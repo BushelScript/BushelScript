@@ -181,14 +181,15 @@ enum Builtin {
         }() ?? RT_Null.null))
     }
     
-    static func newSpecifier0(_ parentPointer: RTObjectPointer?, _ code: OSType, _ rawKind: UInt32) -> RTObjectPointer {
+    static func newSpecifier0(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
+        let uid = (fromOpaque(uidPointer) as! RT_String).value
         let newSpecifier: RT_Specifier
         let kind = RT_Specifier.Kind(rawValue: rawKind)!
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: propertyInfo(for: code), data: [], kind: .property)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: uid), data: [], kind: .property)
         } else {
-            if let type = rt.type(for: code) {
+            if let type = rt.type(forUID: uid) {
                 newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [], kind: kind)
             } else {
                 throwError(message: "unknown type")
@@ -197,15 +198,16 @@ enum Builtin {
         }
         return toOpaque(retain(newSpecifier))
     }
-    static func newSpecifier1(_ parentPointer: RTObjectPointer?, _ code: OSType, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer) -> RTObjectPointer {
+    static func newSpecifier1(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
+        let uid = (fromOpaque(uidPointer) as! RT_String).value
         let data1 = fromOpaque(data1Pointer)
         let newSpecifier: RT_Specifier
         let kind = RT_Specifier.Kind(rawValue: rawKind)!
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: propertyInfo(for: code), data: [data1], kind: .property)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: uid), data: [data1], kind: .property)
         } else {
-            if let type = rt.type(for: code) {
+            if let type = rt.type(forUID: uid) {
                 newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [data1], kind: kind)
             } else {
                 throwError(message: "unknown type")
@@ -214,16 +216,17 @@ enum Builtin {
         }
         return toOpaque(retain(newSpecifier))
     }
-    static func newSpecifier2(_ parentPointer: RTObjectPointer?, _ code: OSType, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer, _ data2Pointer: RTObjectPointer) -> RTObjectPointer {
+    static func newSpecifier2(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer, _ data2Pointer: RTObjectPointer) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
+        let uid = (fromOpaque(uidPointer) as! RT_String).value
         let data1 = fromOpaque(data1Pointer)
         let data2 = fromOpaque(data2Pointer)
         let newSpecifier: RT_Specifier
         let kind = RT_Specifier.Kind(rawValue: rawKind)!
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: propertyInfo(for: code), data: [data1, data2], kind: .property)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: uid), data: [data1, data2], kind: .property)
         } else {
-            if let type = rt.type(for: code) {
+            if let type = rt.type(forUID: uid) {
                 newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [data1, data2], kind: kind)
             } else {
                 throwError(message: "unknown type")
