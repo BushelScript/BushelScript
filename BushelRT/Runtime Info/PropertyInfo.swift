@@ -86,6 +86,14 @@ public extension PropertyInfo {
     
 }
 
+extension PropertyInfo: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        "[PropertyInfo: \(uid)\(code.map { " / '\(String(fourCharCode: $0))'" } ?? "")\(name.map { " / ”\($0)“" } ?? "")]"
+    }
+    
+}
+
 extension PropertyInfo.Tag: Hashable {
     
     public static func == (lhs: PropertyInfo.Tag, rhs: PropertyInfo.Tag) -> Bool {

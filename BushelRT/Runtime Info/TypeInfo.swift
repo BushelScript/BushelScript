@@ -117,6 +117,14 @@ public extension TypeInfo {
     
 }
 
+extension TypeInfo: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        "[TypeInfo: \(uid)\(code.map { " / '\(String(fourCharCode: $0))'" } ?? "")\(name.map { " / ”\($0)“" } ?? "")]"
+    }
+    
+}
+
 extension TypeInfo.Tag: Hashable {
     
     public static func == (lhs: TypeInfo.Tag, rhs: TypeInfo.Tag) -> Bool {

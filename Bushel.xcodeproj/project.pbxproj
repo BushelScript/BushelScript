@@ -662,9 +662,9 @@
 			isa = PBXGroup;
 			children = (
 				3CB528EC23809DDD0051460B /* RTInfo.swift */,
-				3C327261232DBAE2001A527C /* TypeInfo.swift */,
-				3CC224882391CFF300448D25 /* PropertyInfo.swift */,
 				3CC224932391D9D500448D25 /* CommandInfo.swift */,
+				3CC224882391CFF300448D25 /* PropertyInfo.swift */,
+				3C327261232DBAE2001A527C /* TypeInfo.swift */,
 			);
 			path = "Runtime Info";
 			sourceTree = "<group>";

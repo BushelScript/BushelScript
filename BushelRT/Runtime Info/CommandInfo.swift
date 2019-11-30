@@ -86,6 +86,14 @@ public extension CommandInfo {
     
 }
 
+extension CommandInfo: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        "[CommandInfo: \(uid)\(doubleCode.map { " / '\(String(fourCharCode: $0.class))\(String(fourCharCode: $0.id))'" } ?? "")\(name.map { " / ”\($0)“" } ?? "")]"
+    }
+    
+}
+
 extension CommandInfo.Tag: Hashable {
     
     public static func == (lhs: CommandInfo.Tag, rhs: CommandInfo.Tag) -> Bool {
