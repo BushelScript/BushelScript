@@ -555,7 +555,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             
             var parameters: [(Located<ParameterTerm>, Expression)] = []
             func parseParameter() throws -> Bool {
-                guard case let (parameterTermString, parameterTerm?) = try term.parameters.findTerm(in: source) else {
+                guard case let (parameterTermString, parameterTerm?) = try term.parameters.findTerm(in: source.prefix(while: { !$0.isNewline })) else {
                     return false
                 }
                 source.removeFirst(parameterTermString.count)
