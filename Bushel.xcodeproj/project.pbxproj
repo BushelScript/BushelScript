@@ -80,7 +80,7 @@
 		3CC224C5239207A900448D25 /* bushelscript_en.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B75982305B5980006C354 /* bushelscript_en.framework */; };
 		3CC224D5239207E700448D25 /* EntryPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224CD239207E700448D25 /* EntryPoint.swift */; };
 		3CC224D8239207E700448D25 /* PirateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224D1239207E700448D25 /* PirateFormatter.swift */; };
-		3CC224D9239207E700448D25 /* EnglishParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224D2239207E700448D25 /* EnglishParser.swift */; };
+		3CC224D9239207E700448D25 /* PirateParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224D2239207E700448D25 /* PirateParser.swift */; };
 		3CC224DA239207E700448D25 /* BushelScriptPirate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CC224D3239207E700448D25 /* BushelScriptPirate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CC224DC239207EF00448D25 /* LangaugeConstructTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224CF239207E700448D25 /* LangaugeConstructTests.swift */; };
 		3CCA1C7E235D0C010037058C /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCA1C7B235D0C010037058C /* Logging.swift */; };
@@ -320,7 +320,7 @@
 		3CC224CF239207E700448D25 /* LangaugeConstructTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LangaugeConstructTests.swift; sourceTree = "<group>"; };
 		3CC224D0239207E700448D25 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CC224D1239207E700448D25 /* PirateFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PirateFormatter.swift; sourceTree = "<group>"; };
-		3CC224D2239207E700448D25 /* EnglishParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnglishParser.swift; sourceTree = "<group>"; };
+		3CC224D2239207E700448D25 /* PirateParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PirateParser.swift; sourceTree = "<group>"; };
 		3CC224D3239207E700448D25 /* BushelScriptPirate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BushelScriptPirate.h; sourceTree = "<group>"; };
 		3CC224D4239207E700448D25 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CCA1C7B235D0C010037058C /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
@@ -728,7 +728,7 @@
 				3CC224CD239207E700448D25 /* EntryPoint.swift */,
 				3CC224CE239207E700448D25 /* BushelScriptPirateTests */,
 				3CC224D1239207E700448D25 /* PirateFormatter.swift */,
-				3CC224D2239207E700448D25 /* EnglishParser.swift */,
+				3CC224D2239207E700448D25 /* PirateParser.swift */,
 				3CC224D3239207E700448D25 /* BushelScriptPirate.h */,
 				3CC224D4239207E700448D25 /* Info.plist */,
 			);
@@ -1307,7 +1307,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CC224D9239207E700448D25 /* EnglishParser.swift in Sources */,
+				3CC224D9239207E700448D25 /* PirateParser.swift in Sources */,
 				3CC224D5239207E700448D25 /* EntryPoint.swift in Sources */,
 				3CC224D8239207E700448D25 /* PirateFormatter.swift in Sources */,
 			);
