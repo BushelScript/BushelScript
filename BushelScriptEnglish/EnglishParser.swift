@@ -4,6 +4,17 @@ import SDEFinitely
 
 public final class EnglishParser: BushelLanguage.SourceParser {
     
+    private static var sdefCache: [URL : Data] = [:]
+    
+    private static func getSDEF(from url: URL) throws -> Data {
+        if let sdef = sdefCache[url] {
+            return sdef
+        }
+        let sdef = try SDEFinitely.readSDEF(from: url)
+        sdefCache[url] = sdef
+        return sdef
+    }
+    
     public var entireSource: String
     public var source: Substring
     public var expressionStartIndex: String.Index
@@ -395,7 +406,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 
                 let sdef: Data
                 do {
-                    sdef = try SDEFinitely.readSDEF(from: appBundle.bundleURL)
+                    sdef = try EnglishParser.getSDEF(from: appBundle.bundleURL)
                 } catch is SDEFError {
                     // No terminology available
                     break
@@ -489,7 +500,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         let sdef: Data
         do {
-            sdef = try SDEFinitely.readSDEF(from: bundle.bundleURL)
+            sdef = try EnglishParser.getSDEF(from: bundle.bundleURL)
         } catch is SDEFError {
             // No terminology available
             return .use(resource: resource)
