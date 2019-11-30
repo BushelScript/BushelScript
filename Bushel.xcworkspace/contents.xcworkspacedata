@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:BushelScript Editor/BushelScript Editor.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:bushelscript/bushelscript.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:BushelLanguageService/BushelLanguageService.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:Bushel.xcodeproj">
+   </FileRef>
+</Workspace>

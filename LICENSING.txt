@@ -1,0 +1,24 @@
+Different parts of this project may be licensed differently.
+The status quo is as follows:
+
+• Bushel (parsing; "frontend"): Pending decision
+• BushelLanguage (language module internal and consumer API): Pending decision
+• Language modulesL
+	• BushelScriptEnglish (bushelscript_en; primary English module): Pending decision
+	• BushelScriptPirate (bushelscript_argh; toy alternative module): Pending decision; will probably
+		have same license as BushelScriptEnglish, since the code is largely duplicated
+• BushelRT (codegen and runtime library; "backend"): Pending decision
+• bushelscript (BushelScript command-line interface): GPL v3+
+• BushelScript Editor (graphical editor application): GPL v3+
+
+External projects and their licensing terms are as follows:
+
+• SwiftAutomation/SwiftAE (AppleEvent library with roots in objc-appscript):
+    Released into public domain by its author (whose pseudonym is ‘has’). See swiftae/README § Etc.
+    Modifications have been made to simplify the interface by removing parts that aren't needed in BushelRT.
+    I also hereby dedicate any such modifications to the public domain.
+• LLVMSwift (excellent Swift bridge for the LLVM C API):
+    © 2017 Harlan, MIT licensed. See LLVMSwift/LICENSE.txt.
+• LLVM (compiler infrastructure; compiles programs using an “intermediate representation”, or IR):
+    University of Illinois/NCSA Open Source License. Expected to be installed as a system package using
+    `brew`. A copy of the license should be included in the package installation, in the file "LICENSE.TXT".

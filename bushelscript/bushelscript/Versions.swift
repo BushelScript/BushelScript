@@ -1,0 +1,40 @@
+// BushelScript command-line interface.
+// See file main.swift for copyright and licensing information.
+
+import Foundation
+
+private let CFBundleShortVersionString = "CFBundleShortVersionString"
+
+private let toolVersion = "1.0"
+private let frameworks = ["Bushel", "BushelLanguage", "BushelRT"]
+
+// Returns exit status code.
+func printVersion() -> Int32 {
+    let frameworkVersions = [String : Any](uniqueKeysWithValues: frameworks.compactMap { frameworkName in
+        let frameworkBundle = Bundle(identifier: "com.justcheesy.\(frameworkName)")
+        return frameworkBundle?.infoDictionary?[CFBundleShortVersionString].map { version in
+            return (frameworkName, version)
+        }
+    })
+    
+    var exitStatusCode: Int32 = 0
+    
+    func versionDescription(for frameworkName: String) -> String {
+        if let version = frameworkVersions[frameworkName] {
+            return "Using \(frameworkName).framework version \(version)"
+        } else {
+            exitStatusCode = 4
+            return "\(frameworkName).framework is missing!"
+        }
+    }
+    
+    print("""
+
+BushelScript command-line interface version \(toolVersion)
+
+\(frameworks.map(versionDescription).joined(separator: "\n"))
+
+""")
+    
+    return exitStatusCode
+}

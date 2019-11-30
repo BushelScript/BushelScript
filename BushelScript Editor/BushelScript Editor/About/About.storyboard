@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="36X-2N-3oL">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--About BushelScript-->
+        <scene sceneID="h79-4D-QHG">
+            <objects>
+                <viewController title="About BushelScript" showSeguePresentationStyle="single" id="lKB-gH-eQR" customClass="AboutBushelScriptViewController" sceneMemberID="viewController">
+                    <view key="view" wantsLayer="YES" appearanceType="aqua" id="Nfs-Wx-MpS">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="263"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <visualEffectView appearanceType="vibrantDark" blendingMode="behindWindow" material="ultraDark" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="qWK-jA-j6Q" propertyAccessControl="none">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="263"/>
+                            </visualEffectView>
+                            <textField wantsLayer="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a0l-bh-mYI">
+                                <rect key="frame" x="28" y="171" width="424" height="62"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="BushelScript" id="0oo-jk-kcW">
+                                    <font key="font" metaFont="systemBold" size="52"/>
+                                    <color key="textColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField hidden="YES" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="1uK-AP-dy5">
+                                <rect key="frame" x="28" y="109" width="317" height="38"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="38" id="zMq-jk-cXB"/>
+                                </constraints>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Next-generation open-source AppleScript" id="faN-SF-TF2">
+                                    <font key="font" metaFont="systemMedium" size="16"/>
+                                    <color key="textColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="MkV-d2-IXP">
+                                <rect key="frame" x="28" y="74" width="97" height="21"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Version %@" id="Edp-rI-xLB">
+                                    <font key="font" metaFont="systemMedium" size="17"/>
+                                    <color key="textColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="uvO-kX-fTH" customClass="LinkLabel">
+                                <rect key="frame" x="28" y="50" width="362" height="21"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="https://github.com/BushelScript/BushelScript" id="xs1-6O-rz4">
+                                    <font key="font" metaFont="systemMedium" size="17"/>
+                                    <color key="textColor" name="systemBlueColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="879-N5-MDy">
+                                <rect key="frame" x="28" y="20" width="306" height="19"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="If you wish to support development, please" id="88b-Wh-St8">
+                                    <font key="font" metaFont="systemMedium" size="15"/>
+                                    <color key="textColor" name="selectedMenuItemTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="zLr-83-ByX" customClass="LinkLabel">
+                                <rect key="frame" x="334" y="20" width="77" height="19"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="click here." id="rmk-yX-Z7g">
+                                    <font key="font" metaFont="systemMedium" size="15"/>
+                                    <color key="textColor" name="systemBlueColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="link" value="http://example.com"/>
+                                </userDefinedRuntimeAttributes>
+                            </textField>
+                            <imageView hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lmw-8z-qlL">
+                                <rect key="frame" x="388" y="176" width="62" height="62"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="fGC-Th-xg9"/>
+                            </imageView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="1uK-AP-dy5" firstAttribute="firstBaseline" secondItem="a0l-bh-mYI" secondAttribute="firstBaseline" constant="50" id="423-gU-VFd"/>
+                            <constraint firstAttribute="trailing" secondItem="qWK-jA-j6Q" secondAttribute="trailing" id="ERg-t0-DUs"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="a0l-bh-mYI" secondAttribute="trailing" priority="750" constant="20" symbolic="YES" id="IPI-wz-8IQ"/>
+                            <constraint firstItem="879-N5-MDy" firstAttribute="firstBaseline" secondItem="uvO-kX-fTH" secondAttribute="baseline" constant="30" id="KuE-Lf-Zdw"/>
+                            <constraint firstItem="zLr-83-ByX" firstAttribute="baseline" secondItem="879-N5-MDy" secondAttribute="baseline" id="LBi-Nq-k6Q"/>
+                            <constraint firstItem="qWK-jA-j6Q" firstAttribute="top" secondItem="Nfs-Wx-MpS" secondAttribute="top" id="NGM-g0-xxg"/>
+                            <constraint firstItem="879-N5-MDy" firstAttribute="leading" secondItem="Nfs-Wx-MpS" secondAttribute="leading" constant="30" id="NuI-Nv-cz9"/>
+                            <constraint firstItem="a0l-bh-mYI" firstAttribute="centerX" secondItem="Nfs-Wx-MpS" secondAttribute="centerX" id="OGg-8Y-Fym"/>
+                            <constraint firstItem="a0l-bh-mYI" firstAttribute="top" secondItem="Nfs-Wx-MpS" secondAttribute="top" constant="30" id="QiA-nc-mAD"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="zLr-83-ByX" secondAttribute="trailing" constant="20" symbolic="YES" id="U0a-FR-O0t"/>
+                            <constraint firstAttribute="bottom" secondItem="879-N5-MDy" secondAttribute="bottom" constant="20" symbolic="YES" id="VNM-Eu-f3o"/>
+                            <constraint firstItem="uvO-kX-fTH" firstAttribute="leading" secondItem="Nfs-Wx-MpS" secondAttribute="leading" constant="30" id="Wkd-Sv-MWT"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="1uK-AP-dy5" secondAttribute="trailing" constant="20" symbolic="YES" id="cry-25-HcM"/>
+                            <constraint firstItem="MkV-d2-IXP" firstAttribute="leading" secondItem="Nfs-Wx-MpS" secondAttribute="leading" constant="30" id="dHf-eX-Nwf"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="MkV-d2-IXP" secondAttribute="trailing" constant="20" symbolic="YES" id="hz0-SF-nw1"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="uvO-kX-fTH" secondAttribute="trailing" constant="20" symbolic="YES" id="lxC-w9-Pfq"/>
+                            <constraint firstItem="qWK-jA-j6Q" firstAttribute="leading" secondItem="Nfs-Wx-MpS" secondAttribute="leading" id="n8O-qS-7zc"/>
+                            <constraint firstItem="uvO-kX-fTH" firstAttribute="firstBaseline" secondItem="MkV-d2-IXP" secondAttribute="baseline" constant="24" id="n9J-e4-boV"/>
+                            <constraint firstAttribute="bottom" secondItem="qWK-jA-j6Q" secondAttribute="bottom" id="u66-IJ-Nze"/>
+                            <constraint firstItem="1uK-AP-dy5" firstAttribute="leading" secondItem="Nfs-Wx-MpS" secondAttribute="leading" constant="30" id="uWV-xQ-rYs"/>
+                            <constraint firstItem="zLr-83-ByX" firstAttribute="leading" secondItem="879-N5-MDy" secondAttribute="trailing" constant="4" id="vgh-3v-zkO"/>
+                            <constraint firstItem="a0l-bh-mYI" firstAttribute="leading" relation="lessThanOrEqual" secondItem="Nfs-Wx-MpS" secondAttribute="leading" constant="30" id="x3z-qV-NKt"/>
+                            <constraint firstItem="MkV-d2-IXP" firstAttribute="firstBaseline" secondItem="1uK-AP-dy5" secondAttribute="baseline" constant="35" id="ykO-dI-mor"/>
+                        </constraints>
+                        <animations>
+                            <caTransition key="subviews">
+                                <mutableData key="keyedArchiveRepresentation">
+YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKkHCBES
+EwsKGR9VJG51bGzUCQoLDA0ODxBWJGNsYXNzVHR5cGVXc3VidHlwZV8QEl9fQ0FDb2RpbmdDb250ZW50
+c4AIgAOAAoAEV2Zyb21Ub3BUcHVzaNIUCRUYWk5TLm9iamVjdHOiFheABYAGgAfSGhscHVokY2xhc3Nu
+YW1lWCRjbGFzc2VzV05TQXJyYXmiHB5YTlNPYmplY3TSGhsgIVxDQVRyYW5zaXRpb26jIiMeXENBVHJh
+bnNpdGlvbltDQUFuaW1hdGlvbl8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIA
+NwBBAEcAUABXAFwAZAB5AHsAfQB/AIEAiQCOAJMAngChAKMApQCnAKwAtwDAAMgAywDUANkA5gDqAPcB
+AwEVARgBHQAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEfA
+</mutableData>
+                            </caTransition>
+                        </animations>
+                    </view>
+                    <connections>
+                        <outlet property="_animatedCreditsLabel" destination="1uK-AP-dy5" id="sGO-2J-h3h"/>
+                        <outlet property="_centerXTitleToSuper" destination="OGg-8Y-Fym" id="Xbt-ZU-4Xm"/>
+                        <outlet property="_gitHubLinkLabel" destination="uvO-kX-fTH" id="tgU-T8-3f1"/>
+                        <outlet property="_leadingTitleToSuper" destination="x3z-qV-NKt" id="q7t-Jx-Ga9"/>
+                        <outlet property="_supportDevelopmentLabel" destination="879-N5-MDy" id="LNi-s9-clQ"/>
+                        <outlet property="_supportDevelopmentLinkLabel" destination="zLr-83-ByX" id="Mmd-4w-lGJ"/>
+                        <outlet property="_titleIcon" destination="Lmw-8z-qlL" id="bfm-Wk-hLI"/>
+                        <outlet property="_titleLabel" destination="a0l-bh-mYI" id="5gV-9z-nhV"/>
+                        <outlet property="_versionLabel" destination="MkV-d2-IXP" id="ZlV-4B-DHA"/>
+                    </connections>
+                </viewController>
+                <customObject id="TFW-ak-QjL" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="515" y="-254.5"/>
+        </scene>
+        <!--Window Controller-->
+        <scene sceneID="iPk-k6-xey">
+            <objects>
+                <windowController showSeguePresentationStyle="single" id="36X-2N-3oL" sceneMemberID="viewController">
+                    <window key="window" title="About BushelScript" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="none" appearanceType="darkAqua" frameAutosaveName="" tabbingMode="disallowed" id="YDh-rF-3x4" customClass="BackgroundMovableWindow">
+                        <windowStyleMask key="styleMask" closable="YES"/>
+                        <windowCollectionBehavior key="collectionBehavior" transient="YES" fullScreenAuxiliary="YES"/>
+                        <windowPositionMask key="initialPositionMask" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="502" y="321" width="480" height="228"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
+                        <value key="minSize" type="size" width="480" height="228"/>
+                        <value key="maxSize" type="size" width="480" height="228"/>
+                        <connections>
+                            <outlet property="delegate" destination="36X-2N-3oL" id="8G8-Wi-QVV"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="lKB-gH-eQR" kind="relationship" relationship="window.shadowedContentViewController" id="J07-G9-INs"/>
+                    </connections>
+                </windowController>
+                <customObject id="hb9-y6-ANU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="515" y="-583"/>
+        </scene>
+    </scenes>
+</document>

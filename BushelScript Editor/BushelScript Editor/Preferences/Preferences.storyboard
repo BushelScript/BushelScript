@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="tIW-kw-HeA">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="VLT-fg-hWY">
+            <objects>
+                <windowController showSeguePresentationStyle="single" id="tIW-kw-HeA" sceneMemberID="viewController">
+                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="BoT-w8-xfc">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+                        <rect key="contentRect" x="163" y="199" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
+                        <connections>
+                            <outlet property="delegate" destination="tIW-kw-HeA" id="dRo-ZJ-nfZ"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="imV-Ii-MB7" kind="relationship" relationship="window.shadowedContentViewController" id="3p4-VT-1mc"/>
+                    </connections>
+                </windowController>
+                <customObject id="CeS-QV-KuG" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="143" y="46"/>
+        </scene>
+        <!--Preferences View Controller-->
+        <scene sceneID="xTA-hi-mmi">
+            <objects>
+                <tabViewController tabStyle="toolbar" id="imV-Ii-MB7" customClass="PreferencesViewController" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabViewItems>
+                        <tabViewItem image="NSPreferencesGeneral" id="2gf-WD-WkL"/>
+                        <tabViewItem identifier="" image="SuggestionsPrefs" id="Eyd-3q-QAg"/>
+                        <tabViewItem image="SavingPrefs" id="Rpy-Iy-lAn"/>
+                        <tabViewItem identifier="" image="PrivacyPrefs" id="diS-XI-NV8"/>
+                        <tabViewItem image="UpdatePrefs" id="NxG-sN-RP7"/>
+                    </tabViewItems>
+                    <viewControllerTransitionOptions key="transitionOptions" allowUserInteraction="YES"/>
+                    <tabView key="tabView" wantsLayer="YES" type="noTabsNoBorder" id="iBc-Xr-ZIn">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <font key="font" metaFont="system"/>
+                        <connections>
+                            <outlet property="delegate" destination="imV-Ii-MB7" id="tg5-rd-ooO"/>
+                        </connections>
+                    </tabView>
+                    <connections>
+                        <outlet property="tabView" destination="iBc-Xr-ZIn" id="oGl-K3-9TV"/>
+                        <segue destination="Jnz-gE-XA3" kind="relationship" relationship="tabItems" id="TTv-2i-jNs"/>
+                        <segue destination="Jfy-od-eek" kind="relationship" relationship="tabItems" id="Kks-xt-GUI"/>
+                        <segue destination="Olv-la-hnW" kind="relationship" relationship="tabItems" id="j1Y-ga-MAv"/>
+                        <segue destination="Gaw-Mb-Bzc" kind="relationship" relationship="tabItems" id="SmU-Zg-HWj"/>
+                        <segue destination="d7J-M5-OMo" kind="relationship" relationship="tabItems" id="cM5-ld-7G0"/>
+                    </connections>
+                </tabViewController>
+                <customObject id="Zlf-lR-ZY2" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="143" y="452"/>
+        </scene>
+        <!--Saving-->
+        <scene sceneID="0rs-Zb-0R7">
+            <objects>
+                <viewController title="Saving" id="Olv-la-hnW" sceneMemberID="viewController">
+                    <view key="view" id="TfO-YW-tWv">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="120"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w6Y-HO-xFv">
+                                <rect key="frame" x="136" y="42" width="276" height="21"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="/usr/local/bin/bushelscript" drawsBackground="YES" id="rxw-HT-jl3">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="yvA-Kh-ksT" name="value" keyPath="values.AddHashbangOnSaveProgram" id="GzH-rE-FsE">
+                                        <dictionary key="options">
+                                            <string key="NSNullPlaceholder">/usr/local/bin/bushelscript</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="R31-72-ZJ0">
+                                <rect key="frame" x="18" y="84" width="112" height="18"/>
+                                <buttonCell key="cell" type="check" title="Add #! on save" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="VsH-lU-Gfo">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="yvA-Kh-ksT" name="value" keyPath="values.AddHashbangOnSave" id="WBm-fE-jE2"/>
+                                </connections>
+                            </button>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="MJd-ru-GpH">
+                                <rect key="frame" x="134" y="71" width="298" height="28"/>
+                                <textFieldCell key="cell" selectable="YES" title="Makes saved documents executable by passing them as input to the specified program." id="R8c-hI-jjK">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nFn-9Z-i6a">
+                                <rect key="frame" x="55" y="44" width="75" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="#! program:" id="mWt-gY-Evk">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CqE-Jk-evx">
+                                <rect key="frame" x="56" y="19" width="74" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Arguments:" id="e4N-Dq-KRb">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gdN-Vu-9oN">
+                                <rect key="frame" x="134" y="18" width="298" height="18"/>
+                                <buttonCell key="cell" type="check" title="Language flag (-l &lt;language&gt;)" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="vQd-HL-DHx">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="yvA-Kh-ksT" name="value" keyPath="values.AddHashbangOnSaveUseLanguageFlag" id="NHt-7i-eTf"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="gdN-Vu-9oN" firstAttribute="top" secondItem="w6Y-HO-xFv" secondAttribute="bottom" constant="8" symbolic="YES" id="78S-Im-vcO"/>
+                            <constraint firstItem="nFn-9Z-i6a" firstAttribute="firstBaseline" secondItem="w6Y-HO-xFv" secondAttribute="firstBaseline" id="7a0-r8-ynb"/>
+                            <constraint firstItem="MJd-ru-GpH" firstAttribute="leading" secondItem="R31-72-ZJ0" secondAttribute="trailing" constant="8" symbolic="YES" id="9uL-rx-PLr"/>
+                            <constraint firstItem="gdN-Vu-9oN" firstAttribute="leading" secondItem="CqE-Jk-evx" secondAttribute="trailing" constant="8" symbolic="YES" id="NjZ-Vw-6Ey"/>
+                            <constraint firstAttribute="bottom" secondItem="gdN-Vu-9oN" secondAttribute="bottom" constant="20" symbolic="YES" id="Swo-wC-GnJ"/>
+                            <constraint firstItem="nFn-9Z-i6a" firstAttribute="trailing" secondItem="R31-72-ZJ0" secondAttribute="trailing" id="VhE-jQ-RDd"/>
+                            <constraint firstItem="w6Y-HO-xFv" firstAttribute="leading" secondItem="nFn-9Z-i6a" secondAttribute="trailing" constant="8" id="cr4-aU-pCr"/>
+                            <constraint firstItem="R31-72-ZJ0" firstAttribute="leading" secondItem="TfO-YW-tWv" secondAttribute="leading" constant="20" symbolic="YES" id="ejX-ue-Vtg"/>
+                            <constraint firstItem="MJd-ru-GpH" firstAttribute="firstBaseline" secondItem="R31-72-ZJ0" secondAttribute="firstBaseline" id="fZY-ey-qub"/>
+                            <constraint firstItem="R31-72-ZJ0" firstAttribute="top" secondItem="TfO-YW-tWv" secondAttribute="top" constant="20" symbolic="YES" id="fuF-IT-SFP"/>
+                            <constraint firstAttribute="trailing" secondItem="MJd-ru-GpH" secondAttribute="trailing" constant="20" symbolic="YES" id="gWb-EB-s2i"/>
+                            <constraint firstItem="CqE-Jk-evx" firstAttribute="firstBaseline" secondItem="gdN-Vu-9oN" secondAttribute="firstBaseline" id="hli-ij-AlA"/>
+                            <constraint firstItem="CqE-Jk-evx" firstAttribute="trailing" secondItem="nFn-9Z-i6a" secondAttribute="trailing" id="m0I-MV-Ksq"/>
+                            <constraint firstAttribute="trailing" secondItem="w6Y-HO-xFv" secondAttribute="trailing" constant="38" id="rLK-yJ-qDP"/>
+                            <constraint firstItem="w6Y-HO-xFv" firstAttribute="top" secondItem="MJd-ru-GpH" secondAttribute="bottom" constant="8" symbolic="YES" id="tz7-76-FHX"/>
+                            <constraint firstAttribute="trailing" secondItem="gdN-Vu-9oN" secondAttribute="trailing" constant="20" symbolic="YES" id="yfE-Kg-eOt"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="bbj-B8-SCe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="yvA-Kh-ksT"/>
+            </objects>
+            <point key="canvasLocation" x="723" y="544"/>
+        </scene>
+        <!--Suggestions-->
+        <scene sceneID="WWZ-E3-usw">
+            <objects>
+                <viewController title="Suggestions" id="Jfy-od-eek" sceneMemberID="viewController">
+                    <view key="view" id="Q8N-T8-J0J">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="292"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0gx-cp-d1I">
+                                <rect key="frame" x="38" y="234" width="138" height="18"/>
+                                <buttonCell key="cell" type="check" title="Smart Suggestions" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="6h3-Ng-npI">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableLiveParsing" id="2sl-au-iB2"/>
+                                    <binding destination="5uH-Ee-YZn" name="value" keyPath="values.EnableSmartSuggestions" id="jZK-u8-0Ek"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Offers to complete words found previously in the document." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wc1-qn-y5t">
+                                <rect key="frame" x="18" y="54" width="203" height="18"/>
+                                <buttonCell key="cell" type="check" title="Word completion suggestions" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Ilb-df-ced">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="5uH-Ee-YZn" name="value" keyPath="values.EnableWordCompletionSuggestions" id="RCJ-aI-Kef"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3lN-LF-zVq">
+                                <rect key="frame" x="18" y="256" width="149" height="18"/>
+                                <buttonCell key="cell" type="check" title="Live syntax checking" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="h1x-We-eku">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="5uH-Ee-YZn" name="value" keyPath="values.EnableLiveParsing" id="0Dx-4C-8pe"/>
+                                </connections>
+                            </button>
+                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="6" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pwi-jZ-lw5">
+                                <rect key="frame" x="60" y="112" width="351" height="116"/>
+                                <subviews>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cDe-at-khL">
+                                        <rect key="frame" x="-2" y="100" width="188" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Auto-fixes for syntax errors" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="gqt-gK-ni9">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableSmartSuggestions" id="mdX-r1-spe"/>
+                                            <binding destination="5uH-Ee-YZn" name="value" keyPath="values.SmartSuggestionKinds.SourceFixes" id="vr7-Oi-zyx"/>
+                                        </connections>
+                                    </button>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="loE-Fp-sEc">
+                                        <rect key="frame" x="0.0" y="80" width="351" height="16"/>
+                                        <subviews>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wgR-w4-WcE">
+                                                <rect key="frame" x="-2" y="0.0" width="198" height="18"/>
+                                                <buttonCell key="cell" type="check" title="Objects from scriptable apps" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="i7g-l1-ad9">
+                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableSmartSuggestions" id="440-Du-Q5S"/>
+                                                    <binding destination="5uH-Ee-YZn" name="enabled2" keyPath="values.PrivacyFetchAppDataForSmartSuggestions" previousBinding="440-Du-Q5S" id="Dhr-g7-0bc">
+                                                        <dictionary key="options">
+                                                            <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                                            <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                                            <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                                            <integer key="NSNullPlaceholder" value="-1"/>
+                                                        </dictionary>
+                                                    </binding>
+                                                    <binding destination="5uH-Ee-YZn" name="value" keyPath="values.SmartSuggestionKinds.ScriptingObjects" id="jOz-D0-cdK"/>
+                                                </connections>
+                                            </button>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K3d-xb-cxu">
+                                                <rect key="frame" x="200" y="1" width="153" height="14"/>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Disabled by Privacy settings" id="k9L-rV-Sgr">
+                                                    <font key="font" metaFont="message" size="11"/>
+                                                    <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                                <connections>
+                                                    <binding destination="5uH-Ee-YZn" name="hidden" keyPath="values.PrivacyFetchAppDataForSmartSuggestions" id="dcY-fv-Plq"/>
+                                                </connections>
+                                            </textField>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="K3d-xb-cxu" firstAttribute="firstBaseline" secondItem="wgR-w4-WcE" secondAttribute="firstBaseline" id="Y48-gL-oeO"/>
+                                        </constraints>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H0F-Zd-SuT">
+                                        <rect key="frame" x="-2" y="58" width="115" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Variable names" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="EGd-xT-1Gd">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableSmartSuggestions" id="395-sB-E4I"/>
+                                            <binding destination="5uH-Ee-YZn" name="value" keyPath="values.SmartSuggestionKinds.Variables" id="Bsd-bH-sUQ"/>
+                                        </connections>
+                                    </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Lfh-iW-R9W">
+                                        <rect key="frame" x="-2" y="38" width="59" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Types" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="aFh-FN-zBi">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableSmartSuggestions" id="hdw-7I-qYx"/>
+                                            <binding destination="5uH-Ee-YZn" name="value" keyPath="values.SmartSuggestionKinds.Types" id="Vmx-qR-nK4"/>
+                                        </connections>
+                                    </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bsy-KH-hzl">
+                                        <rect key="frame" x="-2" y="18" width="84" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Constants" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Oga-gI-YCg">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableSmartSuggestions" id="bEI-y5-woS"/>
+                                            <binding destination="5uH-Ee-YZn" name="value" keyPath="values.SmartSuggestionKinds.Constants" id="SDD-rn-lm2"/>
+                                        </connections>
+                                    </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KGF-qP-Yq0">
+                                        <rect key="frame" x="-2" y="-2" width="91" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Commands" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="4oh-wR-B9M">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableSmartSuggestions" id="7Om-WZ-7X5"/>
+                                            <binding destination="5uH-Ee-YZn" name="value" keyPath="values.SmartSuggestionKinds.Commands" id="Th0-db-Awj"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="WqC-h4-gBF">
+                                <rect key="frame" x="38" y="20" width="394" height="28"/>
+                                <textFieldCell key="cell" selectable="YES" title="When enabled, press Option-Escape to complete with words that appear previously in the document." id="9nM-aV-Ich">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ffw-GB-yNH">
+                                <rect key="frame" x="38" y="88" width="87" height="18"/>
+                                <buttonCell key="cell" type="check" title="Live errors" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="eDo-JD-CYR">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="5uH-Ee-YZn" name="value" keyPath="values.EnableLiveErrors" id="aMi-zV-wXL"/>
+                                    <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableLiveParsing" id="yYn-HR-H2r"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="3lN-LF-zVq" firstAttribute="top" secondItem="Q8N-T8-J0J" secondAttribute="top" constant="20" symbolic="YES" id="3HV-jN-scE"/>
+                            <constraint firstItem="ffw-GB-yNH" firstAttribute="leading" secondItem="0gx-cp-d1I" secondAttribute="leading" id="7LK-Gs-yCC"/>
+                            <constraint firstItem="3lN-LF-zVq" firstAttribute="leading" secondItem="Q8N-T8-J0J" secondAttribute="leading" constant="20" id="ANv-pu-RFE"/>
+                            <constraint firstItem="0gx-cp-d1I" firstAttribute="firstBaseline" secondItem="3lN-LF-zVq" secondAttribute="baseline" constant="22" id="GKq-23-Ph5"/>
+                            <constraint firstItem="wc1-qn-y5t" firstAttribute="top" secondItem="ffw-GB-yNH" secondAttribute="bottom" constant="20" id="KR0-e4-wDP"/>
+                            <constraint firstItem="pwi-jZ-lw5" firstAttribute="firstBaseline" secondItem="0gx-cp-d1I" secondAttribute="baseline" constant="22" id="RIP-Tb-mMS"/>
+                            <constraint firstItem="WqC-h4-gBF" firstAttribute="leading" secondItem="wc1-qn-y5t" secondAttribute="leading" constant="20" id="YIH-MS-a4I"/>
+                            <constraint firstItem="0gx-cp-d1I" firstAttribute="leading" secondItem="3lN-LF-zVq" secondAttribute="leading" constant="20" id="bxQ-4T-ONk"/>
+                            <constraint firstItem="ffw-GB-yNH" firstAttribute="firstBaseline" secondItem="pwi-jZ-lw5" secondAttribute="baseline" constant="22" id="fpj-jI-Oio"/>
+                            <constraint firstAttribute="trailing" secondItem="WqC-h4-gBF" secondAttribute="trailing" constant="20" symbolic="YES" id="gg0-6b-cK6"/>
+                            <constraint firstAttribute="bottom" secondItem="WqC-h4-gBF" secondAttribute="bottom" constant="20" symbolic="YES" id="hZd-3l-I7p"/>
+                            <constraint firstItem="wc1-qn-y5t" firstAttribute="leading" secondItem="Q8N-T8-J0J" secondAttribute="leading" constant="20" symbolic="YES" id="q4L-nk-gwS"/>
+                            <constraint firstItem="pwi-jZ-lw5" firstAttribute="leading" secondItem="0gx-cp-d1I" secondAttribute="leading" constant="20" id="tV4-OK-cea"/>
+                            <constraint firstItem="WqC-h4-gBF" firstAttribute="firstBaseline" secondItem="wc1-qn-y5t" secondAttribute="baseline" constant="21" id="zhS-Zv-lR0"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="cm4-IT-0RW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="5uH-Ee-YZn"/>
+            </objects>
+            <point key="canvasLocation" x="723" y="180"/>
+        </scene>
+        <!--General-->
+        <scene sceneID="elx-bb-SDp">
+            <objects>
+                <viewController title="General" id="Jnz-gE-XA3" sceneMemberID="viewController">
+                    <view key="view" id="wh5-5I-Lfb">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="54"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="b4f-od-XRB">
+                                <rect key="frame" x="18" y="18" width="183" height="18"/>
+                                <buttonCell key="cell" type="check" title="Pretty print before running" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="FQS-WS-zd2">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="EbU-qF-leD" name="value" keyPath="values.PrettyPrintBeforeRunning" id="K1w-l3-Gt3"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="b4f-od-XRB" firstAttribute="leading" secondItem="wh5-5I-Lfb" secondAttribute="leading" constant="20" symbolic="YES" id="C0X-Tm-vrX"/>
+                            <constraint firstItem="b4f-od-XRB" firstAttribute="top" secondItem="wh5-5I-Lfb" secondAttribute="top" constant="20" symbolic="YES" id="Jfu-O6-kci"/>
+                            <constraint firstAttribute="bottom" secondItem="b4f-od-XRB" secondAttribute="bottom" constant="20" symbolic="YES" id="vm6-k0-TJy"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="F8B-Jg-BKK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="EbU-qF-leD"/>
+            </objects>
+            <point key="canvasLocation" x="723" y="-193"/>
+        </scene>
+        <!--Privacy-->
+        <scene sceneID="1rs-y2-HM7">
+            <objects>
+                <viewController title="Privacy" id="Gaw-Mb-Bzc" sceneMemberID="viewController">
+                    <view key="view" id="MFZ-f2-bO8">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="102"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZMX-lk-Fqu">
+                                <rect key="frame" x="18" y="66" width="104" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Application Data" id="JTs-o9-PIK">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Bsm-Es-soP">
+                                <rect key="frame" x="20" y="43" width="410" height="5"/>
+                            </box>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dxa-dg-ow9">
+                                <rect key="frame" x="126" y="54" width="306" height="28"/>
+                                <textFieldCell key="cell" selectable="YES" title="These features show you relevant data from applications on your system during editing." id="0Ue-Bm-qUi">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" fixedFrame="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jIH-S1-IVg">
+                                <rect key="frame" x="40" y="16" width="378" height="21"/>
+                                <subviews>
+                                    <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="NWn-S3-gbL">
+                                        <rect key="frame" x="-2" y="-2" width="42" height="24"/>
+                                        <connections>
+                                            <binding destination="df4-8L-v29" name="value" keyPath="values.PrivacyFetchAppDataForSmartSuggestions" id="jqV-1f-PBD"/>
+                                        </connections>
+                                    </switch>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vbk-zK-5Hi">
+                                        <rect key="frame" x="44" y="2" width="336" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Fetch data from scriptable apps for Smart Suggestions" id="D4p-BU-7Ko">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="Dxa-dg-ow9" secondAttribute="trailing" constant="20" symbolic="YES" id="5ax-Ag-PZa"/>
+                            <constraint firstItem="Dxa-dg-ow9" firstAttribute="leading" secondItem="ZMX-lk-Fqu" secondAttribute="trailing" constant="8" symbolic="YES" id="6Yo-Ik-y7X"/>
+                            <constraint firstAttribute="bottom" secondItem="vbk-zK-5Hi" secondAttribute="bottom" constant="20" id="MlL-Zi-ORo"/>
+                            <constraint firstItem="Bsm-Es-soP" firstAttribute="leading" secondItem="MFZ-f2-bO8" secondAttribute="leading" constant="20" symbolic="YES" id="O3C-HU-nxC"/>
+                            <constraint firstItem="ZMX-lk-Fqu" firstAttribute="top" secondItem="MFZ-f2-bO8" secondAttribute="top" constant="20" symbolic="YES" id="PQa-5g-H4Q"/>
+                            <constraint firstItem="Dxa-dg-ow9" firstAttribute="top" secondItem="ZMX-lk-Fqu" secondAttribute="top" id="Q3q-7y-LEX"/>
+                            <constraint firstAttribute="trailing" secondItem="Bsm-Es-soP" secondAttribute="trailing" constant="20" symbolic="YES" id="WpY-Kf-3kf"/>
+                            <constraint firstItem="vbk-zK-5Hi" firstAttribute="top" secondItem="Bsm-Es-soP" secondAttribute="bottom" constant="9" id="cW9-Ym-Rut"/>
+                            <constraint firstItem="Bsm-Es-soP" firstAttribute="top" secondItem="Dxa-dg-ow9" secondAttribute="bottom" constant="8" symbolic="YES" id="f5d-vd-KH0"/>
+                            <constraint firstItem="Dxa-dg-ow9" firstAttribute="top" secondItem="MFZ-f2-bO8" secondAttribute="top" constant="20" symbolic="YES" id="kKw-VY-gkM"/>
+                            <constraint firstItem="ZMX-lk-Fqu" firstAttribute="leading" secondItem="MFZ-f2-bO8" secondAttribute="leading" constant="20" symbolic="YES" id="lp2-j9-ZW6"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="QqX-V4-ThT" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="df4-8L-v29"/>
+            </objects>
+            <point key="canvasLocation" x="723" y="1186.5"/>
+        </scene>
+        <!--Updates-->
+        <scene sceneID="qc5-mF-i9R">
+            <objects>
+                <viewController title="Updates" id="d7J-M5-OMo" sceneMemberID="viewController">
+                    <view key="view" id="5nN-JT-odI">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="56"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mqw-4I-vce">
+                                <rect key="frame" x="89" y="20" width="273" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Automatic updates are not yet implemented." id="kvy-tR-E2F">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="mqw-4I-vce" firstAttribute="top" secondItem="5nN-JT-odI" secondAttribute="top" constant="20" symbolic="YES" id="MYz-Mg-D72"/>
+                            <constraint firstAttribute="bottom" secondItem="mqw-4I-vce" secondAttribute="bottom" constant="20" symbolic="YES" id="otN-M3-JrX"/>
+                            <constraint firstItem="mqw-4I-vce" firstAttribute="centerX" secondItem="5nN-JT-odI" secondAttribute="centerX" id="uBU-1D-CKv"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="5pk-9Q-eKQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="723" y="1552"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="NSPreferencesGeneral" width="32" height="32"/>
+        <image name="PrivacyPrefs" width="600" height="600"/>
+        <image name="SavingPrefs" width="600" height="600"/>
+        <image name="SuggestionsPrefs" width="580" height="580"/>
+        <image name="UpdatePrefs" width="600" height="600"/>
+    </resources>
+</document>

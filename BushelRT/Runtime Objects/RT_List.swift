@@ -1,0 +1,130 @@
+import Bushel
+import SwiftAutomation
+
+/// An Apple Event list. Pretty much your standard list type.
+public class RT_List: RT_Object, AEEncodable {
+    
+    public var contents: [RT_Object] = []
+    
+    public init(contents: [RT_Object]) {
+        self.contents = contents
+    }
+    
+    public override var description: String {
+        return "{\(contents.map { String(describing: $0) }.joined(separator: ", "))}"
+    }
+    
+    private static let typeInfo_ = TypeInfo(TypeUID.list.rawValue, TypeUID.list.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("list"))])
+    public override class var typeInfo: TypeInfo {
+        typeInfo_
+    }
+    
+    public override var truthy: Bool {
+        return !contents.isEmpty
+    }
+    
+    public func add(_ object: RT_Object) {
+        contents.append(object)
+    }
+    
+    public override func concatenating(_ other: RT_Object) -> RT_Object? {
+        if let other = other as? RT_List {
+            return RT_List(contents: self.contents + other.contents)
+        } else {
+            return RT_List(contents: self.contents + [other])
+        }
+    }
+    
+    public override func concatenated(to other: RT_Object) -> RT_Object? {
+        if let other = other as? RT_List {
+            return RT_List(contents: other.contents + self.contents)
+        } else {
+            return RT_List(contents: [other] + self.contents)
+        }
+    }
+    
+    public var length: RT_Integer {
+        return RT_Integer(value: Int64(contents.count))
+    }
+    public var reverse: RT_List {
+        return RT_List(contents: contents.reversed())
+    }
+    public var tail: RT_List {
+        return RT_List(contents: [RT_Object](contents[1...]))
+    }
+    
+    public override var properties: [RT_Object] {
+        return super.properties + [length, reverse, tail]
+    }
+    public override func property(_ property: PropertyInfo) throws -> RT_Object {
+        switch PropertyUID(rawValue: property.uid) {
+        case .sequence_length:
+            return length
+        case .sequence_reverse:
+            return reverse
+        case .sequence_tail:
+            return tail
+        default:
+            return try super.property(property)
+        }
+    }
+    
+    private func filteredContents(_ type: TypeInfo) -> [RT_Object] {
+        return contents.filter { $0.dynamicTypeInfo.isA(type) }
+    }
+    
+    public override func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object {
+        let filteredContents = self.filteredContents(type)
+        guard filteredContents.indices.contains(Int(index)) else {
+            // FIXME: use the error system
+            fatalError("index out of bounds")
+        }
+        return filteredContents[Int(index)]
+    }
+    
+    public override func elements(_ type: TypeInfo) throws -> RT_Object {
+        return RT_List(contents: filteredContents(type))
+    }
+    
+    public override func elements(_ type: TypeInfo, from: RT_Object, thru: RT_Object) throws -> RT_Object {
+        let filteredContents = self.filteredContents(type)
+        guard
+            let from = (from as? RT_Numeric)?.numericValue,
+            let to = (thru as? RT_Numeric)?.numericValue
+        else {
+            // FIXME: use the error system
+            fatalError("range types incorrect")
+        }
+        guard filteredContents.indices.contains(Int(from)), filteredContents.indices.contains(Int(to)) else {
+            // FIXME: use the error system
+            fatalError("range out of bounds")
+        }
+        return RT_List(contents: Array(filteredContents[Int(from)...Int(to)]))
+    }
+    
+    public override func compare(with other: RT_Object) -> ComparisonResult? {
+        guard let other = other as? RT_List else {
+            return nil
+        }
+        return contents <=> other.contents
+    }
+    
+    public override func coerce(to type: TypeInfo) -> RT_Object? {
+        switch type.code {
+        case typeUnicodeText:
+            return RT_String(value: contents.compactMap { ($0.coerce(to: type) as? RT_String)?.value }.joined(separator: ", "))
+        default:
+            return super.coerce(to: type)
+        }
+    }
+    
+    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+        return try contents.enumerated().reduce(into: NSAppleEventDescriptor.list()) { (descriptor, entry) in
+            let (index, value) = entry
+            if let value = value as? AEEncodable {
+                descriptor.insert(try value.encodeAEDescriptor(appData), at: index + 1)
+            }
+        }
+    }
+    
+}
