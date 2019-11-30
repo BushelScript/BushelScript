@@ -29,6 +29,10 @@ func getVariableValue(_ term: Builtin.TermPointer) -> Builtin.RTObjectPointer {
     return Builtin.getVariableValue(term)
 }
 
+func setVariableValue(_ term: Builtin.TermPointer, _ newValue: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
+    return Builtin.setVariableValue(term, newValue)
+}
+
 func isTruthy(_ object: Builtin.RTObjectPointer) -> Bool {
     return Builtin.isTruthy(object)
 }
@@ -157,7 +161,7 @@ enum BuiltinFunction: String {
     
     case release
     case pushFrame, pushFrameWithTarget, popFrame
-    case newVariable, getVariableValue
+    case newVariable, getVariableValue, setVariableValue
     case isTruthy
     case numericEqual
     case newReal, newInteger, newBoolean, newString, newConstant, newSymbolicConstant
@@ -193,6 +197,7 @@ enum BuiltinFunction: String {
         case .popFrame: return ([], void)
         case .newVariable: return ([object, object], void)
         case .getVariableValue: return ([object], object)
+        case .setVariableValue: return ([object, object], void)
         case .isTruthy: return ([object], bool)
         case .numericEqual: return ([object, object], bool)
         case .newReal: return ([double], object)
@@ -247,6 +252,9 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     
     let getVariableValue: @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.getVariableValue
     builder.addExternalFunctionAsGlobal(getVariableValue, .getVariableValue)
+    
+    let setVariableValue: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.setVariableValue
+    builder.addExternalFunctionAsGlobal(setVariableValue, .setVariableValue)
     
     let isTruthy: @convention(c) (Builtin.RTObjectPointer) -> Bool = BushelRT.isTruthy
     builder.addExternalFunctionAsGlobal(isTruthy, .isTruthy)
@@ -559,20 +567,28 @@ extension Expression {
                 return builder.buildCall(toExternalFunction: .newSymbolicConstant, args: [builder.module.addGlobalString(name: "const_symbol", value: term.displayName).asRTString(builder: builder)])
             }
         case .set(let expression, to: let newValueExpression): // MARK: .set
-            let command = rt.command(forUID: CommandUID.set.rawValue)!
+            if case .variable(let variableTerm) = expression.kind {
+                let newValueIRValue = try newValueExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+                
+                let termIRValue = variableTerm.irPointerValue(builder: builder)
+                
+                return builder.buildCall(toExternalFunctionReturningVoid: .setVariableValue, args: [termIRValue, newValueIRValue])
+            } else {
+                let directParameterTermIRValue = rt.termPool.term(forID: ParameterUID.direct.rawValue)!.irPointerValue(builder: builder)
+                let toParameterTermIRValue = rt.termPool.term(forID: ParameterUID.set_to.rawValue)!.irPointerValue(builder: builder)
+                let expressionIRValue = try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
+                let newValueIRValue = try newValueExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+                
+                let arguments = builder.buildCall(toExternalFunction: .newRecord, args: [])
+                builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, directParameterTermIRValue, expressionIRValue])
+                builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, toParameterTermIRValue, newValueIRValue])
+                
+                let command = rt.command(forUID: CommandUID.set.rawValue)!
+                let setCommandIRValue = command.irPointerValue(builder: builder)
+                
+                return builder.buildCall(toExternalFunction: .call, args: [setCommandIRValue, arguments])
+            }
             
-            let directParameterTermIRValue = rt.termPool.term(forID: ParameterUID.direct.rawValue)!.irPointerValue(builder: builder)
-            let toParameterTermIRValue = rt.termPool.term(forID: ParameterUID.set_to.rawValue)!.irPointerValue(builder: builder)
-            let expressionIRValue = try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
-            let newValueIRValue = try newValueExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
-            
-            let arguments = builder.buildCall(toExternalFunction: .newRecord, args: [])
-            builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, directParameterTermIRValue, expressionIRValue])
-            builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, toParameterTermIRValue, newValueIRValue])
-            
-            let commandIRValue = command.irPointerValue(builder: builder)
-            
-            return builder.buildCall(toExternalFunction: .call, args: [commandIRValue, arguments])
         case .command(let term, let parameters): // MARK: .command
             let parameterIRValues: [(term: IRValue, value: IRValue)] = try parameters.map { kv in
                 let (parameterTerm, parameterValue) = kv

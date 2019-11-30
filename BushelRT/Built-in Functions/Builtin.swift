@@ -62,6 +62,13 @@ enum Builtin {
         return toOpaque(stack.variables[term.name!] ?? RT_Null.null)
     }
     
+    static func setVariableValue(_ termPointer: TermPointer, _ newValuePointer: RTObjectPointer) -> RTObjectPointer {
+        let term = termFromOpaque(termPointer)
+        let newValue = fromOpaque(newValuePointer)
+        stack.currentFrame.variables[term.name!] = newValue
+        return newValuePointer
+    }
+    
     static func isTruthy(_ object: RTObjectPointer) -> Bool {
         return fromOpaque(object).truthy
     }

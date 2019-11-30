@@ -113,7 +113,7 @@ public extension SourceParser {
             guard parseNewline() != nil || source.isEmpty else {
                 let nextNewline = source.firstIndex(where: { $0.isNewline }) ?? source.endIndex
                 let location = SourceLocation(source.startIndex..<nextNewline, source: entireSource)
-                throw ParseError(description: "expected newline after sequenced expression", location: location, fixes: [PrependingFix(prepending: "\n", at: location)])
+                throw ParseError(description: "expected line break after sequenced expression", location: location, fixes: [PrependingFix(prepending: "\n", at: location)])
             }
             
             eatNewlines()

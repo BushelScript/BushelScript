@@ -306,7 +306,6 @@ public final class PirateParser: BushelLanguage.SourceParser {
                 let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
                 throw ParseError(description: "expected expression or line break following ‘then’ to begin ‘if’-block", location: thenLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: thenLocation))])
             }
-            self.source.removeLeadingWhitespace(removingNewlines: true)
             thenExpr = thenExpression
         }
         
