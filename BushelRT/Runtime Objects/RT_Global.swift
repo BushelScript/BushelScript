@@ -33,6 +33,10 @@ public class RT_Global: RT_Object {
         }
         
         switch CommandUID(rawValue: command.uid) {
+        case .delay:
+            let delaySeconds = (arguments[ParameterTerm(ParameterUID.direct.rawValue, name: TermName(""), code: keyDirectObject)]?.coerce(to: rt.type(forUID: TypeUID.real.rawValue)!) as? RT_Numeric)?.numericValue ?? 1.0
+            Thread.sleep(forTimeInterval: delaySeconds)
+            return RT_Null.null
         case .cli_log:
             guard let message = arguments[ParameterTerm(ParameterUID.direct.rawValue, name: TermName(""), code: keyDirectObject)] else {
                 // TODO: Throw error

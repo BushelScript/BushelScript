@@ -154,6 +154,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         CommandDescriptor(.quit, name: TermName("quit"), parameters: [
         ]),
         
+        CommandDescriptor(.delay, name: TermName("delay"), parameters: [
+            ParameterDescriptor(.direct)
+        ]),
+        CommandDescriptor(.delay, name: TermName("wait"), parameters:[
+            ParameterDescriptor(.direct)
+        ]),
+        
         PropertyDescriptor(.currentDate, name: TermName("current date")),
         
         DictionaryDescriptor("bushel.dictionary.math", name: TermName("Math"), contents: mathDictionary),

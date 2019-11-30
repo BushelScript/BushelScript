@@ -160,6 +160,8 @@ public enum CommandUID: String, TermUIDPredefinedValue {
     case print = "bushel.command.print"
     case quit = "bushel.command.quit"
     
+    case delay = "bushel.command.delay"
+    
     case math_abs = "bushel.math.command.abs"
     case math_sqrt = "bushel.math.command.sqrt"
     case math_cbrt = "bushel.math.command.cbrt"
