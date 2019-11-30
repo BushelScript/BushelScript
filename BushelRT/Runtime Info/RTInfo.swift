@@ -129,7 +129,7 @@ public extension RTInfo {
         Builtin.termPool = termPool
         Builtin.rt = self
         
-        let module = generateLLVMModule(from: expression)
+        let module = generateLLVMModule(from: expression, rt: self)
         
         // Let LLVM verify that the module's IR code is well-formed
         do {

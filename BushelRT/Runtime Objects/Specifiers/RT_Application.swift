@@ -1,7 +1,7 @@
 import Bushel
 import SwiftAutomation
 
-public class RT_Application: RT_Object, RT_AESpecifierProtocol {
+public class RT_Application: RT_Object, RT_SASpecifierConvertible {
     
     public let rt: RTInfo
     public let bundle: Bundle
@@ -25,24 +25,20 @@ public class RT_Application: RT_Object, RT_AESpecifierProtocol {
     }
     
     public override var description: String {
-        return "app id \"\(bundleIdentifier)\""
+        "app id \"\(bundleIdentifier)\""
     }
     
     public override var debugDescription: String {
-        return super.debugDescription + "[id: \(bundleIdentifier)]"
+        super.debugDescription + "[id: \(bundleIdentifier)]"
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.application.rawValue, cApplication, [.supertype(RT_Object.typeInfo), .name(TermName("application"))])
+    private static let typeInfo_ = TypeInfo(TypeUID.application)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }
     
-    public func rootApplication() -> (application: RT_Application?, isSelf: Bool) {
-        return (application: self, isSelf: true)
-    }
-    
     public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
-        return RootSpecifier(bundleIdentifier: bundleIdentifier)
+        RootSpecifier(bundleIdentifier: bundleIdentifier)
     }
     
     public override func perform(command: CommandInfo, arguments: [Bushel.ConstantTerm : RT_Object]) -> RT_Object? {

@@ -103,8 +103,8 @@ func evaluateSpecifier(_ specifier: Builtin.RTObjectPointer) -> Builtin.RTObject
     return Builtin.evaluateSpecifier(specifier)
 }
 
-func call(_ commandTerm: Builtin.TermPointer, arguments: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
-    return Builtin.call(commandTerm, arguments)
+func call(_ command: Builtin.TermPointer, arguments: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
+    return Builtin.call(command, arguments)
 }
 
 func runWeave(_ hashbang: Builtin.RTObjectPointer, _ body: Builtin.RTObjectPointer, _ input: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
@@ -224,7 +224,7 @@ enum BuiltinFunction: String {
 ///
 /// - Parameter expression: The expression from which to generate an LLVM IR program.
 /// - Returns: The completed LLVM module.
-public func generateLLVMModule(from expression: Expression) -> Module {
+public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Module {
     let module = Module(name: "main")
     let builder = IRBuilder(module: module)
     
@@ -329,7 +329,7 @@ public func generateLLVMModule(from expression: Expression) -> Module {
     builder.positionAtEnd(of: entry)
     var stack = StaticStack()
     do {
-        let resultIRValue = try expression.generateLLVMIR(builder, &stack, options: CodeGenOptions(stackIntrospectability: false), lastResult: builder.rtNull)
+        let resultIRValue = try expression.generateLLVMIR(builder, rt, &stack, options: CodeGenOptions(stackIntrospectability: false), lastResult: builder.rtNull)
         builder.buildRet(resultIRValue)
     } catch {
         fatalError("unhandled error \(error)")
@@ -371,7 +371,7 @@ extension Expression {
     ///                         the current setting.
     /// - Returns: The resultant `IRValue` from building the code for this
     ///            expression.
-    public func generateLLVMIR(_ builder: IRBuilder, _ stack: inout StaticStack, options: CodeGenOptions, lastResult: IRValue, evaluateSpecifiers: Bool = true) throws -> IRValue {
+    public func generateLLVMIR(_ builder: IRBuilder, _ rt: RTInfo, _ stack: inout StaticStack, options: CodeGenOptions, lastResult: IRValue, evaluateSpecifiers: Bool = true) throws -> IRValue {
         let currentBlock = builder.insertBlock!
         let function = currentBlock.parent!
         
@@ -399,11 +399,11 @@ extension Expression {
                 }
             }
             
-            return try sequence.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            return try sequence.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
         case .parentheses(let expression): // MARK: .parentheses
-            return try expression.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            return try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
         case let .if_(condition, then, else_): // MARK: .if_
-            let conditionValue = try condition.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            let conditionValue = try condition.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             
             var conditionTest: IRValue!
             switch LLVMGetTypeKind(LLVMTypeOf(conditionValue.asLLVM())!) {
@@ -431,7 +431,7 @@ extension Expression {
             builder.buildCondBr(condition: conditionTest, then: thenBlock, else: elseBlock)
             
             builder.positionAtEnd(of: thenBlock)
-            let thenValue = try then.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            let thenValue = try then.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             if !thenValue.isAReturnInst {
                 builder.buildBr(mergeBlock)
             }
@@ -441,7 +441,7 @@ extension Expression {
             builder.positionAtEnd(of: elseBlock)
             let elseValue: IRValue
             if let else_ = else_ {
-                elseValue = try else_.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+                elseValue = try else_.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
                 elseBlock = builder.insertBlock!
             } else {
                 elseValue = lastResult
@@ -471,7 +471,7 @@ extension Expression {
             
             let result: IRValue
             
-            let timesValue = try times.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            let timesValue = try times.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             
             builder.buildBr(repeatBlock)
             
@@ -481,7 +481,7 @@ extension Expression {
             let repeatCount = builder.buildPhi(FloatType.double)
             repeatCount.addIncoming([(FloatType.double.constant(0), currentBlock)])
             
-            result = try repeating.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            result = try repeating.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             
             let newRepeatCount = builder.buildBinaryOperation(.fadd, repeatCount, FloatType.double.constant(1))
             repeatCount.addIncoming([(newRepeatCount, repeatBlock)])
@@ -498,7 +498,7 @@ extension Expression {
             
             return result
         case .tell(let target, let to): // MARK: .tell
-            let targetValue = try target.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            let targetValue = try target.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             
             stack.currentTarget = targetValue
             
@@ -507,17 +507,17 @@ extension Expression {
                 builder.buildCall(toExternalFunctionReturningVoid: .popFrame, args: [])
             }
             
-            return try to.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            return try to.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
         case .let_(let term, let initialValue): // MARK: .let_
-            let initialIRValue = try initialValue?.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult) ?? builder.rtNull
+            let initialIRValue = try initialValue?.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult) ?? builder.rtNull
             
-            let termIRValue = term.term.asRTTerm(builder: builder)
+            let termIRValue = term.term.irPointerValue(builder: builder)
             
             builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [termIRValue, initialIRValue])
             
             return initialIRValue
         case .return_(let returnValue): // MARK: .return_
-            let returnIRValue = (try returnValue?.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult) ?? builder.rtNull)
+            let returnIRValue = (try returnValue?.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult) ?? builder.rtNull)
             
             return builder.buildRet(returnIRValue)
 //            throw EarlyReturn()
@@ -529,16 +529,16 @@ extension Expression {
             let listIRValue = builder.buildCall(toExternalFunction: .newList, args: [])
             
             for expression in expressions {
-                let expressionIRValue = try expression.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+                let expressionIRValue = try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
                 
                 builder.buildCall(toExternalFunctionReturningVoid: .addToList, args: [listIRValue, expressionIRValue])
             }
             
             return listIRValue
         case .infixOperator(let operation, let lhs, let rhs):
-            return builder.buildCall(toExternalFunction: .binaryOp, args: [IntType.int64.constant(operation.rawValue), try lhs.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult), try rhs.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)])
+            return builder.buildCall(toExternalFunction: .binaryOp, args: [IntType.int64.constant(operation.rawValue), try lhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult), try rhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)])
         case .variable(let term): // MARK: .variable
-            let termIRValue = term.asRTTerm(builder: builder)
+            let termIRValue = term.irPointerValue(builder: builder)
             
             return builder.buildCall(toExternalFunction: .getVariableValue, args: [termIRValue])
         case .use(let resource), // MARK: .use
@@ -559,25 +559,25 @@ extension Expression {
                 return builder.buildCall(toExternalFunction: .newSymbolicConstant, args: [builder.module.addGlobalString(name: "const_symbol", value: term.displayName).asRTString(builder: builder)])
             }
         case .set(let expression, to: let newValueExpression): // MARK: .set
-            let commandTerm = CommandTerm(CommandUID.set.rawValue, name: TermName("set"), codes: CommandUID.set.aeDoubleCode, parameters: ParameterTermDictionary(contents: [ParameterTerm(ParameterUID.set_to.rawValue, name: TermName("to"), code: ParameterUID.set_to.aeCode)]))
+            let command = rt.command(forUID: CommandUID.set.rawValue)!
             
-            let directParameterTermIRValue = ParameterTerm(ParameterUID.direct.rawValue, name: TermName(""), code: ParameterUID.direct.aeCode).asRTTerm(builder: builder)
-            let toParameterTermIRValue = ParameterTerm(ParameterUID.set_to.rawValue, name: TermName("to"), code: ParameterUID.set_to.aeCode).asRTTerm(builder: builder)
-            let expressionIRValue = try expression.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
-            let newValueIRValue = try newValueExpression.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            let directParameterTermIRValue = rt.termPool.term(forID: ParameterUID.direct.rawValue)!.irPointerValue(builder: builder)
+            let toParameterTermIRValue = rt.termPool.term(forID: ParameterUID.set_to.rawValue)!.irPointerValue(builder: builder)
+            let expressionIRValue = try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
+            let newValueIRValue = try newValueExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             
             let arguments = builder.buildCall(toExternalFunction: .newRecord, args: [])
             builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, directParameterTermIRValue, expressionIRValue])
             builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, toParameterTermIRValue, newValueIRValue])
             
-            let termIRValue = commandTerm.asRTTerm(builder: builder)
+            let commandIRValue = command.irPointerValue(builder: builder)
             
-            return builder.buildCall(toExternalFunction: .call, args: [termIRValue, arguments])
+            return builder.buildCall(toExternalFunction: .call, args: [commandIRValue, arguments])
         case .command(let term, let parameters): // MARK: .command
             let parameterIRValues: [(term: IRValue, value: IRValue)] = try parameters.map { kv in
                 let (parameterTerm, parameterValue) = kv
-                let termIRValue = parameterTerm.term.asRTTerm(builder: builder)
-                let valueIRValue = try parameterValue.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
+                let termIRValue = parameterTerm.term.irPointerValue(builder: builder)
+                let valueIRValue = try parameterValue.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
                 return (termIRValue, valueIRValue)
             }
             
@@ -592,16 +592,16 @@ extension Expression {
             {
                 return builder.buildCall(function, args: [arguments])
             } else {
-                let commandTermIRValue = term.term.asRTTerm(builder: builder)
-                return builder.buildCall(toExternalFunction: .call, args: [commandTermIRValue, arguments])
+                let commandIRValue = rt.command(forUID: term.term.uid)!.irPointerValue(builder: builder)
+                return builder.buildCall(toExternalFunction: .call, args: [commandIRValue, arguments])
             }
             
         case .reference(let expression): // MARK: .reference
-            return try expression.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
+            return try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
         case .get(let expression): // MARK: .get
-            return try expression.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: true)
+            return try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: true)
         case .specifier(let specifier): // MARK: .specifier
-            let specifierIRValue = try specifier.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            let specifierIRValue = try specifier.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             return evaluateSpecifiers ? specifierIRValue.evaluatingSpecifier(builder: builder) : specifierIRValue
         case .function(let name, let parameters, let arguments, let body): // MARK: .function
             let prevBlock = builder.insertBlock!
@@ -631,18 +631,18 @@ extension Expression {
                 let firstParam = parameters.first,
                 let firstArg = arguments.first
             {
-                let firstArgVariableTermIRValue = firstArg.term.asRTTerm(builder: builder)
-                let firstArgValueIRValue = builder.buildCall(toExternalFunction: .getFromRecordWithDirectParamFallback, args: [actualArguments, firstParam.term.asRTTerm(builder: builder)])
+                let firstArgVariableTermIRValue = firstArg.term.irPointerValue(builder: builder)
+                let firstArgValueIRValue = builder.buildCall(toExternalFunction: .getFromRecordWithDirectParamFallback, args: [actualArguments, firstParam.term.irPointerValue(builder: builder)])
                 builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [firstArgVariableTermIRValue, firstArgValueIRValue])
             }
             
             for (parameter, argument) in zip(parameters, arguments).dropFirst() {
-                let argumentVariableTermIRValue = argument.term.asRTTerm(builder: builder)
-                let argumentValueIRValue = builder.buildCall(toExternalFunction: .getFromRecord, args: [actualArguments, parameter.term.asRTTerm(builder: builder)])
+                let argumentVariableTermIRValue = argument.term.irPointerValue(builder: builder)
+                let argumentValueIRValue = builder.buildCall(toExternalFunction: .getFromRecord, args: [actualArguments, parameter.term.irPointerValue(builder: builder)])
                 builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [argumentVariableTermIRValue, argumentValueIRValue])
             }
             
-            let resultValue = try body.generateLLVMIR(builder, &stack, options: CodeGenOptions(stackIntrospectability: false), lastResult: builder.rtNull)
+            let resultValue = try body.generateLLVMIR(builder, rt, &stack, options: CodeGenOptions(stackIntrospectability: false), lastResult: builder.rtNull)
             builder.buildRet(resultValue)
             
             builder.positionAtEnd(of: prevBlock)
@@ -678,7 +678,7 @@ extension Sequence {
     ///                 is returned back.
     /// - Returns: The resultant `IRValue` from building the code for this
     ///            expression.
-    public func generateLLVMIR(_ builder: IRBuilder, _ stack: inout StaticStack, options: CodeGenOptions, lastResult: IRValue) throws -> IRValue {
+    public func generateLLVMIR(_ builder: IRBuilder, _ rt: RTInfo, _ stack: inout StaticStack, options: CodeGenOptions, lastResult: IRValue) throws -> IRValue {
         return try expressions
             .filter { if case .end = $0.kind { return false } else { return true } }
             .reduce(lastResult, { (lastResult, expression) -> IRValue in
@@ -688,31 +688,39 @@ extension Sequence {
                     return lastResult
                 }
                 return try expression
-                    .generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+                    .generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             })
     }
     
 }
 
-extension Bushel.Term {
+protocol IRPointerConvertible {
+}
+
+extension IRPointerConvertible {
     
-    func asRTTerm(builder: IRBuilder) -> IRValue {
+    func irPointerValue(builder: IRBuilder) -> IRValue {
         return builder.buildIntToPtr(IntType.int64.constant(UInt(bitPattern: BushelRT.toOpaque(self))), type: .toVoid)
     }
     
 }
 
+extension Bushel.Term: IRPointerConvertible {}
+extension TypeInfo: IRPointerConvertible {}
+extension PropertyInfo: IRPointerConvertible {}
+extension CommandInfo: IRPointerConvertible {}
+
 extension Specifier {
     
-    public func generateLLVMIR(_ builder: IRBuilder, _ stack: inout StaticStack, options: CodeGenOptions, lastResult: IRValue) throws -> IRValue {
+    public func generateLLVMIR(_ builder: IRBuilder, _ rt: RTInfo, _ stack: inout StaticStack, options: CodeGenOptions, lastResult: IRValue) throws -> IRValue {
         guard let code = idTerm.term.code else {
             fatalError("unimplemented")
         }
         let codeIRValue = IntType.int32.constant(code)
         
-        let parentIRValue = try parent?.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false) ?? PointerType.toVoid.null()
+        let parentIRValue = try parent?.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false) ?? PointerType.toVoid.null()
         let dataExpressionIRValues = try allDataExpressions().map { dataExpression in
-            return try dataExpression.generateLLVMIR(builder, &stack, options: options, lastResult: lastResult)
+            return try dataExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
                 
         }
         

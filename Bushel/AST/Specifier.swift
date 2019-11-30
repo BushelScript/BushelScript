@@ -29,7 +29,7 @@ public class Specifier {
         return kind.allDataExpressions()
     }
     
-    public enum Kind/*: Equatable*/ {
+    public enum Kind {
         
         /// A specifier with one data expression. The keyform to be used is
         /// inferred from the type of the data expression at time of evaluation.

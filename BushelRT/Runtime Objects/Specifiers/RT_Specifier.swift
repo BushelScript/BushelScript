@@ -43,7 +43,11 @@ public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
     }
     
     public func rootAncestor() -> RT_Object {
-        return rootSpecifier().parent
+        if let parent = parent as? RT_Specifier {
+            return parent.rootAncestor()
+        } else {
+            return parent
+        }
     }
 
     public func rootSpecifier() -> RT_Specifier {
@@ -342,7 +346,7 @@ public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
         if case (let targetApplication?, _) = rootApplication() {
             return performByAppleEvent(command: command, arguments: arguments, targetBundleID: targetApplication.bundleIdentifier)
         } else {
-            fatalError("non-AE commands are unimplemented")
+            return nil
         }
     }
     

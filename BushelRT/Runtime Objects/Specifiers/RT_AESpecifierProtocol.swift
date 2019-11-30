@@ -1,17 +1,21 @@
 import Bushel
 import SwiftAutomation
 
-public protocol RT_AESpecifierProtocol: AEEncodable {
-    
-    var rt: RTInfo { get }
-    
-    func rootApplication() -> (application: RT_Application?, isSelf: Bool)
+public protocol RT_SASpecifierConvertible: AEEncodable {
     
     func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier?
     
+    var rt: RTInfo { get }
+    
 }
 
-extension RT_AESpecifierProtocol {
+public protocol RT_AESpecifierProtocol: RT_SASpecifierConvertible {
+    
+    func rootApplication() -> (application: RT_Application?, isSelf: Bool)
+    
+}
+
+extension RT_SASpecifierConvertible {
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         guard let saSpecifier = self.saSpecifier(appData: appData) else {
@@ -22,7 +26,7 @@ extension RT_AESpecifierProtocol {
     
 }
 
-extension RT_AESpecifierProtocol where Self: RT_Object {
+extension RT_SASpecifierConvertible where Self: RT_Object {
     
     public func performByAppleEvent(command: CommandInfo, arguments: [ConstantTerm : RT_Object], targetBundleID: String) -> RT_Object? {
         let appData = SwiftAutomation.RootSpecifier(bundleIdentifier: targetBundleID).appData

@@ -449,7 +449,6 @@
 				3C12EF8C2354E3870057E0CC /* RT_Class.swift */,
 				3C12EF9B2354E5D10057E0CC /* RT_AEObject.swift */,
 				3C12EF942354E51C0057E0CC /* Specifiers */,
-				3C12EF992354E5AC0057E0CC /* RT_Application.swift */,
 				3C12EF9D2354E6010057E0CC /* RT_Global.swift */,
 				3C12EF7E2354E2D40057E0CC /* RT_Null.swift */,
 				3C12EF742354E23C0057E0CC /* RT_Object.swift */,
@@ -463,6 +462,7 @@
 			children = (
 				3C12EF902354E4AA0057E0CC /* RT_Specifier.swift */,
 				3C12EF922354E50B0057E0CC /* RT_RootSpecifier.swift */,
+				3C12EF992354E5AC0057E0CC /* RT_Application.swift */,
 				3C12EF952354E53C0057E0CC /* RT_AESpecifierProtocol.swift */,
 			);
 			path = Specifiers;

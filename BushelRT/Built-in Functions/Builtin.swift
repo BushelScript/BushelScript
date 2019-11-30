@@ -9,6 +9,7 @@ enum Builtin {
     
     public typealias RTObjectPointer = UnsafeMutableRawPointer
     public typealias TermPointer = UnsafeMutableRawPointer
+    public typealias InfoPointer = UnsafeMutableRawPointer
     
     static func fromOpaque(_ pointer: RTObjectPointer) -> RT_Object {
         return BushelRT.fromOpaque(pointer) as! RT_Object
@@ -19,6 +20,10 @@ enum Builtin {
     
     static func termFromOpaque(_ pointer: TermPointer) -> Bushel.Term {
         return BushelRT.fromOpaque(pointer) as! Bushel.Term
+    }
+    
+    static func infoFromOpaque<Result>(_ pointer: InfoPointer) -> Result {
+        return BushelRT.fromOpaque(pointer) as! Result
     }
     
     static func retain<Object: RT_Object>(_ object: Object) -> Object {
@@ -57,8 +62,8 @@ enum Builtin {
         return toOpaque(stack.variables[term.name!] ?? RT_Null.null)
     }
     
-    static func isTruthy(_ arg1: RTObjectPointer) -> Bool {
-        return fromOpaque(arg1).truthy
+    static func isTruthy(_ object: RTObjectPointer) -> Bool {
+        return fromOpaque(object).truthy
     }
     
     static func numericEqual(_ lhs: RTObjectPointer, _ rhs: RTObjectPointer) -> Bool {
@@ -241,13 +246,13 @@ enum Builtin {
                 return evaluateSpecifierByAppleEvent(combinedSpecifier, targetApplication: targetApplication)
             }
         } else {
-            return evaluateLocalSpecifier(specifier)
+            return evaluateLocalSpecifier(combinedSpecifier)
         }
     }
     
     private static func evaluateLocalSpecifier(_ specifier: RT_Specifier) -> RTObjectPointer {
         var root = specifier.rootAncestor()
-        if root is RT_AESpecifierProtocol {
+        if root is RT_RootSpecifier {
             let global = RT_Global(rt)
             specifier.addTopParent(global)
             root = global
@@ -340,10 +345,9 @@ enum Builtin {
         return toOpaque(retain(specifier.perform(command: getCommand, arguments: [ParameterTerm(ParameterUID.direct.rawValue, name: TermName(""), code: ParameterUID.direct.aeCode): specifier]) ?? RT_Null.null))
     }
     
-    static func call(_ commandTermPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer) -> RTObjectPointer {
-        let commandTerm = termFromOpaque(commandTermPointer) as! Bushel.CommandTerm
+    static func call(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer) -> RTObjectPointer {
         let arguments = fromOpaque(argumentsPointer) as! RT_Record
-        return call(command: rt.command(forUID: commandTerm.uid)!, arguments: arguments.contents as! [Bushel.ParameterTerm : RT_Object])
+        return call(command: infoFromOpaque(commandPointer), arguments: arguments.contents as! [Bushel.ParameterTerm : RT_Object])
     }
     
     private static func call(command: CommandInfo, arguments: [Bushel.ParameterTerm : RT_Object]) -> RTObjectPointer {
