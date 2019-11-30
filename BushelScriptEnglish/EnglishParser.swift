@@ -34,6 +34,9 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         CommandDescriptor(.math_sqrt, name: TermName("sqrt"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
+        CommandDescriptor(.math_sqrt, name: TermName("√"), parameters: [
+            ParameterDescriptor(.direct)
+        ]),
         CommandDescriptor(.math_cbrt, name: TermName("cube root"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
@@ -93,6 +96,9 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     ]
     
     public lazy var defaultTerms: [TermDescriptor] = [
+        CommandDescriptor(.get, name: TermName("get")),
+        CommandDescriptor(.set, name: TermName("set")),
+        
         PropertyDescriptor(.properties, name: TermName("properties")),
         PropertyDescriptor(.index, name: TermName("index")),
         PropertyDescriptor(.name, name: TermName("name")),
@@ -117,6 +123,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TypeDescriptor(.file, name: TermName("file")),
         TypeDescriptor(.alias, name: TermName("alias")),
         TypeDescriptor(.application, name: TermName("application")),
+        TypeDescriptor(.application, name: TermName("app")),
         
         CommandDescriptor(.run, name: TermName("run"), parameters: [
         ]),
@@ -162,6 +169,14 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         },
         TermName("end tell"): {
             // TODO: Check we're ending a ‘tell’-block
+            .end
+        },
+        TermName("end repeat"): {
+            // TODO: Check we're ending a ‘repeat’-block
+            .end
+        },
+        TermName("end repeating"): {
+            // TODO: Check we're ending a ‘repeat’-block
             .end
         },
         TermName("let"): handleLet,
