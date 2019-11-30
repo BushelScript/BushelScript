@@ -13,11 +13,12 @@ public class PropertyInfo: Hashable {
         }
         
         public static func == (lhs: ID, rhs: ID) -> Bool {
-            return lhs.uid == rhs.uid
+            return lhs.uid == rhs.uid || (lhs.aeCode != nil && lhs.aeCode == rhs.aeCode)
         }
         
         public func hash(into hasher: inout Hasher) {
             hasher.combine(uid)
+            hasher.combine(aeCode)
         }
         
     }
@@ -53,7 +54,7 @@ public class PropertyInfo: Hashable {
         hasher.combine(id)
     }
     
-    public convenience init(_ predefined: TypeUID, _ tags: Set<Tag>) {
+    public convenience init(_ predefined: TypeUID, _ tags: Set<Tag> = []) {
         self.init(predefined.rawValue, predefined.aeCode, tags)
     }
     

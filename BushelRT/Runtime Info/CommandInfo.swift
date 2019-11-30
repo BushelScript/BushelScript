@@ -13,11 +13,13 @@ public class CommandInfo: Hashable {
         }
         
         public static func == (lhs: ID, rhs: ID) -> Bool {
-            return lhs.uid == rhs.uid
+            return lhs.uid == rhs.uid || (lhs.aeDoubleCode != nil && lhs.aeDoubleCode?.class == rhs.aeDoubleCode?.class && lhs.aeDoubleCode?.id == rhs.aeDoubleCode?.id)
         }
         
         public func hash(into hasher: inout Hasher) {
             hasher.combine(uid)
+            hasher.combine(aeDoubleCode?.class)
+            hasher.combine(aeDoubleCode?.id)
         }
         
     }
@@ -53,7 +55,7 @@ public class CommandInfo: Hashable {
         hasher.combine(id)
     }
     
-    public convenience init(_ predefined: TypeUID, _ tags: Set<Tag>) {
+    public convenience init(_ predefined: TypeUID, _ tags: Set<Tag> = []) {
         self.init(predefined.rawValue, predefined.aeDoubleCode, tags)
     }
     
