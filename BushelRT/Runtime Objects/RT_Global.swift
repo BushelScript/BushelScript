@@ -15,6 +15,8 @@ public class RT_Global: RT_Object {
     
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
         switch PropertyUID(rawValue: property.uid) {
+        case .currentDate:
+            return RT_Date(value: Date())
         case .math_pi:
             return RT_Real(value: Double.pi)
         case .math_e:

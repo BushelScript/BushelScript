@@ -97,12 +97,18 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
     case id = "bushel.property.id"
     case index = "bushel.property.index"
     
-    case math_pi = "bushel.math.property.pi"
-    case math_e = "bushel.math.property.e"
+    case currentDate = "bushel.property.currentDate"
     
     case sequence_length = "bushel.sequence.property.length"
     case sequence_reverse = "bushel.sequence.property.reverse"
     case sequence_tail = "bushel.sequence.property.tail"
+    
+    case date_seconds = "bushel.date.property.seconds"
+    case date_minutes = "bushel.date.property.minutes"
+    case date_hours = "bushel.date.property.hours"
+    
+    case math_pi = "bushel.math.property.pi"
+    case math_e = "bushel.math.property.e"
     
     public var aeCode: OSType? {
         switch self {
@@ -114,16 +120,14 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
             return pID
         case .index:
             return pIndex
-        case .math_pi:
-            return try! FourCharCode(fourByteString: "BMPI")
-        case .math_e:
-            return try! FourCharCode(fourByteString: "BME ")
         case .sequence_length:
             return try! FourCharCode(fourByteString: "leng")
         case .sequence_reverse:
             return try! FourCharCode(fourByteString: "rvse")
         case .sequence_tail:
             return try! FourCharCode(fourByteString: "rest")
+        default:
+            return nil
         }
     }
     

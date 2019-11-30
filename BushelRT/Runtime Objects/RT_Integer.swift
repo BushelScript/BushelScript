@@ -10,6 +10,10 @@ public class RT_Integer: RT_Object, AEEncodable {
         self.value = value
     }
     
+    public convenience init(value: Int) {
+        self.init(value: Int64(value))
+    }
+    
     public override var description: String {
         return String(describing: value)
     }

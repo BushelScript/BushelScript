@@ -124,6 +124,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         PropertyDescriptor(.sequence_reverse, name: TermName("reverse")),
         PropertyDescriptor(.sequence_tail, name: TermName("tail")),
         
+        TypeDescriptor(TypeUID.date, name: TermName("date")),
+        PropertyDescriptor(.date_seconds, name: TermName("seconds")),
+        PropertyDescriptor(.date_minutes, name: TermName("minutes")),
+        PropertyDescriptor(.date_hours, name: TermName("hours")),
+        
         TypeDescriptor(.item, name: TermName("item")),
         TypeDescriptor(.record, name: TermName("record")),
         TypeDescriptor(.string, name: TermName("string")),
@@ -148,6 +153,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         ]),
         CommandDescriptor(.quit, name: TermName("quit"), parameters: [
         ]),
+        
+        PropertyDescriptor(.currentDate, name: TermName("current date")),
         
         DictionaryDescriptor("bushel.dictionary.math", name: TermName("Math"), contents: mathDictionary),
         DictionaryDescriptor("bushel.dictionary.sequence", name: TermName("Sequence"), contents: sequenceDictionary),

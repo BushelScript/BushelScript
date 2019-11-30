@@ -19,6 +19,20 @@ public class RT_Date: RT_Object {
         typeInfo_
     }
     
+    public override func property(_ property: PropertyInfo) throws -> RT_Object {
+        let calendar = Calendar(identifier: .gregorian)
+        switch PropertyUID(rawValue: property.uid) {
+        case .date_seconds:
+            return RT_Integer(value: calendar.component(.second, from: value))
+        case .date_minutes:
+            return RT_Integer(value: calendar.component(.minute, from: value))
+        case .date_hours:
+            return RT_Integer(value: calendar.component(.hour, from: value))
+        default:
+            return try super.property(property)
+        }
+    }
+    
 }
 
 extension RT_Date {
