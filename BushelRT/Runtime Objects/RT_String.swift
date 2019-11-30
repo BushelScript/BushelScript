@@ -14,10 +14,6 @@ public class RT_String: RT_Object, AEEncodable {
         return "\"\(value)\""
     }
     
-    public override var debugDescription: String {
-        return super.debugDescription + "[value: \(value)]"
-    }
-    
     private static let typeInfo_ = TypeInfo(TypeUID.string.rawValue, TypeUID.string.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("string"))])
     public override class var typeInfo: TypeInfo {
         typeInfo_
@@ -87,6 +83,14 @@ public class RT_String: RT_Object, AEEncodable {
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         return NSAppleEventDescriptor(string: value)
+    }
+    
+}
+
+extension RT_String {
+    
+    public override var debugDescription: String {
+        return super.debugDescription + "[value: \(value)]"
     }
     
 }

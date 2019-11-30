@@ -22,10 +22,6 @@ public class RT_Boolean: RT_Object, AEEncodable {
         return String(describing: value)
     }
     
-    public override var debugDescription: String {
-        return super.debugDescription + "[value: \(value)]"
-    }
-    
     private static let typeInfo_ = TypeInfo(TypeUID.boolean.rawValue, typeBoolean, [.supertype(RT_Object.typeInfo), .name(TermName("boolean"))])
     public override class var typeInfo: TypeInfo {
         typeInfo_
@@ -60,6 +56,14 @@ public class RT_Boolean: RT_Object, AEEncodable {
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         return NSAppleEventDescriptor(boolean: value)
+    }
+    
+}
+
+extension RT_Boolean {
+    
+    public override var debugDescription: String {
+        return super.debugDescription + "[value: \(value)]"
     }
     
 }

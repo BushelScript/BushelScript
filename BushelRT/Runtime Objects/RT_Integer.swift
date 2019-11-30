@@ -14,10 +14,6 @@ public class RT_Integer: RT_Object, AEEncodable {
         return String(describing: value)
     }
     
-    public override var debugDescription: String {
-        return super.debugDescription + "[value: \(value)]"
-    }
-    
     private static let typeInfo_ = TypeInfo(TypeUID.application.rawValue, TypeUID.integer.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("integer"))])
     public override class var typeInfo: TypeInfo {
         typeInfo_
@@ -107,6 +103,14 @@ extension RT_Integer: RT_Numeric {
     
     public var numericValue: Double {
         return Double(value)
+    }
+    
+}
+
+extension RT_Integer {
+    
+    public override var debugDescription: String {
+        super.debugDescription + "[value: \(value)]"
     }
     
 }

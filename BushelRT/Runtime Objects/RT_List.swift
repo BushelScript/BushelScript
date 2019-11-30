@@ -128,3 +128,11 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
 }
+
+extension RT_List {
+    
+    public override var debugDescription: String {
+        super.debugDescription + "[contents: \(contents)]"
+    }
+    
+}

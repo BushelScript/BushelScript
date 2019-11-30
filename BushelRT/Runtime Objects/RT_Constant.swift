@@ -14,10 +14,6 @@ public class RT_Constant: RT_Object, AEEncodable {
         return "'\(String(fourCharCode: value))'"
     }
     
-    public override var debugDescription: String {
-        return super.description + "[value: \(value) '\(String(fourCharCode: value))']"
-    }
-    
     private static let typeInfo_ = TypeInfo(TypeUID.constant.rawValue, typeEnumerated, [.supertype(RT_Object.typeInfo), .name(TermName("constant"))])
     public override class var typeInfo: TypeInfo {
         typeInfo_
@@ -25,6 +21,14 @@ public class RT_Constant: RT_Object, AEEncodable {
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         return NSAppleEventDescriptor(typeCode: value)
+    }
+    
+}
+
+extension RT_Constant {
+    
+    public override var debugDescription: String {
+        super.description + "[value: \(value) '\(String(fourCharCode: value))']"
     }
     
 }

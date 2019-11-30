@@ -20,3 +20,11 @@ public class RT_Date: RT_Object {
     }
     
 }
+
+extension RT_Date {
+    
+    public override var debugDescription: String {
+        super.debugDescription + "[value: \(value)]"
+    }
+    
+}

@@ -44,3 +44,11 @@ public class RT_Global: RT_Object {
     }
     
 }
+
+extension RT_Global {
+    
+    public override var debugDescription: String {
+        super.debugDescription
+    }
+    
+}

@@ -303,10 +303,6 @@ public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
         typeInfo_
     }
     
-    public override var debugDescription: String {
-        return super.debugDescription + "[parent: \(String(describing: parent)), type: \(String(describing: type)), data: \(data), kind: \(kind)]"
-    }
-    
     private var descriptionForSelf: String {
         let termString = type.map { $0.displayName } ?? property.map { $0.displayName } ?? "(invalid specifier!)"
         
@@ -348,6 +344,14 @@ public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
         } else {
             return nil
         }
+    }
+    
+}
+
+extension RT_Specifier {
+    
+    public override var debugDescription: String {
+        super.debugDescription + "[parent: \(String(describing: parent)), type: \(String(describing: type)), data: \(data), kind: \(kind)]"
     }
     
 }

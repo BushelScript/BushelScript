@@ -44,8 +44,12 @@ public final class RT_RootSpecifier: RT_Object, RT_AESpecifierProtocol {
         }
     }
     
+}
+
+extension RT_RootSpecifier {
+    
     public override var debugDescription: String {
-        return "(root \(kind == .application ? "application" : (kind == .container ? "container" : "specimen")))"
+        super.debugDescription + "[root \(kind == .application ? "application" : (kind == .container ? "container" : "specimen"))]"
     }
     
 }

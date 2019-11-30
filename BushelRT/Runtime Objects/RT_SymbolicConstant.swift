@@ -16,8 +16,12 @@ public class RT_SymbolicConstant: RT_Object {
         return String(describing: value)
     }
     
+}
+
+extension RT_SymbolicConstant {
+    
     public override var debugDescription: String {
-        return super.description + "[value: \(value)]"
+        super.description + "[value: \(value)]"
     }
     
 }

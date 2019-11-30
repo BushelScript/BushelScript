@@ -33,3 +33,11 @@ public class RT_Character: RT_Object, AEEncodable {
     }
     
 }
+
+extension RT_Character {
+    
+    public override var debugDescription: String {
+        super.debugDescription + "[value: \(value)]"
+    }
+    
+}

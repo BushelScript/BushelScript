@@ -71,3 +71,12 @@ public class RT_Record: RT_Object, AEEncodable {
     }
     
 }
+
+extension RT_Record {
+    
+    public override var debugDescription: String {
+        super.debugDescription + "[contents: \(contents)]"
+    }
+    
+}
+

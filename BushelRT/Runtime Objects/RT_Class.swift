@@ -18,8 +18,12 @@ public class RT_Class: RT_Object {
         return String(describing: value.name)
     }
     
+}
+
+extension RT_Class {
+    
     public override var debugDescription: String {
-        return super.description + "[value: \(value)]"
+        super.description + "[value: \(value)]"
     }
     
 }

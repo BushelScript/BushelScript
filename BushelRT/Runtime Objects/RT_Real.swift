@@ -14,10 +14,6 @@ public class RT_Real: RT_Object, AEEncodable {
         return String(describing: value)
     }
     
-    public override var debugDescription: String {
-        return super.debugDescription + "[value: \(value)]"
-    }
-    
     private static let typeInfo_ = TypeInfo(TypeUID.real.rawValue, TypeUID.real.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("real"))])
     public override class var typeInfo: TypeInfo {
         typeInfo_
@@ -103,6 +99,14 @@ extension RT_Real: RT_Numeric {
     
     public var numericValue: Double {
         return value
+    }
+    
+}
+
+extension RT_Real {
+    
+    public override var debugDescription: String {
+        super.debugDescription + "[value: \(value)]"
     }
     
 }

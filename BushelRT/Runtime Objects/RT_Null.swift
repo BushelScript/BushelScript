@@ -35,3 +35,11 @@ public class RT_Null: RT_Object, AEEncodable {
     }
     
 }
+
+extension RT_Null {
+    
+    public override var debugDescription: String {
+        super.debugDescription
+    }
+    
+}

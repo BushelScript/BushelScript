@@ -28,10 +28,6 @@ public class RT_Application: RT_Object, RT_SASpecifierConvertible {
         "app id \"\(bundleIdentifier)\""
     }
     
-    public override var debugDescription: String {
-        super.debugDescription + "[id: \(bundleIdentifier)]"
-    }
-    
     private static let typeInfo_ = TypeInfo(TypeUID.application)
     public override class var typeInfo: TypeInfo {
         typeInfo_
@@ -43,6 +39,14 @@ public class RT_Application: RT_Object, RT_SASpecifierConvertible {
     
     public override func perform(command: CommandInfo, arguments: [Bushel.ConstantTerm : RT_Object]) -> RT_Object? {
         return performByAppleEvent(command: command, arguments: arguments, targetBundleID: bundleIdentifier)
+    }
+    
+}
+
+extension RT_Application {
+    
+    public override var debugDescription: String {
+        super.debugDescription + "[id: \(bundleIdentifier)]"
     }
     
 }
