@@ -313,9 +313,7 @@
 		3CC2249D2391F6A100448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC224A02391FA2A00448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC224BD239207A500448D25 /* bushelscript_argh.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = bushelscript_argh.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CC224BE239207A500448D25 /* BushelScriptEnglish copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "BushelScriptEnglish copy-Info.plist"; path = "/Users/ian/Documents/Bushel/Bushel/BushelScriptEnglish copy-Info.plist"; sourceTree = "<absolute>"; };
 		3CC224CA239207A900448D25 /* BushelScriptPirateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BushelScriptPirateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CC224CB239207A900448D25 /* BushelScriptEnglishTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "BushelScriptEnglishTests copy-Info.plist"; path = "/Users/ian/Documents/Bushel/Bushel/BushelScriptEnglishTests copy-Info.plist"; sourceTree = "<absolute>"; };
 		3CC224CD239207E700448D25 /* EntryPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntryPoint.swift; sourceTree = "<group>"; };
 		3CC224CF239207E700448D25 /* LangaugeConstructTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LangaugeConstructTests.swift; sourceTree = "<group>"; };
 		3CC224D0239207E700448D25 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -481,8 +479,6 @@
 				3C72CEBC22E1023200A98EC7 /* SwiftAutomation */,
 				3C35A5BC22C81DE7002D4582 /* Products */,
 				3CEF504F23529828008603E3 /* Frameworks */,
-				3CC224BE239207A500448D25 /* BushelScriptEnglish copy-Info.plist */,
-				3CC224CB239207A900448D25 /* BushelScriptEnglishTests copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
