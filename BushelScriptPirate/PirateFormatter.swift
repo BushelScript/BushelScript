@@ -60,6 +60,26 @@ public final class PirateFormatter: BushelLanguage.SourceFormatter {
         case .infixOperator(let operation, let lhs, let rhs):
             let formattedOperator: String = {
                 switch operation {
+                case .or:
+                    return "or"
+                case .xor:
+                    return "xor"
+                case .and:
+                    return "and"
+                case .less:
+                    return "<"
+                case .lessEqual:
+                    return "≤"
+                case .equal:
+                    return "="
+                case .notEqual:
+                    return "≠"
+                case .greater:
+                    return ">"
+                case .greaterEqual:
+                    return "≥"
+                case .concatenate:
+                    return "&"
                 case .add:
                     return "+"
                 case .subtract:
@@ -68,8 +88,6 @@ public final class PirateFormatter: BushelLanguage.SourceFormatter {
                     return "*"
                 case .divide:
                     return "/"
-                case .concatenate:
-                    return "&"
                 }
             }()
             

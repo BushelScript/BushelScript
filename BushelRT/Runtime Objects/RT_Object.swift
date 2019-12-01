@@ -49,6 +49,44 @@ import Bushel
         return nil
     }
     
+    public func or(_ other: RT_Object) -> RT_Object? {
+        return RT_Boolean.withValue(truthy || other.truthy)
+    }
+    
+    public func xor(_ other: RT_Object) -> RT_Object? {
+        let lhsTruthy = truthy
+        let rhsTruthy = other.truthy
+        return RT_Boolean.withValue(lhsTruthy && !rhsTruthy || !lhsTruthy && rhsTruthy)
+    }
+    
+    public func and(_ other: RT_Object) -> RT_Object? {
+        return RT_Boolean.withValue(truthy && other.truthy)
+    }
+    
+    public func equal(to other: RT_Object) -> RT_Object? {
+        return compare(with: other).map { RT_Boolean.withValue($0 == .orderedSame) }
+    }
+    
+    public func notEqual(to other: RT_Object) -> RT_Object? {
+        return compare(with: other).map { RT_Boolean.withValue($0 != .orderedSame) }
+    }
+    
+    public func less(than other: RT_Object) -> RT_Object? {
+        return compare(with: other).map { RT_Boolean.withValue($0 == .orderedAscending) }
+    }
+    
+    public func lessEqual(to other: RT_Object) -> RT_Object? {
+        return compare(with: other).map { RT_Boolean.withValue($0 != .orderedDescending) }
+    }
+    
+    public func greater(than other: RT_Object) -> RT_Object? {
+        return compare(with: other).map { RT_Boolean.withValue($0 == .orderedDescending) }
+    }
+    
+    public func greaterEqual(to other: RT_Object) -> RT_Object? {
+        return compare(with: other).map { RT_Boolean.withValue($0 != .orderedAscending) }
+    }
+    
     public func adding(_ other: RT_Object) -> RT_Object? {
         return nil
     }

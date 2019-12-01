@@ -167,6 +167,24 @@ enum Builtin {
         
         return toOpaque(retain({ () -> RT_Object? in
             switch BinaryOperation(rawValue: Int(operation))! {
+            case .or:
+                return lhs.or(rhs)
+            case .xor:
+                return lhs.xor(rhs)
+            case .and:
+                return lhs.and(rhs)
+            case .equal:
+                return lhs.equal(to: rhs)
+            case .notEqual:
+                return lhs.notEqual(to: rhs)
+            case .less:
+                return lhs.less(than: rhs)
+            case .lessEqual:
+                return lhs.lessEqual(to: rhs)
+            case .greater:
+                return lhs.greater(than: rhs)
+            case .greaterEqual:
+                return lhs.greaterEqual(to: rhs)
             case .add:
                 return lhs.adding(rhs)
             case .subtract:
