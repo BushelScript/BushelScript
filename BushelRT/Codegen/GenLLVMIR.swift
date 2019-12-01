@@ -89,6 +89,10 @@ func getFromRecordWithDirectParamFallback(_ record: Builtin.RTObjectPointer, _ t
     return Builtin.getFromRecordWithDirectParamFallback(record, term)
 }
 
+func unaryOp(_ operation: Int64, _ operand: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
+    return Builtin.unaryOp(operation, operand)
+}
+
 func binaryOp(_ operation: Int64, _ lhs: Builtin.RTObjectPointer, _ rhs: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
     return Builtin.binaryOp(operation, lhs, rhs)
 }
@@ -168,7 +172,7 @@ enum BuiltinFunction: String {
     case newList, newRecord
     case addToList, addToRecord
     case getFromRecord, getFromRecordWithDirectParamFallback
-    case binaryOp
+    case unaryOp, binaryOp
     case newSpecifier0, newSpecifier1, newSpecifier2
     case evaluateSpecifier
     case call
@@ -212,6 +216,7 @@ enum BuiltinFunction: String {
         case .addToRecord: return ([object, object, object], void)
         case .getFromRecord: return ([object, object], object)
         case .getFromRecordWithDirectParamFallback: return ([object, object], object)
+        case .unaryOp: return ([int64, object], object)
         case .binaryOp: return ([int64, object, object], object)
         case .newSpecifier0: return ([object, object, int32], object)
         case .newSpecifier1: return ([object, object, int32, object], object)
@@ -297,6 +302,9 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     
     let getFromRecordWithDirectParamFallback: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.getFromRecordWithDirectParamFallback
     builder.addExternalFunctionAsGlobal(getFromRecordWithDirectParamFallback, .getFromRecordWithDirectParamFallback)
+    
+    let unaryOp: @convention(c) (Int64, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.unaryOp
+    builder.addExternalFunctionAsGlobal(unaryOp, .unaryOp)
     
     let binaryOp: @convention(c) (Int64, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.binaryOp
     builder.addExternalFunctionAsGlobal(binaryOp, .binaryOp)
@@ -543,7 +551,9 @@ extension Expression {
             }
             
             return listIRValue
-        case .infixOperator(let operation, let lhs, let rhs):
+        case .prefixOperator(let operation, let operand), .postfixOperator(let operation, let operand): // MARK: .prefixOperator, .postfixOperator
+            return builder.buildCall(toExternalFunction: .unaryOp, args: [IntType.int64.constant(operation.rawValue), try operand.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)])
+        case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
             return builder.buildCall(toExternalFunction: .binaryOp, args: [IntType.int64.constant(operation.rawValue), try lhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult), try rhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)])
         case .variable(let term): // MARK: .variable
             let termIRValue = term.irPointerValue(builder: builder)

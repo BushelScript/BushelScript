@@ -35,6 +35,8 @@ public protocol SourceParser: AnyObject {
     
     var keywords: [TermName : KeywordHandler] { get }
     var defaultTerms: [TermDescriptor] { get }
+    var prefixOperators: [TermName : UnaryOperation] { get }
+    var postfixOperators: [TermName : UnaryOperation] { get }
     var binaryOperators: [TermName : BinaryOperation] { get }
     var lineCommentMarkers: [TermName] { get }
     var blockCommentMarkers: [(begin: TermName, end: TermName)] { get }
@@ -165,7 +167,7 @@ public extension SourceParser {
             currentElements.removeLast()
         }
         
-        guard var primary = try parseUnprocessedPrimary() else {
+        guard var primary = try (parsePrefixOperators() ?? parseUnprocessedPrimary()) else {
             return nil
         }
         
@@ -173,8 +175,12 @@ public extension SourceParser {
             primary = processedPrimary
         }
         
-        while let processedPrimary = try postprocess(primary: primary) {
-            primary = Expression(processedPrimary, primary.elements, at: expressionLocation)
+        while let processedPrimary = try (
+            postprocess(primary: primary).map {
+                Expression($0, primary.elements, at: expressionLocation)
+            } ?? parsePostfixOperators()
+        ) {
+            primary = processedPrimary
         }
         
         return primary
@@ -237,6 +243,40 @@ public extension SourceParser {
         } else {
             fatalError("unhandled operator grouping case!")
         }
+    }
+    
+    private func parsePrefixOperators() throws -> Expression? {
+        var operations: [UnaryOperation] = []
+        while let (_, operation) = findPrefixOperator() {
+            operations.append(operation)
+            eatPrefixOperator()
+        }
+        
+        var expression: Expression?
+        for operation in operations.reversed() {
+            source.removeLeadingWhitespace()
+            guard let operand = try expression ?? parsePrimary() else {
+                throw ParseError(description: "expected expression after prefix operator", location: currentLocation)
+            }
+            
+            expression = Expression(.prefixOperator(operation: operation, operand: operand), currentElements.last!, at: expressionLocation)
+        }
+        return expression
+    }
+    
+    private func parsePostfixOperators() throws -> Expression? {
+        var expression: Expression?
+        while let (_, operation) = findPostfixOperator() {
+            eatPostfixOperator()
+            
+            source.removeLeadingWhitespace()
+            guard let operand = try expression ?? parsePrimary() else {
+                throw ParseError(description: "expected expression after prefix operator", location: currentLocation)
+            }
+            
+            expression = Expression(.postfixOperator(operation: operation, operand: operand), currentElements.last!, at: expressionLocation)
+        }
+        return expression
     }
     
     private func parseUnprocessedPrimary() throws -> Expression? {
@@ -446,6 +486,38 @@ public extension SourceParser {
             currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized))
         }
         return result
+    }
+    
+    func findPrefixOperator() -> (termName: TermName, operator: UnaryOperation)? {
+        let result = Array(prefixOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        return result.termName.map { name in
+            (termName: name, operator: prefixOperators[name]!)
+        }
+    }
+    
+    func eatPrefixOperator() {
+        let result = Array(prefixOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        source.removeFirst(result.termString.count)
+        guard let name = result.termName else {
+            return
+        }
+        currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized, styling: .operator))
+    }
+    
+    func findPostfixOperator() -> (termName: TermName, operator: UnaryOperation)? {
+        let result = Array(postfixOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        return result.termName.map { name in
+            (termName: name, operator: postfixOperators[name]!)
+        }
+    }
+    
+    func eatPostfixOperator() {
+        let result = Array(postfixOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        source.removeFirst(result.termString.count)
+        guard let name = result.termName else {
+            return
+        }
+        currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized, styling: .operator))
     }
     
     func findBinaryOperator() -> (termName: TermName, operator: BinaryOperation)? {

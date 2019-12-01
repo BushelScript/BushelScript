@@ -139,6 +139,10 @@ public final class PirateParser: BushelLanguage.SourceParser {
         DictionaryDescriptor("bushel.dictionary.cli", name: TermName("argh CLI"), contents: cliDictionary),
     ]
     
+    public let prefixOperators: [TermName : UnaryOperation] = [:]
+    
+    public let postfixOperators: [TermName : UnaryOperation] = [:]
+    
     public let binaryOperators: [TermName : BinaryOperation] = [
         TermName("argh +"): .add,
         TermName("argh -"): .subtract,

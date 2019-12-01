@@ -169,6 +169,12 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         DictionaryDescriptor("bushel.dictionary.cli", name: TermName("CLI"), contents: cliDictionary),
     ]
     
+    public let prefixOperators: [TermName : UnaryOperation] = [
+        TermName("not"): .not
+    ]
+    
+    public let postfixOperators: [TermName : UnaryOperation] = [:]
+    
     public let binaryOperators: [TermName : BinaryOperation] = [
         TermName("or"): .or,
         TermName("xor"): .xor,
@@ -657,7 +663,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     public func postprocess(primary: Expression) throws -> Expression.Kind? {
-        // There might be a possessive ('s) after
         return try tryParseSpecifierPhrase(chainingTo: primary)
     }
     
@@ -753,7 +758,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             
             guard let parentExpression = try parsePrimary() else {
                 // e.g., character 1 of
-                throw ParseError(description: "expected expression after ‘of’, but found end of script", location: currentLocation)
+                throw ParseError(description: "expected expression after ‘of’ or ‘in’", location: currentLocation)
             }
             
             let prevTopExpression = childSpecifier.topParent() ?? chainTo

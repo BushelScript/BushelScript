@@ -40,6 +40,10 @@ import Bushel
         }
     }
     
+    public func not() -> RT_Object? {
+        return RT_Boolean.withValue(!truthy)
+    }
+    
     /// Compares this object with another object.
     ///
     /// - Parameter other: The object to compare against.

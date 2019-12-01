@@ -57,6 +57,11 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             return "\"\(value)\""
         case .list(let expressions):
             return "{\(expressions.map { format($0, level: level) }.joined(separator: ", "))}"
+        case .prefixOperator(let operation, let operand), .postfixOperator(let operation, let operand):
+            switch operation {
+            case .not:
+                return "not \(format(operand, level: level))"
+            }
         case .infixOperator(let operation, let lhs, let rhs):
             let formattedOperator: String = {
                 switch operation {

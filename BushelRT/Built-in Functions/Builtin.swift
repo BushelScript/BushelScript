@@ -161,6 +161,17 @@ enum Builtin {
         )
     }
     
+    static func unaryOp(_ operation: Int64, _ operandPointer: RTObjectPointer) -> RTObjectPointer {
+        let operand = fromOpaque(operandPointer)
+        
+        return toOpaque(retain({ () -> RT_Object? in
+            switch UnaryOperation(rawValue: Int(operation))! {
+            case .not:
+                return operand.not()
+            }
+        }() ?? RT_Null.null))
+    }
+    
     static func binaryOp(_ operation: Int64, _ lhsPointer: RTObjectPointer, _ rhsPointer: RTObjectPointer) -> RTObjectPointer {
         let lhs = fromOpaque(lhsPointer)
         let rhs = fromOpaque(rhsPointer)

@@ -27,7 +27,7 @@ public class RT_Boolean: RT_Object, AEEncodable {
         typeInfo_
     }
     public override var truthy: Bool {
-        return value
+        value
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {

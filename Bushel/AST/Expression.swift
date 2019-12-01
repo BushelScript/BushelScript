@@ -57,6 +57,8 @@ public struct Expression {
         case number(Double)
         case string(String)
         case list([Expression])
+        case prefixOperator(operation: UnaryOperation, operand: Expression)
+        case postfixOperator(operation: UnaryOperation, operand: Expression)
         case infixOperator(operation: BinaryOperation, lhs: Expression, rhs: Expression)
         case variable(VariableTerm)
         case enumerator(EnumeratorTerm)
