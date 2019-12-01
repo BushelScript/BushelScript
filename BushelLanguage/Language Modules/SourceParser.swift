@@ -36,6 +36,8 @@ public protocol SourceParser: AnyObject {
     var keywords: [TermName : KeywordHandler] { get }
     var defaultTerms: [TermDescriptor] { get }
     var binaryOperators: [TermName : BinaryOperation] { get }
+    var lineCommentMarkers: [TermName] { get }
+    var blockCommentMarkers: [(begin: TermName, end: TermName)] { get }
     
     init(source: String)
     
@@ -85,13 +87,47 @@ public extension SourceParser {
         }
     }
     
+    func parseComments() {
+        func parseLineComment() -> Bool {
+            guard eatLineCommentMarker() else {
+                return false
+            }
+            source.removeFirst(while: { !$0.isNewline })
+            return true
+        }
+        func parseBlockComment() -> Bool {
+            func awaitEndMarker() {
+                while !eatBlockCommentEndMarker(), !source.isEmpty {
+                    if eatBlockCommentBeginMarker() {
+                        // Handle nested comments au façon Swift
+                        /* e.g., /* must end twice */ */
+                        awaitEndMarker()
+                    }
+                    if !source.isEmpty {
+                        source.removeFirst()
+                    }
+                }
+            }
+            if eatBlockCommentBeginMarker() {
+                awaitEndMarker()
+                return true
+            } else {
+                return false
+            }
+        }
+        
+        while parseBlockComment() || parseLineComment() {
+        }
+    }
+    
     func parseSequence(stoppingAt stopKeywords: [String] = []) throws -> Sequence? {
         var expressions: [Expression] = []
         
         func eatNewlines() {
-            source.removeLeadingWhitespace()
+            parseComments()
             while let newline = parseNewline() {
                 expressions.append(newline)
+                parseComments()
             }
         }
         
@@ -109,7 +145,8 @@ public extension SourceParser {
                 }
             }
             
-            source.removeLeadingWhitespace()
+            parseComments()
+            
             guard parseNewline() != nil || source.isEmpty else {
                 let nextNewline = source.firstIndex(where: { $0.isNewline }) ?? source.endIndex
                 let location = SourceLocation(source.startIndex..<nextNewline, source: entireSource)
@@ -382,6 +419,24 @@ public extension SourceParser {
         source.removeFirst(invocationSource.count)
         
         return Hashbang(String(invocationSource), at: expressionLocation)
+    }
+    
+    func eatLineCommentMarker() -> Bool {
+        let result = lineCommentMarkers.findTermName(in: source.prefix(while: { !$0.isNewline }))
+        source.removeFirst(result.termString.count)
+        return result.termName != nil
+    }
+    
+    func eatBlockCommentBeginMarker() -> Bool {
+        let result = blockCommentMarkers.map { $0.begin }.findTermName(in: source.prefix(while: { !$0.isNewline }))
+        source.removeFirst(result.termString.count)
+        return result.termName != nil
+    }
+    
+    func eatBlockCommentEndMarker() -> Bool {
+        let result = blockCommentMarkers.map { $0.end }.findTermName(in: source.prefix(while: { !$0.isNewline }))
+        source.removeFirst(result.termString.count)
+        return result.termName != nil
     }
     
     func eatKeyword() -> (termString: Substring, termName: TermName?) {

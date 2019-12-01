@@ -10,6 +10,9 @@ public final class PirateParser: BushelLanguage.SourceParser {
     public var lexicon: Lexicon = Lexicon()
     public var currentElements: [[PrettyPrintable]] = []
     
+    public var lineCommentMarkers: [TermName] = []
+    public var blockCommentMarkers: [(begin: TermName, end: TermName)] = []
+    
     public init(source: String) {
         self.entireSource = source
         self.source = Substring(source)

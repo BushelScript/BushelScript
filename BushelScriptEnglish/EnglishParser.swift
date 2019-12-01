@@ -177,6 +177,14 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("&"): .concatenate
     ]
     
+    public let lineCommentMarkers: [TermName] = [
+        TermName("--")
+    ]
+    
+    public let blockCommentMarkers: [(begin: TermName, end: TermName)] = [
+        (begin: TermName("--("), end: TermName(")--"))
+    ]
+    
     public lazy var keywords: [TermName : KeywordHandler] = [
         TermName("("): handleOpenParenthesis,
         TermName("{"): handleOpenBrace,
