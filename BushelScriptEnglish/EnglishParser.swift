@@ -550,22 +550,22 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     public func handle(term: LocatedTerm) throws -> Expression.Kind? {
         let termLocation = term.location
         switch term.wrappedTerm.enumerated {
-        case .enumerator(let term):
+        case .enumerator(let term): // MARK: .enumerator
             return .enumerator(term)
-        case .dictionary(let term):
+        case .dictionary(let term): // MARK: .dictionary
             // FIXME: unimplemented
             return .null
-        case .class_(let term):
+        case .class_(let term): // MARK: .class_
             if let specifierKind = try parseSpecifierAfterClassName() {
                 return .specifier(Specifier(class: Located(term, at: termLocation), kind: specifierKind))
             } else {
                 // Just the class name
                 return .class_(term)
             }
-        case .property(let term):
+        case .property(let term): // MARK: .property
             let specifier = Specifier(class: Located(term, at: expressionLocation), kind: .property)
             return .specifier(specifier)
-        case .command(let term):
+        case .command(let term): // MARK: .command
             let termLocation = expressionLocation
             
             var parameters: [(Located<ParameterTerm>, Expression)] = []
@@ -592,7 +592,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             // If neither of those succeed, then what's in front of us must be
             // a direct parameter (e.g, "open {file1, file2}").
             if !(try parseParameter()) {
-                source.removeLeadingWhitespace()
+                parseComments()
                 if !(source.first?.isNewline ?? true) {
                     // Direct parameter
                     let directParameterLocation = currentLocation
@@ -608,13 +608,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
             
             return result()
-        case .parameter:
+        case .parameter: // MARK: .parameter
             throw ParseError(description: "parameter term outside of a command invocation", location: expressionLocation)
-        case .variable(let term):
+        case .variable(let term): // MARK: .variable
             return .variable(term)
-        case .applicationName(let term):
+        case .applicationName(let term): // MARK: .applicationName
             return .resource(.applicationByName(Located(term, at: expressionLocation)))
-        case .applicationID(let term):
+        case .applicationID(let term): // MARK: .applicationID
             return .resource(.applicationByID(Located(term, at: expressionLocation)))
         }
     }
@@ -638,13 +638,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
                 throw ParseError(description: "expected expression or line break following ‘else’ to begin ‘else’-block", location: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", by: AppendingFix(appending: " <#expression#>", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
             }
-            source.removeLeadingWhitespace()
+            parseComments()
             return elseExpr
         }
     }
     
     public func parseSpecifierAfterClassName() throws -> Specifier.Kind? {
-        source.removeLeadingWhitespace()
+        parseComments()
         guard let firstWord = TermName.nextWord(in: source) else {
             return nil
         }
@@ -671,7 +671,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 return .test(predicate: predicate)
             }
         default:
-            source.removeLeadingWhitespace()
             guard
                 !source.hasPrefix("\n"),
                 let firstExpression = try? parsePrimary()
