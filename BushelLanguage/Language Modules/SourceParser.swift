@@ -366,12 +366,14 @@ public extension SourceParser {
                 }
                 return Expression(.number(value), [Keyword(keyword: String(numberSource), styling: .number)], at: SourceLocation(numberSource.range, source: entireSource))
             } else if c == "\"" {
+                let slicedSourceCode = String(source)
                 let regex = try! NSRegularExpression(pattern: "\".*?(?<!\\\\)\"", options: [])
-                guard let stringNSRange = regex.firstMatch(in: String(source), options: [], range: NSRange(source.range, in: source))?.range else {
+                guard let stringNSRange = regex.firstMatch(in: slicedSourceCode, options: [], range: NSRange(slicedSourceCode.range, in: slicedSourceCode))?.range else {
                     throw ParseError(description: "unable to parse string", location: currentLocation)
                 }
-                let stringRange = Range(stringNSRange, in: String(source))!
-                let stringEndIndex = source.index(currentIndex, offsetBy: source.distance(from: stringRange.lowerBound, to: stringRange.upperBound))
+                let stringRange = Range(stringNSRange, in: slicedSourceCode)!
+                let stringEndIndex = source.index(currentIndex, offsetBy: slicedSourceCode.distance(from: stringRange.lowerBound, to: stringRange.upperBound))
+                
                 let stringSource = source[currentIndex..<stringEndIndex]
                 source.removeFirst(stringSource.count)
                 
