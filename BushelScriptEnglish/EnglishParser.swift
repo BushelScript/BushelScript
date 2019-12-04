@@ -18,8 +18,10 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     public var entireSource: String
     public var source: Substring
     public var expressionStartIndex: String.Index
+    
     public var lexicon: Lexicon = Lexicon()
     public var currentElements: [[PrettyPrintable]] = []
+    public var awaitingEndKeywords: [Set<TermName>] = []
     
     public init(source: String) {
         self.entireSource = source
@@ -311,25 +313,41 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     ]
     
     private func handleOpenParenthesis() throws -> Expression.Kind? {
+        awaitingEndKeywords.append([TermName(")")])
+        defer {
+            awaitingEndKeywords.removeLast()
+        }
+        
         guard let enclosed = try parsePrimary() else {
             throw ParseError(description: "expected expression after ‘(’", location: SourceLocation(source.range, source: entireSource))
         }
         guard tryEating(prefix: ")") else {
-            throw ParseError(description: "expected ‘)’ after bracketed-expression", location: SourceLocation(source.range, source: entireSource))
+            throw ParseError(description: "expected ‘)’ to end bracketed expression", location: SourceLocation(source.range, source: entireSource))
         }
         
         return .parentheses(enclosed)
     }
     
     private func handleOpenBrace() throws -> Expression.Kind? {
+        awaitingEndKeywords.append([TermName("}"), TermName(",")])
+        defer {
+            awaitingEndKeywords.removeLast()
+        }
+        
+        guard !tryEating(prefix: "}") else {
+            return .list([])
+        }
+        
         var items: [Expression] = []
-        while let item = try parsePrimary() {
-            items.append(item)
-            if tryEating(prefix: "}") {
-                break
-            }
-            guard tryEating(prefix: ",") else {
-                throw ParseError(description: "expected ‘,’ or ‘}’ after list item", location: currentLocation)
+        do {
+            repeat {
+                guard let item = try parsePrimary() else {
+                    throw ParseError(description: "expected list item", location: currentLocation)
+                }
+                items.append(item)
+            } while tryEating(prefix: ",")
+            guard tryEating(prefix: "}") else {
+                throw ParseError(description: "expected ‘}’ to end list", location: currentLocation)
             }
         }
         
@@ -639,8 +657,12 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 if !(source.first?.isNewline ?? true) {
                     // Direct parameter
                     let directParameterLocation = currentLocation
-                    guard let directParameterValue = try parsePrimary() else {
-                        throw ParseError(description: "expected parameter name or direct parameter expression", location: currentLocation)
+                    let directParameterValue: Expression
+                    do {
+                        guard let dpValue = try parsePrimary() else {
+                            return result()
+                        }
+                        directParameterValue = dpValue
                     }
                     parameters.append((Located(lexicon.pool.term(forID: ParameterUID.direct.rawValue) as! ParameterTerm, at: directParameterLocation), directParameterValue))
                 }

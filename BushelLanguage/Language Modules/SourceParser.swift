@@ -11,12 +11,13 @@ public struct ParseError: Error {
         self.location = location
         self.fixes = fixes
     }
+    
 }
 
 extension ParseError: CodableLocalizedError {
     
     public var errorDescription: String? {
-        return description
+        description
     }
     
 }
@@ -32,6 +33,7 @@ public protocol SourceParser: AnyObject {
     
     var lexicon: Lexicon { get set }
     var currentElements: [[PrettyPrintable]] { get set }
+    var awaitingEndKeywords: [Set<TermName>] { get set }
     
     var keywords: [TermName : KeywordHandler] { get }
     var defaultTerms: [TermDescriptor] { get }
@@ -339,12 +341,16 @@ public extension SourceParser {
             }
         } else {
             source.removeLeadingWhitespace()
+            if case (_, _?)? = awaitingEndKeywords.last.map({ Array($0) })?.findTermName(in: source) ?? nil {
+                return nil
+            }
+            
             guard let c = source.first else {
                 return nil
             }
             
             expressionStartIndex = currentIndex
-        
+            
             if c.isNumber {
                 let regex = try! NSRegularExpression(pattern: "[-+]?(?:0x)?\\d*(?:\\.\\d+(?:[ep][-+]?\\d+)?)?", options: [.caseInsensitive])
                 guard let numberNSRange = regex.firstMatch(in: String(source), options: [], range: NSRange(source.range, in: source))?.range else {
@@ -371,13 +377,6 @@ public extension SourceParser {
                 
                 let value = stringSource[stringSource.index(after: stringSource.startIndex)..<stringSource.index(before: stringSource.endIndex)] // Without quotes
                 return Expression(.string(String(value)), [Keyword(keyword: String(stringSource), styling: .string)], at: SourceLocation(stringSource.range, source: entireSource))
-            } else if c == ")" {
-                let location = SourceLocation(currentIndex..<source.index(after: currentIndex), source: entireSource)
-                
-                let beforeNewline = entireSource[(entireSource[...location.range.lowerBound].lastIndex(where: { $0.isNewline }) ?? entireSource.startIndex)...]
-                let startParenInsertLocation = SourceLocation(at: beforeNewline.firstIndex(where: { !$0.isWordBreaking }) ?? beforeNewline.startIndex, source: entireSource)
-                
-                throw ParseError(description: "expected expression but found stray ‘)’", location: location, fixes: [DeletingFix(at: location), PrependingFix(prepending: "(", at: startParenInsertLocation)])
             } else {
                 print("undefined term source: \(source)")
                 throw ParseError(description: "undefined term; perhaps you made a typo?", location: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource))

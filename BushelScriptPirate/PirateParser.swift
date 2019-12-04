@@ -7,8 +7,10 @@ public final class PirateParser: BushelLanguage.SourceParser {
     public var entireSource: String
     public var source: Substring
     public var expressionStartIndex: String.Index
+    
     public var lexicon: Lexicon = Lexicon()
     public var currentElements: [[PrettyPrintable]] = []
+    public var awaitingEndKeywords: [Set<TermName>] = []
     
     public var lineCommentMarkers: [TermName] = []
     public var blockCommentMarkers: [(begin: TermName, end: TermName)] = []
