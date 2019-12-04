@@ -695,7 +695,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     public func postprocess(primary: Expression) throws -> Expression.Kind? {
-        return try tryParseSpecifierPhrase(chainingTo: primary)
+        return try tryParseSpecifierPhrase(chainingTo: primary) ?? tryParseCoercion(of: primary)
     }
     
     public func parseElse() throws -> Expression? {
@@ -772,7 +772,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             let classExpression = try parsePrimary(),
             case .class_(let term) = classExpression.kind
         else {
-            throw ParseError(description: "expected class name", location: currentLocation)
+            throw ParseError(description: "expected type name", location: currentLocation)
         }
         
         let specifier = Specifier(class: Located(term, at: classExpression.location), kind: kind)
@@ -830,6 +830,21 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         newChildSpecifier.parent = chainTo
         return .specifier(newChildSpecifier)
+    }
+    
+    public func tryParseCoercion(of expression: Expression) throws -> Expression.Kind? {
+        guard tryEating(prefix: "as") else {
+            return nil
+        }
+        
+        guard
+            let toTypeExpression = try parsePrimary(),
+            case .class_(let toType) = toTypeExpression.kind
+        else {
+            throw ParseError(description: "expected type name", location: currentLocation)
+        }
+        
+        return .coercion(of: expression, to: Located(toType, at: expressionLocation))
     }
     
 }

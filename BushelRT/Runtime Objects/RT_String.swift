@@ -11,7 +11,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override var description: String {
-        return "\"\(value)\""
+        value
     }
     
     private static let typeInfo_ = TypeInfo(TypeUID.string.rawValue, TypeUID.string.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("string"))])
@@ -19,7 +19,7 @@ public class RT_String: RT_Object, AEEncodable {
         typeInfo_
     }
     public override var truthy: Bool {
-        return !value.isEmpty
+        !value.isEmpty
     }
     
     public override func concatenating(_ other: RT_Object) -> RT_Object? {
@@ -31,7 +31,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public var length: RT_Integer {
-        return RT_Integer(value: Int64(value.count))
+        RT_Integer(value: Int64(value.count))
     }
     
     public override var properties: [RT_Object] {
@@ -63,12 +63,18 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch type.code {
-        case cChar:
+        switch TypeUID(rawValue: type.uid) {
+        case .character:
             guard value.count == 1 else {
                 return nil
             }
             return RT_Character(value: value.first!)
+        case .integer:
+            return Int64(value).map { RT_Integer(value: $0) }
+        case .real:
+            return Double(value).map { RT_Real(value: $0) }
+        case .date:
+            return DateFormatter().date(from: value).map { RT_Date(value: $0) }
         default:
             return super.coerce(to: type)
         }

@@ -60,6 +60,7 @@ public struct Expression {
         case prefixOperator(operation: UnaryOperation, operand: Expression)
         case postfixOperator(operation: UnaryOperation, operand: Expression)
         case infixOperator(operation: BinaryOperation, lhs: Expression, rhs: Expression)
+        case coercion(of: Expression, to: Located<ClassTerm>)
         case variable(VariableTerm)
         case enumerator(EnumeratorTerm)
         case class_(ClassTerm)

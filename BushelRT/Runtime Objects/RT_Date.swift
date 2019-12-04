@@ -11,7 +11,7 @@ public class RT_Date: RT_Object {
     }
     
     public override var description: String {
-        return super.description + "[value: \(value)]"
+        String(describing: value)
     }
     
     private static let typeInfo_ = TypeInfo(TypeUID.date.rawValue, TypeUID.date.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("date"))])

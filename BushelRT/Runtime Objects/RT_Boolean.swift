@@ -11,7 +11,7 @@ public class RT_Boolean: RT_Object, AEEncodable {
     public static let `false` = RT_Boolean(value: false)
     
     public static func withValue(_ value: Bool) -> RT_Boolean {
-        return value ? `true` : `false`
+        value ? `true` : `false`
     }
     
     private init(value: Bool) {
@@ -19,7 +19,7 @@ public class RT_Boolean: RT_Object, AEEncodable {
     }
     
     public override var description: String {
-        return String(describing: value)
+        String(describing: value)
     }
     
     private static let typeInfo_ = TypeInfo(TypeUID.boolean.rawValue, typeBoolean, [.supertype(RT_Object.typeInfo), .name(TermName("boolean"))])

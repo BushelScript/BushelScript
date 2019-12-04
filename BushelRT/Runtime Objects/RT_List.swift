@@ -109,15 +109,6 @@ public class RT_List: RT_Object, AEEncodable {
         return contents <=> other.contents
     }
     
-    public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch type.code {
-        case typeUnicodeText:
-            return RT_String(value: contents.compactMap { ($0.coerce(to: type) as? RT_String)?.value }.joined(separator: ", "))
-        default:
-            return super.coerce(to: type)
-        }
-    }
-    
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         return try contents.enumerated().reduce(into: NSAppleEventDescriptor.list()) { (descriptor, entry) in
             let (index, value) = entry

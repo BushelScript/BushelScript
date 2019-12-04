@@ -97,6 +97,8 @@ public final class PirateFormatter: BushelLanguage.SourceFormatter {
             }()
             
             return "\(format(lhs, level: level)) \(formattedOperator) \(format(rhs, level: level))"
+        case let .coercion(of: expression, to: type):
+            return "\(format(expression, level: level)) as \(type.displayName)"
         case .variable(let term as NamedTerm),
              .enumerator(let term as NamedTerm),
              .class_(let term as NamedTerm):

@@ -210,6 +210,13 @@ enum Builtin {
         }() ?? RT_Null.null))
     }
     
+    static func coerce(_ objectPointer: RTObjectPointer, to typePointer: InfoPointer) -> RTObjectPointer {
+        let object = fromOpaque(objectPointer)
+        let type = infoFromOpaque(typePointer) as TypeInfo
+        // TODO: Should throw error when not coercible
+        return toOpaque(retain(object.coerce(to: type) ?? RT_Null.null))
+    }
+    
     static func newSpecifier0(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
         let uid = (fromOpaque(uidPointer) as! RT_String).value

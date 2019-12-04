@@ -97,6 +97,10 @@ func binaryOp(_ operation: Int64, _ lhs: Builtin.RTObjectPointer, _ rhs: Builtin
     return Builtin.binaryOp(operation, lhs, rhs)
 }
 
+func coerce(_ object: Builtin.RTObjectPointer, to type: Builtin.InfoPointer) -> Builtin.RTObjectPointer {
+    return Builtin.coerce(object, to: type)
+}
+
 func newSpecifier0(_ parent: Builtin.RTObjectPointer?, _ uid: Builtin.RTObjectPointer, _ kind: UInt32) -> Builtin.RTObjectPointer {
     return Builtin.newSpecifier0(parent, uid, kind)
 }
@@ -173,6 +177,7 @@ enum BuiltinFunction: String {
     case addToList, addToRecord
     case getFromRecord, getFromRecordWithDirectParamFallback
     case unaryOp, binaryOp
+    case coerce
     case newSpecifier0, newSpecifier1, newSpecifier2
     case evaluateSpecifier
     case call
@@ -218,6 +223,7 @@ enum BuiltinFunction: String {
         case .getFromRecordWithDirectParamFallback: return ([object, object], object)
         case .unaryOp: return ([int64, object], object)
         case .binaryOp: return ([int64, object, object], object)
+        case .coerce: return ([object, object], object)
         case .newSpecifier0: return ([object, object, int32], object)
         case .newSpecifier1: return ([object, object, int32, object], object)
         case .newSpecifier2: return ([object, object, int32, object, object], object)
@@ -308,6 +314,9 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     
     let binaryOp: @convention(c) (Int64, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.binaryOp
     builder.addExternalFunctionAsGlobal(binaryOp, .binaryOp)
+    
+    let coerce: @convention(c) (Builtin.RTObjectPointer, Builtin.InfoPointer) -> Builtin.RTObjectPointer = BushelRT.coerce
+    builder.addExternalFunctionAsGlobal(coerce, .coerce)
     
     let newSpecifier0: @convention(c) (Builtin.RTObjectPointer?, Builtin.RTObjectPointer, UInt32) -> Builtin.RTObjectPointer = BushelRT.newSpecifier0
     builder.addExternalFunctionAsGlobal(newSpecifier0, .newSpecifier0)
@@ -555,6 +564,8 @@ extension Expression {
             return builder.buildCall(toExternalFunction: .unaryOp, args: [IntType.int64.constant(operation.rawValue), try operand.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)])
         case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
             return builder.buildCall(toExternalFunction: .binaryOp, args: [IntType.int64.constant(operation.rawValue), try lhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult), try rhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)])
+        case .coercion(of: let expression, to: let type): // MARK: .coercion
+            return builder.buildCall(toExternalFunction: .coerce, args: [try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult), rt.type(forUID: type.term.uid)!.irPointerValue(builder: builder)])
         case .variable(let term): // MARK: .variable
             let termIRValue = term.irPointerValue(builder: builder)
             

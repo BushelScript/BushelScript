@@ -31,9 +31,11 @@ import Bushel
         if dynamicTypeInfo.isA(type) {
             return self
         } else {
-            switch type.code {
-            case typeBoolean:
+            switch TypeUID(rawValue: type.uid) {
+            case .boolean:
                 return RT_Boolean.withValue(self.truthy)
+            case .string:
+                return RT_String(value: String(describing: self))
             default:
                 return nil
             }
