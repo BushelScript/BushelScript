@@ -9,6 +9,9 @@
 import Cocoa
 import Defaults
 import BushelLanguage
+import os
+
+private let log = OSLog(subsystem: logSubsystem, category: "App delegate")
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -30,14 +33,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         ]
     }
+    
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        let runningCount = NSDocumentController.shared.documents.filter({ ($0 as? Document)?.isRunning ?? false }).count
+        if runningCount == 0 {
+            return .terminateNow
+        } else {
+            let alert = NSAlert()
+            alert.alertStyle = .informational
+            alert.messageText = "Are you sure you want to quit BushelScript Editor?"
+            alert.informativeText = "Quitting will terminate \(runningCount) running script\(runningCount == 1 ? "" : "s")."
+            alert.addButton(withTitle: "Quit and Terminate \(runningCount) Script\(runningCount == 1 ? "" : "s")")
+            alert.addButton(withTitle: "Cancel")
+            let response = alert.runModal()
+            switch response {
+            case .alertFirstButtonReturn:
+                return .terminateNow
+            case .alertSecondButtonReturn:
+                return .terminateCancel
+            default:
+                os_log("Unknown termination modal response %d", log: log, response.rawValue)
+                return .terminateNow
+            }
+        }
+    }
 
     func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
-        
         for observation in defaultsObservations {
             observation.invalidate()
         }
-        UserDefaults.standard.synchronize()
     }
     
     @IBOutlet var runItem: NSMenuItem! {

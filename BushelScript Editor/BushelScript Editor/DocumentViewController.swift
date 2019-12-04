@@ -48,6 +48,8 @@ class DocumentViewController: NSViewController {
     var status: Status? {
         didSet {
             DispatchQueue.main.async {
+                self.document.isRunning = (self.status == .running)
+                
                 self.connectionInUse = (self.status != nil)
                 self.isWorking = self.connectionInUse
                 self.statusText = self.status?.localizedDescription ?? ""

@@ -17,6 +17,8 @@ class Document: NSDocument {
     @objc var sourceCode: String = ""
     @objc dynamic var languageID: String = "bushelscript_en"
     
+    var isRunning: Bool = false
+    
     /// The hashbang string the document had when it was opened.
     /// If "Add hashbang on save" is disabled, this is used instead.
     private var originalHashbang: String? = nil
