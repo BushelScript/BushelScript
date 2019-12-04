@@ -100,6 +100,16 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             ParameterDescriptor(.gui_alert_cancel, name: TermName("cancel")),
             ParameterDescriptor(.gui_alert_timeout, name: TermName("timeout")),
         ]),
+        CommandDescriptor(.gui_chooseFrom, name: TermName("choose from"), parameters: [
+            ParameterDescriptor(.direct, name: TermName("list")),
+            ParameterDescriptor(.gui_chooseFrom_title, name: TermName("title")),
+            ParameterDescriptor(.gui_chooseFrom_prompt, name: TermName("prompt")),
+            ParameterDescriptor(.gui_chooseFrom_default, name: TermName("default")),
+            ParameterDescriptor(.gui_chooseFrom_confirm, name: TermName("confirm")),
+            ParameterDescriptor(.gui_chooseFrom_cancel, name: TermName("cancel")),
+            ParameterDescriptor(.gui_chooseFrom_multipleSelection, name: TermName("multiple selection")),
+            ParameterDescriptor(.gui_chooseFrom_noSelection, name: TermName("no selection"))
+        ]),
     ]
     
     private lazy var cliDictionary: [TermDescriptor] = [

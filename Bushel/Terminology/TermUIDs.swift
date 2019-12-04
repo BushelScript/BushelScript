@@ -171,6 +171,7 @@ public enum CommandUID: String, TermUIDPredefinedValue {
     
     case gui_notification = "bushel.gui.command.notification"
     case gui_alert = "bushel.gui.command.alert"
+    case gui_chooseFrom = "bushel.gui.chooseFrom"
     
     case cli_log = "bushel.cli.command.log"
     
@@ -206,6 +207,8 @@ public enum CommandUID: String, TermUIDPredefinedValue {
             return (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "notf"))
         case .gui_alert:
             return (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "disA"))
+        case .gui_chooseFrom:
+            return (class: try! FourCharCode(fourByteString: "gtqp"), id: try! FourCharCode(fourByteString: "chlt"))
 //        case .cli_log:
 //            return (class: try! FourCharCode(fourByteString: "BCLI"), id: try! FourCharCode(fourByteString: "log "))
         default:
@@ -232,6 +235,13 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
     case gui_alert_default = "bushel.gui.parameter.alert.default"
     case gui_alert_cancel = "bushel.gui.parameter.alert.cancel"
     case gui_alert_timeout = "bushel.gui.parameter.alert.timeout"
+    case gui_chooseFrom_title = "bushel.gui.parameter.chooseFrom.title"
+    case gui_chooseFrom_prompt = "bushel.gui.parameter.chooseFrom.prompt"
+    case gui_chooseFrom_default = "bushel.gui.parameter.chooseFrom.default"
+    case gui_chooseFrom_confirm = "bushel.gui.parameter.chooseFrom.confirm"
+    case gui_chooseFrom_cancel = "bushel.gui.parameter.chooseFrom.cancel"
+    case gui_chooseFrom_multipleSelection = "bushel.gui.parameter.chooseFrom.multipleSelection"
+    case gui_chooseFrom_noSelection = "bushel.gui.parameter.chooseFrom.noSelection"
     
     public var aeCode: OSType? {
         switch self {
@@ -261,6 +271,20 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
             return try! FourCharCode(fourByteString: "cbtn")
         case .gui_alert_timeout:
             return try! FourCharCode(fourByteString: "givu")
+        case .gui_chooseFrom_title:
+            return try! FourCharCode(fourByteString: "appr")
+        case .gui_chooseFrom_prompt:
+            return try! FourCharCode(fourByteString: "prmp")
+        case .gui_chooseFrom_default:
+            return try! FourCharCode(fourByteString: "inSL")
+        case .gui_chooseFrom_confirm:
+            return try! FourCharCode(fourByteString: "okbt")
+        case .gui_chooseFrom_cancel:
+            return try! FourCharCode(fourByteString: "cnbt")
+        case .gui_chooseFrom_multipleSelection:
+            return try! FourCharCode(fourByteString: "mlsl")
+        case .gui_chooseFrom_noSelection:
+            return try! FourCharCode(fourByteString: "empL")
         }
     }
     

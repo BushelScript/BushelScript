@@ -27,7 +27,8 @@ public class RT_Global: RT_Object {
     }
     
     public override func perform(command: CommandInfo, arguments: [ConstantTerm : RT_Object]) -> RT_Object? {
-        if command.doubleCode?.class == (try! FourCharCode(fourByteString: "syso")) {
+        let commandClass = command.doubleCode?.class
+        if commandClass == (try! FourCharCode(fourByteString: "syso")) || commandClass == (try! FourCharCode(fourByteString: "gtqp")) {
             // Run command from StandardAdditions.osax
             return RT_Application(rt, currentApplication: ()).perform(command: command, arguments: arguments)
         }
