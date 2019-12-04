@@ -545,8 +545,9 @@ extension Expression {
             let returnIRValue = (try returnValue?.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult) ?? builder.rtNull)
             
             return builder.buildRet(returnIRValue)
-//            throw EarlyReturn()
-        case .number(let value): // MARK: .number
+        case .integer(let value):
+            return IntType.int64.constant(value).asRTInteger(builder: builder)
+        case .double(let value): // MARK: .number
             return FloatType.double.constant(value).asRTReal(builder: builder)
         case .string(let value): // MARK: .string
             return builder.addGlobalString(name: "str", value: value).asRTString(builder: builder)

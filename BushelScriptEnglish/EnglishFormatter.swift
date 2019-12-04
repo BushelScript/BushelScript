@@ -51,7 +51,9 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             return "that"
         case .it:
             return "it"
-        case .number(let value):
+        case .integer(let value):
+            return String(value)
+        case .double(let value):
             return String(value)
         case .string(let value):
             return "\"\(value)\""

@@ -33,7 +33,7 @@ public class RT_Integer: RT_Object, AEEncodable {
             guard let other = other as? RT_Numeric else {
                 return nil
             }
-            return Double(value) <=> other.numericValue
+            return self.numericValue <=> other.numericValue
         }
     }
     
@@ -41,7 +41,7 @@ public class RT_Integer: RT_Object, AEEncodable {
         if let other = other as? RT_Integer {
             return RT_Integer(value: self.value + other.value)
         } else if let other = other as? RT_Numeric {
-            return RT_Real(value: Double(self.value) + other.numericValue)
+            return RT_Real(value: self.numericValue + other.numericValue)
         } else {
             return nil
         }
@@ -49,9 +49,9 @@ public class RT_Integer: RT_Object, AEEncodable {
     
     public override func subtracting(_ other: RT_Object) -> RT_Object? {
         if let other = other as? RT_Integer {
-            return RT_Integer(value: self.value + other.value)
+            return RT_Integer(value: self.value - other.value)
         } else if let other = other as? RT_Numeric {
-            return RT_Real(value: Double(self.value) - other.numericValue)
+            return RT_Real(value: self.numericValue - other.numericValue)
         } else {
             return nil
         }
@@ -59,19 +59,17 @@ public class RT_Integer: RT_Object, AEEncodable {
     
     public override func multiplying(by other: RT_Object) -> RT_Object? {
         if let other = other as? RT_Integer {
-            return RT_Integer(value: self.value + other.value)
+            return RT_Integer(value: self.value * other.value)
         } else if let other = other as? RT_Numeric {
-            return RT_Real(value: Double(self.value) * other.numericValue)
+            return RT_Real(value: self.numericValue * other.numericValue)
         } else {
             return nil
         }
     }
     
     public override func dividing(by other: RT_Object) -> RT_Object? {
-        if let other = other as? RT_Integer {
-            return RT_Integer(value: self.value + other.value)
-        } else if let other = other as? RT_Numeric {
-            return RT_Real(value: Double(self.value) / other.numericValue)
+        if let other = other as? RT_Numeric {
+            return RT_Real(value: self.numericValue / other.numericValue)
         } else {
             return nil
         }
@@ -106,7 +104,7 @@ public class RT_Integer: RT_Object, AEEncodable {
 extension RT_Integer: RT_Numeric {
     
     public var numericValue: Double {
-        return Double(value)
+        Double(value)
     }
     
 }

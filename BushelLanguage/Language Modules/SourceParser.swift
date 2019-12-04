@@ -351,20 +351,41 @@ public extension SourceParser {
             
             expressionStartIndex = currentIndex
             
-            if c.isNumber {
-                let regex = try! NSRegularExpression(pattern: "[-+]?(?:0x)?\\d*(?:\\.\\d+(?:[ep][-+]?\\d+)?)?", options: [.caseInsensitive])
-                guard let numberNSRange = regex.firstMatch(in: String(source), options: [], range: NSRange(source.range, in: source))?.range else {
-                    throw ParseError(description: "unable to parse number", location: currentLocation)
+            if c.isNumber || c == "-" || c == "+" {
+                func parseInteger() -> Expression? {
+                    let slicedSourceCode = String(source)
+                    let regex = try! NSRegularExpression(pattern: "^[-+]?\\d++(?!\\.)", options: [.caseInsensitive])
+                    guard let numberNSRange = regex.firstMatch(in: slicedSourceCode, options: [], range: NSRange(source.range, in: source))?.range else {
+                        return nil
+                    }
+                    let numberRange = Range(numberNSRange, in: slicedSourceCode)!
+                    let numberEndIndex = source.index(currentIndex, offsetBy: slicedSourceCode.distance(from: numberRange.lowerBound, to: numberRange.upperBound))
+                    let numberSource = source[currentIndex..<numberEndIndex]
+                    guard let value = Int64(numberSource) else {
+                        return nil
+                    }
+                    source.removeFirst(numberSource.count)
+                    
+                    return Expression(.integer(value), [Keyword(keyword: String(numberSource), styling: .number)], at: SourceLocation(numberSource.range, source: entireSource))
                 }
-                let numberRange = Range(numberNSRange, in: String(source))!
-                let numberEndIndex = source.index(currentIndex, offsetBy: source.distance(from: numberRange.lowerBound, to: numberRange.upperBound))
-                let numberSource = source[currentIndex..<numberEndIndex]
-                source.removeFirst(numberSource.count)
+                func parseDouble() throws -> Expression {
+                    let slicedSourceCode = String(source)
+                    let regex = try! NSRegularExpression(pattern: "^[-+]?\\d*(?:\\.\\d++(?:[ep][-+]?\\d+)?)?", options: [.caseInsensitive])
+                    guard let numberNSRange = regex.firstMatch(in: slicedSourceCode, options: [], range: NSRange(source.range, in: source))?.range else {
+                        throw ParseError(description: "unable to parse number", location: currentLocation)
+                    }
+                    let numberRange = Range(numberNSRange, in: slicedSourceCode)!
+                    let numberEndIndex = source.index(currentIndex, offsetBy: slicedSourceCode.distance(from: numberRange.lowerBound, to: numberRange.upperBound))
+                    let numberSource = source[currentIndex..<numberEndIndex]
+                    source.removeFirst(numberSource.count)
+                    
+                    guard let value = Double(numberSource) else {
+                        throw ParseError(description: "unable to parse number", location: SourceLocation(numberSource.range, source: entireSource))
+                    }
+                    return Expression(.double(value), [Keyword(keyword: String(numberSource), styling: .number)], at: SourceLocation(numberSource.range, source: entireSource))
+                }
                 
-                guard let value = Double(numberSource) else {
-                    throw ParseError(description: "unable to parse number", location: SourceLocation(numberSource.range, source: entireSource))
-                }
-                return Expression(.number(value), [Keyword(keyword: String(numberSource), styling: .number)], at: SourceLocation(numberSource.range, source: entireSource))
+                return try parseInteger() ?? parseDouble()
             } else if c == "\"" {
                 let slicedSourceCode = String(source)
                 let regex = try! NSRegularExpression(pattern: "\".*?(?<!\\\\)\"", options: [])

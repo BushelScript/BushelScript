@@ -98,7 +98,7 @@ public class RT_Real: RT_Object, AEEncodable {
 extension RT_Real: RT_Numeric {
     
     public var numericValue: Double {
-        return value
+        value
     }
     
 }
