@@ -719,6 +719,15 @@ CQ
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <size key="minSize" width="540" height="295"/>
                                             <size key="maxSize" width="540" height="10000000"/>
+                                            <attributedString key="textStorage">
+                                                <fragment content=" ">
+                                                    <attributes>
+                                                        <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                        <font key="NSFont" size="13" name="SFMono-Regular"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                    </attributes>
+                                                </fragment>
+                                            </attributedString>
                                             <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="enabledTextCheckingTypes">
