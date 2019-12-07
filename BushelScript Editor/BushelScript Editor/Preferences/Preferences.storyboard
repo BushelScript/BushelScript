@@ -331,6 +331,15 @@
                                     <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableLiveParsing" id="yYn-HR-H2r"/>
                                 </connections>
                             </button>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IuD-Mv-Wem">
+                                <rect key="frame" x="188" y="244" width="258" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" selectable="YES" title="Note: not all of these features are implemented as of yet." id="VSm-da-CfP">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="3lN-LF-zVq" firstAttribute="top" secondItem="Q8N-T8-J0J" secondAttribute="top" constant="20" symbolic="YES" id="3HV-jN-scE"/>
