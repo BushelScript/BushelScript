@@ -13,4 +13,14 @@
    <FileRef
       location = "container:Bushel.xcodeproj">
    </FileRef>
+   <Group
+      location = "container:"
+      name = "General">
+      <FileRef
+         location = "group:README.md">
+      </FileRef>
+      <FileRef
+         location = "group:LICENSING.txt">
+      </FileRef>
+   </Group>
 </Workspace>
