@@ -20,6 +20,8 @@ class DocumentViewController: NSViewController {
     @IBOutlet var textView: NSTextView!
     @IBOutlet var progressIndicator: NSProgressIndicator!
     
+    @objc dynamic var resultInspectorPanelWC: ObjectInspectorPanelWC?
+    
     private lazy var connection: NSXPCConnection? = self.newLanguageServiceConnection()
     private var connectionInUse: Bool = false
     
@@ -123,6 +125,7 @@ class DocumentViewController: NSViewController {
     
     override func viewWillDisappear() {
         dismissSuggestionList()
+        resultInspectorPanelWC?.close()
     }
     
     override var representedObject: Any? {
@@ -168,8 +171,6 @@ class DocumentViewController: NSViewController {
     
     private var program: ProgramToken? = nil
     
-    private var resultInspectorPanelWC: ObjectInspectorPanelWC?
-    
     @IBAction func runScript(_ sender: Any?) {
         func compileCallback(service: BushelLanguageServiceProtocol, language: LanguageModuleToken, result: Result<ProgramToken, ErrorToken>) {
             switch result {
@@ -184,7 +185,7 @@ class DocumentViewController: NSViewController {
                         self.resultInspectorPanelWC?.window?.orderOut(nil)
                         
                         let resultWC = self.resultInspectorPanelWC ?? ObjectInspectorPanelWC.instantiate(for: NoSelection())
-                        resultWC.window?.title = "Result"
+                        resultWC.window?.title = "Result\(self.document.displayName.map { " – \($0)" } ?? "")"
                         resultWC.contentViewController?.representedObject = BushelRTObject(service: service, object: result as RTObjectToken)
                         
                         DispatchQueue.main.async {

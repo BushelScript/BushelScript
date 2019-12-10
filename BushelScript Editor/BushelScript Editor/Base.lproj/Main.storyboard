@@ -774,14 +774,29 @@ CQ
                                             <binding destination="5gI-5U-AMq" name="value" keyPath="statusText" id="zp7-66-7AU"/>
                                         </connections>
                                     </textField>
+                                    <button toolTip="Toggle Result panel" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ihm-ze-IVU">
+                                        <rect key="frame" x="480" y="0.0" width="40" height="23"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="40" id="imB-Wz-eml"/>
+                                        </constraints>
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSQuickLookTemplate" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lw5-AZ-xPf">
+                                            <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="5gI-5U-AMq" name="value" keyPath="resultInspectorPanelWC.isWindowVisible" id="s2b-pS-BMR"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="OWw-pE-B0h" firstAttribute="centerY" secondItem="1za-9N-l7c" secondAttribute="centerY" id="3iv-hO-g7t"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="OWw-pE-B0h" secondAttribute="trailing" constant="20" symbolic="YES" id="4bU-fW-kiP"/>
                                     <constraint firstAttribute="bottom" secondItem="1za-9N-l7c" secondAttribute="bottom" constant="4" id="AkG-Pp-O7e"/>
                                     <constraint firstItem="1za-9N-l7c" firstAttribute="leading" secondItem="cX1-w8-oNb" secondAttribute="leading" constant="6" id="B4Z-Zv-dTL"/>
+                                    <constraint firstItem="ihm-ze-IVU" firstAttribute="centerY" secondItem="OWw-pE-B0h" secondAttribute="centerY" id="VJk-fg-Vyn"/>
+                                    <constraint firstItem="ihm-ze-IVU" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="OWw-pE-B0h" secondAttribute="trailing" constant="8" symbolic="YES" id="aVU-Dg-VJg"/>
                                     <constraint firstItem="OWw-pE-B0h" firstAttribute="leading" secondItem="1za-9N-l7c" secondAttribute="trailing" constant="8" symbolic="YES" id="ksK-Qp-Oju"/>
                                     <constraint firstItem="1za-9N-l7c" firstAttribute="top" secondItem="cX1-w8-oNb" secondAttribute="top" constant="2" id="peP-TI-Re0"/>
+                                    <constraint firstAttribute="trailing" secondItem="ihm-ze-IVU" secondAttribute="trailing" constant="20" symbolic="YES" id="wxw-Ew-Ros"/>
                                 </constraints>
                             </customView>
                         </subviews>
@@ -805,10 +820,11 @@ CQ
                 </viewController>
                 <customObject id="2Tp-Fl-jBw" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="74" y="714"/>
+            <point key="canvasLocation" x="74" y="713.5"/>
         </scene>
     </scenes>
     <resources>
+        <image name="NSQuickLookTemplate" width="19" height="12"/>
         <image name="SECompileScriptTemplate" width="18" height="14"/>
         <image name="SERunScriptTemplate" width="18" height="14"/>
     </resources>
