@@ -39,5 +39,3 @@ public extension TermDictionaryDelayedInitContainer {
     }
     
 }
-
-public var terminology: TermDictionary?

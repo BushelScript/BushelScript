@@ -7,7 +7,6 @@ public struct Lexicon: TerminologySource {
     public typealias Term = Bushel.Term
     
     private(set) public var dictionaryStack: [TermDictionary] = []
-    private var exportedDictionaries: [TermDictionary] = []
     
     private(set) public var pool = TermPool()
     
@@ -16,12 +15,15 @@ public struct Lexicon: TerminologySource {
     }
     
     public func term(named name: TermName) -> Term? {
-        for dictionary in dictionaryStack {
-            if let term = dictionary.term(named: name) {
-                return term
+        func find(in dictionaries: [TermDictionary]) -> Term? {
+            for dictionary in dictionaries {
+                if let term = dictionary.term(named: name) {
+                    return term
+                }
             }
+            return nil
         }
-        return nil
+        return find(in: dictionaryStack) ?? find(in: pool.exportedDictionaries)
     }
     
     public func makeUID(_ kind: String, _ names: TermName...) -> String {
@@ -36,7 +38,9 @@ public struct Lexicon: TerminologySource {
     }
     
     public mutating func pop() {
-        dictionaryStack.removeLast()
+        if !dictionaryStack.isEmpty {
+            dictionaryStack.removeLast()
+        }
     }
     
     public mutating func dictionary(named name: TermName, exports: Bool) -> TermDictionary {
@@ -57,6 +61,11 @@ public struct Lexicon: TerminologySource {
     }
     
     public mutating func add(_ terms: Set<Term>) {
+        signpostBegin()
+        defer {
+            signpostEnd()
+        }
+        
         for term in terms {
             add(term)
         }

@@ -123,7 +123,9 @@ public final class ClassTerm: ConstantTerm, TermDictionaryDelayedInitContainer {
             }
         }
     }
-    public var exportsTerminology: Bool { return false }
+    public var exportsTerminology: Bool {
+        true
+    }
     
     public var parentClass: ClassTerm?
     
@@ -208,9 +210,6 @@ public final class ParameterTerm: ConstantTerm {
         return .parameter(self)
     }
     
-//    public static var directParameter = ParameterTerm(<#String#>, name: TermName(""), code: keyDirectObject)
-//    public static var setToParameter = ParameterTerm(<#String#>, name: TermName("set"), code: keyAEData)
-    
     public override var description: String {
         describe(tag: "parameter")
     }
@@ -230,7 +229,9 @@ public final class ApplicationNameTerm: Term, TermDictionaryDelayedInitContainer
     public let bundle: Bundle
     
     public var terminology: TermDictionary?
-    public var exportsTerminology: Bool { return true }
+    public var exportsTerminology: Bool {
+        true
+    }
     
     public override var enumerated: TermKind {
         return .applicationName(self)
@@ -248,7 +249,9 @@ public final class ApplicationIDTerm: Term, TermDictionaryDelayedInitContainer {
     public let bundle: Bundle
     
     public var terminology: TermDictionary?
-    public var exportsTerminology: Bool { return true }
+    public var exportsTerminology: Bool {
+        true
+    }
     
     public override var enumerated: TermKind {
         return .applicationID(self)

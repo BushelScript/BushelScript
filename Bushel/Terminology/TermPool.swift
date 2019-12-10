@@ -10,7 +10,8 @@ public class TermPool: TerminologySource {
     //       To enabled messages like, e.g.,
     //           undefined term "outgoing mssage"
     //               - fix: did you mean “outgoing message” (from dictionary “Mail”)?
-    public var containerTerms: [TermName? : TermDictionaryContainer] = [:]
+    private var containerTerms: [TermName? : TermDictionaryContainer] = [:]
+    public var exportedDictionaries: [TermDictionary] = []
     public var byName: [TermName : Term] = [:]
     public var byCode: [OSType : ConstantTerm] = [:]
     public var byID: [String : Term] = [:]
@@ -69,6 +70,9 @@ public class TermPool: TerminologySource {
             container = UnnamedDictionaryContainer(terminology: dictionary)
         }
         containerTerms[name] = container
+        if dictionary.exports {
+            exportedDictionaries.append(dictionary)
+        }
         return dictionary
     }
     
