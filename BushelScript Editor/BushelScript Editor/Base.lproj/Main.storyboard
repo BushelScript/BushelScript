@@ -784,6 +784,11 @@ CQ
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
+                                            <binding destination="5gI-5U-AMq" name="enabled" keyPath="resultInspectorPanelWC" id="tqW-4O-XyY">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSIsNotNil</string>
+                                                </dictionary>
+                                            </binding>
                                             <binding destination="5gI-5U-AMq" name="value" keyPath="resultInspectorPanelWC.isWindowVisible" id="s2b-pS-BMR"/>
                                         </connections>
                                     </button>
