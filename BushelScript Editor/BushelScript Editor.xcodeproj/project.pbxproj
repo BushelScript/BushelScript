@@ -47,6 +47,7 @@
 		3C3C1823231AB0FB00553072 /* BackgroundMovableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1822231AB0FB00553072 /* BackgroundMovableWindow.m */; };
 		3C3C1828231AE12700553072 /* HashbangTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1827231AE12700553072 /* HashbangTests.swift */; };
 		3C3C182A231B585200553072 /* CustomHashbang.bushel in Resources */ = {isa = PBXBuildFile; fileRef = 3C3C1829231B585200553072 /* CustomHashbang.bushel */; };
+		3C907700239F347200A01D8D /* KVODelegate in Frameworks */ = {isa = PBXBuildFile; productRef = 3C9076FF239F347200A01D8D /* KVODelegate */; };
 		3CCA1C85235D14120037058C /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566F823135690004CDB1A /* BushelLanguage.framework */; };
 		3CCA1C86235D14120037058C /* BushelLanguage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566F823135690004CDB1A /* BushelLanguage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CCA1C87235D141A0037058C /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
@@ -254,7 +255,6 @@
 		3C0566B323135675004CDB1A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3C0566B623135675004CDB1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3C0566B823135675004CDB1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3C0566B923135675004CDB1A /* BushelScript_Editor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BushelScript_Editor.entitlements; sourceTree = "<group>"; };
 		3C0566BE23135675004CDB1A /* BushelScript EditorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BushelScript EditorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C0566C423135675004CDB1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C0566C923135675004CDB1A /* BushelScript EditorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BushelScript EditorUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -301,6 +301,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C907700239F347200A01D8D /* KVODelegate in Frameworks */,
 				3C12EFA12354E7640057E0CC /* Defaults in Frameworks */,
 				3C05670D231356E7004CDB1A /* Bushel.framework in Frameworks */,
 				3CCA1C87235D141A0037058C /* BushelRT.framework in Frameworks */,
@@ -372,7 +373,6 @@
 		3C0566AC23135673004CDB1A /* BushelScript Editor */ = {
 			isa = PBXGroup;
 			children = (
-				3CEF50422352948E008603E3 /* BushelScript Editor.entitlements */,
 				3C3C1810231A20B100553072 /* DocumentWindowController.swift */,
 				3C0566AF23135673004CDB1A /* DocumentViewController.swift */,
 				3C0566B123135673004CDB1A /* Document.swift */,
@@ -387,7 +387,7 @@
 				3C3C1814231AA70B00553072 /* Logging.swift */,
 				3C0566B323135675004CDB1A /* Assets.xcassets */,
 				3C0566B823135675004CDB1A /* Info.plist */,
-				3C0566B923135675004CDB1A /* BushelScript_Editor.entitlements */,
+				3CEF50422352948E008603E3 /* BushelScript Editor.entitlements */,
 				3C05671A23136BB8004CDB1A /* SERunScriptTemplate.pdf */,
 				3C3C17FF2319CC4100553072 /* SECompileScriptTemplate.pdf */,
 			);
@@ -421,10 +421,10 @@
 				3C0566FA23135690004CDB1A /* BushelLanguageTests.xctest */,
 				3C0566FC23135690004CDB1A /* bushelscript_en.framework */,
 				3C0566FE23135690004CDB1A /* BushelScriptEnglishTests.xctest */,
-				3C0566EE23135690004CDB1A /* BushelRT.framework */,
-				3C0566F023135690004CDB1A /* BushelRTTests.xctest */,
 				3CC224E223920AE100448D25 /* bushelscript_argh.framework */,
 				3CC224E423920AE100448D25 /* BushelScriptPirateTests.xctest */,
+				3C0566EE23135690004CDB1A /* BushelRT.framework */,
+				3C0566F023135690004CDB1A /* BushelRTTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -520,6 +520,7 @@
 			name = "BushelScript Editor";
 			packageProductDependencies = (
 				3C12EFA02354E7640057E0CC /* Defaults */,
+				3C9076FF239F347200A01D8D /* KVODelegate */,
 			);
 			productName = "BushelScript Editor";
 			productReference = 3C0566AA23135673004CDB1A /* BushelScript Editor.app */;
@@ -596,6 +597,7 @@
 			mainGroup = 3C0566A123135673004CDB1A;
 			packageReferences = (
 				3C12EF9F2354E7640057E0CC /* XCRemoteSwiftPackageReference "Defaults" */,
+				3C9076FE239F347200A01D8D /* XCRemoteSwiftPackageReference "KVODelegate" */,
 			);
 			productRefGroup = 3C0566AB23135673004CDB1A /* Products */;
 			projectDirPath = "";
@@ -1144,6 +1146,14 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		3C9076FE239F347200A01D8D /* XCRemoteSwiftPackageReference "KVODelegate" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ThatsJustCheesy/KVODelegate";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1151,6 +1161,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3C12EF9F2354E7640057E0CC /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		3C9076FF239F347200A01D8D /* KVODelegate */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3C9076FE239F347200A01D8D /* XCRemoteSwiftPackageReference "KVODelegate" */;
+			productName = KVODelegate;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

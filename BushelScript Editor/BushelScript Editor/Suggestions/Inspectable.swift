@@ -8,6 +8,7 @@
 
 import Cocoa
 import BushelLanguageServiceConnectionCreation
+import KVODelegate
 
 @objc protocol ObjectInspectable: NSObjectProtocol, NSCopying {
     
@@ -83,6 +84,7 @@ class AutoFixSuggestionListItem: NSObject, SuggestionListItem {
     @objc dynamic var fixDescription: String? = nil
     
     init(service: BushelLanguageServiceProtocol, fix: SourceFixToken, source: Substring) {
+        _ = AutoFixSuggestionListItem.notificationDelegate
         self.service = service
         self.fix = fix
         self.source = source
@@ -99,10 +101,6 @@ class AutoFixSuggestionListItem: NSObject, SuggestionListItem {
     
     override var description: String {
         return (fixDescription ?? "(loading…)").replacingOccurrences(of: "\n", with: "[line break]")
-    }
-    
-    @objc class func keyPathsForValuesAffectingDescription() -> Set<String> {
-        return [#keyPath(AutoFixSuggestionListItem.fixDescription)]
     }
     
     var iconImage: NSImage {
@@ -123,6 +121,20 @@ class AutoFixSuggestionListItem: NSObject, SuggestionListItem {
     
 }
 
+extension AutoFixSuggestionListItem: KVONotificationDelegator {
+    
+    private static var notificationDelegate = KVONotificationDelegate(forClass: AutoFixSuggestionListItem.self)
+    
+    static func configKVONotificationDelegate(_ delegate: KVONotificationDelegate) {
+        delegate.key(#keyPath(AutoFixSuggestionListItem.description), dependsUponKeyPath: #keyPath(AutoFixSuggestionListItem.fixDescription))
+    }
+    
+    override class func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
+        notificationDelegate.keyPathsForValuesAffectingValue(forKey: key)
+    }
+    
+}
+
 class BushelRTObject: NSObject, ObjectInspectable {
     
     let service: BushelLanguageServiceProtocol
@@ -131,6 +143,7 @@ class BushelRTObject: NSObject, ObjectInspectable {
     @objc dynamic var objectDescription: String?
     
     init(service: BushelLanguageServiceProtocol, object: RTObjectToken) {
+        _ = BushelRTObject.notificationDelegate
         self.service = service
         self.object = object
         super.init()
@@ -149,16 +162,26 @@ class BushelRTObject: NSObject, ObjectInspectable {
         return objectDescription ?? "(loading…)"
     }
     
-    @objc class func keyPathsForValuesAffectingDescription() -> Set<String> {
-        return [#keyPath(BushelRTObject.objectDescription)]
-    }
-    
     var typeIdentifier: String {
         return "object"
     }
     
     var localizedTypeName: String {
         return "Object"
+    }
+    
+}
+
+extension BushelRTObject: KVONotificationDelegator {
+    
+    private static var notificationDelegate = KVONotificationDelegate(forClass: BushelRTObject.self)
+    
+    static func configKVONotificationDelegate(_ delegate: KVONotificationDelegate) {
+        delegate.key(#keyPath(BushelRTObject.description), dependsUponKeyPath: #keyPath(BushelRTObject.objectDescription))
+    }
+    
+    override class func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
+        notificationDelegate.keyPathsForValuesAffectingValue(forKey: key)
     }
     
 }

@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "KVODelegate",
+        "repositoryURL": "https://github.com/ThatsJustCheesy/KVODelegate",
+        "state": {
+          "branch": "master",
+          "revision": "f20b64d03463cbd35bcacea1d80848b19d15ea6a",
+          "version": null
+        }
+      },
+      {
         "package": "LLVM",
         "repositoryURL": "https://github.com/llvm-swift/LLVMSwift.git",
         "state": {
