@@ -47,7 +47,7 @@
 		3C3C1823231AB0FB00553072 /* BackgroundMovableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1822231AB0FB00553072 /* BackgroundMovableWindow.m */; };
 		3C3C1828231AE12700553072 /* HashbangTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1827231AE12700553072 /* HashbangTests.swift */; };
 		3C3C182A231B585200553072 /* CustomHashbang.bushel in Resources */ = {isa = PBXBuildFile; fileRef = 3C3C1829231B585200553072 /* CustomHashbang.bushel */; };
-		3C907700239F347200A01D8D /* KVODelegate in Frameworks */ = {isa = PBXBuildFile; productRef = 3C9076FF239F347200A01D8D /* KVODelegate */; };
+		3C907703239F3DD000A01D8D /* KVODelegate in Frameworks */ = {isa = PBXBuildFile; productRef = 3C907702239F3DD000A01D8D /* KVODelegate */; };
 		3CCA1C85235D14120037058C /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566F823135690004CDB1A /* BushelLanguage.framework */; };
 		3CCA1C86235D14120037058C /* BushelLanguage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566F823135690004CDB1A /* BushelLanguage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CCA1C87235D141A0037058C /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
@@ -301,7 +301,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C907700239F347200A01D8D /* KVODelegate in Frameworks */,
+				3C907703239F3DD000A01D8D /* KVODelegate in Frameworks */,
 				3C12EFA12354E7640057E0CC /* Defaults in Frameworks */,
 				3C05670D231356E7004CDB1A /* Bushel.framework in Frameworks */,
 				3CCA1C87235D141A0037058C /* BushelRT.framework in Frameworks */,
@@ -520,7 +520,7 @@
 			name = "BushelScript Editor";
 			packageProductDependencies = (
 				3C12EFA02354E7640057E0CC /* Defaults */,
-				3C9076FF239F347200A01D8D /* KVODelegate */,
+				3C907702239F3DD000A01D8D /* KVODelegate */,
 			);
 			productName = "BushelScript Editor";
 			productReference = 3C0566AA23135673004CDB1A /* BushelScript Editor.app */;
@@ -597,7 +597,7 @@
 			mainGroup = 3C0566A123135673004CDB1A;
 			packageReferences = (
 				3C12EF9F2354E7640057E0CC /* XCRemoteSwiftPackageReference "Defaults" */,
-				3C9076FE239F347200A01D8D /* XCRemoteSwiftPackageReference "KVODelegate" */,
+				3C907701239F3DD000A01D8D /* XCRemoteSwiftPackageReference "KVODelegate" */,
 			);
 			productRefGroup = 3C0566AB23135673004CDB1A /* Products */;
 			projectDirPath = "";
@@ -1146,12 +1146,12 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		3C9076FE239F347200A01D8D /* XCRemoteSwiftPackageReference "KVODelegate" */ = {
+		3C907701239F3DD000A01D8D /* XCRemoteSwiftPackageReference "KVODelegate" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ThatsJustCheesy/KVODelegate";
+			repositoryURL = "https://github.com/ThatsJustCheesy/KVODelegate.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -1162,9 +1162,9 @@
 			package = 3C12EF9F2354E7640057E0CC /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
-		3C9076FF239F347200A01D8D /* KVODelegate */ = {
+		3C907702239F3DD000A01D8D /* KVODelegate */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3C9076FE239F347200A01D8D /* XCRemoteSwiftPackageReference "KVODelegate" */;
+			package = 3C907701239F3DD000A01D8D /* XCRemoteSwiftPackageReference "KVODelegate" */;
 			productName = KVODelegate;
 		};
 /* End XCSwiftPackageProductDependency section */
