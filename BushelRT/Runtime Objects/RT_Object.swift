@@ -125,7 +125,6 @@ import Bushel
     /// - Returns: The result of this object executing the command, or
     ///            `nil` if the command was not handled.
     public func perform(command: CommandInfo, arguments: [Bushel.ConstantTerm : RT_Object]) -> RT_Object? {
-        print("Command “\(command.displayName)” not handled!")
         return nil
     }
     
