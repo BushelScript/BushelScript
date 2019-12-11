@@ -270,7 +270,12 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         },
         TermName("let"): handleLet,
         TermName("return"): {
-            .return_(try self.parsePrimary())
+            self.parseComments()
+            if self.source.first?.isNewline ?? true {
+                return .return_(Expression.empty(at: self.currentIndex))
+            } else {
+                return .return_(try self.parsePrimary())
+            }
         },
         TermName("use application"): handleUseApplication,
         TermName("use app"): handleUseApplication,
