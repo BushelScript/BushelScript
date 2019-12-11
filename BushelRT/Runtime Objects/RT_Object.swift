@@ -60,7 +60,7 @@ import Bushel
     /// - Parameter other: The object to compare against.
     /// - Returns: Whether this object is equal to the other object.
     public func compareEqual(with other: RT_Object) -> Bool {
-        return self === other || compareEqual(with: other)
+        return self === other || (compare(with: other) == .orderedSame)
     }
     
     public func or(_ other: RT_Object) -> RT_Object? {
