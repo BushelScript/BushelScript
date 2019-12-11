@@ -26,7 +26,7 @@ public class RT_Global: RT_Object {
         }
     }
     
-    public override func perform(command: CommandInfo, arguments: [ConstantTerm : RT_Object]) -> RT_Object? {
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
         let commandClass = command.doubleCode?.class
         if commandClass == (try! FourCharCode(fourByteString: "syso")) || commandClass == (try! FourCharCode(fourByteString: "gtqp")) {
             // Run command from StandardAdditions.osax
@@ -35,11 +35,11 @@ public class RT_Global: RT_Object {
         
         switch CommandUID(rawValue: command.uid) {
         case .delay:
-            let delaySeconds = (arguments[ParameterTerm(ParameterUID.direct.rawValue, name: TermName(""), code: keyDirectObject)]?.coerce(to: rt.type(forUID: TypeUID.real.rawValue)!) as? RT_Numeric)?.numericValue ?? 1.0
+            let delaySeconds = (arguments[ParameterInfo(.direct)]?.coerce(to: rt.type(forUID: TypeUID.real.rawValue)!) as? RT_Numeric)?.numericValue ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)
             return RT_Null.null
         case .cli_log:
-            guard let message = arguments[ParameterTerm(ParameterUID.direct.rawValue, name: TermName(""), code: keyDirectObject)] else {
+            guard let message = arguments[ParameterInfo(.direct)] else {
                 // TODO: Throw error
                 return RT_Null.null
             }

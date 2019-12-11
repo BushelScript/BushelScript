@@ -28,7 +28,7 @@ extension RT_SASpecifierConvertible {
 
 extension RT_SASpecifierConvertible where Self: RT_Object {
     
-    public func performByAppleEvent(command: CommandInfo, arguments: [ConstantTerm : RT_Object], targetBundleID: String) -> RT_Object? {
+    public func performByAppleEvent(command: CommandInfo, arguments: [ParameterInfo : RT_Object], targetBundleID: String) -> RT_Object? {
         let appData = SwiftAutomation.RootSpecifier(bundleIdentifier: targetBundleID).appData
         
         // Pack argument values

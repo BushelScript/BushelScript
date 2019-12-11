@@ -745,8 +745,9 @@ extension IRPointerConvertible {
 
 extension Bushel.Term: IRPointerConvertible {}
 extension TypeInfo: IRPointerConvertible {}
-extension PropertyInfo: IRPointerConvertible {}
 extension CommandInfo: IRPointerConvertible {}
+extension ParameterInfo: IRPointerConvertible {}
+extension PropertyInfo: IRPointerConvertible {}
 
 extension Specifier {
     

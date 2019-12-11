@@ -57,7 +57,7 @@ public class RT_Real: RT_Object, AEEncodable {
         return RT_Real(value: self.value / other.numericValue)
     }
     
-    public override func perform(command: CommandInfo, arguments: [Bushel.ConstantTerm : RT_Object]) -> RT_Object? {
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
         switch CommandUID(rawValue: command.uid) {
         case .math_abs:
             return RT_Real(value: abs(self.value))
@@ -70,7 +70,7 @@ public class RT_Real: RT_Object, AEEncodable {
         case .math_cube:
             return RT_Real(value: self.value * self.value * self.value)
         case .math_pow:
-            guard let exponent = arguments[ParameterTerm(ParameterUID.math_pow_exponent.rawValue, name: TermName("to the"), code: ParameterUID.math_pow_exponent.aeCode)] as? RT_Numeric else {
+            guard let exponent = arguments[ParameterInfo(.math_pow_exponent)] as? RT_Numeric else {
                 // FIXME: Throw error
                 return RT_Null.null
             }

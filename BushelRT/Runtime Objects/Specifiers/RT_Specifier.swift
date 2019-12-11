@@ -338,7 +338,7 @@ public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
         }
     }
     
-    public override func perform(command: CommandInfo, arguments: [Bushel.ConstantTerm : RT_Object]) -> RT_Object? {
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
         if case (let targetApplication?, _) = rootApplication() {
             return performByAppleEvent(command: command, arguments: arguments, targetBundleID: targetApplication.bundleIdentifier)
         } else {

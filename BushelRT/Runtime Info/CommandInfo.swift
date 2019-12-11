@@ -26,7 +26,7 @@ public class CommandInfo: Hashable {
     
     public enum Tag {
         
-        /// The property's user-facing name.
+        /// The command's user-facing name.
         case name(TermName)
         
     }
@@ -55,7 +55,7 @@ public class CommandInfo: Hashable {
         hasher.combine(id)
     }
     
-    public convenience init(_ predefined: TypeUID, _ tags: Set<Tag> = []) {
+    public convenience init(_ predefined: CommandUID, _ tags: Set<Tag> = []) {
         self.init(predefined.rawValue, predefined.aeDoubleCode, tags)
     }
     

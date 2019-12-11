@@ -1,6 +1,6 @@
 import Bushel
 
-public class PropertyInfo: Hashable {
+public class ParameterInfo: Hashable {
     
     public struct ID: Hashable {
         
@@ -25,7 +25,7 @@ public class PropertyInfo: Hashable {
     
     public enum Tag {
         
-        /// The property's user-facing name.
+        /// The parameter's user-facing name.
         case name(TermName)
         
     }
@@ -46,7 +46,7 @@ public class PropertyInfo: Hashable {
         id.aeCode
     }
     
-    public static func == (lhs: PropertyInfo, rhs: PropertyInfo) -> Bool {
+    public static func == (lhs: ParameterInfo, rhs: ParameterInfo) -> Bool {
         return lhs.id == rhs.id
     }
     
@@ -54,7 +54,7 @@ public class PropertyInfo: Hashable {
         hasher.combine(id)
     }
     
-    public convenience init(_ predefined: PropertyUID, _ tags: Set<Tag> = []) {
+    public convenience init(_ predefined: ParameterUID, _ tags: Set<Tag> = []) {
         self.init(predefined.rawValue, predefined.aeCode, tags)
     }
     
@@ -73,31 +73,31 @@ public class PropertyInfo: Hashable {
     
 }
 
-public extension PropertyInfo {
+public extension ParameterInfo {
     
     var displayName: String {
         if let name = name {
             return name.normalized
         } else if let code = code {
-            return "«property \(String(fourCharCode: code))»"
+            return "«parameter \(String(fourCharCode: code))»"
         } else {
-            return "«property»"
+            return "«parameter»"
         }
     }
     
 }
 
-extension PropertyInfo: CustomDebugStringConvertible {
+extension ParameterInfo: CustomDebugStringConvertible {
     
     public var debugDescription: String {
-        "[PropertyInfo: \(uid)\(code.map { " / '\(String(fourCharCode: $0))'" } ?? "")\(name.map { " / ”\($0)“" } ?? "")]"
+        "[ParameterInfo: \(uid)\(code.map { " / '\(String(fourCharCode: $0))'" } ?? "")\(name.map { " / ”\($0)“" } ?? "")]"
     }
     
 }
 
-extension PropertyInfo.Tag: Hashable {
+extension ParameterInfo.Tag: Hashable {
     
-    public static func == (lhs: PropertyInfo.Tag, rhs: PropertyInfo.Tag) -> Bool {
+    public static func == (lhs: ParameterInfo.Tag, rhs: ParameterInfo.Tag) -> Bool {
         switch (lhs, rhs) {
         case (.name(let lName), .name(let rName)):
             return lName == rName

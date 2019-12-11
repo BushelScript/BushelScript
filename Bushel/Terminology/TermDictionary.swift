@@ -79,6 +79,10 @@ public class ParameterTermDictionary: TerminologySource {
             })
     }
     
+    public func term(forUID uid: String) -> ParameterTerm? {
+        return contentsByUID[uid]
+    }
+    
     public func term(named name: TermName) -> ParameterTerm? {
         return contentsByName[name]
     }

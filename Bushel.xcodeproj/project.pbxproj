@@ -31,6 +31,7 @@
 		3C12EF9A2354E5AC0057E0CC /* RT_Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF992354E5AC0057E0CC /* RT_Application.swift */; };
 		3C12EF9C2354E5D10057E0CC /* RT_AEObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF9B2354E5D10057E0CC /* RT_AEObject.swift */; };
 		3C12EF9E2354E6010057E0CC /* RT_Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF9D2354E6010057E0CC /* RT_Global.swift */; };
+		3C2DD4A823A06E90002FAE57 /* ParameterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */; };
 		3C3065B1230B7ABB00833CE8 /* TermName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B0230B7ABB00833CE8 /* TermName.swift */; };
 		3C3065B3230B7E2000833CE8 /* TerminologySource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B2230B7E2000833CE8 /* TerminologySource.swift */; };
 		3C3065B5230B83B500833CE8 /* MessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B4230B83B500833CE8 /* MessageFormatter.swift */; };
@@ -244,6 +245,7 @@
 		3C12EF992354E5AC0057E0CC /* RT_Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Application.swift; sourceTree = "<group>"; };
 		3C12EF9B2354E5D10057E0CC /* RT_AEObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_AEObject.swift; sourceTree = "<group>"; };
 		3C12EF9D2354E6010057E0CC /* RT_Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Global.swift; sourceTree = "<group>"; };
+		3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterInfo.swift; sourceTree = "<group>"; };
 		3C3065B0230B7ABB00833CE8 /* TermName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermName.swift; sourceTree = "<group>"; };
 		3C3065B2230B7E2000833CE8 /* TerminologySource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminologySource.swift; sourceTree = "<group>"; };
 		3C3065B4230B83B500833CE8 /* MessageFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFormatter.swift; sourceTree = "<group>"; };
@@ -667,6 +669,7 @@
 			children = (
 				3CB528EC23809DDD0051460B /* RTInfo.swift */,
 				3CC224932391D9D500448D25 /* CommandInfo.swift */,
+				3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */,
 				3CC224882391CFF300448D25 /* PropertyInfo.swift */,
 				3C327261232DBAE2001A527C /* TypeInfo.swift */,
 			);
@@ -1346,6 +1349,7 @@
 				3C12EF9A2354E5AC0057E0CC /* RT_Application.swift in Sources */,
 				3C12EF9E2354E6010057E0CC /* RT_Global.swift in Sources */,
 				3C12EF7F2354E2D40057E0CC /* RT_Null.swift in Sources */,
+				3C2DD4A823A06E90002FAE57 /* ParameterInfo.swift in Sources */,
 				3C12EF982354E5720057E0CC /* RT_Date.swift in Sources */,
 				3C12EF792354E2860057E0CC /* RT_Real.swift in Sources */,
 				3CB528ED23809DDD0051460B /* RTInfo.swift in Sources */,

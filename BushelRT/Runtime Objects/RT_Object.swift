@@ -124,7 +124,7 @@ import Bushel
     ///   - arguments: The arguments to the command.
     /// - Returns: The result of this object executing the command, or
     ///            `nil` if the command was not handled.
-    public func perform(command: CommandInfo, arguments: [Bushel.ConstantTerm : RT_Object]) -> RT_Object? {
+    public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
         return nil
     }
     

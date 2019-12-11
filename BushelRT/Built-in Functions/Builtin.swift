@@ -388,20 +388,32 @@ enum Builtin {
     
     private static func evaluateSpecifierByAppleEvent(_ specifier: RT_Specifier, targetApplication: RT_Application) -> RTObjectPointer {
         let getCommand = rt.command(forUID: CommandUID.get.rawValue)!
-        return toOpaque(retain(specifier.perform(command: getCommand, arguments: [ParameterTerm(ParameterUID.direct.rawValue, name: TermName(""), code: ParameterUID.direct.aeCode): specifier]) ?? RT_Null.null))
+        return toOpaque(retain(specifier.perform(command: getCommand, arguments: [ParameterInfo(.direct): specifier]) ?? RT_Null.null))
     }
     
     static func call(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer) -> RTObjectPointer {
-        let arguments = fromOpaque(argumentsPointer) as! RT_Record
-        return call(command: infoFromOpaque(commandPointer), arguments: arguments.contents as! [Bushel.ParameterTerm : RT_Object])
+        let command = infoFromOpaque(commandPointer) as CommandInfo
+        let argumentsRecord = fromOpaque(argumentsPointer) as! RT_Record
+        return call(command: command, arguments: arguments(from: argumentsRecord, for: command))
     }
     
-    private static func call(command: CommandInfo, arguments: [Bushel.ParameterTerm : RT_Object]) -> RTObjectPointer {
+    private static func arguments(from record: RT_Record, for command: CommandInfo) -> [ParameterInfo : RT_Object] {
+        [ParameterInfo : RT_Object](uniqueKeysWithValues: (record.contents as! [Bushel.ParameterTerm : RT_Object]).map { kv in
+            let (term, value) = kv
+            var tags: Set<ParameterInfo.Tag> = []
+            if let name = term.name {
+                tags.insert(.name(name))
+            }
+            return (key: ParameterInfo(term.uid, term.code, tags), value: value)
+        })
+    }
+    
+    private static func call(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RTObjectPointer {
         var arguments = qualify(arguments: arguments)
         
-        let directParameter = arguments.first(where: { (kv: (key: Bushel.ParameterTerm, value: RT_Object)) -> Bool in
-            let (term, _) = kv
-            return term.code == keyDirectObject
+        let directParameter = arguments.first(where: { (kv: (key: ParameterInfo, value: RT_Object)) -> Bool in
+            let (parameter, _) = kv
+            return parameter.code == keyDirectObject
         })?.value
         
         if let result = directParameter?.perform(command: command, arguments: arguments) {
@@ -411,14 +423,14 @@ enum Builtin {
                 if let result = qualifiedTarget.perform(command: command, arguments: arguments) {
                     return toOpaque(retain(result))
                 } else {
-                    arguments[ParameterTerm(ParameterUID.direct.rawValue, name: TermName(""), code: ParameterUID.direct.aeCode)] = qualifiedTarget
+                    arguments[ParameterInfo(.direct)] = qualifiedTarget
                 }
             }
             return toOpaque(retain(RT_Global(rt).perform(command: command, arguments: arguments) ?? RT_Null.null))
         }
     }
     
-    private static func qualify(arguments: [Bushel.ParameterTerm : RT_Object]) -> [Bushel.ParameterTerm : RT_Object] {
+    private static func qualify(arguments: [ParameterInfo : RT_Object]) -> [ParameterInfo : RT_Object] {
         return arguments.mapValues { (argument: RT_Object) -> RT_Object in
             if let specifier = argument as? RT_Specifier {
                 return stack.qualify(specifier: specifier)
