@@ -79,6 +79,20 @@ public class RT_Integer: RT_Object, AEEncodable {
         switch CommandUID(rawValue: command.uid) {
         case .math_abs:
             return RT_Integer(value: abs(self.value))
+        case .math_sqrt:
+            return RT_Real(value: sqrt(self.numericValue))
+        case .math_cbrt:
+            return RT_Real(value: cbrt(self.numericValue))
+        case .math_square:
+            return RT_Integer(value: self.value * self.value)
+        case .math_cube:
+            return RT_Integer(value: self.value * self.value * self.value)
+        case .math_pow:
+            guard let exponent = arguments[ParameterTerm(ParameterUID.math_pow_exponent.rawValue, name: TermName("to the"), code: ParameterUID.math_pow_exponent.aeCode)] as? RT_Numeric else {
+                // FIXME: Throw error
+                return RT_Null.null
+            }
+            return RT_Integer(value: Int64(pow(self.numericValue, exponent.numericValue)))
         default:
             return super.perform(command: command, arguments: arguments)
         }
