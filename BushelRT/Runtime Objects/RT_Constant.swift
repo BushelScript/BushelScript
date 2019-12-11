@@ -19,6 +19,10 @@ public class RT_Constant: RT_Object, AEEncodable {
         typeInfo_
     }
     
+    public override func compareEqual(with other: RT_Object) -> Bool {
+        value == (other as? RT_Constant)?.value
+    }
+    
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         return NSAppleEventDescriptor(typeCode: value)
     }

@@ -33,6 +33,13 @@ public class RT_Date: RT_Object {
         }
     }
     
+    public override func compare(with other: RT_Object) -> ComparisonResult? {
+        guard let other = other as? RT_Date else {
+            return nil
+        }
+        return value <=> other.value
+    }
+    
 }
 
 extension RT_Date {

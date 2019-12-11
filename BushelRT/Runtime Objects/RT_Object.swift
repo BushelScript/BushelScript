@@ -55,6 +55,14 @@ import Bushel
         return nil
     }
     
+    /// Checks this object for equality with another object.
+    ///
+    /// - Parameter other: The object to compare against.
+    /// - Returns: Whether this object is equal to the other object.
+    public func compareEqual(with other: RT_Object) -> Bool {
+        return self === other || compareEqual(with: other)
+    }
+    
     public func or(_ other: RT_Object) -> RT_Object? {
         return RT_Boolean.withValue(truthy || other.truthy)
     }
@@ -70,11 +78,11 @@ import Bushel
     }
     
     public func equal(to other: RT_Object) -> RT_Object? {
-        return compare(with: other).map { RT_Boolean.withValue($0 == .orderedSame) }
+        return RT_Boolean.withValue(compareEqual(with: other))
     }
     
     public func notEqual(to other: RT_Object) -> RT_Object? {
-        return compare(with: other).map { RT_Boolean.withValue($0 != .orderedSame) }
+        return RT_Boolean.withValue(!compareEqual(with: other))
     }
     
     public func less(than other: RT_Object) -> RT_Object? {

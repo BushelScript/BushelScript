@@ -16,6 +16,10 @@ public class RT_SymbolicConstant: RT_Object {
         return String(describing: value)
     }
     
+    public override func compareEqual(with other: RT_Object) -> Bool {
+        value == (other as? RT_SymbolicConstant)?.value
+    }
+    
 }
 
 extension RT_SymbolicConstant {

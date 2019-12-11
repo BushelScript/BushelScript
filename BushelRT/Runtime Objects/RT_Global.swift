@@ -50,6 +50,10 @@ public class RT_Global: RT_Object {
         }
     }
     
+    public override func compareEqual(with other: RT_Object) -> Bool {
+        other.dynamicTypeInfo.isA(dynamicTypeInfo)
+    }
+    
 }
 
 extension RT_Global {

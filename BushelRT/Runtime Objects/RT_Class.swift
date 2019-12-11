@@ -18,6 +18,10 @@ public class RT_Class: RT_Object {
         return String(describing: value.name)
     }
     
+    public override func compareEqual(with other: RT_Object) -> Bool {
+        value == (other as? RT_Class)?.value
+    }
+    
 }
 
 extension RT_Class {
