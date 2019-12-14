@@ -71,12 +71,14 @@ public class ParameterTermDictionary: TerminologySource {
     private var contentsByUID: [String : ParameterTerm]
     private var contentsByName: [TermName : ParameterTerm]
     
-    public init(contents: Set<ParameterTerm> = []) {
-        self.contentsByUID = Dictionary(uniqueKeysWithValues: contents.map { (key: $0.uid, value: $0) })
-        self.contentsByName = Dictionary(uniqueKeysWithValues:
+    public init(contents: [ParameterTerm] = []) {
+        self.contentsByUID = Dictionary(contents.map { (key: $0.uid, value: $0) }, uniquingKeysWith: { x, _ in x })
+        self.contentsByName = Dictionary(
             contents.compactMap { term in
                 term.name.flatMap { (key: $0, value: term) }
-            })
+            },
+            uniquingKeysWith: { x, _ in x }
+        )
     }
     
     public func term(forUID uid: String) -> ParameterTerm? {
@@ -143,8 +145,7 @@ private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
             name: TermName(term.name),
             codes: (class: term.eventClass,
                     id: term.eventID),
-            parameters: ParameterTermDictionary(contents:
-                Set(term.parameters.map { convertParameterTerm($0, term) }))
+            parameters: ParameterTermDictionary(contents: term.parameters.map { convertParameterTerm($0, term) })
             )
         )
     }

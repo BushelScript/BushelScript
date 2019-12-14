@@ -97,7 +97,7 @@ public struct CommandDescriptor: TermDescriptor {
     }
     
     public func realize(_ pool: TermPool) -> Term {
-        CommandTerm(uid, name: name, codes: codes, parameters: ParameterTermDictionary(contents: Set(parameters.map { $0.realize(pool) as! ParameterTerm })))
+        CommandTerm(uid, name: name, codes: codes, parameters: ParameterTermDictionary(contents: parameters.map { $0.realize(pool) as! ParameterTerm }))
     }
     
 }

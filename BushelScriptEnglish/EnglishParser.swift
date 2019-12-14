@@ -393,7 +393,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
         }
         
-        let parameterTerms = Set(parameters.map { $0.term })
+        let parameterTerms = parameters.map { $0.term }
         
         let commandTerm = CommandTerm(lexicon.makeUID("command", termName), name: termName, codes: nil, parameters: ParameterTermDictionary(contents: parameterTerms))
         lexicon.add(commandTerm)
