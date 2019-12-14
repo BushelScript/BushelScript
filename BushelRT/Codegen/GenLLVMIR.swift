@@ -680,11 +680,12 @@ extension Expression {
                 builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [argumentVariableTermIRValue, argumentValueIRValue])
             }
             
+            stack.currentFrame.add(function: function, for: name.name!)
+            
             let resultValue = try body.generateLLVMIR(builder, rt, &stack, options: CodeGenOptions(stackIntrospectability: false), lastResult: builder.rtNull)
             builder.buildRet(resultValue)
             
             builder.positionAtEnd(of: prevBlock)
-            stack.currentFrame.add(function: function, for: name.name!)
             
             return lastResult
         case .weave(let hashbang, let body): // MARK: .weave
