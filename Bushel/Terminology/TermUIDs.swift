@@ -169,6 +169,8 @@ public enum CommandUID: String, TermUIDPredefinedValue {
     case math_cube = "bushel.math.command.cube"
     case math_pow = "bushel.math.command.pow"
     
+    case sequence_join = "bushel.sequence.command.join"
+    
     case gui_notification = "bushel.gui.command.notification"
     case gui_alert = "bushel.gui.command.alert"
     case gui_chooseFrom = "bushel.gui.chooseFrom"
@@ -225,6 +227,8 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
     case open_searchText = "bushel.parameter.open.searchText"
     
     case math_pow_exponent = "bushel.math.parameter.pow.exponent"
+    
+    case sequence_join_with = "bushel.sequence.parameter.join.with"
     
     case gui_notification_title = "bushel.gui.parameter.notification.title"
     case gui_notification_subtitle = "bushel.gui.parameter.notification.subtitle"
@@ -285,6 +289,8 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
             return try! FourCharCode(fourByteString: "mlsl")
         case .gui_chooseFrom_noSelection:
             return try! FourCharCode(fourByteString: "empL")
+        default:
+            return nil
         }
     }
     

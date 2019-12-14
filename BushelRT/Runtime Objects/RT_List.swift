@@ -109,6 +109,19 @@ public class RT_List: RT_Object, AEEncodable {
         return contents <=> other.contents
     }
     
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
+        switch CommandUID(rawValue: command.uid) {
+        case .sequence_join:
+            guard let separator = arguments[ParameterInfo(.sequence_join_with)]?.coerce(to: RT_String.typeInfo) as? RT_String else {
+                // TODO: Throw error
+                return nil
+            }
+            return RT_String(value: contents.map { $0.description }.joined(separator: separator.value))
+        default:
+            return super.perform(command: command, arguments: arguments)
+        }
+    }
+    
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         return try contents.enumerated().reduce(into: NSAppleEventDescriptor.list()) { (descriptor, entry) in
             let (index, value) = entry

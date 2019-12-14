@@ -82,6 +82,10 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     ]
     
     private lazy var sequenceDictionary: [TermDescriptor] = [
+        CommandDescriptor(.sequence_join, name: TermName("join"), parameters: [
+            ParameterDescriptor(.sequence_join_with, name: TermName("with")),
+            ParameterDescriptor(.sequence_join_with, name: TermName("by"))
+        ]),
     ]
     
     private lazy var guiDictionary: [TermDescriptor] = [
