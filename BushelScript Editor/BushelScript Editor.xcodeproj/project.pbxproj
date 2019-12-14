@@ -241,7 +241,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3C042FF82314986500758339 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		3C0430012314BECD00758339 /* ModelPropagation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPropagation.swift; sourceTree = "<group>"; };
 		3C0430052314BFC100758339 /* BushelScript Editor-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BushelScript Editor-Bridging-Header.h"; sourceTree = "<group>"; };
 		3C0430072314BFC200758339 /* AppDelegate+Swizzling.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Swizzling.m"; sourceTree = "<group>"; };
@@ -354,7 +353,6 @@
 				3C0566C123135675004CDB1A /* BushelScript EditorTests */,
 				3C0566CC23135675004CDB1A /* BushelScript EditorUITests */,
 				3C0430052314BFC100758339 /* BushelScript Editor-Bridging-Header.h */,
-				3C042FF82314986500758339 /* Config.xcconfig */,
 				3C0566AB23135673004CDB1A /* Products */,
 				3C05670C231356E7004CDB1A /* Frameworks */,
 			);
@@ -857,7 +855,6 @@
 /* Begin XCBuildConfiguration section */
 		3C0566D023135675004CDB1A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C042FF82314986500758339 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
