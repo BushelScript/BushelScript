@@ -99,6 +99,8 @@ public extension Array where Element == TermName {
                 return (termString, termName)
             } else if let lastWord = termName.words.last {
                 termString.removeLast(lastWord.count)
+            } else if !termString.isEmpty {
+                termString.removeLast()
             }
         }
         return (termString, nil)
