@@ -139,7 +139,6 @@
 		3C0430172315ABB900758339 /* BushelLanguageServiceProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BushelLanguageServiceProtocol.h; sourceTree = "<group>"; };
 		3C04301B2315ABB900758339 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3C04301D2315ABB900758339 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3C0430232315AC1600758339 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		3C0430242315AD7D00758339 /* NSXPCConnection+BushelLanguageService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSXPCConnection+BushelLanguageService.h"; sourceTree = "<group>"; };
 		3C0430252315AD7D00758339 /* NSXPCConnection+BushelLanguageService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSXPCConnection+BushelLanguageService.m"; sourceTree = "<group>"; };
 		3C0430272315AEE000758339 /* BushelLanguageService-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BushelLanguageService-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -181,7 +180,6 @@
 				3C0430172315ABB900758339 /* BushelLanguageServiceProtocol.h */,
 				3C0430162315ABB900758339 /* BushelLanguageService */,
 				3C04305B2315C12200758339 /* BushelLanguageServiceConnectionCreation */,
-				3C0430232315AC1600758339 /* Config.xcconfig */,
 				3C0430152315ABB900758339 /* Products */,
 				3C249D3F2319BF8000F5826E /* Frameworks */,
 			);
@@ -473,7 +471,6 @@
 /* Begin XCBuildConfiguration section */
 		3C04301E2315ABB900758339 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C0430232315AC1600758339 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
