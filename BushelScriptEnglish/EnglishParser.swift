@@ -470,6 +470,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             throw ParseError(description: "expected ‘to’ or line break following target expression to begin ‘tell’-block", location: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " to", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
         }
         
+        var terminologyPushed = false
+        defer {
+            if terminologyPushed {
+                lexicon.pop()
+            }
+        }
+        
         noTerminology: do {
             let appBundle: Bundle
             switch target.kind {
@@ -511,6 +518,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 }
                 
                 let dictionary = lexicon.push()
+                terminologyPushed = true
                 dictionary.add(try Bushel.parse(sdef: sdef, under: lexicon))
             case .use(let resource),
                  .resource(let resource):
@@ -518,6 +526,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 case .applicationByName(let term as LocatedTerm),
                      .applicationByID(let term as LocatedTerm):
                     lexicon.push(name: term.name)
+                    terminologyPushed = true
                 }
             default:
                 break noTerminology

@@ -15,7 +15,7 @@ public struct Lexicon: TerminologySource {
     }
     
     public func term(named name: TermName) -> Term? {
-        func find(in dictionaries: [TermDictionary]) -> Term? {
+        func find<Dictionaries: Collection>(in dictionaries: Dictionaries) -> Term? where Dictionaries.Element == TermDictionary {
             for dictionary in dictionaries {
                 if let term = dictionary.term(named: name) {
                     return term
@@ -23,7 +23,7 @@ public struct Lexicon: TerminologySource {
             }
             return nil
         }
-        return find(in: dictionaryStack) ?? find(in: pool.exportedDictionaries)
+        return find(in: dictionaryStack.reversed()) ?? find(in: pool.exportedDictionaries.reversed())
     }
     
     public func makeUID(_ kind: String, _ names: TermName...) -> String {

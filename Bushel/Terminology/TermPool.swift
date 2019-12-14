@@ -10,7 +10,7 @@ public class TermPool: TerminologySource {
     //       To enabled messages like, e.g.,
     //           undefined term "outgoing mssage"
     //               - fix: did you mean “outgoing message” (from dictionary “Mail”)?
-    private var containerTerms: [TermName? : TermDictionaryContainer] = [:]
+    private var containerTerms: [TermName : TermDictionaryContainer] = [:]
     public var exportedDictionaries: [TermDictionary] = []
     public var byName: [TermName : Term] = [:]
     public var byCode: [OSType : ConstantTerm] = [:]
@@ -35,10 +35,10 @@ public class TermPool: TerminologySource {
     }
     
     public func add(_ term: Term) {
-        if let container = term as? TermDictionaryContainer {
-            containerTerms[term.name] = container
-        }
         if let name = term.name {
+            if let container = term as? TermDictionaryContainer {
+                containerTerms[name] = container
+            }
             byName[name] = term
         }
         if let term = term as? ConstantTerm, let code = term.code {
@@ -54,7 +54,10 @@ public class TermPool: TerminologySource {
     }
     
     public func dictionary(named name: TermName?, exports: Bool = false) -> TermDictionary {
-        if let dictionary = containerTerms[name]?.terminology {
+        if
+            let name = name,
+            let dictionary = containerTerms[name]?.terminology
+        {
             return dictionary
         } else {
             return makeDictionary(named: name, exports: exports)
@@ -69,7 +72,7 @@ public class TermPool: TerminologySource {
         } else {
             container = UnnamedDictionaryContainer(terminology: dictionary)
         }
-        containerTerms[name] = container
+        containerTerms[name ?? TermName(UUID().uuidString)] = container
         if dictionary.exports {
             exportedDictionaries.append(dictionary)
         }
