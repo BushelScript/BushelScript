@@ -171,6 +171,8 @@ public enum CommandUID: String, TermUIDPredefinedValue {
     
     case sequence_join = "bushel.sequence.command.join"
     
+    case string_split = "bushel.sequence.command.split"
+    
     case gui_notification = "bushel.gui.command.notification"
     case gui_alert = "bushel.gui.command.alert"
     case gui_chooseFrom = "bushel.gui.chooseFrom"
@@ -229,6 +231,8 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
     case math_pow_exponent = "bushel.math.parameter.pow.exponent"
     
     case sequence_join_with = "bushel.sequence.parameter.join.with"
+    
+    case string_split_by = "bushel.string.parameter.split.by"
     
     case gui_notification_title = "bushel.gui.parameter.notification.title"
     case gui_notification_subtitle = "bushel.gui.parameter.notification.subtitle"

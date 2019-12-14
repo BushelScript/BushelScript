@@ -87,6 +87,19 @@ public class RT_String: RT_Object, AEEncodable {
         return value <=> other.value
     }
     
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
+        switch CommandUID(rawValue: command.uid) {
+        case .string_split:
+            guard let separator = arguments[ParameterInfo(.string_split_by)]?.coerce(to: RT_String.typeInfo) as? RT_String else {
+                // TODO: Throw error
+                return nil
+            }
+            return RT_List(contents: value.components(separatedBy: separator.value).map { RT_String(value: $0) })
+        default:
+            return perform(command: command, arguments: arguments)
+        }
+    }
+    
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         return NSAppleEventDescriptor(string: value)
     }

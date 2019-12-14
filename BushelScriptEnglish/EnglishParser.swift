@@ -83,8 +83,16 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private lazy var sequenceDictionary: [TermDescriptor] = [
         CommandDescriptor(.sequence_join, name: TermName("join"), parameters: [
+            ParameterDescriptor(.direct),
             ParameterDescriptor(.sequence_join_with, name: TermName("with")),
             ParameterDescriptor(.sequence_join_with, name: TermName("by"))
+        ]),
+    ]
+    
+    private lazy var stringDictionary: [TermDescriptor] = [
+        CommandDescriptor(.string_split, name: TermName("split"), parameters: [
+            ParameterDescriptor(.direct),
+            ParameterDescriptor(.string_split_by, name: TermName("by"))
         ]),
     ]
     
@@ -181,6 +189,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         DictionaryDescriptor("bushel.dictionary.math", name: TermName("Math"), contents: mathDictionary),
         DictionaryDescriptor("bushel.dictionary.sequence", name: TermName("Sequence"), contents: sequenceDictionary),
+        DictionaryDescriptor("bushel.dictionary.string", name: TermName("String"), contents: stringDictionary),
         DictionaryDescriptor("bushel.dictionary.gui", name: TermName("GUI"), contents: guiDictionary),
         DictionaryDescriptor("bushel.dictionary.cli", name: TermName("CLI"), contents: cliDictionary),
     ]
