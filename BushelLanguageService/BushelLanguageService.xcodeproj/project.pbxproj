@@ -13,6 +13,8 @@
 		3C0430622315C12E00758339 /* NSXPCConnection+BushelLanguageService.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0430252315AD7D00758339 /* NSXPCConnection+BushelLanguageService.m */; };
 		3C0430632315C1E800758339 /* NSXPCConnection+BushelLanguageService.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C0430242315AD7D00758339 /* NSXPCConnection+BushelLanguageService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C0430652315CB2A00758339 /* BushelLanguageServiceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C0430172315ABB900758339 /* BushelLanguageServiceProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C75066923A1A455006E7591 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C75066823A1A455006E7591 /* SwiftAutomation.framework */; };
+		3C75066A23A1A455006E7591 /* SwiftAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C75066823A1A455006E7591 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C9703CA23551FD30099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0430392315AFA900758339 /* Bushel.framework */; };
 		3C9703CB23551FD30099AA05 /* Bushel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0430392315AFA900758339 /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C9703D423551FD50099AA05 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C04303D2315AFA900758339 /* BushelLanguage.framework */; };
@@ -125,6 +127,7 @@
 				3C9703CB23551FD30099AA05 /* Bushel.framework in Embed Frameworks */,
 				3C9703D723551FD60099AA05 /* BushelRT.framework in Embed Frameworks */,
 				3C9703D523551FD50099AA05 /* BushelLanguage.framework in Embed Frameworks */,
+				3C75066A23A1A455006E7591 /* SwiftAutomation.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -145,6 +148,7 @@
 		3C04305A2315C12200758339 /* BushelLanguageServiceConnectionCreation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BushelLanguageServiceConnectionCreation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C04305C2315C12200758339 /* BushelLanguageServiceConnectionCreation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BushelLanguageServiceConnectionCreation.h; sourceTree = "<group>"; };
 		3C04305D2315C12200758339 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3C75066823A1A455006E7591 /* SwiftAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEF50432352951C008603E3 /* BushelLanguageService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BushelLanguageService.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -156,6 +160,7 @@
 				3C9703D423551FD50099AA05 /* BushelLanguage.framework in Frameworks */,
 				3C9703D623551FD60099AA05 /* BushelRT.framework in Frameworks */,
 				3C9703CA23551FD30099AA05 /* Bushel.framework in Frameworks */,
+				3C75066923A1A455006E7591 /* SwiftAutomation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,10 +217,10 @@
 				3C04303F2315AFA900758339 /* BushelLanguageTests.xctest */,
 				3C0430412315AFA900758339 /* bushelscript_en.framework */,
 				3C0430432315AFA900758339 /* BushelScriptEnglishTests.xctest */,
-				3C0430452315AFA900758339 /* BushelRT.framework */,
-				3C0430472315AFA900758339 /* BushelRTTests.xctest */,
 				3C5722A62392146F00F9CF47 /* bushelscript_argh.framework */,
 				3C5722A82392146F00F9CF47 /* BushelScriptPirateTests.xctest */,
+				3C0430452315AFA900758339 /* BushelRT.framework */,
+				3C0430472315AFA900758339 /* BushelRTTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -234,6 +239,7 @@
 		3C249D3F2319BF8000F5826E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3C75066823A1A455006E7591 /* SwiftAutomation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
