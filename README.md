@@ -39,6 +39,26 @@ Some more technical specifics; BushelScript:
     * AS++ is specifically targeted towards programmers who want to get scripting stuff done quicker and with a syntax that's more familiar and symbol-heavy
     * English is of course the dominant version of these two, but they could theoretically be ported to a wider range of natural language bases—e.g., English names are “BushelScript (English)”, `​bushelscript_en`​, and “AS++ (English)”, `​aspp_en`​, while French names would be “BushelScript (français)”, `​bushelscript_fr`​, and “AS++ (français)”, `​aspp_fr`​.
 
+## Status
+
+Currently, the language is in its early- to mid-growth stages. New features are being added very often, and some will likely be changed or removed with time.
+
+The graphical BushelScript Editor application is also functional but very basic at the moment. I hope to drastically improve the interface once the API and language are more mature and finalized.
+
+### Installation
+
+There's no automated installer yet. For now, you can build the project yourself, which should be pretty straightforward.
+
+To build the core frameworks, language service, English module and graphical Editor from source, do the following:
+
+1. Make sure [Homebrew](https://brew.sh) and [Xcode](https://developer.apple.com/xcode) are installed. 
+2. `brew install llvm`
+3. `xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT=/`
+
+Language modules are installed to `/Library/BushelScript/Languages` and BushelScript Editor is placed in `/Applications`. Launch the app to begin writing BushelScript programs.
+
+If this doesn't work or you believe I've missed a step, please open an issue.
+
 ## Why “BushelScript”?
 
 Since the language is basically just an improved, next-gen AppleScript, I wanted to pun off of that name. For the first few months of the project's life, it was called “AppleScript+”. However, I eventually realized that this could cause trademark issues. The code needed to be scrapped and started from scratch anyway, so from that point on I named it “BushelScript”, after the fruit basket measure commonly used to sell apples.
