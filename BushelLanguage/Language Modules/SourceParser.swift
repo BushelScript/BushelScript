@@ -700,15 +700,15 @@ public extension SourceParser {
     }
     
     var currentLocation: SourceLocation {
-        return SourceLocation(at: currentIndex, source: entireSource)
+        SourceLocation(at: currentIndex, source: entireSource)
     }
     
     var currentIndex: String.Index {
-        return source.startIndex
+        source.startIndex
     }
     
     var expressionLocation: SourceLocation {
-        return SourceLocation(expressionStartIndex..<currentIndex, source: entireSource)
+        SourceLocation(expressionStartIndex..<currentIndex, source: entireSource)
     }
     
 }

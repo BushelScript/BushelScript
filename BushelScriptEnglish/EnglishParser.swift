@@ -332,9 +332,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleOpenParenthesis() throws -> Expression.Kind? {
         try awaiting(endMarker: TermName(")")) {
+            eatCommentsAndWhitespace(eatingNewlines: true)
             guard let enclosed = try parsePrimary() else {
                 throw ParseError(description: "expected expression after ‘(’", location: SourceLocation(source.range, source: entireSource))
             }
+            eatCommentsAndWhitespace(eatingNewlines: true)
             guard tryEating(prefix: ")") else {
                 throw ParseError(description: "expected ‘)’ to end bracketed expression", location: SourceLocation(source.range, source: entireSource))
             }
@@ -345,6 +347,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleOpenBrace() throws -> Expression.Kind? {
         try awaiting(endMarkers: [TermName("}"), TermName(",")]) {
+            eatCommentsAndWhitespace(eatingNewlines: true)
             guard !tryEating(prefix: "}") else {
                 return .list([])
             }
@@ -357,6 +360,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                         throw ParseError(description: "expected list item", location: currentLocation)
                     }
                     items.append(item)
+                    eatCommentsAndWhitespace(eatingNewlines: true)
                 } while tryEating(prefix: ",")
                 guard tryEating(prefix: "}") else {
                     throw ParseError(description: "expected ‘}’ to end list", location: currentLocation)
