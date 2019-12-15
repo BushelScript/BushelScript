@@ -273,7 +273,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         },
         TermName("let"): handleLet,
         TermName("return"): {
-            self.parseComments()
+            self.eatCommentsAndWhitespace()
             if self.source.first?.isNewline ?? true {
                 return .return_(Expression.empty(at: self.currentIndex))
             } else {
@@ -352,6 +352,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             var items: [Expression] = []
             do {
                 repeat {
+                    eatCommentsAndWhitespace(eatingNewlines: true)
                     guard let item = try parsePrimary() else {
                         throw ParseError(description: "expected list item", location: currentLocation)
                     }
@@ -505,7 +506,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     private func handleUseApplication() throws -> Expression.Kind? {
-        source.removeLeadingWhitespace()
+        eatCommentsAndWhitespace()
         guard !source.hasPrefix("\"") else {
             throw ParseError(description: "‘use application’ takes a raw application name, not a string, since it binds a constant; remove the quotation marks", location: currentLocation)
         }
@@ -598,7 +599,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             // If neither of those succeed, then what's in front of us must be
             // a direct parameter (e.g, "open {file1, file2}").
             if !(try parseParameter()) {
-                parseComments()
+                eatCommentsAndWhitespace()
                 if !(source.first?.isNewline ?? true) {
                     // Direct parameter
                     let directParameterLocation = currentLocation
@@ -647,13 +648,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
                 throw ParseError(description: "expected expression or line break following ‘else’ to begin ‘else’-block", location: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", by: AppendingFix(appending: " <#expression#>", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
             }
-            parseComments()
+            eatCommentsAndWhitespace()
             return elseExpr
         }
     }
     
     public func parseSpecifierAfterClassName() throws -> Specifier.Kind? {
-        parseComments()
+        eatCommentsAndWhitespace()
         guard let firstWord = TermName.nextWord(in: source) else {
             return nil
         }
@@ -687,7 +688,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 return nil
             }
             
-            source.removeLeadingWhitespace()
+            eatCommentsAndWhitespace()
             let midWord = TermName.nextWord(in: source)
             
             switch midWord {

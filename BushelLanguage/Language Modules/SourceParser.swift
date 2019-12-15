@@ -94,15 +94,15 @@ public extension SourceParser {
         }
     }
     
-    func parseComments() {
-        func parseLineComment() -> Bool {
+    func eatCommentsAndWhitespace(eatingNewlines: Bool = false) {
+        func eatLineComment() -> Bool {
             guard eatLineCommentMarker() else {
                 return false
             }
             source.removeFirst(while: { !$0.isNewline })
             return true
         }
-        func parseBlockComment() -> Bool {
+        func eatBlockComment() -> Bool {
             func awaitEndMarker() {
                 while !eatBlockCommentEndMarker(), !source.isEmpty {
                     if eatBlockCommentBeginMarker() {
@@ -123,18 +123,19 @@ public extension SourceParser {
             }
         }
         
-        while parseBlockComment() || parseLineComment() {
-        }
+        repeat {
+            source.removeLeadingWhitespace(removingNewlines: eatingNewlines)
+        } while eatBlockComment() || eatLineComment()
     }
     
     func parseSequence(stoppingAt stopKeywords: [String] = []) throws -> Sequence? {
         var expressions: [Expression] = []
         
         func eatNewlines() {
-            parseComments()
+            eatCommentsAndWhitespace()
             while let newline = parseNewline() {
                 expressions.append(newline)
-                parseComments()
+                eatCommentsAndWhitespace()
             }
         }
         
@@ -152,7 +153,7 @@ public extension SourceParser {
                 }
             }
             
-            parseComments()
+            eatCommentsAndWhitespace()
             
             guard parseNewline() != nil || source.isEmpty else {
                 let nextNewline = source.firstIndex(where: { $0.isNewline }) ?? source.endIndex
@@ -192,6 +193,7 @@ public extension SourceParser {
     }
     
     private func processOperators(after lhs: Expression, lastOperation: BinaryOperation?) throws -> Expression? {
+        eatCommentsAndWhitespace()
         guard let (_, operation) = findBinaryOperator() else {
             // There's no binary operator here, so we're done.
             return nil
@@ -251,6 +253,7 @@ public extension SourceParser {
     }
     
     private func parsePrefixOperators() throws -> Expression? {
+        eatCommentsAndWhitespace()
         var operations: [UnaryOperation] = []
         while let (_, operation) = findPrefixOperator() {
             operations.append(operation)
@@ -259,7 +262,7 @@ public extension SourceParser {
         
         var expression: Expression?
         for operation in operations.reversed() {
-            source.removeLeadingWhitespace()
+            eatCommentsAndWhitespace()
             guard let operand = try expression ?? parsePrimary() else {
                 throw ParseError(description: "expected expression after prefix operator", location: currentLocation)
             }
@@ -270,11 +273,12 @@ public extension SourceParser {
     }
     
     private func parsePostfixOperators() throws -> Expression? {
+        eatCommentsAndWhitespace()
         var expression: Expression?
         while let (_, operation) = findPostfixOperator() {
             eatPostfixOperator()
             
-            source.removeLeadingWhitespace()
+            eatCommentsAndWhitespace()
             guard let operand = try expression ?? parsePrimary() else {
                 throw ParseError(description: "expected expression after prefix operator", location: currentLocation)
             }
@@ -285,6 +289,7 @@ public extension SourceParser {
     }
     
     private func parseUnprocessedPrimary() throws -> Expression? {
+        eatCommentsAndWhitespace()
         if let hashbang = eatHashbang() {
             expressionStartIndex = hashbang.location.range.lowerBound
             var hashbangs = [hashbang]
@@ -328,7 +333,6 @@ public extension SourceParser {
             return Expression(.scoped(Sequence(expressions: weaves, location: expressionLocation)), at: expressionLocation)
         } else if case let (termString, termName?) = eatKeyword() {
             expressionStartIndex = termString.startIndex
-            source.removeLeadingWhitespace()
             if let kind = try keywords[termName]!() {
                 return Expression(kind, currentElements.last!, at: expressionLocation)
             } else {
@@ -336,14 +340,12 @@ public extension SourceParser {
             }
         } else if case let (termString, term?) = try eatTerm() {
             expressionStartIndex = termString.startIndex
-            source.removeLeadingWhitespace()
             if let kind = try handle(term: Located(term, at: SourceLocation(termString.range, source: entireSource))) {
                 return Expression(kind, currentElements.last!, at: expressionLocation)
             } else {
                 return nil
             }
         } else {
-            source.removeLeadingWhitespace()
             if case (_, _?)? = awaitingEndKeywords.last.map({ Array($0) })?.findTermName(in: source) ?? nil {
                 return nil
             }
@@ -593,8 +595,7 @@ public extension SourceParser {
     }
     
     func tryEating(prefix target: String) -> Bool {
-        source.removeLeadingWhitespace()
-        
+        eatCommentsAndWhitespace()
         if
             source.hasPrefix(target),
             target.last!.isWordBreaking || (source.dropFirst(target.count).first?.isWordBreaking ?? true)
