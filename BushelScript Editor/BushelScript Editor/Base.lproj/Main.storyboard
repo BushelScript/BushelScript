@@ -381,9 +381,15 @@ DQ
                                         </menuItem>
                                         <menuItem title="BushelScript Quick Tutorial" id="5Yg-6y-ng2">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openLink:" target="PMs-4m-F4f" id="4QL-o1-yQz"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem title="AppleScript Translation Guide" id="VK3-4a-n3X">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openLink:" target="1sS-mL-F5k" id="rr0-H3-tzI"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="5me-yQ-FHZ"/>
                                         <menuItem title="Assets Attribution" id="1S0-4F-eSK">
@@ -415,6 +421,11 @@ DQ
                 <customObject id="PMs-4m-F4f" userLabel="Quick Tutorial Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io/quick-tutorial/"/>
+                    </userDefinedRuntimeAttributes>
+                </customObject>
+                <customObject id="1sS-mL-F5k" userLabel="AS Translation Guide Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io/applescript-translation/"/>
                     </userDefinedRuntimeAttributes>
                 </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
