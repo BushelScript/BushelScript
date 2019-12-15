@@ -96,7 +96,7 @@ public class RT_String: RT_Object, AEEncodable {
             }
             return RT_List(contents: value.components(separatedBy: separator.value).map { RT_String(value: $0) })
         default:
-            return perform(command: command, arguments: arguments)
+            return super.perform(command: command, arguments: arguments)
         }
     }
     
