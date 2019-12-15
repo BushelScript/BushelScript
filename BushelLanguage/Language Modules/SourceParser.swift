@@ -463,6 +463,18 @@ public extension SourceParser {
         }
     }
     
+    func awaiting<Result>(endMarkers: Set<TermName>, perform action: () throws -> Result) rethrows -> Result {
+        awaitingEndKeywords.append(endMarkers)
+        defer {
+            awaitingEndKeywords.removeLast()
+        }
+        return try action()
+    }
+    
+    func awaiting<Result>(endMarker: TermName, perform action: () throws -> Result) rethrows -> Result {
+        try awaiting(endMarkers: [endMarker], perform: action)
+    }
+    
     func parseNewline() -> Expression? {
         guard source.first?.isNewline ?? false else {
             return nil

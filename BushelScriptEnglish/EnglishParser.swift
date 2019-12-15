@@ -341,45 +341,39 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     ]
     
     private func handleOpenParenthesis() throws -> Expression.Kind? {
-        awaitingEndKeywords.append([TermName(")")])
-        defer {
-            awaitingEndKeywords.removeLast()
+        try awaiting(endMarker: TermName(")")) {
+            guard let enclosed = try parsePrimary() else {
+                throw ParseError(description: "expected expression after ‘(’", location: SourceLocation(source.range, source: entireSource))
+            }
+            guard tryEating(prefix: ")") else {
+                throw ParseError(description: "expected ‘)’ to end bracketed expression", location: SourceLocation(source.range, source: entireSource))
+            }
+            
+            return .parentheses(enclosed)
         }
-        
-        guard let enclosed = try parsePrimary() else {
-            throw ParseError(description: "expected expression after ‘(’", location: SourceLocation(source.range, source: entireSource))
-        }
-        guard tryEating(prefix: ")") else {
-            throw ParseError(description: "expected ‘)’ to end bracketed expression", location: SourceLocation(source.range, source: entireSource))
-        }
-        
-        return .parentheses(enclosed)
     }
     
     private func handleOpenBrace() throws -> Expression.Kind? {
-        awaitingEndKeywords.append([TermName("}"), TermName(",")])
-        defer {
-            awaitingEndKeywords.removeLast()
-        }
-        
-        guard !tryEating(prefix: "}") else {
-            return .list([])
-        }
-        
-        var items: [Expression] = []
-        do {
-            repeat {
-                guard let item = try parsePrimary() else {
-                    throw ParseError(description: "expected list item", location: currentLocation)
-                }
-                items.append(item)
-            } while tryEating(prefix: ",")
-            guard tryEating(prefix: "}") else {
-                throw ParseError(description: "expected ‘}’ to end list", location: currentLocation)
+        try awaiting(endMarkers: [TermName("}"), TermName(",")]) {
+            guard !tryEating(prefix: "}") else {
+                return .list([])
             }
+            
+            var items: [Expression] = []
+            do {
+                repeat {
+                    guard let item = try parsePrimary() else {
+                        throw ParseError(description: "expected list item", location: currentLocation)
+                    }
+                    items.append(item)
+                } while tryEating(prefix: ",")
+                guard tryEating(prefix: "}") else {
+                    throw ParseError(description: "expected ‘}’ to end list", location: currentLocation)
+                }
+            }
+            
+            return .list(items)
         }
-        
-        return .list(items)
     }
     
     private func handleFunctionStart() throws -> Expression.Kind? {
