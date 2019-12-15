@@ -288,30 +288,14 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("it"): {
             .it
         },
-        TermName("every"): {
-            try self.parseSpecifierAfterQuantifier(kind: .all, startIndex: self.expressionStartIndex)
-        },
-        TermName("all"): {
-            try self.parseSpecifierAfterQuantifier(kind: .all, startIndex: self.expressionStartIndex)
-        },
-        TermName("first"): {
-            try self.parseSpecifierAfterQuantifier(kind: .first, startIndex: self.expressionStartIndex)
-        },
-        TermName("front"): {
-            try self.parseSpecifierAfterQuantifier(kind: .first, startIndex: self.expressionStartIndex)
-        },
-        TermName("middle"): {
-            try self.parseSpecifierAfterQuantifier(kind: .middle, startIndex: self.expressionStartIndex)
-        },
-        TermName("last"): {
-            try self.parseSpecifierAfterQuantifier(kind: .last, startIndex: self.expressionStartIndex)
-        },
-        TermName("back"): {
-            try self.parseSpecifierAfterQuantifier(kind: .last, startIndex: self.expressionStartIndex)
-        },
-        TermName("some"): {
-            try self.parseSpecifierAfterQuantifier(kind: .random, startIndex: self.expressionStartIndex)
-        },
+        TermName("every"): handleQuantifier(.all),
+        TermName("all"): handleQuantifier(.all),
+        TermName("first"): handleQuantifier(.first),
+        TermName("front"): handleQuantifier(.first),
+        TermName("middle"): handleQuantifier(.middle),
+        TermName("last"): handleQuantifier(.last),
+        TermName("back"): handleQuantifier(.last),
+        TermName("some"): handleQuantifier(.random),
         TermName("ref"): {
             guard let expression = try self.parsePrimary() else {
                 throw ParseError(description: "expected expression after ‘ref’", location: self.currentLocation)
@@ -556,6 +540,12 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             throw ParseError(description: "expected new-value-expression after ‘to’", location: currentLocation)
         }
         return .set(destinationExpression, to: newValueExpression)
+    }
+    
+    private func handleQuantifier(_ kind: Specifier.Kind) -> () throws -> Expression.Kind? {
+        {
+            try self.parseSpecifierAfterQuantifier(kind: kind, startIndex: self.expressionStartIndex)
+        }
     }
     
     public func handle(term: LocatedTerm) throws -> Expression.Kind? {
