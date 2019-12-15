@@ -6,16 +6,14 @@ public struct Lexicon: TerminologySource {
     
     public typealias Term = Bushel.Term
     
-    private(set) public var dictionaryStack: [TermDictionary] = [] {
-        didSet {
-            allExportingDictionaries = dictionaryStack.flatMap { dictionary in
-                dictionary.exportingDictionaryContainers.values.compactMap({ dictionaryContainer in
-                    dictionaryContainer.terminology
-                })
-            }
+    private(set) public var dictionaryStack: [TermDictionary] = []
+    private var allExportingDictionaries: [TermDictionary] {
+        dictionaryStack.flatMap { dictionary in
+            dictionary.exportingDictionaryContainers.values.compactMap({ dictionaryContainer in
+                dictionaryContainer.terminology
+            })
         }
     }
-    private var allExportingDictionaries: [TermDictionary] = []
     
     private(set) public var pool = TermPool()
     

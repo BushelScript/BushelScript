@@ -36,28 +36,15 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
         self.contentsByUID = new.contentsByUID.merging(old.contentsByUID, uniquingKeysWith: { $1 })
         self.contentsByName = new.contentsByName.merging(old.contentsByName, uniquingKeysWith: { $1 })
         self.dictionaryContainers = new.dictionaryContainers.merging(old.dictionaryContainers, uniquingKeysWith: { $1 })
+        self.exportingDictionaryContainers = new.exportingDictionaryContainers.merging(old.exportingDictionaryContainers, uniquingKeysWith: { $1 })
     }
     
     public func term(forUID uid: String) -> Term? {
-        contentsByUID[uid] ?? {
-            for container in dictionaryContainers.values {
-                if let term = container.terminology?.term(forUID: uid) {
-                    return term
-                }
-            }
-            return nil
-        }()
+        contentsByUID[uid]
     }
     
     public func term(named name: TermName) -> Term? {
-        contentsByName[name] ?? {
-            for container in dictionaryContainers.values {
-                if let term = container.terminology?.term(named: name) {
-                    return term
-                }
-            }
-            return nil
-        }()
+        contentsByName[name]
     }
     
     public func add(_ term: Term) {
