@@ -64,8 +64,6 @@
 		3C75067223A1A4EF006E7591 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C75067323A1A4EF006E7591 /* Bushel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C75067523A1A4F1006E7591 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
-		3C75067723A1A4F4006E7591 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
-		3C75067823A1A4F4006E7591 /* Bushel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C8FEEF322DE2B8300C1F1CF /* Builtin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8FEEF222DE2B8300C1F1CF /* Builtin.swift */; };
 		3C906F00231CD30A0099B139 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906EFF231CD30A0099B139 /* Ordering.swift */; };
 		3C906F24231DDAC00099B139 /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906F23231DDAC00099B139 /* Sequence.swift */; };
@@ -83,13 +81,6 @@
 		3CC224942391D9D500448D25 /* CommandInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224932391D9D500448D25 /* CommandInfo.swift */; };
 		3CC224962391E06800448D25 /* TermDescriptors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224952391E06800448D25 /* TermDescriptors.swift */; };
 		3CC224982391E08800448D25 /* TermUIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224972391E08800448D25 /* TermUIDs.swift */; };
-		3CC224B8239207A500448D25 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
-		3CC224C5239207A900448D25 /* bushelscript_en.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B75982305B5980006C354 /* bushelscript_en.framework */; };
-		3CC224D5239207E700448D25 /* EntryPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224CD239207E700448D25 /* EntryPoint.swift */; };
-		3CC224D8239207E700448D25 /* PirateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224D1239207E700448D25 /* PirateFormatter.swift */; };
-		3CC224D9239207E700448D25 /* PirateParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224D2239207E700448D25 /* PirateParser.swift */; };
-		3CC224DA239207E700448D25 /* BushelScriptPirate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CC224D3239207E700448D25 /* BushelScriptPirate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CC224DC239207EF00448D25 /* LangaugeConstructTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224CF239207E700448D25 /* LangaugeConstructTests.swift */; };
 		3CCA1C7E235D0C010037058C /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCA1C7B235D0C010037058C /* Logging.swift */; };
 		3CCD8AB822CC45040049C74F /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
 		3CCD8ABD22CC45040049C74F /* BushelRTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8ABC22CC45040049C74F /* BushelRTTests.swift */; };
@@ -179,27 +170,6 @@
 			remoteGlobalIDString = 3C35A5BA22C81DE7002D4582;
 			remoteInfo = Bushel;
 		};
-		3CC224AD239207A500448D25 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C6B756E2305AF3F0006C354;
-			remoteInfo = BushelParser;
-		};
-		3CC224AF239207A500448D25 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C35A5BA22C81DE7002D4582;
-			remoteInfo = Bushel;
-		};
-		3CC224C1239207A900448D25 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C6B75972305B5980006C354;
-			remoteInfo = BushelScriptEnglish;
-		};
 		3CCD8AB922CC45040049C74F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
@@ -228,17 +198,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				3C75067323A1A4EF006E7591 /* Bushel.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3C75067923A1A4F4006E7591 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				3C75067823A1A4F4006E7591 /* Bushel.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -354,15 +313,6 @@
 		3CC224992391F3C400448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC2249D2391F6A100448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC224A02391FA2A00448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		3CC224BD239207A500448D25 /* bushelscript_argh.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = bushelscript_argh.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CC224CA239207A900448D25 /* BushelScriptPirateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BushelScriptPirateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CC224CD239207E700448D25 /* EntryPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntryPoint.swift; sourceTree = "<group>"; };
-		3CC224CF239207E700448D25 /* LangaugeConstructTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LangaugeConstructTests.swift; sourceTree = "<group>"; };
-		3CC224D0239207E700448D25 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3CC224D1239207E700448D25 /* PirateFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PirateFormatter.swift; sourceTree = "<group>"; };
-		3CC224D2239207E700448D25 /* PirateParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PirateParser.swift; sourceTree = "<group>"; };
-		3CC224D3239207E700448D25 /* BushelScriptPirate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BushelScriptPirate.h; sourceTree = "<group>"; };
-		3CC224D4239207E700448D25 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CCA1C7B235D0C010037058C /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3CCD8AAF22CC45040049C74F /* BushelRT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BushelRT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CCD8AB122CC45040049C74F /* BushelRT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BushelRT.h; sourceTree = "<group>"; };
@@ -434,23 +384,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3CC224B6239207A500448D25 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3CC224B8239207A500448D25 /* BushelLanguage.framework in Frameworks */,
-				3C75067723A1A4F4006E7591 /* Bushel.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3CC224C4239207A900448D25 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3CC224C5239207A900448D25 /* bushelscript_en.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3CCD8AAC22CC45040049C74F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -514,7 +447,6 @@
 				3C35A5BD22C81DE7002D4582 /* Bushel */,
 				3C6B75702305AF3F0006C354 /* BushelLanguage */,
 				3C6B75992305B5980006C354 /* BushelScriptEnglish */,
-				3CC224CC239207E700448D25 /* BushelScriptPirate */,
 				3CCD8AB022CC45040049C74F /* BushelRT */,
 				3C72CEBC22E1023200A98EC7 /* SwiftAutomation */,
 				3C35A5BC22C81DE7002D4582 /* Products */,
@@ -533,8 +465,6 @@
 				3C6B75772305AF3F0006C354 /* BushelLanguageTests.xctest */,
 				3C6B75982305B5980006C354 /* bushelscript_en.framework */,
 				3C6B75A02305B5990006C354 /* BushelScriptEnglishTests.xctest */,
-				3CC224BD239207A500448D25 /* bushelscript_argh.framework */,
-				3CC224CA239207A900448D25 /* BushelScriptPirateTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -757,28 +687,6 @@
 			name = Config;
 			sourceTree = "<group>";
 		};
-		3CC224CC239207E700448D25 /* BushelScriptPirate */ = {
-			isa = PBXGroup;
-			children = (
-				3CC224CD239207E700448D25 /* EntryPoint.swift */,
-				3CC224CE239207E700448D25 /* BushelScriptPirateTests */,
-				3CC224D1239207E700448D25 /* PirateFormatter.swift */,
-				3CC224D2239207E700448D25 /* PirateParser.swift */,
-				3CC224D3239207E700448D25 /* BushelScriptPirate.h */,
-				3CC224D4239207E700448D25 /* Info.plist */,
-			);
-			path = BushelScriptPirate;
-			sourceTree = "<group>";
-		};
-		3CC224CE239207E700448D25 /* BushelScriptPirateTests */ = {
-			isa = PBXGroup;
-			children = (
-				3CC224CF239207E700448D25 /* LangaugeConstructTests.swift */,
-				3CC224D0239207E700448D25 /* Info.plist */,
-			);
-			path = BushelScriptPirateTests;
-			sourceTree = "<group>";
-		};
 		3CCD8AB022CC45040049C74F /* BushelRT */ = {
 			isa = PBXGroup;
 			children = (
@@ -870,14 +778,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C6B75AA2305B5990006C354 /* BushelScriptEnglish.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3CC224B0239207A500448D25 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3CC224DA239207E700448D25 /* BushelScriptPirate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1008,45 +908,6 @@
 			productReference = 3C6B75A02305B5990006C354 /* BushelScriptEnglishTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		3CC224AB239207A500448D25 /* BushelScriptPirate */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3CC224BA239207A500448D25 /* Build configuration list for PBXNativeTarget "BushelScriptPirate" */;
-			buildPhases = (
-				3CC224B0239207A500448D25 /* Headers */,
-				3CC224B2239207A500448D25 /* Sources */,
-				3CC224B6239207A500448D25 /* Frameworks */,
-				3CC224B9239207A500448D25 /* Resources */,
-				3C75067923A1A4F4006E7591 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				3CC224AC239207A500448D25 /* PBXTargetDependency */,
-				3CC224AE239207A500448D25 /* PBXTargetDependency */,
-			);
-			name = BushelScriptPirate;
-			productName = BushelScriptEnglish;
-			productReference = 3CC224BD239207A500448D25 /* bushelscript_argh.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		3CC224BF239207A900448D25 /* BushelScriptPirateTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3CC224C7239207A900448D25 /* Build configuration list for PBXNativeTarget "BushelScriptPirateTests" */;
-			buildPhases = (
-				3CC224C2239207A900448D25 /* Sources */,
-				3CC224C4239207A900448D25 /* Frameworks */,
-				3CC224C6239207A900448D25 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				3CC224C0239207A900448D25 /* PBXTargetDependency */,
-			);
-			name = BushelScriptPirateTests;
-			productName = BushelScriptEnglishTests;
-			productReference = 3CC224CA239207A900448D25 /* BushelScriptPirateTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		3CCD8AAE22CC45040049C74F /* BushelRT */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3CCD8AC022CC45040049C74F /* Build configuration list for PBXNativeTarget "BushelRT" */;
@@ -1158,8 +1019,6 @@
 				3C6B75762305AF3F0006C354 /* BushelLanguageTests */,
 				3C6B75972305B5980006C354 /* BushelScriptEnglish */,
 				3C6B759F2305B5990006C354 /* BushelScriptEnglishTests */,
-				3CC224AB239207A500448D25 /* BushelScriptPirate */,
-				3CC224BF239207A900448D25 /* BushelScriptPirateTests */,
 				3CCD8AAE22CC45040049C74F /* BushelRT */,
 				3CCD8AB622CC45040049C74F /* BushelRTTests */,
 			);
@@ -1227,20 +1086,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		3C6B759E2305B5990006C354 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3CC224B9239207A500448D25 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3CC224C6239207A900448D25 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1345,24 +1190,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3CC224B2239207A500448D25 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3CC224D9239207E700448D25 /* PirateParser.swift in Sources */,
-				3CC224D5239207E700448D25 /* EntryPoint.swift in Sources */,
-				3CC224D8239207E700448D25 /* PirateFormatter.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3CC224C2239207A900448D25 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3CC224DC239207EF00448D25 /* LangaugeConstructTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3CCD8AAB22CC45040049C74F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1446,21 +1273,6 @@
 			isa = PBXTargetDependency;
 			target = 3C35A5BA22C81DE7002D4582 /* Bushel */;
 			targetProxy = 3C8FEEF422DE2C2200C1F1CF /* PBXContainerItemProxy */;
-		};
-		3CC224AC239207A500448D25 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3C6B756E2305AF3F0006C354 /* BushelLanguage */;
-			targetProxy = 3CC224AD239207A500448D25 /* PBXContainerItemProxy */;
-		};
-		3CC224AE239207A500448D25 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3C35A5BA22C81DE7002D4582 /* Bushel */;
-			targetProxy = 3CC224AF239207A500448D25 /* PBXContainerItemProxy */;
-		};
-		3CC224C0239207A900448D25 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3C6B75972305B5980006C354 /* BushelScriptEnglish */;
-			targetProxy = 3CC224C1239207A900448D25 /* PBXContainerItemProxy */;
 		};
 		3CCD8ABA22CC45040049C74F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1867,99 +1679,6 @@
 			};
 			name = Release;
 		};
-		3CC224BB239207A500448D25 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
-				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = /;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = BushelScriptPirate/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/BushelScript/Languages";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScriptPirate;
-				PRODUCT_NAME = bushelscript_argh;
-				SKIP_INSTALL = NO;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		3CC224BC239207A500448D25 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
-				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = /;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = BushelScriptPirate/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/BushelScript/Languages";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScriptPirate;
-				PRODUCT_NAME = bushelscript_argh;
-				SKIP_INSTALL = NO;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
-		3CC224C8239207A900448D25 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = BushelScriptPirate/BushelScriptPirateTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScriptPirateTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		3CC224C9239207A900448D25 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = BushelScriptPirate/BushelScriptPirateTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScriptPirateTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
 		3CCD8AC122CC45040049C74F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2113,24 +1832,6 @@
 			buildConfigurations = (
 				3C6B75B32305B5990006C354 /* Debug */,
 				3C6B75B42305B5990006C354 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3CC224BA239207A500448D25 /* Build configuration list for PBXNativeTarget "BushelScriptPirate" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3CC224BB239207A500448D25 /* Debug */,
-				3CC224BC239207A500448D25 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3CC224C7239207A900448D25 /* Build configuration list for PBXNativeTarget "BushelScriptPirateTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3CC224C8239207A900448D25 /* Debug */,
-				3CC224C9239207A900448D25 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
