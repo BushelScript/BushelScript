@@ -435,6 +435,16 @@ public extension SourceParser {
         return (TermName(words), SourceLocation(startIndex..<endIndex, source: entireSource))
     }
     
+    func parseClassTerm() throws -> Located<Bushel.ClassTerm>? {
+        guard
+            let typeExpression = try parsePrimary(),
+            case .class_(let type) = typeExpression.kind
+        else {
+            return nil
+        }
+        return Located(type, at: typeExpression.location)
+    }
+    
     func parseTermNameLazily() throws -> (TermName, SourceLocation)? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex

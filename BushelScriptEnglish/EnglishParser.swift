@@ -703,14 +703,10 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     public func parseSpecifierAfterQuantifier(kind: Specifier.Kind, startIndex: Substring.Index) throws -> Expression.Kind? {
-        guard
-            let classExpression = try parsePrimary(),
-            case .class_(let term) = classExpression.kind
-        else {
+        guard let type = try parseClassTerm() else {
             throw ParseError(description: "expected type name", location: currentLocation)
         }
-        
-        let specifier = Specifier(class: Located(term, at: classExpression.location), kind: kind)
+        let specifier = Specifier(class: Located(type.term, at: type.location), kind: kind)
         return .specifier(specifier)
     }
     
@@ -772,14 +768,10 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             return nil
         }
         
-        guard
-            let toTypeExpression = try parsePrimary(),
-            case .class_(let toType) = toTypeExpression.kind
-        else {
+        guard let toType = try parseClassTerm() else {
             throw ParseError(description: "expected type name", location: currentLocation)
         }
-        
-        return .coercion(of: expression, to: Located(toType, at: expressionLocation))
+        return .coercion(of: expression, to: toType)
     }
     
 }
