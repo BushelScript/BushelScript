@@ -1,19 +1,9 @@
 import BushelLanguage
 import Bushel
-import SDEFinitely
 
 public final class EnglishParser: BushelLanguage.SourceParser {
     
-    private static var sdefCache: [URL : Data] = [:]
-    
-    private static func getSDEF(from url: URL) throws -> Data {
-        if let sdef = sdefCache[url] {
-            return sdef
-        }
-        let sdef = try SDEFinitely.readSDEF(from: url)
-        sdefCache[url] = sdef
-        return sdef
-    }
+    public static var sdefCache: [URL : Data] = [:]
     
     public var entireSource: String
     public var source: Substring
@@ -477,87 +467,22 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             throw ParseError(description: "expected ‘to’ or line break following target expression to begin ‘tell’-block", location: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " to", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
         }
         
-        var terminologyPushed = false
-        defer {
-            if terminologyPushed {
-                lexicon.pop()
+        return try withTerminology(of: target) {
+            let toExpr: Expression
+            if foundNewline {
+                toExpr = try withScope {
+                    return try parseSequence() ?? Sequence.empty(at: currentIndex)
+                }
+            } else {
+                guard let toExpression = try parsePrimary() else {
+                    let toLocation = SourceLocation(toStartIndex..<currentIndex, source: entireSource)
+                    throw ParseError(description: "expected expression after ‘to’ in ‘tell’-expression", location: toLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it with a new target", by: AppendingFix(appending: " <#expression#>", at: currentLocation))])
+                }
+                toExpr = toExpression
             }
+            
+            return .tell(target: target, to: toExpr)
         }
-        
-        noTerminology: do {
-            let appBundle: Bundle
-            switch target.kind {
-            case .specifier(let specifier):
-                guard
-                    let code = (specifier.idTerm.term as? Bushel.ClassTerm)?.code,
-                    code == cApplication
-                else {
-                    break noTerminology
-                }
-                
-                switch specifier.kind {
-                case .simple(let dataExpression), .name(let dataExpression):
-                    guard case .string(let name) = dataExpression.kind else {
-                        break noTerminology
-                    }
-                    guard let bundle = Bundle(applicationName: name) else {
-                        throw ParseError(description: "no application found with name ‘\(name)’", location: target.location)
-                    }
-                    appBundle = bundle
-                case .id(let dataExpression):
-                    guard case .string(let bundleID) = dataExpression.kind else {
-                        break noTerminology
-                    }
-                    guard let bundle = Bundle(applicationBundleIdentifier: bundleID) else {
-                        throw ParseError(description: "no application found for bundle identifier ‘\(bundleID)’", location: target.location)
-                    }
-                    appBundle = bundle
-                default:
-                    break noTerminology
-                }
-                
-                let sdef: Data
-                do {
-                    sdef = try EnglishParser.getSDEF(from: appBundle.bundleURL)
-                } catch is SDEFError {
-                    // No terminology available
-                    break
-                }
-                
-                let dictionary = lexicon.push()
-                terminologyPushed = true
-                dictionary.add(try Bushel.parse(sdef: sdef, under: lexicon))
-            case .use(let resource),
-                 .resource(let resource):
-                switch resource {
-                case .applicationByName(let term as LocatedTerm),
-                     .applicationByID(let term as LocatedTerm):
-                    lexicon.push(name: term.name)
-                    terminologyPushed = true
-                }
-            default:
-                break noTerminology
-            }
-        } catch let error as ParseError {
-            throw error
-        } catch {
-            throw ParseError(description: "an error occurred while retrieving terminology: \(error)", location: target.location)
-        }
-        
-        let toExpr: Expression
-        if foundNewline {
-            toExpr = try withScope {
-                return try parseSequence() ?? Sequence.empty(at: currentIndex)
-            }
-        } else {
-            guard let toExpression = try parsePrimary() else {
-                let toLocation = SourceLocation(toStartIndex..<currentIndex, source: entireSource)
-                throw ParseError(description: "expected expression after ‘to’ in ‘tell’-expression", location: toLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it with a new target", by: AppendingFix(appending: " <#expression#>", at: currentLocation))])
-            }
-            toExpr = toExpression
-        }
-        
-        return .tell(target: target, to: toExpr)
     }
     
     private func handleLet() throws -> Expression.Kind? {
@@ -611,18 +536,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
         
         lexicon.add(locatedTerm)
-        
-        let sdef: Data
-        do {
-            sdef = try EnglishParser.getSDEF(from: bundle.bundleURL)
-        } catch is SDEFError {
-            // No terminology available
-            return .use(resource: resource)
-        }
-        
-        let dictionary = term.makeDictionary(under: lexicon.pool)
-        dictionary.add(try Bushel.parse(sdef: sdef, under: lexicon))
-        
+        try loadTerminology(at: bundle.bundleURL, into: term)
         return .use(resource: resource)
     }
     

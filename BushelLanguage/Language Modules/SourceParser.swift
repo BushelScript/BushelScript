@@ -1,4 +1,5 @@
 import Bushel
+import SDEFinitely
 
 public struct ParseError: Error {
     
@@ -26,6 +27,8 @@ public typealias KeywordHandler = () throws -> Expression.Kind?
 
 /// Parses source code into an AST.
 public protocol SourceParser: AnyObject {
+    
+    static var sdefCache: [URL : Data] { get set }
     
     var entireSource: String { get }
     var source: Substring { get set }
@@ -597,6 +600,92 @@ public extension SourceParser {
         lexicon.push()
         defer { lexicon.pop() }
         return Expression(.scoped(try parse()), at: expressionLocation)
+    }
+    
+    func withTerminology<Result>(of expression: Expression, parse: () throws -> Result) throws -> Result {
+        var terminologyPushed = false
+        defer {
+            if terminologyPushed {
+                lexicon.pop()
+            }
+        }
+        
+        noTerminology: do {
+            let appBundle: Bundle
+            switch expression.kind {
+            case .specifier(let specifier):
+                guard
+                    let code = (specifier.idTerm.term as? Bushel.ClassTerm)?.code,
+                    code == cApplication
+                else {
+                    break noTerminology
+                }
+                
+                switch specifier.kind {
+                case .simple(let dataExpression), .name(let dataExpression):
+                    guard case .string(let name) = dataExpression.kind else {
+                        break noTerminology
+                    }
+                    guard let bundle = Bundle(applicationName: name) else {
+                        throw ParseError(description: "no application found with name ‘\(name)’", location: expression.location)
+                    }
+                    appBundle = bundle
+                case .id(let dataExpression):
+                    guard case .string(let bundleID) = dataExpression.kind else {
+                        break noTerminology
+                    }
+                    guard let bundle = Bundle(applicationBundleIdentifier: bundleID) else {
+                        throw ParseError(description: "no application found for bundle identifier ‘\(bundleID)’", location: expression.location)
+                    }
+                    appBundle = bundle
+                default:
+                    break noTerminology
+                }
+                
+                let dictionary = lexicon.push()
+                terminologyPushed = true
+                try loadTerminology(at: appBundle.bundleURL, into: dictionary)
+            case .use(let resource),
+                 .resource(let resource):
+                switch resource {
+                case .applicationByName(let term as LocatedTerm),
+                     .applicationByID(let term as LocatedTerm):
+                    lexicon.push(name: term.name)
+                    terminologyPushed = true
+                }
+            default:
+                break noTerminology
+            }
+        } catch let error as ParseError {
+            throw error
+        } catch {
+            throw ParseError(description: "an error occurred while retrieving terminology: \(error)", location: expression.location)
+        }
+        
+        return try parse()
+    }
+    
+    func loadTerminology(at url: URL, into dictionaryContainer: TermDictionaryDelayedInitContainer) throws {
+        try loadTerminology(at: url, into: dictionaryContainer.makeDictionary(under: lexicon.pool))
+    }
+    
+    func loadTerminology(at url: URL, into dictionary: TermDictionary) throws {
+        let sdef: Data
+        do {
+            sdef = try Self.getSDEF(from: url)
+        } catch is SDEFError {
+            return
+        }
+        dictionary.add(try Bushel.parse(sdef: sdef, under: lexicon))
+    }
+    
+    static func getSDEF(from url: URL) throws -> Data {
+        if let sdef = sdefCache[url] {
+            return sdef
+        }
+        let sdef = try SDEFinitely.readSDEF(from: url)
+        sdefCache[url] = sdef
+        return sdef
     }
     
     var currentLocation: SourceLocation {
