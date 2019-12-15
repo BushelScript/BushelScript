@@ -6,7 +6,16 @@ public struct Lexicon: TerminologySource {
     
     public typealias Term = Bushel.Term
     
-    private(set) public var dictionaryStack: [TermDictionary] = []
+    private(set) public var dictionaryStack: [TermDictionary] = [] {
+        didSet {
+            allExportingDictionaries = dictionaryStack.flatMap { dictionary in
+                dictionary.exportingDictionaryContainers.values.compactMap({ dictionaryContainer in
+                    dictionaryContainer.terminology
+                })
+            }
+        }
+    }
+    private var allExportingDictionaries: [TermDictionary] = []
     
     private(set) public var pool = TermPool()
     
@@ -23,7 +32,7 @@ public struct Lexicon: TerminologySource {
             }
             return nil
         }
-        return find(in: dictionaryStack.reversed()) ?? find(in: pool.exportedDictionaries.reversed())
+        return find(in: dictionaryStack.reversed()) ?? find(in: allExportingDictionaries.reversed())
     }
     
     public func makeUID(_ kind: String, _ names: TermName...) -> String {
@@ -32,7 +41,9 @@ public struct Lexicon: TerminologySource {
     
     @discardableResult
     public mutating func push(name: TermName? = nil) -> TermDictionary {
-        let dictionary = pool.dictionary(named: name)
+        let dictionary =
+            name.flatMap { self.dictionary(named: $0) } ??
+            TermDictionary(pool: pool, name: name, exports: false)
         dictionaryStack.append(dictionary)
         return dictionary
     }
@@ -41,14 +52,6 @@ public struct Lexicon: TerminologySource {
         if !dictionaryStack.isEmpty {
             dictionaryStack.removeLast()
         }
-    }
-    
-    public mutating func dictionary(named name: TermName, exports: Bool) -> TermDictionary {
-        return pool.dictionary(named: name, exports: exports)
-    }
-    
-    public mutating func dictionary(named name: TermName) -> TermDictionary {
-        return pool.dictionary(named: name)
     }
     
     public mutating func add(_ term: Term) {

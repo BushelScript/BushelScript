@@ -505,22 +505,19 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
         
         let term: Term & TermDictionaryDelayedInitContainer
-        let locatedTerm: LocatedTerm
         let resource: Resource
         if byBundleID {
             let idTerm = Located(ApplicationIDTerm(name.normalized, name: name, bundle: bundle), at: nameLocation)
             term = idTerm.term
-            locatedTerm = idTerm
             resource = .applicationByID(idTerm)
         } else {
             let nameTerm = Located(ApplicationNameTerm(name.normalized, name: name, bundle: bundle), at: nameLocation)
             term = nameTerm.term
-            locatedTerm = nameTerm
             resource = .applicationByName(nameTerm)
         }
         
-        lexicon.add(locatedTerm)
         try loadTerminology(at: bundle.bundleURL, into: term)
+        lexicon.add(term)
         return .use(resource: resource)
     }
     

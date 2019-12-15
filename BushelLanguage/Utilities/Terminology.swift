@@ -19,17 +19,17 @@ public extension TerminologySource {
                     termString.removeLast(termName.words.last!.count)
                 }
             } else {
-                let outerSource = self.term(named: scopes.first!) as? TermDictionaryContainer
+                let outerDict = self.dictionary(named: scopes.first!)
                 guard
-                    let innermostSource = scopes.dropFirst().reduce(outerSource?.terminology, { (source: TermDictionary?, scopeName: TermName) -> TermDictionary? in
-                        (source?.term(named: scopeName) as? TermDictionaryContainer)?.terminology
+                    let innermostDict = scopes.dropFirst().reduce(outerDict, { (dict: TermDictionary?, scopeName: TermName) -> TermDictionary? in
+                        dict?.dictionary(named: scopeName)
                     })
                 else {
                     throw ParseError(description: "no such dictionary ‘\(termName.normalizedScopes)’", location: SourceLocation(termString.range, source: String(sourceCode)))
                 }
                 
                 let scopelessTermName = TermName(termName.words)
-                if let term = innermostSource.term(named: scopelessTermName) as? Term {
+                if let term = innermostDict.term(named: scopelessTermName) as? Term {
                     return (termString, term)
                 } else {
                     termString.removeLast(termName.words.last!.count)

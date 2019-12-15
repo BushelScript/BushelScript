@@ -6,15 +6,9 @@ public class TermPool: TerminologySource {
     
     public typealias Term = Bushel.Term
     
-    // TODO: Keep track of where terms came from.
-    //       To enabled messages like, e.g.,
-    //           undefined term "outgoing mssage"
-    //               - fix: did you mean “outgoing message” (from dictionary “Mail”)?
-    private var containerTerms: [TermName : TermDictionaryContainer] = [:]
-    public var exportedDictionaries: [TermDictionary] = []
-    public var byName: [TermName : Term] = [:]
-    public var byCode: [OSType : ConstantTerm] = [:]
-    public var byID: [String : Term] = [:]
+    private(set) public var byName: [TermName : Term] = [:]
+    private(set) public var byCode: [OSType : ConstantTerm] = [:]
+    private(set) public var byID: [String : Term] = [:]
     
     public init(contents: Set<Term> = []) {
         for term in contents {
@@ -36,9 +30,6 @@ public class TermPool: TerminologySource {
     
     public func add(_ term: Term) {
         if let name = term.name {
-            if let container = term as? TermDictionaryContainer {
-                containerTerms[name] = container
-            }
             byName[name] = term
         }
         if let term = term as? ConstantTerm, let code = term.code {
@@ -53,44 +44,8 @@ public class TermPool: TerminologySource {
         }
     }
     
-    public func dictionary(named name: TermName?, exports: Bool = false) -> TermDictionary {
-        if
-            let name = name,
-            let dictionary = containerTerms[name]?.terminology
-        {
-            return dictionary
-        } else {
-            return makeDictionary(named: name, exports: exports)
-        }
-    }
-    
-    private func makeDictionary(named name: TermName?, exports: Bool = false) -> TermDictionary {
-        let container: TermDictionaryContainer
-        let dictionary = TermDictionary(pool: self, name: name, exports: exports)
-        if let name = name {
-            container = DictionaryTerm(name.normalized, name: name, terminology: dictionary)
-        } else {
-            container = UnnamedDictionaryContainer(terminology: dictionary)
-        }
-        containerTerms[name ?? TermName(UUID().uuidString)] = container
-        if dictionary.exports {
-            exportedDictionaries.append(dictionary)
-        }
-        return dictionary
-    }
-    
     public var pool: TermPool {
         return self
-    }
-    
-}
-
-private class UnnamedDictionaryContainer: TermDictionaryContainer {
-    
-    var terminology: TermDictionary?
-    
-    init(terminology: TermDictionary?) {
-        self.terminology = terminology
     }
     
 }

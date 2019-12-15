@@ -22,7 +22,7 @@ public struct DictionaryDescriptor: TermDescriptor {
     }
     
     public func realize(_ pool: TermPool) -> Term {
-        let contentsDictionary = pool.dictionary(named: name, exports: true)
+        let contentsDictionary = TermDictionary(pool: pool, name: name, exports: true)
         contentsDictionary.add(contents.map { $0.realize(pool) })
         return DictionaryTerm(uid, name: name, terminology: contentsDictionary)
     }

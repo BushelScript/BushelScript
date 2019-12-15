@@ -11,9 +11,10 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
     private var contentsByUID: [String : Term]
     private var contentsByName: [TermName : Term]
     
-    public var includedDictionary: TermDictionary?
+    private(set) public var dictionaryContainers: [TermName : TermDictionaryContainer] = [:]
+    private(set) public var exportingDictionaryContainers: [TermName : TermDictionaryContainer] = [:]
     
-    internal init(pool: TermPool, name: TermName?, exports: Bool, contents: [Term] = [], including included: TermDictionary? = nil) {
+    public init(pool: TermPool, name: TermName?, exports: Bool, contents: [Term] = []) {
         self.pool = pool
         self.name = name
         self.exports = exports
@@ -22,17 +23,41 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
             contents.compactMap { term in
                 term.name.flatMap { (key: $0, value: term) }
             })
-        self.includedDictionary = included
+        
+        catalogueDictionaryContainers(in: contents)
         
         pool.add(contents)
     }
     
+    public init(merging new: TermDictionary, into old: TermDictionary) {
+        self.pool = new.pool
+        self.name = new.name
+        self.exports = new.exports
+        self.contentsByUID = new.contentsByUID.merging(old.contentsByUID, uniquingKeysWith: { $1 })
+        self.contentsByName = new.contentsByName.merging(old.contentsByName, uniquingKeysWith: { $1 })
+        self.dictionaryContainers = new.dictionaryContainers.merging(old.dictionaryContainers, uniquingKeysWith: { $1 })
+    }
+    
     public func term(forUID uid: String) -> Term? {
-        contentsByUID[uid] ?? includedDictionary?.term(forUID: uid)
+        contentsByUID[uid] ?? {
+            for container in dictionaryContainers.values {
+                if let term = container.terminology?.term(forUID: uid) {
+                    return term
+                }
+            }
+            return nil
+        }()
     }
     
     public func term(named name: TermName) -> Term? {
-        contentsByName[name] ?? includedDictionary?.term(named: name)
+        contentsByName[name] ?? {
+            for container in dictionaryContainers.values {
+                if let term = container.terminology?.term(named: name) {
+                    return term
+                }
+            }
+            return nil
+        }()
     }
     
     public func add(_ term: Term) {
@@ -40,6 +65,7 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
         if let name = term.name {
             contentsByName[name] = term
         }
+        catalogueDictionaryContainers(in: [term])
         pool.add(term)
     }
     
@@ -51,13 +77,29 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
             },
             uniquingKeysWith: { $1 }
         )
+        catalogueDictionaryContainers(in: terms)
         pool.add(terms)
     }
     
     public func merge(_ dictionary: TermDictionary) {
         contentsByUID.merge(dictionary.contentsByUID, uniquingKeysWith: { $1 })
         contentsByName.merge(dictionary.contentsByName, uniquingKeysWith: { $1 })
-        pool.add(Array(dictionary.contentsByName.values))
+        catalogueDictionaryContainers(in: dictionary.contentsByUID.values)
+        pool.add(Array(dictionary.contentsByUID.values))
+    }
+    
+    private func catalogueDictionaryContainers<Terms: Collection>(in terms: Terms) where Terms.Element == Term {
+        for case let containerTerm as TermDictionaryContainer in terms {
+            if
+                let dictionary = containerTerm.terminology,
+                let dictionaryName = containerTerm.terminology?.name
+            {
+                dictionaryContainers[dictionaryName] = containerTerm
+                if dictionary.exports {
+                    exportingDictionaryContainers[dictionaryName] = containerTerm
+                }
+            }
+        }
     }
     
     public var description: String {

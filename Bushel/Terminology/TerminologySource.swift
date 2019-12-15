@@ -10,8 +10,8 @@ public protocol TerminologySource {
 
 extension TerminologySource {
     
-    public func term(for stringName: String) -> Term? {
-        return term(named: TermName(stringName))
+    public func dictionary(named name: TermName) -> TermDictionary? {
+        (term(named: name) as? TermDictionaryContainer)?.terminology
     }
     
 }
@@ -34,7 +34,7 @@ public extension TermDictionaryDelayedInitContainer {
     
     @discardableResult
     func makeDictionary(under pool: TermPool) -> TermDictionary {
-        terminology = pool.dictionary(named: name, exports: exportsTerminology)
+        terminology = TermDictionary(pool: pool, name: name, exports: exportsTerminology)
         return terminology!
     }
     

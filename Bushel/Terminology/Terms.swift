@@ -118,8 +118,11 @@ public final class ClassTerm: ConstantTerm, TermDictionaryDelayedInitContainer {
     
     public var terminology: TermDictionary? = nil {
         didSet {
-            if let parentTerminology = parentClass?.terminology {
-                terminology?.includedDictionary = parentTerminology
+            if
+                let myTerminology = terminology,
+                let parentTerminology = parentClass?.terminology
+            {
+                terminology = TermDictionary(merging: parentTerminology, into: myTerminology)
             }
         }
     }
