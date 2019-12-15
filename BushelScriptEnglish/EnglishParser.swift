@@ -11,7 +11,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     public var lexicon: Lexicon = Lexicon()
     public var currentElements: [[PrettyPrintable]] = []
-    public var awaitingEndKeywords: [Set<TermName>] = []
+    public var awaitingExpressionEndKeywords: [Set<TermName>] = []
+    public var sequenceEndTags: [TermName] = []
     
     public init(source: String) {
         self.entireSource = source
@@ -246,31 +247,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     public lazy var keywords: [TermName : KeywordHandler] = [
         TermName("("): handleOpenParenthesis,
         TermName("{"): handleOpenBrace,
+        TermName("end"): handleEnd,
         TermName("on"): handleFunctionStart,
         TermName("to"): handleFunctionStart,
         TermName("if"): handleIf,
-        TermName("repeat"): handleRepeat,
-        TermName("repeating"): handleRepeat,
+        TermName("repeat"): handleRepeat(TermName("repeat")),
+        TermName("repeating"): handleRepeat(TermName("repeating")),
         TermName("tell"): handleTell,
-        TermName("end"): {
-            .end
-        },
-        TermName("end if"): {
-            // TODO: Check we're ending an ‘if’-block
-            .end
-        },
-        TermName("end tell"): {
-            // TODO: Check we're ending a ‘tell’-block
-            .end
-        },
-        TermName("end repeat"): {
-            // TODO: Check we're ending a ‘repeat’-block
-            .end
-        },
-        TermName("end repeating"): {
-            // TODO: Check we're ending a ‘repeat’-block
-            .end
-        },
         TermName("let"): handleLet,
         TermName("return"): {
             self.eatCommentsAndWhitespace()
@@ -282,12 +265,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         },
         TermName("use application"): handleUseApplication,
         TermName("use app"): handleUseApplication,
-        TermName("that"): {
-            .that
-        },
-        TermName("it"): {
-            .it
-        },
+        TermName("that"): { .that },
+        TermName("it"): { .it },
         TermName("every"): handleQuantifier(.all),
         TermName("all"): handleQuantifier(.all),
         TermName("first"): handleQuantifier(.first),
@@ -309,9 +288,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             return .get(sourceExpression)
         },
         TermName("set"): handleSet,
-        TermName("null"): {
-            .null
-        }
+        TermName("null"): { .null }
     ]
     
     private func handleOpenParenthesis() throws -> Expression.Kind? {
@@ -355,6 +332,18 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
     }
     
+    private func handleEnd() throws -> Expression.Kind? {
+        eatCommentsAndWhitespace()
+        if findExpressionEndKeyword() || source.hasPrefix("\n") {
+            return .end
+        }
+        let endTag = sequenceEndTags.last!
+        guard tryEating(termName: endTag) else {
+            throw ParseError(description: "expected ‘\(endTag)’ or line break", location: currentLocation, fixes: [SequencingFix(fixes: [DeletingFix(at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource)), AppendingFix(appending: "\(endTag)", at: currentLocation)]), AppendingFix(appending: "\(endTag)\n", at: currentLocation)])
+        }
+        return .end
+    }
+    
     private func handleFunctionStart() throws -> Expression.Kind? {
         guard let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: [":"]) else {
             throw ParseError(description: "expected function name", location: SourceLocation(source.range, source: entireSource))
@@ -389,7 +378,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
         let body = try withScope {
             lexicon.add(Set(arguments.map { $0.term }))
-            return try parseSequence() ?? Sequence.empty(at: currentIndex)
+            return try parseSequence(functionNameTerm.name!) ?? Sequence.empty(at: currentIndex)
         }
         
         return .function(name: functionNameTerm, parameters: parameters, arguments: arguments, body: body)
@@ -410,7 +399,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         let thenExpr: Expression
         if foundNewline {
             thenExpr = try withScope {
-                return try parseSequence(stoppingAt: ["else"]) ?? Sequence.empty(at: currentIndex)
+                return try parseSequence(TermName("if"), stoppingAt: ["else"]) ?? Sequence.empty(at: currentIndex)
             }
         } else {
             guard let thenExpression = try parsePrimary() else {
@@ -425,7 +414,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return .if_(condition: condition, then: thenExpr, else: elseExpr)
     }
     
-    private func handleRepeat() throws -> Expression.Kind? {
+    private func handleRepeat(_ endTag: TermName) -> () throws -> Expression.Kind? {
+        {
+            try self.handleRepeat(endTag)
+        }
+    }
+    
+    private func handleRepeat(_ endTag: TermName) throws -> Expression.Kind? {
         guard let times = try parsePrimary() else {
             throw ParseError(description: "expected times-expression after ‘\(expressionLocation.snippet(in: entireSource))’", location: currentLocation)
         }
@@ -438,7 +433,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
         
         let repeatingBlock = try withScope {
-            return try parseSequence() ?? Sequence.empty(at: currentIndex)
+            return try parseSequence(endTag) ?? Sequence.empty(at: currentIndex)
         }
         
         return .repeatTimes(times: times, repeating: repeatingBlock)
@@ -460,7 +455,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             let toExpr: Expression
             if foundNewline {
                 toExpr = try withScope {
-                    return try parseSequence() ?? Sequence.empty(at: currentIndex)
+                    return try parseSequence(TermName("tell")) ?? Sequence.empty(at: currentIndex)
                 }
             } else {
                 guard let toExpression = try parsePrimary() else {
@@ -635,7 +630,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
         if tryEating(prefix: "\n") {
             return try withScope {
-                return try parseSequence() ?? Sequence.empty(at: currentIndex)
+                return try parseSequence(TermName("if")) ?? Sequence.empty(at: currentIndex)
             }
         } else {
             guard let elseExpr = try parsePrimary() else {

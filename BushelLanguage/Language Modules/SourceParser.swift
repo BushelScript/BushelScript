@@ -36,7 +36,8 @@ public protocol SourceParser: AnyObject {
     
     var lexicon: Lexicon { get set }
     var currentElements: [[PrettyPrintable]] { get set }
-    var awaitingEndKeywords: [Set<TermName>] { get set }
+    var awaitingExpressionEndKeywords: [Set<TermName>] { get set }
+    var sequenceEndTags: [TermName] { get set }
     
     var keywords: [TermName : KeywordHandler] { get }
     var defaultTerms: [TermDescriptor] { get }
@@ -80,7 +81,7 @@ public extension SourceParser {
         
         do {
             let ast: Expression
-            if let sequence = try parseSequence() {
+            if let sequence = try parseSequence(TermName("")) {
                 ast = Expression(.scoped(sequence), at: SourceLocation(entireSource.range, source: entireSource))
             } else {
                 ast = Expression(.empty, at: SourceLocation(entireSource.range, source: entireSource))
@@ -128,7 +129,12 @@ public extension SourceParser {
         } while eatBlockComment() || eatLineComment()
     }
     
-    func parseSequence(stoppingAt stopKeywords: [String] = []) throws -> Sequence? {
+    func parseSequence(_ endTag: TermName, stoppingAt stopKeywords: [String] = []) throws -> Sequence? {
+        sequenceEndTags.append(endTag)
+        defer {
+            sequenceEndTags.removeLast()
+        }
+        
         var expressions: [Expression] = []
         
         func eatNewlines() {
@@ -346,7 +352,7 @@ public extension SourceParser {
                 return nil
             }
         } else {
-            if case (_, _?)? = awaitingEndKeywords.last.map({ Array($0) })?.findTermName(in: source) ?? nil {
+            if findExpressionEndKeyword() {
                 return nil
             }
             
@@ -479,9 +485,9 @@ public extension SourceParser {
     }
     
     func awaiting<Result>(endMarkers: Set<TermName>, perform action: () throws -> Result) rethrows -> Result {
-        awaitingEndKeywords.append(endMarkers)
+        awaitingExpressionEndKeywords.append(endMarkers)
         defer {
-            awaitingEndKeywords.removeLast()
+            awaitingExpressionEndKeywords.removeLast()
         }
         return try action()
     }
@@ -594,6 +600,17 @@ public extension SourceParser {
         return result
     }
     
+    func tryEating(termName: TermName) -> Bool {
+        let rollbackSource = source
+        for word in termName.words {
+            guard tryEating(prefix: word) else {
+                source = rollbackSource
+                return false
+            }
+        }
+        return true
+    }
+    
     func tryEating(prefix target: String) -> Bool {
         eatCommentsAndWhitespace()
         if
@@ -602,6 +619,13 @@ public extension SourceParser {
         {
             source.removeFirst(target.count)
             currentElements[currentElements.endIndex - 1].append(Keyword(keyword: target))
+            return true
+        }
+        return false
+    }
+    
+    func findExpressionEndKeyword() -> Bool {
+        if case (_, _?)? = awaitingExpressionEndKeywords.last.map({ Array($0) })?.findTermName(in: source) ?? nil {
             return true
         }
         return false
