@@ -44,7 +44,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         CommandDescriptor(.math_cbrt, name: TermName("cube root"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_cbrt, name: TermName("cubed root"), parameters: [
+        CommandDescriptor(.math_cbrt, name: TermName("cubic root"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
         CommandDescriptor(.math_cbrt, name: TermName("cbrt"), parameters: [
