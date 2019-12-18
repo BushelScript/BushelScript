@@ -30,6 +30,10 @@ public class RT_Boolean: RT_Object, AEEncodable {
         value
     }
     
+    public static prefix func ! (boolean: RT_Boolean) -> RT_Boolean {
+        RT_Boolean.withValue(!boolean.value)
+    }
+    
     public override func compare(with other: RT_Object) -> ComparisonResult? {
         guard let other = other as? RT_Boolean else {
             return nil

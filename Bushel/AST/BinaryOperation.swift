@@ -2,11 +2,13 @@ import Foundation
 
 public enum BinaryOperation: Int {
     
+    // Ordered by precedence, ascending
     case or, xor
     case and
-    case equal, notEqual, less, lessEqual, greater, greaterEqual
+    case equal, notEqual, less, lessEqual, greater, greaterEqual, startsWith, endsWith, contains, notContains, containedBy, notContainedBy
     case concatenate
-    case add, subtract, multiply, divide
+    case add, subtract
+    case multiply, divide
     
     public var precedence: PrecedenceGroup {
         switch self {
@@ -14,7 +16,7 @@ public enum BinaryOperation: Int {
             return .or
         case .and:
             return .and
-        case .equal, .notEqual, .less, .lessEqual, .greater, .greaterEqual:
+        case .equal, .notEqual, .less, .lessEqual, .greater, .greaterEqual, .startsWith, .endsWith, .contains, .notContains, .containedBy, .notContainedBy:
             return .comparison
         case .concatenate:
             return .concatenation

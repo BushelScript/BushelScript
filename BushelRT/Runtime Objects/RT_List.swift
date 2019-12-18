@@ -109,6 +109,12 @@ public class RT_List: RT_Object, AEEncodable {
         return contents <=> other.contents
     }
     
+    public override func contains(_ other: RT_Object) -> RT_Object? {
+        contents
+            .first { $0.equal(to: other)?.truthy ?? false }
+            .map { RT_Boolean.withValue($0.truthy) }
+    }
+    
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
         switch CommandUID(rawValue: command.uid) {
         case .sequence_join:

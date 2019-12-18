@@ -101,6 +101,30 @@ import Bushel
         return compare(with: other).map { RT_Boolean.withValue($0 != .orderedAscending) }
     }
     
+    public func startsWith(_ other: RT_Object) -> RT_Object? {
+        return nil
+    }
+    
+    public func endsWith(_ other: RT_Object) -> RT_Object? {
+        return nil
+    }
+    
+    public func contains(_ other: RT_Object) -> RT_Object? {
+        return nil
+    }
+    
+    public func notContains(_ other: RT_Object) -> RT_Object? {
+        return contains(other).map { RT_Boolean.withValue(!$0.truthy) }
+    }
+    
+    public func contained(by other: RT_Object) -> RT_Object? {
+        return other.contains(self)
+    }
+    
+    public func notContained(by other: RT_Object) -> RT_Object? {
+        return contained(by: other).map { RT_Boolean.withValue(!$0.truthy) }
+    }
+    
     public func adding(_ other: RT_Object) -> RT_Object? {
         return nil
     }
@@ -247,6 +271,14 @@ extension RT_Object: Comparable {
     
     public static func < (lhs: RT_Object, rhs: RT_Object) -> Bool {
         return lhs.compare(with: rhs) == .orderedAscending
+    }
+    
+}
+
+extension RT_Object {
+    
+    public func coerce<T: RT_Object>() -> T? {
+        coerce(to: T.typeInfo) as? T
     }
     
 }

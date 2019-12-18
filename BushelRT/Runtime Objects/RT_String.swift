@@ -87,6 +87,21 @@ public class RT_String: RT_Object, AEEncodable {
         return value <=> other.value
     }
     
+    public override func startsWith(_ other: RT_Object) -> RT_Object? {
+        (other.coerce() as? RT_String)
+            .map { RT_Boolean.withValue(value.hasPrefix($0.value)) }
+    }
+    
+    public override func endsWith(_ other: RT_Object) -> RT_Object? {
+        (other.coerce() as? RT_String)
+            .map { RT_Boolean.withValue(value.hasSuffix($0.value)) }
+    }
+    
+    public override func contains(_ other: RT_Object) -> RT_Object? {
+        (other.coerce() as? RT_String)
+            .map { RT_Boolean.withValue(value.contains($0.value)) }
+    }
+    
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
         switch CommandUID(rawValue: command.uid) {
         case .string_split:

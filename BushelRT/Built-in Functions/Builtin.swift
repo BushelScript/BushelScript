@@ -196,6 +196,18 @@ enum Builtin {
                 return lhs.greater(than: rhs)
             case .greaterEqual:
                 return lhs.greaterEqual(to: rhs)
+            case .startsWith:
+                return lhs.startsWith(rhs)
+            case .endsWith:
+                return lhs.endsWith(rhs)
+            case .contains:
+                return lhs.contains(rhs)
+            case .notContains:
+                return lhs.notContains(rhs)
+            case .containedBy:
+                return lhs.contained(by: rhs)
+            case .notContainedBy:
+                return lhs.notContained(by: rhs)
             case .add:
                 return lhs.adding(rhs)
             case .subtract:

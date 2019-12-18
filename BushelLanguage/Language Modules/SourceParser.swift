@@ -183,7 +183,7 @@ public extension SourceParser {
             return nil
         }
         
-        while let processedPrimary = try processOperators(after: primary, lastOperation: lastOperation) {
+        while let processedPrimary = try processBinaryOperators(after: primary, lastOperation: lastOperation) {
             primary = processedPrimary
         }
         
@@ -198,7 +198,7 @@ public extension SourceParser {
         return primary
     }
     
-    private func processOperators(after lhs: Expression, lastOperation: BinaryOperation?) throws -> Expression? {
+    private func processBinaryOperators(after lhs: Expression, lastOperation: BinaryOperation?) throws -> Expression? {
         eatCommentsAndWhitespace()
         guard let (_, operation) = findBinaryOperator() else {
             // There's no binary operator here, so we're done.

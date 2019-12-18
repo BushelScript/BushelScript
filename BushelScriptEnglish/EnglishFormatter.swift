@@ -85,6 +85,18 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                     return ">"
                 case .greaterEqual:
                     return "≥"
+                case .startsWith:
+                    return "starts with"
+                case .endsWith:
+                    return "ends with"
+                case .contains:
+                    return "contains"
+                case .notContains:
+                    return "does not contain"
+                case .containedBy:
+                    return "is in"
+                case .notContainedBy:
+                    return "is not in"
                 case .concatenate:
                     return "&"
                 case .add:
