@@ -1,6 +1,8 @@
 import Bushel
 import SwiftAutomation
 
+private let calendar = Calendar(identifier: .gregorian)
+
 /// A date, stored as a Foundation `Date`.
 public class RT_Date: RT_Object {
     
@@ -19,25 +21,35 @@ public class RT_Date: RT_Object {
         typeInfo_
     }
     
+    public var seconds: RT_Integer {
+        RT_Integer(value: calendar.component(.second, from: value))
+    }
+    public var minutes: RT_Integer {
+        RT_Integer(value: calendar.component(.minute, from: value))
+    }
+    public var hours: RT_Integer {
+        RT_Integer(value: calendar.component(.hour, from: value))
+    }
+    
+    public override var properties: [RT_Object] {
+        super.properties + [seconds, minutes, hours]
+    }
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        let calendar = Calendar(identifier: .gregorian)
         switch PropertyUID(rawValue: property.uid) {
         case .date_seconds:
-            return RT_Integer(value: calendar.component(.second, from: value))
+            return seconds
         case .date_minutes:
-            return RT_Integer(value: calendar.component(.minute, from: value))
+            return minutes
         case .date_hours:
-            return RT_Integer(value: calendar.component(.hour, from: value))
+            return hours
         default:
             return try super.property(property)
         }
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
-        guard let other = other as? RT_Date else {
-            return nil
-        }
-        return value <=> other.value
+        (other as? RT_Date)
+            .map { value <=> $0.value }
     }
     
 }

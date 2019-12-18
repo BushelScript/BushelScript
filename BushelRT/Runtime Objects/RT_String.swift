@@ -23,7 +23,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func concatenating(_ other: RT_Object) -> RT_Object? {
-        if let other = other as? RT_String {
+        if let other = other.coerce() as? RT_String {
             return RT_String(value: self.value + other.value)
         } else {
             return nil
@@ -35,7 +35,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override var properties: [RT_Object] {
-        return super.properties + [length]
+        super.properties + [length]
     }
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
         switch PropertyUID(rawValue: property.uid) {
@@ -81,10 +81,8 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
-        guard let other = other as? RT_String else {
-            return nil
-        }
-        return value <=> other.value
+        (other as? RT_String)
+            .map { value <=> $0.value }
     }
     
     public override func startsWith(_ other: RT_Object) -> RT_Object? {
@@ -105,7 +103,7 @@ public class RT_String: RT_Object, AEEncodable {
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
         switch CommandUID(rawValue: command.uid) {
         case .string_split:
-            guard let separator = arguments[ParameterInfo(.string_split_by)]?.coerce(to: RT_String.typeInfo) as? RT_String else {
+            guard let separator = arguments[ParameterInfo(.string_split_by)]?.coerce() as? RT_String else {
                 // TODO: Throw error
                 return nil
             }
@@ -116,7 +114,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
-        return NSAppleEventDescriptor(string: value)
+        NSAppleEventDescriptor(string: value)
     }
     
 }
@@ -124,7 +122,7 @@ public class RT_String: RT_Object, AEEncodable {
 extension RT_String {
     
     public override var debugDescription: String {
-        return super.debugDescription + "[value: \(value)]"
+        super.debugDescription + "[value: \(value)]"
     }
     
 }

@@ -35,10 +35,8 @@ public class RT_Boolean: RT_Object, AEEncodable {
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
-        guard let other = other as? RT_Boolean else {
-            return nil
-        }
-        return value <=> other.value
+        (other as? RT_Boolean)
+            .map { value <=> $0.value }
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
@@ -67,7 +65,7 @@ public class RT_Boolean: RT_Object, AEEncodable {
 extension RT_Boolean {
     
     public override var debugDescription: String {
-        return super.debugDescription + "[value: \(value)]"
+        super.debugDescription + "[value: \(value)]"
     }
     
 }

@@ -11,7 +11,7 @@ public class RT_Character: RT_Object, AEEncodable {
     }
     
     public override var description: String {
-        return "(\"\(value)\" as character)"
+        "(\"\(value)\" as character)"
     }
     
     private static let typeInfo_ = TypeInfo(TypeUID.character.rawValue, TypeUID.character.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("character"))])
@@ -20,10 +20,8 @@ public class RT_Character: RT_Object, AEEncodable {
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
-        guard let other = other as? RT_Character else {
-            return nil
-        }
-        return value <=> other.value
+        (other as? RT_Character)
+            .map { value <=> $0.value }
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {

@@ -14,18 +14,16 @@ public class RT_AEObject: RT_Object {
         self.descriptor = descriptor
     }
     
-    public override var description: String {
-        return super.description + "[descriptor: \(descriptor)]"
-    }
-    
-    // TODO: Have subclasses simply give code, and then search a passed
-    //       dictionary in an extension method to get the class name
     private static let typeInfo_ = TypeInfo(TypeUID.item.rawValue, [.dynamic])
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }
     public override var dynamicTypeInfo: TypeInfo {
         TypeInfo(TypeUID.item.rawValue, descriptor.descriptorType, [])
+    }
+    
+    public override var description: String {
+        String(describing: descriptor)
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
@@ -36,6 +34,14 @@ public class RT_AEObject: RT_Object {
             return nil
         }
         return RT_Object.fromEventResult(rt, coercedDescriptor)
+    }
+    
+}
+
+extension RT_AEObject {
+    
+    public override var debugDescription: String {
+        super.description + "[descriptor: \(descriptor)]"
     }
     
 }

@@ -11,7 +11,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override var description: String {
-        return "{\(contents.map { String(describing: $0) }.joined(separator: ", "))}"
+        "{\(contents.map { String(describing: $0) }.joined(separator: ", "))}"
     }
     
     private static let typeInfo_ = TypeInfo(TypeUID.list.rawValue, TypeUID.list.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("list"))])
@@ -20,7 +20,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override var truthy: Bool {
-        return !contents.isEmpty
+        !contents.isEmpty
     }
     
     public func add(_ object: RT_Object) {
@@ -28,7 +28,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override func concatenating(_ other: RT_Object) -> RT_Object? {
-        if let other = other as? RT_List {
+        if let other = other.coerce() as? RT_List {
             return RT_List(contents: self.contents + other.contents)
         } else {
             return RT_List(contents: self.contents + [other])
@@ -36,7 +36,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override func concatenated(to other: RT_Object) -> RT_Object? {
-        if let other = other as? RT_List {
+        if let other = other.coerce() as? RT_List {
             return RT_List(contents: other.contents + self.contents)
         } else {
             return RT_List(contents: [other] + self.contents)
@@ -89,8 +89,8 @@ public class RT_List: RT_Object, AEEncodable {
     public override func elements(_ type: TypeInfo, from: RT_Object, thru: RT_Object) throws -> RT_Object {
         let filteredContents = self.filteredContents(type)
         guard
-            let from = (from as? RT_Numeric)?.numericValue,
-            let to = (thru as? RT_Numeric)?.numericValue
+            let from = (from.coerce() as? RT_Numeric)?.numericValue,
+            let to = (thru.coerce() as? RT_Numeric)?.numericValue
         else {
             // FIXME: use the error system
             fatalError("range types incorrect")
@@ -103,10 +103,8 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
-        guard let other = other as? RT_List else {
-            return nil
-        }
-        return contents <=> other.contents
+        (other as? RT_List)
+            .map { contents <=> $0.contents }
     }
     
     public override func contains(_ other: RT_Object) -> RT_Object? {
@@ -118,7 +116,7 @@ public class RT_List: RT_Object, AEEncodable {
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
         switch CommandUID(rawValue: command.uid) {
         case .sequence_join:
-            guard let separator = arguments[ParameterInfo(.sequence_join_with)]?.coerce(to: RT_String.typeInfo) as? RT_String else {
+            guard let separator = arguments[ParameterInfo(.sequence_join_with)]?.coerce() as? RT_String else {
                 // TODO: Throw error
                 return nil
             }

@@ -11,7 +11,7 @@ public class RT_Record: RT_Object, AEEncodable {
     }
     
     public override var description: String {
-        return "{\(contents.map { "\($0.key): \($0.value)" }.joined(separator: ", "))}"
+        "{\(contents.map { "\($0.key): \($0.value)" }.joined(separator: ", "))}"
     }
     
     private static let typeInfo_ = TypeInfo(TypeUID.record.rawValue, TypeUID.record.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("record"))])
@@ -20,7 +20,7 @@ public class RT_Record: RT_Object, AEEncodable {
     }
     
     public override var truthy: Bool {
-        return !contents.isEmpty
+        !contents.isEmpty
     }
     
     public func add(key: Bushel.Term, value: RT_Object) {
@@ -28,7 +28,7 @@ public class RT_Record: RT_Object, AEEncodable {
     }
     
     public var length: RT_Integer {
-        return RT_Integer(value: Int64(contents.count))
+        RT_Integer(value: Int64(contents.count))
     }
     
     public override var properties: [RT_Object] {

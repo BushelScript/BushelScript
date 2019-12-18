@@ -9,9 +9,6 @@ public class RT_Null: RT_Object, AEEncodable {
     private override init() {
     }
     
-    public override var description: String {
-        return "null"
-    }
     
     private static let typeInfo_ = TypeInfo(TypeUID.null.rawValue, TypeUID.null.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("null"))])
     public override class var typeInfo: TypeInfo {
@@ -19,6 +16,10 @@ public class RT_Null: RT_Object, AEEncodable {
     }
     public override var truthy: Bool {
         return false
+    }
+    
+    public override var description: String {
+        "null"
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {

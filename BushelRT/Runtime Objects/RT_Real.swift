@@ -11,7 +11,7 @@ public class RT_Real: RT_Object, AEEncodable {
     }
     
     public override var description: String {
-        return String(describing: value)
+        String(describing: value)
     }
     
     private static let typeInfo_ = TypeInfo(TypeUID.real.rawValue, TypeUID.real.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("real"))])
@@ -19,7 +19,7 @@ public class RT_Real: RT_Object, AEEncodable {
         typeInfo_
     }
     public override var truthy: Bool {
-        return !value.isZero
+        !value.isZero
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {

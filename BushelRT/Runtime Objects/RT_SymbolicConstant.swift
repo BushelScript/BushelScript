@@ -13,7 +13,7 @@ public class RT_SymbolicConstant: RT_Object {
     }
     
     public override var description: String {
-        return String(describing: value)
+        String(describing: value)
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {

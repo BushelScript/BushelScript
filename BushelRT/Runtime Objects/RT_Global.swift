@@ -13,6 +13,10 @@ public class RT_Global: RT_Object {
         typeInfo_
     }
     
+    public override var description: String {
+        "BushelScript"
+    }
+    
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
         switch PropertyUID(rawValue: property.uid) {
         case .currentDate:
@@ -43,7 +47,7 @@ public class RT_Global: RT_Object {
                 // TODO: Throw error
                 return RT_Null.null
             }
-            print((message.coerce(to: rt.type(forUID: TypeUID.string.rawValue)!) as? RT_String)?.value ?? String(describing: message))
+            print((message.coerce() as? RT_String)?.value ?? String(describing: message))
             return RT_Null.null
         default:
             return super.perform(command: command, arguments: arguments)
