@@ -6,7 +6,7 @@ Next-generation open-source AppleScript.
 
 **BushelScript** is best described as a next-generation open-source alternative to AppleScript.
 
-As opposed to its big brother, BushelScript is open-source and community-driven, meaning it can undergo necessary changes and gain useful features rather than remaining stagnant as a side project on life support.
+As opposed to its big brother, BushelScript is open-source and community-driven, meaning it can undergo necessary changes and gain useful features rather than remain stagnant as a side project on life support.
 
 The real tragedy of AppleScript is not its becoming obsolete or irrelevant; tons of Apple-supported macOS apps still have healthy scripting interfaces. No, the tragedy is that the language through which such functionality is presented, with all its quirks and weak points and even utter failures, is extremely unlikely to receive any badly needed improvements in the future, if any changes at all. It is stuck in maintenance (read: bugfix and security hole-filling) mode and will be for years to come if we, the users, don't replace it with something better whose fate we can control.
 
@@ -44,7 +44,6 @@ Some more technical specifics; BushelScript:
         * A hybrid of the two, where the text is editable but there are still coloured boxes, drop-down menus, and assistive buttons that are a little more out of the way, to allow for quickly typing scripts while still having the convenience of the blocks mode
     * An Automator action to run BushelScript scripts (analog: Run AppleScript action)
     * A command-line script running tool (analog: `​osascript`​)
-    * An OSA component to replace AppleScript for extension point scripts run through `​NSUserScriptTask`​, e.g., Apple Mail Rules (analog: AppleScript.component) (note from future Ian: largely moot now that 10.15 has completely removed the possibility of this working with Apple apps)
 * Relies on a language module system, similar in spirit to early AppleScript’s “dialects” but less arcane
 * Has two primary language modules:
     * BushelScript is the AppleScript lookalike language for everyone
