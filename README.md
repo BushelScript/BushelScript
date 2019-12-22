@@ -1,8 +1,20 @@
 # BushelScript
 
-The next-generation open-source AppleScript reimplementation.
+Next-generation open-source AppleScript.
 
-## Manifesto
+## About
+
+**BushelScript** is best described as a next-generation open-source alternative to AppleScript.
+
+As opposed to its big brother, BushelScript is open-source and community-driven, meaning it can undergo necessary changes and gain useful features rather than remaining stagnant as a side project on life support.
+
+The real tragedy of AppleScript is not its becoming obsolete or irrelevant; tons of Apple-supported macOS apps still have healthy scripting interfaces. No, the tragedy is that the language through which such functionality is presented, with all its quirks and weak points and even utter failures, is extremely unlikely to receive any badly needed improvements in the future, if any changes at all. It is stuck in maintenance (read: bugfix and security hole-filling) mode and will be for years to come if we, the users, don't replace it with something better whose fate we can control.
+
+It's been my pet project for over three years now to try to create a less-frustrating yet equally useful alternative to the confusing and arcane nightmare that is AppleScript. BushelScript aims to do everything that made AppleScript useful, and hopefully do it better.
+
+That said, here's a pitch I wrote near the beginning of the project in its current form:
+
+### Manifesto
 
 BushelScript is a next-generation open-source reimplementation of AppleScript that's more usable, predictable and extensible.
 
@@ -51,9 +63,10 @@ There's no automated installer yet. For now, you can build the project yourself,
 
 To build the core frameworks, language service, English module and graphical Editor from source, do the following:
 
-1. Make sure [Homebrew](https://brew.sh) and [Xcode](https://developer.apple.com/xcode) are installed. 
-2. `brew install llvm`
-3. `xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT=/`
+1. Clone the [GitHub repository](https://github.com/BushelScript/BushelScript) to your local machine. (`git clone https://github.com/BushelScript/BushelScript` in a Terminal prompt, or download the zip file from the web interface).
+2. Make sure [Homebrew](https://brew.sh) and [Xcode](https://developer.apple.com/xcode) are installed. 
+3. `brew install llvm`
+4. `xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT=/`
 
 Language modules are installed to `/Library/BushelScript/Languages` and BushelScript Editor is placed in `/Applications`. Launch the app to begin writing BushelScript programs.
 
@@ -69,3 +82,5 @@ Since the language is basically just an improved, next-gen AppleScript, I wanted
 2. This software is not reliable in any way due to its unfinished and semi-prototype-y nature.
 3. You must not rely on this software to do business, control real-world systems, or in any other applications where reliability is at all required.
 4. I, Ian A. Gregory, WILL NOT BE HELD LIABLE for any damages resulting from the failure to read, understand and apply this disclaimer.
+
+I know that this is legally weak, IANAL, etc. But it shouldn't need to be legally strong. Please don't trust this software until things stabilize. Okay?
