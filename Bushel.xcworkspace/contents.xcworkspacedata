@@ -16,6 +16,17 @@
    <Group
       location = "container:"
       name = "General">
+      <Group
+         location = "group:/Users/ian/Documents/Bushel/Licenses"
+         name = "Licenses">
+         <Group
+            location = "group:Third-party"
+            name = "Third-party">
+            <FileRef
+               location = "group:LLVMSwift-LICENSE.txt">
+            </FileRef>
+         </Group>
+      </Group>
       <FileRef
          location = "group:README.md">
       </FileRef>

@@ -3,10 +3,8 @@ The status quo is as follows:
 
 • Bushel (parsing; "frontend"): Pending decision
 • BushelLanguage (language module internal and consumer API): Pending decision
-• Language modulesL
+• Language modules:
 	• BushelScriptEnglish (bushelscript_en; primary English module): Pending decision
-	• BushelScriptPirate (bushelscript_argh; toy alternative module): Pending decision; will probably
-		have same license as BushelScriptEnglish, since the code is largely duplicated
 • BushelRT (codegen and runtime library; "backend"): Pending decision
 • bushelscript (BushelScript command-line interface): GPL v3+
 • BushelScript Editor (graphical editor application): GPL v3+

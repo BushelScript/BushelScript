@@ -35,6 +35,7 @@
 		3C3065B1230B7ABB00833CE8 /* TermName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B0230B7ABB00833CE8 /* TermName.swift */; };
 		3C3065B3230B7E2000833CE8 /* TerminologySource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B2230B7E2000833CE8 /* TerminologySource.swift */; };
 		3C3065B5230B83B500833CE8 /* MessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B4230B83B500833CE8 /* MessageFormatter.swift */; };
+		3C32B11523B16AAB002FF795 /* LLVMSwift-LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3C32B11423B16AA7002FF795 /* LLVMSwift-LICENSE.txt */; };
 		3C35A5C522C81DE7002D4582 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C35A5CC22C81DE7002D4582 /* Bushel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C35A5BE22C81DE7002D4582 /* Bushel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C35A5DB22C81E60002D4582 /* SourceLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C35A5D522C81E60002D4582 /* SourceLocation.swift */; };
@@ -206,6 +207,7 @@
 		3C3065B2230B7E2000833CE8 /* TerminologySource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminologySource.swift; sourceTree = "<group>"; };
 		3C3065B4230B83B500833CE8 /* MessageFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFormatter.swift; sourceTree = "<group>"; };
 		3C327261232DBAE2001A527C /* TypeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeInfo.swift; sourceTree = "<group>"; };
+		3C32B11423B16AA7002FF795 /* LLVMSwift-LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "LLVMSwift-LICENSE.txt"; sourceTree = "<group>"; };
 		3C35A5BB22C81DE7002D4582 /* Bushel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Bushel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C35A5BE22C81DE7002D4582 /* Bushel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bushel.h; sourceTree = "<group>"; };
 		3C35A5BF22C81DE7002D4582 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -291,7 +293,6 @@
 		3CD113D322FB700000329583 /* Applications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Applications.swift; sourceTree = "<group>"; };
 		3CD113DA22FC6E9300329583 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3CE775082336C3DC00E0E7C6 /* StaticStackFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticStackFrame.swift; sourceTree = "<group>"; };
-		3CEF505023529828008603E3 /* libLLVM.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLLVM.dylib; path = ../../../../usr/local/Cellar/llvm/8.0.0_1/lib/libLLVM.dylib; sourceTree = DEVELOPER_DIR; };
 		3CFC16E12326F4C0007A1055 /* TermNameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermNameTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -402,6 +403,22 @@
 			path = Specifiers;
 			sourceTree = "<group>";
 		};
+		3C32B11223B16AA7002FF795 /* Licenses */ = {
+			isa = PBXGroup;
+			children = (
+				3C32B11323B16AA7002FF795 /* Third-party */,
+			);
+			path = Licenses;
+			sourceTree = "<group>";
+		};
+		3C32B11323B16AA7002FF795 /* Third-party */ = {
+			isa = PBXGroup;
+			children = (
+				3C32B11423B16AA7002FF795 /* LLVMSwift-LICENSE.txt */,
+			);
+			path = "Third-party";
+			sourceTree = "<group>";
+		};
 		3C35A5B122C81DE7002D4582 = {
 			isa = PBXGroup;
 			children = (
@@ -411,7 +428,7 @@
 				3CCD8AB022CC45040049C74F /* BushelRT */,
 				3C72CEBC22E1023200A98EC7 /* SwiftAutomation */,
 				3C35A5BC22C81DE7002D4582 /* Products */,
-				3CEF504F23529828008603E3 /* Frameworks */,
+				3C32B11223B16AA7002FF795 /* Licenses */,
 			);
 			sourceTree = "<group>";
 		};
@@ -705,14 +722,6 @@
 				3CCE9EAB2325A9E200198564 /* SourceFix.swift */,
 			);
 			path = "Auto-fixes";
-			sourceTree = "<group>";
-		};
-		3CEF504F23529828008603E3 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				3CEF505023529828008603E3 /* libLLVM.dylib */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1055,6 +1064,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CD113CC22FA8FFE00329583 /* source.bushel in Resources */,
+				3C32B11523B16AAB002FF795 /* LLVMSwift-LICENSE.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
