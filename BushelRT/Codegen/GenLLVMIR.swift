@@ -365,7 +365,9 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     pipeliner.addStandardFunctionPipeline("std_fn")
     pipeliner.execute()
     
+    #if DEBUG
     module.dump()
+    #endif
     
     return module
 }
