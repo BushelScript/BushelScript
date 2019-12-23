@@ -130,3 +130,8 @@ iOSInjectionProject/
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 # End of https://www.gitignore.io/api/swift,xcode,macos
+
+# make-pkg.sh install path
+install
+# make-pkg.sh resulting pkg file
+BushelScript.pkg
