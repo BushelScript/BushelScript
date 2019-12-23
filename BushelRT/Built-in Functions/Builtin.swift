@@ -36,6 +36,14 @@ enum Builtin {
     }
     
     static func throwError(message: String) {
+        _ = RT_Global(rt).perform(command: CommandInfo(.gui_alert), arguments: [
+            ParameterInfo(.gui_alert_kind): RT_Integer(value: 2),
+            ParameterInfo(.direct): RT_String(value: "An error occurred:"),
+            ParameterInfo(.gui_alert_message): RT_String(value: message + "\n\nThe script will be terminated."),
+            ParameterInfo(.gui_alert_buttons): RT_List(contents: [
+                RT_String(value: "OK")
+            ])
+        ])
         fatalError(message)
     }
     
@@ -318,7 +326,7 @@ enum Builtin {
         do {
             return toOpaque(retain(try evaluateLocalSpecifier(specifier, root: root)))
         } catch {
-            throwError(message: "error evaluating local specifier: \(error)")
+            throwError(message: "error evaluating local specifier: \(error.localizedDescription)")
             return toOpaque(RT_Null.null)
         }
     }
