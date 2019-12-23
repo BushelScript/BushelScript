@@ -22,5 +22,8 @@
       <FileRef
          location = "group:LICENSING.txt">
       </FileRef>
+      <FileRef
+         location = "group:make-pkg.sh">
+      </FileRef>
    </Group>
 </Workspace>

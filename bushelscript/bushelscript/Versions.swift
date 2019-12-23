@@ -6,7 +6,7 @@ import Foundation
 private let CFBundleShortVersionString = "CFBundleShortVersionString"
 
 private let toolVersion = "1.0"
-private let frameworks = ["Bushel", "BushelLanguage", "BushelRT"]
+private let frameworks = ["Bushel", "BushelLanguage", "BushelRT", "SwiftAutomation"]
 
 // Returns exit status code.
 func printVersion() -> Int32 {

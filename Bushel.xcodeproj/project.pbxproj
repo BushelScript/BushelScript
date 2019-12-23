@@ -60,9 +60,7 @@
 		3C6B75C82305D8EA0006C354 /* EnglishFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */; };
 		3C6B75CF2305F95A0006C354 /* LanguageModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75CE2305F95A0006C354 /* LanguageModule.swift */; };
 		3C75066523A1A3BF006E7591 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
-		3C75066623A1A3BF006E7591 /* SwiftAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C75067223A1A4EF006E7591 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
-		3C75067323A1A4EF006E7591 /* Bushel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C75067523A1A4F1006E7591 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
 		3C8FEEF322DE2B8300C1F1CF /* Builtin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8FEEF222DE2B8300C1F1CF /* Builtin.swift */; };
 		3C906F00231CD30A0099B139 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906EFF231CD30A0099B139 /* Ordering.swift */; };
@@ -70,7 +68,6 @@
 		3C906F26231DDB8D0099B139 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906F25231DDB8D0099B139 /* Resource.swift */; };
 		3C906F28231DDBB40099B139 /* LocatedTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906F27231DDBB40099B139 /* LocatedTerm.swift */; };
 		3C9703D8235520D20099AA05 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
-		3C9703D9235520D20099AA05 /* SwiftAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C9703DE235520D50099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C9703E5235520DF0099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */; };
@@ -178,42 +175,6 @@
 			remoteInfo = BushelRT;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		3C75066723A1A3BF006E7591 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				3C75066623A1A3BF006E7591 /* SwiftAutomation.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3C75067423A1A4EF006E7591 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				3C75067323A1A4EF006E7591 /* Bushel.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3C9703DA235520D20099AA05 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				3C9703D9235520D20099AA05 /* SwiftAutomation.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3C0430702316210D00758339 /* Opaquify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Opaquify.h; sourceTree = "<group>"; };
@@ -801,7 +762,6 @@
 				3C35A5B722C81DE7002D4582 /* Sources */,
 				3C35A5B822C81DE7002D4582 /* Frameworks */,
 				3C35A5B922C81DE7002D4582 /* Resources */,
-				3C75066723A1A3BF006E7591 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -877,7 +837,6 @@
 				3C6B75942305B5980006C354 /* Sources */,
 				3C6B75952305B5980006C354 /* Frameworks */,
 				3C6B75962305B5980006C354 /* Resources */,
-				3C75067423A1A4EF006E7591 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -916,7 +875,6 @@
 				3CCD8AAB22CC45040049C74F /* Sources */,
 				3CCD8AAC22CC45040049C74F /* Frameworks */,
 				3CCD8AAD22CC45040049C74F /* Resources */,
-				3C9703DA235520D20099AA05 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1017,10 +975,10 @@
 				3C35A5C322C81DE7002D4582 /* BushelTests */,
 				3C6B756E2305AF3F0006C354 /* BushelLanguage */,
 				3C6B75762305AF3F0006C354 /* BushelLanguageTests */,
-				3C6B75972305B5980006C354 /* BushelScriptEnglish */,
-				3C6B759F2305B5990006C354 /* BushelScriptEnglishTests */,
 				3CCD8AAE22CC45040049C74F /* BushelRT */,
 				3CCD8AB622CC45040049C74F /* BushelRTTests */,
+				3C6B75972305B5980006C354 /* BushelScriptEnglish */,
+				3C6B759F2305B5990006C354 /* BushelScriptEnglishTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1426,7 +1384,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.Bushel;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1453,7 +1410,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.Bushel;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -1518,7 +1474,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguage;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1545,7 +1500,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguage;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -1601,7 +1555,8 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = BushelScriptEnglish/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/BushelScript/Languages";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/BushelScript/Languages/DevEnvironment";
+				LANGUAGE_MODULE_NAME = "BushelScript (English) (DevEnvironment)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1609,7 +1564,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScriptEnglish;
 				PRODUCT_NAME = bushelscript_en;
-				SKIP_INSTALL = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1631,6 +1585,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = BushelScriptEnglish/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/BushelScript/Languages";
+				LANGUAGE_MODULE_NAME = "BushelScript (English)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1638,7 +1593,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScriptEnglish;
 				PRODUCT_NAME = bushelscript_en;
-				SKIP_INSTALL = NO;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -1700,7 +1654,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelRT;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1727,7 +1680,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelRT;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

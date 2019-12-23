@@ -171,7 +171,6 @@ import Bushel
     ///     - `UnsupportedIndexForm` if indexed access is unsupported by
     ///       the receiver.
     public func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object {
-        print(self)
         throw UnsupportedIndexForm(indexForm: .index, class: dynamicTypeInfo)
     }
     

@@ -6,6 +6,9 @@ import BushelRT
 import Bushel // TEMPORARY!!
 import os
 
+@objc class ObjCHook: NSObject {
+}
+
 struct ToolInvocation {
     
     var files: [Substring] = []
@@ -38,8 +41,9 @@ extension ToolInvocation {
         let parser: BushelLanguage.SourceParser = languageModule.parser(for: source)
         do {
             let program = try parser.parse()
-//            print(expression.prettified(source: source))
-            BushelRT.run(program.ast, terms: program.terms)
+            let rt = RTInfo(termPool: program.terms)
+            rt.currentApplicationBundleID = nil // TODO: Add an application ID here (similar to osascript)
+            print(rt.run(program.ast))
         } catch let error as ParseError {
             print(error: error, in: source, fileName: fileName)
         }

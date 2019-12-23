@@ -138,7 +138,9 @@ public extension RTInfo {
             os_log("Module verification error: %@", log: log, type: .error, String(describing: error))
         }
         
+        #if DEBUG
         module.dump()
+        #endif
         
         // Load StandardAdditions.osax
         do {
@@ -158,7 +160,9 @@ public extension RTInfo {
         let address = try! jit.address(of: "main")
         let fn = unsafeBitCast(address, to: FnPtr.self)
         let resultObject = Unmanaged<RT_Object>.fromOpaque(fn()).takeUnretainedValue()
+        #if DEBUG
         print(resultObject)
+        #endif
         return resultObject
     }
     

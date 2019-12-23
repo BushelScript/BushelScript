@@ -7,14 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C32B0FC23B147D4002FF795 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424322F9FDF0006EEF85 /* Bushel.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		3C32B10623B147D6002FF795 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B75CB2305F1F90006C354 /* BushelLanguage.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		3C32B10823B147D7002FF795 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424A22FA0C87006EEF85 /* BushelRT.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		3C32B11123B15638002FF795 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C32B11023B15638002FF795 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C47423C22F9F85E006EEF85 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47423B22F9F85E006EEF85 /* main.swift */; };
-		3C47424422F9FDF0006EEF85 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424322F9FDF0006EEF85 /* Bushel.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C47424722FA00F7006EEF85 /* Parsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47424622FA00F7006EEF85 /* Parsing.swift */; };
 		3C47424922FA02E8006EEF85 /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47424822FA02E8006EEF85 /* Output.swift */; };
-		3C47424B22FA0C87006EEF85 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424A22FA0C87006EEF85 /* BushelRT.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C47424D22FA26D3006EEF85 /* ToolInvocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47424C22FA26D3006EEF85 /* ToolInvocation.swift */; };
 		3C6B75CA2305E0260006C354 /* Versions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C92305E0260006C354 /* Versions.swift */; };
-		3C6B75CD2305F2250006C354 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B75CB2305F1F90006C354 /* BushelLanguage.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,20 +46,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3CCD8AB722CC45040049C74F;
 			remoteInfo = BushelRTTests;
-		};
-		3C1D25112306E33300D202FA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C1D24F92306E33300D202FA /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C292B3022EE937F00B7F8EA;
-			remoteInfo = TestApp;
-		};
-		3C1D25132306E33300D202FA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C1D24F92306E33300D202FA /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C292B3F22EE938200B7F8EA;
-			remoteInfo = TestAppTests;
 		};
 		3C1D25152306E33300D202FA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -111,6 +98,7 @@
 
 /* Begin PBXFileReference section */
 		3C1D24F92306E33300D202FA /* Bushel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Bushel.xcodeproj; path = ../Bushel.xcodeproj; sourceTree = "<group>"; };
+		3C32B11023B15638002FF795 /* SwiftAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C47423822F9F85E006EEF85 /* bushelscript */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bushelscript; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C47423B22F9F85E006EEF85 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		3C47424322F9FDF0006EEF85 /* Bushel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Bushel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,9 +118,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C47424422F9FDF0006EEF85 /* Bushel.framework in Frameworks */,
-				3C6B75CD2305F2250006C354 /* BushelLanguage.framework in Frameworks */,
-				3C47424B22FA0C87006EEF85 /* BushelRT.framework in Frameworks */,
+				3C32B11123B15638002FF795 /* SwiftAutomation.framework in Frameworks */,
+				3C32B10623B147D6002FF795 /* BushelLanguage.framework in Frameworks */,
+				3C32B10823B147D7002FF795 /* BushelRT.framework in Frameworks */,
+				3C32B0FC23B147D4002FF795 /* Bushel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,8 +139,6 @@
 				3C1D251C2306E33300D202FA /* BushelScriptEnglishTests.xctest */,
 				3C1D250C2306E33300D202FA /* BushelRT.framework */,
 				3C1D250E2306E33300D202FA /* BushelRTTests.xctest */,
-				3C1D25122306E33300D202FA /* TestApp.app */,
-				3C1D25142306E33300D202FA /* TestAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -191,6 +178,7 @@
 		3C47424222F9FDF0006EEF85 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3C32B11023B15638002FF795 /* SwiftAutomation.framework */,
 				3C47424A22FA0C87006EEF85 /* BushelRT.framework */,
 				3C6B75CB2305F1F90006C354 /* BushelLanguage.framework */,
 				3C6B75C22305D5960006C354 /* BushelScriptEnglish.framework */,
@@ -286,20 +274,6 @@
 			fileType = wrapper.cfbundle;
 			path = BushelRTTests.xctest;
 			remoteRef = 3C1D250D2306E33300D202FA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C1D25122306E33300D202FA /* TestApp.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = TestApp.app;
-			remoteRef = 3C1D25112306E33300D202FA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C1D25142306E33300D202FA /* TestAppTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = TestAppTests.xctest;
-			remoteRef = 3C1D25132306E33300D202FA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3C1D25162306E33300D202FA /* BushelLanguage.framework */ = {

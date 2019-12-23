@@ -121,9 +121,18 @@ private func allLanguageBundles() -> [Bundle] {
 
 private var languageBundleDirectories: [URL] = {
     let libraryURLs = FileManager.default.urls(for: .libraryDirectory, in: .allDomainsMask)
-    return libraryURLs.map { url in
-        return url
+    let mainLanguageBundleDirectories = libraryURLs.map { url in
+        url
             .appendingPathComponent("BushelScript", isDirectory: true)
             .appendingPathComponent("Languages", isDirectory: true)
     }
+    #if DEBUG
+    let devEnvironmentLanguageBundleDirectories: [URL] = mainLanguageBundleDirectories.map { url in
+        url.appendingPathComponent("DevEnvironment")
+    }
+    #else
+    let devEnvironmentLanguageBundleDirectories: [URL] = []
+    #endif
+    return mainLanguageBundleDirectories + devEnvironmentLanguageBundleDirectories
+        
 }()

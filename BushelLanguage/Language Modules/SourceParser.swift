@@ -314,7 +314,9 @@ public extension SourceParser {
                     }
                 } else {
                     let line = String(source.prefix { !$0.isNewline })
+                    #if DEBUG
                     print(source)
+                    #endif
                     bodies[bodies.index(before: bodies.endIndex)] += "\(line)\n"
                     source.removeFirst(line.count)
                 }
@@ -412,7 +414,9 @@ public extension SourceParser {
                 let value = stringSource[stringSource.index(after: stringSource.startIndex)..<stringSource.index(before: stringSource.endIndex)] // Without quotes
                 return Expression(.string(String(value)), [Keyword(keyword: String(stringSource), styling: .string)], at: SourceLocation(stringSource.range, source: entireSource))
             } else {
+                #if DEBUG
                 print("undefined term source: \(source)")
+                #endif
                 throw ParseError(description: "undefined term; perhaps you made a typo?", location: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource))
             }
         }

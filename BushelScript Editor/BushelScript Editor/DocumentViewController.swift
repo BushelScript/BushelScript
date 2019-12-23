@@ -337,7 +337,9 @@ extension DocumentViewController: NSTextViewDelegate {
         guard !sourceBeforeCaret.isEmpty else {
             return
         }
+        #if DEBUG
         print(sourceBeforeCaret)
+        #endif
         
         status = .compiling
         compile(String(sourceBeforeCaret)) { (service, language, result) in

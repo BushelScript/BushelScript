@@ -36,6 +36,8 @@
 		3C2E1345231B709000E0EB8E /* NoHashbang.bushel in Resources */ = {isa = PBXBuildFile; fileRef = 3C2E1344231B709000E0EB8E /* NoHashbang.bushel */; };
 		3C2E134C231B75FA00E0EB8E /* BushelLanguageServiceConnectionCreation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0430682316124F00758339 /* BushelLanguageServiceConnectionCreation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2E1350231B763700E0EB8E /* Bushel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3C32B10A23B151C2002FF795 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEF504023529437008603E3 /* SwiftAutomation.framework */; };
+		3C32B10B23B151C2002FF795 /* SwiftAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEF504023529437008603E3 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C3355F123490F2500AEAAE9 /* NSTabViewController+SelectionConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3355F023490F2500AEAAE9 /* NSTabViewController+SelectionConvenience.swift */; };
 		3C3C180F2319CC4100553072 /* SECompileScriptTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3C3C17FF2319CC4100553072 /* SECompileScriptTemplate.pdf */; };
 		3C3C1811231A20B100553072 /* DocumentWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1810231A20B100553072 /* DocumentWindowController.swift */; };
@@ -189,27 +191,6 @@
 			remoteGlobalIDString = 3C6B75972305B5980006C354;
 			remoteInfo = BushelScriptEnglish;
 		};
-		3CC224DD23920AE000448D25 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3CC224AB239207A500448D25;
-			remoteInfo = BushelScriptPirate;
-		};
-		3CC224E123920AE100448D25 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3CC224BD239207A500448D25;
-			remoteInfo = BushelScriptPirate;
-		};
-		3CC224E323920AE100448D25 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3CC224CA239207A900448D25;
-			remoteInfo = BushelScriptPirateTests;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -231,6 +212,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				3C2E134C231B75FA00E0EB8E /* BushelLanguageServiceConnectionCreation.framework in Embed Frameworks */,
+				3C32B10B23B151C2002FF795 /* SwiftAutomation.framework in Embed Frameworks */,
 				3CCA1C86235D14120037058C /* BushelLanguage.framework in Embed Frameworks */,
 				3C2E1350231B763700E0EB8E /* Bushel.framework in Embed Frameworks */,
 				3CCA1C88235D141A0037058C /* BushelRT.framework in Embed Frameworks */,
@@ -304,6 +286,7 @@
 				3C12EFA12354E7640057E0CC /* Defaults in Frameworks */,
 				3C05670D231356E7004CDB1A /* Bushel.framework in Frameworks */,
 				3CCA1C87235D141A0037058C /* BushelRT.framework in Frameworks */,
+				3C32B10A23B151C2002FF795 /* SwiftAutomation.framework in Frameworks */,
 				3C0430692316124F00758339 /* BushelLanguageServiceConnectionCreation.framework in Frameworks */,
 				3CCA1C85235D14120037058C /* BushelLanguage.framework in Frameworks */,
 			);
@@ -419,8 +402,6 @@
 				3C0566FA23135690004CDB1A /* BushelLanguageTests.xctest */,
 				3C0566FC23135690004CDB1A /* bushelscript_en.framework */,
 				3C0566FE23135690004CDB1A /* BushelScriptEnglishTests.xctest */,
-				3CC224E223920AE100448D25 /* bushelscript_argh.framework */,
-				3CC224E423920AE100448D25 /* BushelScriptPirateTests.xctest */,
 				3C0566EE23135690004CDB1A /* BushelRT.framework */,
 				3C0566F023135690004CDB1A /* BushelRTTests.xctest */,
 			);
@@ -509,7 +490,6 @@
 				3C056711231356F8004CDB1A /* PBXTargetDependency */,
 				3C04306C2316138500758339 /* PBXTargetDependency */,
 				3C906EF1231C7D380099B139 /* PBXTargetDependency */,
-				3CC224DE23920AE000448D25 /* PBXTargetDependency */,
 				3C2E134E231B75FA00E0EB8E /* PBXTargetDependency */,
 				3C2E1352231B763700E0EB8E /* PBXTargetDependency */,
 				3C2E1356231B763700E0EB8E /* PBXTargetDependency */,
@@ -689,20 +669,6 @@
 			remoteRef = 3C0566FD23135690004CDB1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		3CC224E223920AE100448D25 /* bushelscript_argh.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = bushelscript_argh.framework;
-			remoteRef = 3CC224E123920AE100448D25 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3CC224E423920AE100448D25 /* BushelScriptPirateTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = BushelScriptPirateTests.xctest;
-			remoteRef = 3CC224E323920AE100448D25 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -833,11 +799,6 @@
 			isa = PBXTargetDependency;
 			name = BushelScriptEnglish;
 			targetProxy = 3C906EF0231C7D380099B139 /* PBXContainerItemProxy */;
-		};
-		3CC224DE23920AE000448D25 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = BushelScriptPirate;
-			targetProxy = 3CC224DD23920AE000448D25 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
