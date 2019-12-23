@@ -54,6 +54,19 @@ public class RT_String: RT_Object, AEEncodable {
         }
     }
     
+    public override func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object {
+        switch positioning {
+        case .first:
+            return try element(type, at: 0)
+        case .middle:
+            return try element(type, at: Int64(value.count / 2))
+        case .last:
+            return try element(type, at: Int64(value.count - 1))
+        case .random:
+            return try element(type, at: Int64(arc4random_uniform(UInt32(value.count))))
+        }
+    }
+    
     public override func elements(_ type: TypeInfo) throws -> RT_Object {
         if type.isA(RT_Character.typeInfo) {
             return RT_List(contents: value.map { RT_Character(value: $0) })

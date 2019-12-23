@@ -82,6 +82,19 @@ public class RT_List: RT_Object, AEEncodable {
         return filteredContents[Int(index)]
     }
     
+    public override func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object {
+        switch positioning {
+        case .first:
+            return try element(type, at: 0)
+        case .middle:
+            return try element(type, at: Int64(contents.count / 2))
+        case .last:
+            return try element(type, at: Int64(contents.count - 1))
+        case .random:
+            return try element(type, at: Int64(arc4random_uniform(UInt32(contents.count))))
+        }
+    }
+    
     public override func elements(_ type: TypeInfo) throws -> RT_Object {
         return RT_List(contents: filteredContents(type))
     }
