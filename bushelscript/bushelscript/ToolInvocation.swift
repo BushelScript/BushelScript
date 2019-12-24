@@ -6,38 +6,60 @@ import BushelRT
 import Bushel // TEMPORARY!!
 import os
 
-@objc class ObjCHook: NSObject {
-}
+private var defaultLanguageID = "bushelscript_en"
 
 struct ToolInvocation {
     
     var files: [Substring] = []
     var scriptLines: [Substring] = []
     
-    var language: String = "bushelscript_en"
+    var language: String?
     
 }
 
 extension ToolInvocation {
     
     func run() throws {
-        guard let languageModule = LanguageModule(identifier: language) else {
-            print("\nbushelscript: error: Language with identifier ‘\(language)’ not found!\n")
-            exit(0)
-        }
-        
         if !scriptLines.isEmpty {
-            try run(languageModule: languageModule, source: scriptLines.map { String($0) }.joined(separator: "\n"), fileName: "<command-line>")
+            try run(source: scriptLines.map { String($0) }.joined(separator: "\n"), fileName: "<command-line>")
         }
         if !files.isEmpty {
             for file in files {
                 let file = String(file)
-                try run(languageModule: languageModule, source: try String(contentsOfFile: file), fileName: file)
+                try run(source: try String(contentsOfFile: file), fileName: file)
             }
         }
     }
     
-    func run(languageModule: LanguageModule, source: String, fileName: String) throws {
+    func run(source: String, fileName: String) throws {
+        var source = source
+        var language = self.language
+        
+        var firstLine = source.prefix(while: { !$0.isNewline })
+        firstLine.removeLeadingWhitespace()
+        if firstLine.hasPrefix("#!") {
+            let hashbang = String(firstLine)
+            
+            let languageIDRegex = try! NSRegularExpression(pattern: "-l\\s*(\\w+)", options: [])
+            if
+                let match = languageIDRegex.firstMatch(in: hashbang, options: [], range: NSRange(hashbang.range, in: hashbang)),
+                let languageIDRange = Range<String.Index>(match.range(at: 1), in: hashbang)
+            {
+                language = String(hashbang[languageIDRange])
+            }
+            
+            source = String(
+                source[hashbang.endIndex...]
+                .drop(while: { $0.isNewline })
+            )
+        }
+        
+        language = language ?? defaultLanguageID
+        guard let languageModule = LanguageModule(identifier: language!) else {
+            print("\nbushelscript: error: Language with identifier ‘\(language!)’ not found!\n")
+            exit(0)
+        }
+        
         let parser: BushelLanguage.SourceParser = languageModule.parser(for: source)
         do {
             let program = try parser.parse()

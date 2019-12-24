@@ -91,8 +91,10 @@ class Document: NSDocument {
             throw ReadError.corruptData(reason: "Could not determine the encoding of the document's text.")
         }
         
-        if readString.hasPrefix("#!") {
-            let hashbang = String(readString.prefix(while: { !$0.isNewline }))
+        var firstLine = readString.prefix(while: { !$0.isNewline })
+        firstLine.removeLeadingWhitespace()
+        if firstLine.hasPrefix("#!") {
+            let hashbang = String(firstLine)
             self.originalHashbang = hashbang
             
             let languageIDRegex = try! NSRegularExpression(pattern: "-l\\s*(\\w+)", options: [])

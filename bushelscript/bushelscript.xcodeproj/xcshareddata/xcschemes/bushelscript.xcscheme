@@ -66,11 +66,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "&quot;/Users/ian/Favourites/Loading Bay/Alert HelloWorld.bushel&quot;"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--version"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/ian/Favourites/Loading Bay/First Safari Tab.bushel&quot;"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>
