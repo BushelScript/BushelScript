@@ -33,8 +33,8 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
         self.pool = new.pool
         self.name = new.name
         self.exports = new.exports
-        self.contentsByUID = new.contentsByUID.merging(old.contentsByUID, uniquingKeysWith: { $1 })
-        self.contentsByName = new.contentsByName.merging(old.contentsByName, uniquingKeysWith: { $1 })
+        self.contentsByUID = new.contentsByUID.merging(old.contentsByUID, uniquingKeysWith: TermDictionary.whichTermWins)
+        self.contentsByName = new.contentsByName.merging(old.contentsByName, uniquingKeysWith: TermDictionary.whichTermWins)
         self.dictionaryContainers = new.dictionaryContainers.merging(old.dictionaryContainers, uniquingKeysWith: { $1 })
         self.exportingDictionaryContainers = new.exportingDictionaryContainers.merging(old.exportingDictionaryContainers, uniquingKeysWith: { $1 })
     }
@@ -57,20 +57,20 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
     }
     
     public func add(_ terms: [Term]) {
-        contentsByUID.merge(terms.map { (key: $0.uid, value: $0) }, uniquingKeysWith: { $1 })
+        contentsByUID.merge(terms.map { (key: $0.uid, value: $0) }, uniquingKeysWith: TermDictionary.whichTermWins)
         contentsByName.merge(
             terms.compactMap { term in
                 term.name.flatMap { (key: $0, value: term) }
             },
-            uniquingKeysWith: { $1 }
+            uniquingKeysWith: TermDictionary.whichTermWins
         )
         catalogueDictionaryContainers(in: terms)
         pool.add(terms)
     }
     
     public func merge(_ dictionary: TermDictionary) {
-        contentsByUID.merge(dictionary.contentsByUID, uniquingKeysWith: { $1 })
-        contentsByName.merge(dictionary.contentsByName, uniquingKeysWith: { $1 })
+        contentsByUID.merge(dictionary.contentsByUID, uniquingKeysWith: TermDictionary.whichTermWins)
+        contentsByName.merge(dictionary.contentsByName, uniquingKeysWith: TermDictionary.whichTermWins)
         catalogueDictionaryContainers(in: dictionary.contentsByUID.values)
         pool.add(Array(dictionary.contentsByUID.values))
     }
@@ -87,6 +87,15 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
                 }
             }
         }
+    }
+    
+    private static func whichTermWins(_ old: Term, _ new: Term) -> Term {
+        // For compatibility.
+        // e.g., AppleScript sees Xcode : project as a class whilst ignoring the identically named property term.
+        if case .class_ = old.enumerated, case .property = new.enumerated {
+            return old
+        }
+        return new
     }
     
     public var description: String {
