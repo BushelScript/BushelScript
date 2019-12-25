@@ -45,12 +45,12 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             return "use \(resource.formattedForUseStatement)"
         case .resource(let resource):
             return resource.formatted
-        case .null:
-            return "null"
         case .that:
             return "that"
         case .it:
             return "it"
+        case .null:
+            return "null"
         case .integer(let value):
             return String(value)
         case .double(let value):

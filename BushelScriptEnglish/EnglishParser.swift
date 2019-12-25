@@ -22,6 +22,64 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         lexicon.push(name: TermName("BushelScript"))
     }
     
+    private lazy var mainDictionary: [TermDescriptor] = [
+        CommandDescriptor(.get, name: TermName("get")),
+        CommandDescriptor(.set, name: TermName("set")),
+        ParameterDescriptor(.set_to, name: TermName("to")),
+        
+        PropertyDescriptor(.properties, name: TermName("properties")),
+        PropertyDescriptor(.index, name: TermName("index")),
+        PropertyDescriptor(.name, name: TermName("name")),
+        PropertyDescriptor(.id, name: TermName("id")),
+        
+        ConstantDescriptor(.true, name: TermName("true")),
+        ConstantDescriptor(.false, name: TermName("false")),
+        
+        TypeDescriptor(.list, name: TermName("list")),
+        PropertyDescriptor(.sequence_length, name: TermName("length")),
+        PropertyDescriptor(.sequence_reverse, name: TermName("reverse")),
+        PropertyDescriptor(.sequence_tail, name: TermName("tail")),
+        
+        TypeDescriptor(.date, name: TermName("date")),
+        PropertyDescriptor(.date_seconds, name: TermName("seconds")),
+        PropertyDescriptor(.date_minutes, name: TermName("minutes")),
+        PropertyDescriptor(.date_hours, name: TermName("hours")),
+        
+        TypeDescriptor(.item, name: TermName("item")),
+        TypeDescriptor(.record, name: TermName("record")),
+        TypeDescriptor(.string, name: TermName("string")),
+        TypeDescriptor(.character, name: TermName("character")),
+        TypeDescriptor(.integer, name: TermName("integer")),
+        TypeDescriptor(.real, name: TermName("real")),
+        TypeDescriptor(.window, name: TermName("window")),
+        TypeDescriptor(.document, name: TermName("document")),
+        TypeDescriptor(.file, name: TermName("file")),
+        TypeDescriptor(.alias, name: TermName("alias")),
+        TypeDescriptor(.application, name: TermName("application")),
+        TypeDescriptor(.application, name: TermName("app")),
+        
+        CommandDescriptor(.run, name: TermName("run"), parameters: [
+        ]),
+        CommandDescriptor(.reopen, name: TermName("reopen"), parameters: [
+        ]),
+        CommandDescriptor(.open, name: TermName("open"), parameters: [
+            ParameterDescriptor(.open_searchText, name: TermName("search text"))
+        ]),
+        CommandDescriptor(.print, name: TermName("print"), parameters: [
+        ]),
+        CommandDescriptor(.quit, name: TermName("quit"), parameters: [
+        ]),
+        
+        CommandDescriptor(.delay, name: TermName("delay"), parameters: [
+            ParameterDescriptor(.direct)
+        ]),
+        CommandDescriptor(.delay, name: TermName("wait"), parameters:[
+            ParameterDescriptor(.direct)
+        ]),
+    
+        PropertyDescriptor(.currentDate, name: TermName("current date")),
+    ]
+    
     private lazy var mathDictionary: [TermDescriptor] = [
         PropertyDescriptor(.math_pi, name: TermName("pi")),
         PropertyDescriptor(.math_e, name: TermName("e")),
@@ -122,62 +180,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     ]
     
     public lazy var defaultTerms: [TermDescriptor] = [
-        CommandDescriptor(.get, name: TermName("get")),
-        CommandDescriptor(.set, name: TermName("set")),
-        ParameterDescriptor(.set_to, name: TermName("to")),
-        
-        PropertyDescriptor(.properties, name: TermName("properties")),
-        PropertyDescriptor(.index, name: TermName("index")),
-        PropertyDescriptor(.name, name: TermName("name")),
-        PropertyDescriptor(.id, name: TermName("id")),
-        
-        ConstantDescriptor(.true, name: TermName("true")),
-        ConstantDescriptor(.false, name: TermName("false")),
-        
-        TypeDescriptor(TypeUID.list, name: TermName("list")),
-        PropertyDescriptor(.sequence_length, name: TermName("length")),
-        PropertyDescriptor(.sequence_reverse, name: TermName("reverse")),
-        PropertyDescriptor(.sequence_tail, name: TermName("tail")),
-        
-        TypeDescriptor(TypeUID.date, name: TermName("date")),
-        PropertyDescriptor(.date_seconds, name: TermName("seconds")),
-        PropertyDescriptor(.date_minutes, name: TermName("minutes")),
-        PropertyDescriptor(.date_hours, name: TermName("hours")),
-        
-        TypeDescriptor(.item, name: TermName("item")),
-        TypeDescriptor(.record, name: TermName("record")),
-        TypeDescriptor(.string, name: TermName("string")),
-        TypeDescriptor(.character, name: TermName("character")),
-        TypeDescriptor(.integer, name: TermName("integer")),
-        TypeDescriptor(.real, name: TermName("real")),
-        TypeDescriptor(.window, name: TermName("window")),
-        TypeDescriptor(.document, name: TermName("document")),
-        TypeDescriptor(.file, name: TermName("file")),
-        TypeDescriptor(.alias, name: TermName("alias")),
-        TypeDescriptor(.application, name: TermName("application")),
-        TypeDescriptor(.application, name: TermName("app")),
-        
-        CommandDescriptor(.run, name: TermName("run"), parameters: [
-        ]),
-        CommandDescriptor(.reopen, name: TermName("reopen"), parameters: [
-        ]),
-        CommandDescriptor(CommandUID.open, name: TermName("open"), parameters: [
-            ParameterDescriptor(.open_searchText, name: TermName("search text"))
-        ]),
-        CommandDescriptor(.print, name: TermName("print"), parameters: [
-        ]),
-        CommandDescriptor(.quit, name: TermName("quit"), parameters: [
-        ]),
-        
-        CommandDescriptor(.delay, name: TermName("delay"), parameters: [
-            ParameterDescriptor(.direct)
-        ]),
-        CommandDescriptor(.delay, name: TermName("wait"), parameters:[
-            ParameterDescriptor(.direct)
-        ]),
-        
-        PropertyDescriptor(.currentDate, name: TermName("current date")),
-        
+        DictionaryDescriptor("bushel.dictionary.bushelscript", name: TermName("BushelScript"), contents: mainDictionary),
         DictionaryDescriptor("bushel.dictionary.math", name: TermName("Math"), contents: mathDictionary),
         DictionaryDescriptor("bushel.dictionary.sequence", name: TermName("Sequence"), contents: sequenceDictionary),
         DictionaryDescriptor("bushel.dictionary.string", name: TermName("String"), contents: stringDictionary),
