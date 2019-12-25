@@ -64,7 +64,7 @@ extension ToolInvocation {
         do {
             let program = try parser.parse()
             let rt = RTInfo(termPool: program.terms)
-            rt.currentApplicationBundleID = nil // TODO: Add an application ID here (similar to osascript)
+            rt.currentApplicationBundleID = "com.apple.systemevents" // TODO: Add an application ID here (similar to osascript)
             print(rt.run(program.ast))
         } catch let error as ParseError {
             print(error: error, in: source, fileName: fileName)
