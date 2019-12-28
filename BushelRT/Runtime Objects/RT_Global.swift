@@ -8,7 +8,7 @@ public class RT_Global: RT_Object {
         self.rt = rt
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.global.rawValue, [.supertype(RT_Object.typeInfo), .name(TermName("BushelScript global"))])
+    private static let typeInfo_ = TypeInfo(.global)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }
@@ -19,6 +19,8 @@ public class RT_Global: RT_Object {
     
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
         switch PropertyUID(rawValue: property.uid) {
+        case .topScript:
+            return rt.topScript
         case .currentDate:
             return RT_Date(value: Date())
         case .math_pi:

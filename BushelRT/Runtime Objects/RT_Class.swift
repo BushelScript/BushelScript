@@ -9,7 +9,7 @@ public class RT_Class: RT_Object {
         self.value = value
     }
     
-    private static let typeInfo_ = TypeInfo(.class, [.supertype(RT_Object.typeInfo), .name(TermName("class"))])
+    private static let typeInfo_ = TypeInfo(.class)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }

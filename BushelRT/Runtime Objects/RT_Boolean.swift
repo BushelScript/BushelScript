@@ -22,7 +22,7 @@ public class RT_Boolean: RT_Object, AEEncodable {
         String(describing: value)
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.boolean.rawValue, typeBoolean, [.supertype(RT_Object.typeInfo), .name(TermName("boolean"))])
+    private static let typeInfo_ = TypeInfo(.boolean)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }

@@ -14,7 +14,7 @@ public class RT_String: RT_Object, AEEncodable {
         value
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.string.rawValue, TypeUID.string.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("string"))])
+    private static let typeInfo_ = TypeInfo(.string)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }

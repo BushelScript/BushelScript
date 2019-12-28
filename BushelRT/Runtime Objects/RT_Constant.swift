@@ -14,7 +14,7 @@ public class RT_Constant: RT_Object, AEEncodable {
         "'\(String(fourCharCode: value))'"
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.constant.rawValue, typeEnumerated, [.supertype(RT_Object.typeInfo), .name(TermName("constant"))])
+    private static let typeInfo_ = TypeInfo(.constant)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }

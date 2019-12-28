@@ -14,7 +14,7 @@ public class RT_Real: RT_Object, AEEncodable {
         String(describing: value)
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.real.rawValue, TypeUID.real.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("real"))])
+    private static let typeInfo_ = TypeInfo(.real)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }

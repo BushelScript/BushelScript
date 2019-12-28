@@ -18,7 +18,7 @@ public class RT_Integer: RT_Object, AEEncodable {
         String(describing: value)
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.application.rawValue, TypeUID.integer.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("integer"))])
+    private static let typeInfo_ = TypeInfo(.integer)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }

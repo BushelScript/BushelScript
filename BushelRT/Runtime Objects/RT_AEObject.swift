@@ -14,7 +14,7 @@ public class RT_AEObject: RT_Object {
         self.descriptor = descriptor
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.item.rawValue, [.dynamic])
+    private static let typeInfo_ = TypeInfo(.item, [.dynamic])
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }

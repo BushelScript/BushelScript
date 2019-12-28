@@ -18,8 +18,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         self.entireSource = source
         self.source = Substring(source)
         self.expressionStartIndex = source.startIndex
-        
-        lexicon.push(name: TermName("BushelScript"))
     }
     
     private lazy var mainDictionary: [TermDescriptor] = [
@@ -73,9 +71,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         CommandDescriptor(.delay, name: TermName("delay"), parameters: [
             ParameterDescriptor(.direct)
         ]),
-        CommandDescriptor(.delay, name: TermName("wait"), parameters:[
+        CommandDescriptor(.delay, name: TermName("wait"), parameters: [
             ParameterDescriptor(.direct)
         ]),
+        
+        DictionaryDescriptor("bushel.dictionary.topScript", name: TermName("script"), contents: []),
     
         PropertyDescriptor(.currentDate, name: TermName("current date")),
     ]

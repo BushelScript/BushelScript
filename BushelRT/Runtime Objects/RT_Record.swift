@@ -14,7 +14,7 @@ public class RT_Record: RT_Object, AEEncodable {
         "{\(contents.map { "\($0.key): \($0.value)" }.joined(separator: ", "))}"
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.record.rawValue, TypeUID.record.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("record"))])
+    private static let typeInfo_ = TypeInfo(.record)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }
