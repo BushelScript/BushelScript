@@ -20,19 +20,8 @@
          location = "group:BuildScripts"
          name = "BuildScripts">
          <FileRef
-            location = "group:copy-licenses-into-product.rb">
+            location = "group:/Users/ian/Documents/Bushel/BuildScripts/copy-spm-licenses-into-product.rb">
          </FileRef>
-      </Group>
-      <Group
-         location = "group:/Users/ian/Documents/Bushel/Licenses"
-         name = "Licenses">
-         <Group
-            location = "group:Third-party"
-            name = "Third-party">
-            <FileRef
-               location = "group:LLVMSwift-LICENSE.txt">
-            </FileRef>
-         </Group>
       </Group>
       <FileRef
          location = "group:README.md">

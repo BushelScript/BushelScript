@@ -35,7 +35,6 @@
 		3C3065B1230B7ABB00833CE8 /* TermName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B0230B7ABB00833CE8 /* TermName.swift */; };
 		3C3065B3230B7E2000833CE8 /* TerminologySource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B2230B7E2000833CE8 /* TerminologySource.swift */; };
 		3C3065B5230B83B500833CE8 /* MessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B4230B83B500833CE8 /* MessageFormatter.swift */; };
-		3C32B11523B16AAB002FF795 /* LLVMSwift-LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3C32B11423B16AA7002FF795 /* LLVMSwift-LICENSE.txt */; };
 		3C35A5C522C81DE7002D4582 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C35A5CC22C81DE7002D4582 /* Bushel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C35A5BE22C81DE7002D4582 /* Bushel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C35A5DB22C81E60002D4582 /* SourceLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C35A5D522C81E60002D4582 /* SourceLocation.swift */; };
@@ -209,7 +208,6 @@
 		3C3065B2230B7E2000833CE8 /* TerminologySource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminologySource.swift; sourceTree = "<group>"; };
 		3C3065B4230B83B500833CE8 /* MessageFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFormatter.swift; sourceTree = "<group>"; };
 		3C327261232DBAE2001A527C /* TypeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeInfo.swift; sourceTree = "<group>"; };
-		3C32B11423B16AA7002FF795 /* LLVMSwift-LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "LLVMSwift-LICENSE.txt"; sourceTree = "<group>"; };
 		3C35A5BB22C81DE7002D4582 /* Bushel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Bushel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C35A5BE22C81DE7002D4582 /* Bushel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bushel.h; sourceTree = "<group>"; };
 		3C35A5BF22C81DE7002D4582 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -243,8 +241,6 @@
 		3C6B75C52305D6ED0006C354 /* SourceFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceFormatter.swift; sourceTree = "<group>"; };
 		3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnglishFormatter.swift; sourceTree = "<group>"; };
 		3C6B75CE2305F95A0006C354 /* LanguageModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageModule.swift; sourceTree = "<group>"; };
-		3C6D209823BA598100E7E321 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.txt; path = "../../Library/Developer/Xcode/DerivedData/Bushel-clkkjwwpgwcsrtfemlduidfeiweb/SourcePackages/checkouts/InAnyCase/LICENSE.txt"; sourceTree = "<group>"; };
-		3C6D209C23BA5A7100E7E321 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.txt; path = "../../Library/Developer/Xcode/DerivedData/Bushel-clkkjwwpgwcsrtfemlduidfeiweb/SourcePackages/checkouts/InAnyCase/LICENSE.txt"; sourceTree = "<group>"; };
 		3C72CEBD22E1023200A98EC7 /* TypeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeExtensions.swift; sourceTree = "<group>"; };
 		3C72CEBE22E1023200A98EC7 /* TermTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermTypes.swift; sourceTree = "<group>"; };
 		3C72CEBF22E1023200A98EC7 /* AEApplicationGlue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AEApplicationGlue.swift; sourceTree = "<group>"; };
@@ -410,34 +406,15 @@
 			path = Specifiers;
 			sourceTree = "<group>";
 		};
-		3C32B11223B16AA7002FF795 /* Licenses */ = {
-			isa = PBXGroup;
-			children = (
-				3C32B11323B16AA7002FF795 /* Third-party */,
-			);
-			path = Licenses;
-			sourceTree = "<group>";
-		};
-		3C32B11323B16AA7002FF795 /* Third-party */ = {
-			isa = PBXGroup;
-			children = (
-				3C32B11423B16AA7002FF795 /* LLVMSwift-LICENSE.txt */,
-			);
-			path = "Third-party";
-			sourceTree = "<group>";
-		};
 		3C35A5B122C81DE7002D4582 = {
 			isa = PBXGroup;
 			children = (
-				3C6D209823BA598100E7E321 /* LICENSE.txt */,
-				3C6D209C23BA5A7100E7E321 /* LICENSE.txt */,
 				3C35A5BD22C81DE7002D4582 /* Bushel */,
 				3C6B75702305AF3F0006C354 /* BushelLanguage */,
 				3C6B75992305B5980006C354 /* BushelScriptEnglish */,
 				3CCD8AB022CC45040049C74F /* BushelRT */,
 				3C72CEBC22E1023200A98EC7 /* SwiftAutomation */,
 				3C35A5BC22C81DE7002D4582 /* Products */,
-				3C32B11223B16AA7002FF795 /* Licenses */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1076,7 +1053,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C32B11523B16AAB002FF795 /* LLVMSwift-LICENSE.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
