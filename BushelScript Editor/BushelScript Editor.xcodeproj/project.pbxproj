@@ -400,10 +400,10 @@
 				3C0566EC23135690004CDB1A /* BushelTests.xctest */,
 				3C0566F823135690004CDB1A /* BushelLanguage.framework */,
 				3C0566FA23135690004CDB1A /* BushelLanguageTests.xctest */,
-				3C0566FC23135690004CDB1A /* bushelscript_en.framework */,
-				3C0566FE23135690004CDB1A /* BushelScriptEnglishTests.xctest */,
 				3C0566EE23135690004CDB1A /* BushelRT.framework */,
 				3C0566F023135690004CDB1A /* BushelRTTests.xctest */,
+				3C0566FC23135690004CDB1A /* bushelscript_en.framework */,
+				3C0566FE23135690004CDB1A /* BushelScriptEnglishTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -483,6 +483,7 @@
 				3C0566A823135673004CDB1A /* Resources */,
 				3C04306D2316138500758339 /* Embed XPC Services */,
 				3CD1D07C2319A15B00DD01A9 /* Embed Frameworks */,
+				3C6D20A023BA7A5500E7E321 /* Copy SPM Dependency Licenses */,
 			);
 			buildRules = (
 			);
@@ -706,6 +707,29 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		3C6D20A023BA7A5500E7E321 /* Copy SPM Dependency Licenses */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/SPMLicenses.txt",
+			);
+			name = "Copy SPM Dependency Licenses";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/../BuildScripts/copy-spm-licenses-into-product.rb\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3C0566A623135673004CDB1A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -872,6 +896,7 @@
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PACKAGE_DEPS_DIR = "${BUILD_DIR}/../../SourcePackages/checkouts";
 			};
 			name = Debug;
 		};
@@ -926,6 +951,7 @@
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_PACKAGE_DEPS_DIR = "${BUILD_DIR}/../../SourcePackages/checkouts";
 			};
 			name = Release;
 		};

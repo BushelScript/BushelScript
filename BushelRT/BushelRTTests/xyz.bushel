@@ -1,3 +1,0 @@
-tell application id "com.apple.Safari"
-    window index 1
-end

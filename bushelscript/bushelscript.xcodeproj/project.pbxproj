@@ -110,7 +110,6 @@
 		3C6B75C22305D5960006C354 /* BushelScriptEnglish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelScriptEnglish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C6B75C92305E0260006C354 /* Versions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Versions.swift; sourceTree = "<group>"; };
 		3C6B75CB2305F1F90006C354 /* BushelLanguage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelLanguage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CD113D022FA900700329583 /* source.bushel */ = {isa = PBXFileReference; lastKnownFileType = text; path = source.bushel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,10 +134,10 @@
 				3C1D250A2306E33300D202FA /* BushelTests.xctest */,
 				3C1D25162306E33300D202FA /* BushelLanguage.framework */,
 				3C1D25182306E33300D202FA /* BushelLanguageTests.xctest */,
-				3C1D251A2306E33300D202FA /* bushelscript_en.framework */,
-				3C1D251C2306E33300D202FA /* BushelScriptEnglishTests.xctest */,
 				3C1D250C2306E33300D202FA /* BushelRT.framework */,
 				3C1D250E2306E33300D202FA /* BushelRTTests.xctest */,
+				3C1D251A2306E33300D202FA /* bushelscript_en.framework */,
+				3C1D251C2306E33300D202FA /* BushelScriptEnglishTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -169,7 +168,6 @@
 				3C47424C22FA26D3006EEF85 /* ToolInvocation.swift */,
 				3C47424822FA02E8006EEF85 /* Output.swift */,
 				3C6B75C92305E0260006C354 /* Versions.swift */,
-				3CD113D022FA900700329583 /* source.bushel */,
 				3C47424522F9FEDD006EEF85 /* Config.xcconfig */,
 			);
 			path = bushelscript;

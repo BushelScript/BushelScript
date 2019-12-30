@@ -87,10 +87,8 @@
 		3CCD8AC722CC45860049C74F /* StackFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8AC622CC45860049C74F /* StackFrame.swift */; };
 		3CCD8BA322CFA5BF0049C74F /* GenLLVMIR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8BA222CFA5BF0049C74F /* GenLLVMIR.swift */; };
 		3CCD8BA522CFA6020049C74F /* PrettyPrinting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8BA422CFA6020049C74F /* PrettyPrinting.swift */; };
-		3CCD8BAA22CFAE0D0049C74F /* xyz.bushel in Resources */ = {isa = PBXBuildFile; fileRef = 3CCD8BA922CFAE030049C74F /* xyz.bushel */; };
 		3CCE9EA82325907D00198564 /* CodableErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9E9B23258ECF00198564 /* CodableErrors.swift */; };
 		3CCE9EAC2325A9E200198564 /* SourceFix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9EAB2325A9E200198564 /* SourceFix.swift */; };
-		3CD113CC22FA8FFE00329583 /* source.bushel in Resources */ = {isa = PBXBuildFile; fileRef = 3CD113CB22FA8FFE00329583 /* source.bushel */; };
 		3CD113D422FB700000329583 /* Applications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113D322FB700000329583 /* Applications.swift */; };
 		3CD113DB22FC6E9300329583 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113DA22FC6E9300329583 /* Logging.swift */; };
 		3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */; };
@@ -245,6 +243,8 @@
 		3C6B75C52305D6ED0006C354 /* SourceFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceFormatter.swift; sourceTree = "<group>"; };
 		3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnglishFormatter.swift; sourceTree = "<group>"; };
 		3C6B75CE2305F95A0006C354 /* LanguageModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageModule.swift; sourceTree = "<group>"; };
+		3C6D209823BA598100E7E321 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.txt; path = "../../Library/Developer/Xcode/DerivedData/Bushel-clkkjwwpgwcsrtfemlduidfeiweb/SourcePackages/checkouts/InAnyCase/LICENSE.txt"; sourceTree = "<group>"; };
+		3C6D209C23BA5A7100E7E321 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.txt; path = "../../Library/Developer/Xcode/DerivedData/Bushel-clkkjwwpgwcsrtfemlduidfeiweb/SourcePackages/checkouts/InAnyCase/LICENSE.txt"; sourceTree = "<group>"; };
 		3C72CEBD22E1023200A98EC7 /* TypeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeExtensions.swift; sourceTree = "<group>"; };
 		3C72CEBE22E1023200A98EC7 /* TermTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermTypes.swift; sourceTree = "<group>"; };
 		3C72CEBF22E1023200A98EC7 /* AEApplicationGlue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AEApplicationGlue.swift; sourceTree = "<group>"; };
@@ -291,10 +291,8 @@
 		3CCD8AC622CC45860049C74F /* StackFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackFrame.swift; sourceTree = "<group>"; };
 		3CCD8BA222CFA5BF0049C74F /* GenLLVMIR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenLLVMIR.swift; sourceTree = "<group>"; };
 		3CCD8BA422CFA6020049C74F /* PrettyPrinting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrettyPrinting.swift; sourceTree = "<group>"; };
-		3CCD8BA922CFAE030049C74F /* xyz.bushel */ = {isa = PBXFileReference; lastKnownFileType = text; path = xyz.bushel; sourceTree = "<group>"; };
 		3CCE9E9B23258ECF00198564 /* CodableErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodableErrors.swift; sourceTree = "<group>"; };
 		3CCE9EAB2325A9E200198564 /* SourceFix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceFix.swift; sourceTree = "<group>"; };
-		3CD113CB22FA8FFE00329583 /* source.bushel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = source.bushel; path = bushelscript/bushelscript/source.bushel; sourceTree = SOURCE_ROOT; };
 		3CD113D322FB700000329583 /* Applications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Applications.swift; sourceTree = "<group>"; };
 		3CD113DA22FC6E9300329583 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_Script.swift; sourceTree = "<group>"; };
@@ -431,6 +429,8 @@
 		3C35A5B122C81DE7002D4582 = {
 			isa = PBXGroup;
 			children = (
+				3C6D209823BA598100E7E321 /* LICENSE.txt */,
+				3C6D209C23BA5A7100E7E321 /* LICENSE.txt */,
 				3C35A5BD22C81DE7002D4582 /* Bushel */,
 				3C6B75702305AF3F0006C354 /* BushelLanguage */,
 				3C6B75992305B5980006C354 /* BushelScriptEnglish */,
@@ -695,8 +695,6 @@
 			isa = PBXGroup;
 			children = (
 				3CCD8ABC22CC45040049C74F /* BushelRTTests.swift */,
-				3CCD8BA922CFAE030049C74F /* xyz.bushel */,
-				3CD113CB22FA8FFE00329583 /* source.bushel */,
 				3CCD8ABE22CC45040049C74F /* Info.plist */,
 			);
 			path = BushelRTTests;
@@ -782,6 +780,7 @@
 				3C35A5B722C81DE7002D4582 /* Sources */,
 				3C35A5B822C81DE7002D4582 /* Frameworks */,
 				3C35A5B922C81DE7002D4582 /* Resources */,
+				3C6D209B23BA5A5000E7E321 /* Copy SPM Dependency Licenses */,
 			);
 			buildRules = (
 			);
@@ -896,6 +895,7 @@
 				3CCD8AAB22CC45040049C74F /* Sources */,
 				3CCD8AAC22CC45040049C74F /* Frameworks */,
 				3CCD8AAD22CC45040049C74F /* Resources */,
+				3C6D209F23BA7A2400E7E321 /* Copy SPM Dependency Licenses */,
 			);
 			buildRules = (
 			);
@@ -1076,7 +1076,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CD113CC22FA8FFE00329583 /* source.bushel in Resources */,
 				3C32B11523B16AAB002FF795 /* LLVMSwift-LICENSE.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1085,11 +1084,53 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CCD8BAA22CFAE0D0049C74F /* xyz.bushel in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3C6D209B23BA5A5000E7E321 /* Copy SPM Dependency Licenses */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/$(TARGET_NAME)/SPMLicenses.txt",
+			);
+			name = "Copy SPM Dependency Licenses";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/BuildScripts/copy-spm-licenses-into-product.rb\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3C6D209F23BA7A2400E7E321 /* Copy SPM Dependency Licenses */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/$(TARGET_NAME)/SPMLicenses.txt",
+			);
+			name = "Copy SPM Dependency Licenses";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/BuildScripts/copy-spm-licenses-into-product.rb\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3C35A5B722C81DE7002D4582 /* Sources */ = {
@@ -1326,6 +1367,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PACKAGE_DEPS_DIR = "${BUILD_DIR}/../../SourcePackages/checkouts";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1384,6 +1426,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_PACKAGE_DEPS_DIR = "${BUILD_DIR}/../../SourcePackages/checkouts";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

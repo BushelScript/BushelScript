@@ -17,6 +17,13 @@
       location = "container:"
       name = "General">
       <Group
+         location = "group:BuildScripts"
+         name = "BuildScripts">
+         <FileRef
+            location = "group:copy-licenses-into-product.rb">
+         </FileRef>
+      </Group>
+      <Group
          location = "group:/Users/ian/Documents/Bushel/Licenses"
          name = "Licenses">
          <Group

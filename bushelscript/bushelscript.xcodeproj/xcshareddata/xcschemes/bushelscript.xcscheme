@@ -61,20 +61,8 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/ian/Documents/Bushel/bushelscript/bushelscript/source.bushel"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "&quot;/Users/ian/Favourites/Loading Bay/Alert HelloWorld.bushel&quot;"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "--version"
             isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "&quot;/Users/ian/Favourites/Loading Bay/First Safari Tab.bushel&quot;"
-            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>
