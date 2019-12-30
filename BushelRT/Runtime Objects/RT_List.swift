@@ -133,7 +133,11 @@ public class RT_List: RT_Object, AEEncodable {
                 // TODO: Throw error
                 return nil
             }
-            return RT_String(value: contents.map { $0.description }.joined(separator: separator.value))
+            guard let strings = contents.map({ ($0.coerce() as? RT_String)?.value }) as? [String] else {
+                // TODO: Throw error
+                return nil
+            }
+            return RT_String(value: strings.joined(separator: separator.value))
         default:
             return super.perform(command: command, arguments: arguments)
         }
