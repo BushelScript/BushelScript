@@ -35,7 +35,7 @@ public class RT_Date: RT_Object {
         super.properties + [seconds, minutes, hours]
     }
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(rawValue: property.uid) {
+        switch PropertyUID(property.uid) {
         case .date_seconds:
             return seconds
         case .date_minutes:

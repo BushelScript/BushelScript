@@ -75,6 +75,7 @@
 		3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */; };
 		3CB528EB237FAF8A0051460B /* TypeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C327261232DBAE2001A527C /* TypeInfo.swift */; };
 		3CB528ED23809DDD0051460B /* RTInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB528EC23809DDD0051460B /* RTInfo.swift */; };
+		3CB7FEC623B7CA22003191AC /* TermUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB7FEC523B7CA22003191AC /* TermUID.swift */; };
 		3CC224892391CFF300448D25 /* PropertyInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224882391CFF300448D25 /* PropertyInfo.swift */; };
 		3CC224942391D9D500448D25 /* CommandInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224932391D9D500448D25 /* CommandInfo.swift */; };
 		3CC224962391E06800448D25 /* TermDescriptors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224952391E06800448D25 /* TermDescriptors.swift */; };
@@ -92,8 +93,11 @@
 		3CD113CC22FA8FFE00329583 /* source.bushel in Resources */ = {isa = PBXBuildFile; fileRef = 3CD113CB22FA8FFE00329583 /* source.bushel */; };
 		3CD113D422FB700000329583 /* Applications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113D322FB700000329583 /* Applications.swift */; };
 		3CD113DB22FC6E9300329583 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113DA22FC6E9300329583 /* Logging.swift */; };
+		3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */; };
 		3CE775092336C3DC00E0E7C6 /* StaticStackFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE775082336C3DC00E0E7C6 /* StaticStackFrame.swift */; };
 		3CEF505723529A1B008603E3 /* LLVM in Frameworks */ = {isa = PBXBuildFile; productRef = 3CEF505623529A1B008603E3 /* LLVM */; };
+		3CF7486F23B825AC00A2F981 /* InAnyCase in Frameworks */ = {isa = PBXBuildFile; productRef = 3CF7486E23B825AC00A2F981 /* InAnyCase */; };
+		3CF7487423B88C5500A2F981 /* TermInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF7487323B88C5500A2F981 /* TermInfo.swift */; };
 		3CFC16E22326F4C0007A1055 /* TermNameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFC16E12326F4C0007A1055 /* TermNameTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -269,6 +273,7 @@
 		3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermDictionary.swift; sourceTree = "<group>"; };
 		3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lexicon.swift; sourceTree = "<group>"; };
 		3CB528EC23809DDD0051460B /* RTInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTInfo.swift; sourceTree = "<group>"; };
+		3CB7FEC523B7CA22003191AC /* TermUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermUID.swift; sourceTree = "<group>"; };
 		3CC224882391CFF300448D25 /* PropertyInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyInfo.swift; sourceTree = "<group>"; };
 		3CC224932391D9D500448D25 /* CommandInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandInfo.swift; sourceTree = "<group>"; };
 		3CC224952391E06800448D25 /* TermDescriptors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermDescriptors.swift; sourceTree = "<group>"; };
@@ -292,7 +297,9 @@
 		3CD113CB22FA8FFE00329583 /* source.bushel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = source.bushel; path = bushelscript/bushelscript/source.bushel; sourceTree = SOURCE_ROOT; };
 		3CD113D322FB700000329583 /* Applications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Applications.swift; sourceTree = "<group>"; };
 		3CD113DA22FC6E9300329583 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_Script.swift; sourceTree = "<group>"; };
 		3CE775082336C3DC00E0E7C6 /* StaticStackFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticStackFrame.swift; sourceTree = "<group>"; };
+		3CF7487323B88C5500A2F981 /* TermInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermInfo.swift; sourceTree = "<group>"; };
 		3CFC16E12326F4C0007A1055 /* TermNameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermNameTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -301,6 +308,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CF7486F23B825AC00A2F981 /* InAnyCase in Frameworks */,
 				3C75066523A1A3BF006E7591 /* SwiftAutomation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -385,6 +393,7 @@
 				3C12EF9B2354E5D10057E0CC /* RT_AEObject.swift */,
 				3C12EF942354E51C0057E0CC /* Specifiers */,
 				3C12EF9D2354E6010057E0CC /* RT_Global.swift */,
+				3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */,
 				3C12EF7E2354E2D40057E0CC /* RT_Null.swift */,
 				3C12EF742354E23C0057E0CC /* RT_Object.swift */,
 				3C12EF8E2354E4130057E0CC /* Errors.swift */,
@@ -564,6 +573,7 @@
 				3CC224952391E06800448D25 /* TermDescriptors.swift */,
 				3C3065B0230B7ABB00833CE8 /* TermName.swift */,
 				3CC224972391E08800448D25 /* TermUIDs.swift */,
+				3CB7FEC523B7CA22003191AC /* TermUID.swift */,
 			);
 			path = Terminology;
 			sourceTree = "<group>";
@@ -613,6 +623,7 @@
 				3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */,
 				3CC224882391CFF300448D25 /* PropertyInfo.swift */,
 				3C327261232DBAE2001A527C /* TypeInfo.swift */,
+				3CF7487323B88C5500A2F981 /* TermInfo.swift */,
 			);
 			path = "Runtime Info";
 			sourceTree = "<group>";
@@ -778,6 +789,7 @@
 			);
 			name = Bushel;
 			packageProductDependencies = (
+				3CF7486E23B825AC00A2F981 /* InAnyCase */,
 			);
 			productName = Bushel;
 			productReference = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */;
@@ -969,6 +981,7 @@
 			mainGroup = 3C35A5B122C81DE7002D4582;
 			packageReferences = (
 				3CEF505523529A1B008603E3 /* XCRemoteSwiftPackageReference "LLVMSwift" */,
+				3CF7486D23B825AC00A2F981 /* XCRemoteSwiftPackageReference "InAnyCase" */,
 			);
 			productRefGroup = 3C35A5BC22C81DE7002D4582 /* Products */;
 			projectDirPath = "";
@@ -1101,6 +1114,7 @@
 				3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */,
 				3C3065B1230B7ABB00833CE8 /* TermName.swift in Sources */,
 				3CD113DB22FC6E9300329583 /* Logging.swift in Sources */,
+				3CB7FEC623B7CA22003191AC /* TermUID.swift in Sources */,
 				3CC224982391E08800448D25 /* TermUIDs.swift in Sources */,
 				3CD113D422FB700000329583 /* Applications.swift in Sources */,
 				3C68D2452353BA300059FD3E /* BinaryOperation.swift in Sources */,
@@ -1166,6 +1180,7 @@
 				3CC224942391D9D500448D25 /* CommandInfo.swift in Sources */,
 				3C12EF7B2354E29B0057E0CC /* RT_Integer.swift in Sources */,
 				3C12EF852354E32C0057E0CC /* RT_String.swift in Sources */,
+				3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */,
 				3CE775092336C3DC00E0E7C6 /* StaticStackFrame.swift in Sources */,
 				3CCD8BA322CFA5BF0049C74F /* GenLLVMIR.swift in Sources */,
 				3CC224892391CFF300448D25 /* PropertyInfo.swift in Sources */,
@@ -1187,6 +1202,7 @@
 				3C12EF9C2354E5D10057E0CC /* RT_AEObject.swift in Sources */,
 				3C12EF752354E23C0057E0CC /* RT_Object.swift in Sources */,
 				3C12EF832354E30C0057E0CC /* RT_Record.swift in Sources */,
+				3CF7487423B88C5500A2F981 /* TermInfo.swift in Sources */,
 				3C12EF7D2354E2B50057E0CC /* RT_Boolean.swift in Sources */,
 				3C12EF8F2354E4130057E0CC /* Errors.swift in Sources */,
 				3CCD8AC722CC45860049C74F /* StackFrame.swift in Sources */,
@@ -1827,6 +1843,14 @@
 				minimumVersion = 0.6.0;
 			};
 		};
+		3CF7486D23B825AC00A2F981 /* XCRemoteSwiftPackageReference "InAnyCase" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ThatsJustCheesy/InAnyCase.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1834,6 +1858,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3CEF505523529A1B008603E3 /* XCRemoteSwiftPackageReference "LLVMSwift" */;
 			productName = LLVM;
+		};
+		3CF7486E23B825AC00A2F981 /* InAnyCase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3CF7486D23B825AC00A2F981 /* XCRemoteSwiftPackageReference "InAnyCase" */;
+			productName = InAnyCase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

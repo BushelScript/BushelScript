@@ -8,7 +8,7 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
     public var name: TermName?
     public let exports: Bool
     
-    private var contentsByUID: [String : Term]
+    private var contentsByUID: [TermUID : Term]
     private var contentsByName: [TermName : Term]
     
     private(set) public var dictionaryContainers: [TermName : TermDictionaryContainer] = [:]
@@ -39,7 +39,7 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
         self.exportingDictionaryContainers = new.exportingDictionaryContainers.merging(old.exportingDictionaryContainers, uniquingKeysWith: { $1 })
     }
     
-    public func term(forUID uid: String) -> Term? {
+    public func term(forUID uid: TermUID) -> Term? {
         contentsByUID[uid]
     }
     
@@ -106,7 +106,7 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
 
 public class ParameterTermDictionary: TerminologySource {
     
-    private var contentsByUID: [String : ParameterTerm]
+    private var contentsByUID: [TermUID : ParameterTerm]
     private var contentsByName: [TermName : ParameterTerm]
     
     public init(contents: [ParameterTerm] = []) {
@@ -119,7 +119,7 @@ public class ParameterTermDictionary: TerminologySource {
         )
     }
     
-    public func term(forUID uid: String) -> ParameterTerm? {
+    public func term(forUID uid: TermUID) -> ParameterTerm? {
         return contentsByUID[uid]
     }
     
@@ -166,30 +166,28 @@ private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
     var terms: [Term] = []
     
     func addType(_ term: SDEFinitely.KeywordTerm) {
-        add(ClassTerm(lexicon.makeUID("type", term.termName), name: term.termName, code: term.code, parentClass: (lexicon.pool.term(forID: TypeUID.item.rawValue) as! ClassTerm)))
+        add(ClassTerm(TermUID(.type, .ae4(code: term.code)), name: term.termName, parentClass: (lexicon.pool.term(forUID: TermUID(TypeUID.item)) as! ClassTerm)))
     }
     func addClass(_ term: SDEFinitely.ClassTerm) {
-        add(ClassTerm(lexicon.makeUID("type", term.termName), name: term.termName, code: term.code, parentClass: (lexicon.pool.term(forID: TypeUID.item.rawValue) as! ClassTerm)))
+        add(ClassTerm(TermUID(.type, .ae4(code: term.code)), name: term.termName, parentClass: (lexicon.pool.term(forUID: TermUID(TypeUID.item)) as! ClassTerm)))
     }
     func addProperty(_ term: SDEFinitely.KeywordTerm) {
-        add(PropertyTerm(lexicon.makeUID("property", term.termName), name: TermName(term.name), code: term.code))
+        add(PropertyTerm(TermUID(.property, .ae4(code: term.code)), name: TermName(term.name)))
     }
     func addEnumerator(_ term: SDEFinitely.KeywordTerm) {
-        add(EnumeratorTerm(lexicon.makeUID("constant", term.termName), name: TermName(term.name), code: term.code))
+        add(EnumeratorTerm(TermUID(.enumerator, .ae4(code: term.code)), name: TermName(term.name)))
     }
     func addCommand(_ term: SDEFinitely.CommandTerm) {
         add(
-            CommandTerm(lexicon.makeUID("command", term.termName),
+            CommandTerm(TermUID(.command, .ae8(class: term.eventClass, id: term.eventID)),
             name: TermName(term.name),
-            codes: (class: term.eventClass,
-                    id: term.eventID),
             parameters: ParameterTermDictionary(contents: term.parameters.map { convertParameterTerm($0, term) })
             )
         )
     }
     
     private func convertParameterTerm(_ parameterTerm: SDEFinitely.KeywordTerm, _ commandTerm: SDEFinitely.CommandTerm) -> ParameterTerm {
-        return ParameterTerm(lexicon.makeUID("parameter", commandTerm.termName, parameterTerm.termName), name: TermName(parameterTerm.name), code: parameterTerm.code)
+        return ParameterTerm(TermUID(.parameter, .ae4(code: parameterTerm.code)), name: TermName(parameterTerm.name))
     }
     
     private func add(_ term: Term) {

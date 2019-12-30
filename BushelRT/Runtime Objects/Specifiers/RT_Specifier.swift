@@ -119,10 +119,10 @@ public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
         }
         
         if case .property = kind {
-            return parentSpecifier.property(property!.code!)
+            return parentSpecifier.property(property!.uid.ae4Code!)
         }
         
-        guard let code = type?.code else {
+        guard let code = type?.uid.ae4Code else {
             // TODO: handle these errors more gracefully (should make this a throwing method)
             fatalError("must have code to evaluate by Apple Event")
         }
@@ -298,13 +298,13 @@ public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
         return "\(descriptionForSelf) of \(parent.description)"
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.specifier.rawValue, TypeUID.specifier.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("specifier"))])
+    private static let typeInfo_ = TypeInfo(.specifier)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }
     
     private var descriptionForSelf: String {
-        let termString = type.map { $0.displayName } ?? property.map { $0.displayName } ?? "(invalid specifier!)"
+        let termString = (type as TermInfo? ?? property as TermInfo?).map { String(describing: $0) } ?? "(invalid specifier!)"
         
         switch kind {
         case .simple:

@@ -34,9 +34,9 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         ConstantDescriptor(.false, name: TermName("false")),
         
         TypeDescriptor(.list, name: TermName("list")),
-        PropertyDescriptor(.sequence_length, name: TermName("length")),
-        PropertyDescriptor(.sequence_reverse, name: TermName("reverse")),
-        PropertyDescriptor(.sequence_tail, name: TermName("tail")),
+        PropertyDescriptor(.Sequence_length, name: TermName("length")),
+        PropertyDescriptor(.Sequence_reverse, name: TermName("reverse")),
+        PropertyDescriptor(.Sequence_tail, name: TermName("tail")),
         
         TypeDescriptor(.date, name: TermName("date")),
         PropertyDescriptor(.date_seconds, name: TermName("seconds")),
@@ -75,117 +75,117 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             ParameterDescriptor(.direct)
         ]),
         
-        DictionaryDescriptor("bushel.dictionary.topScript", name: TermName("script"), contents: []),
+        DictionaryDescriptor(TermUID(.dictionary, .id("script")), name: TermName("script"), contents: []),
     
         PropertyDescriptor(.currentDate, name: TermName("current date")),
     ]
     
     private lazy var mathDictionary: [TermDescriptor] = [
-        PropertyDescriptor(.math_pi, name: TermName("pi")),
-        PropertyDescriptor(.math_e, name: TermName("e")),
+        PropertyDescriptor(.Math_pi, name: TermName("pi")),
+        PropertyDescriptor(.Math_e, name: TermName("e")),
         
-        CommandDescriptor(.math_abs, name: TermName("absolute value"), parameters: [
+        CommandDescriptor(.Math_abs, name: TermName("absolute value"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_abs, name: TermName("abs"), parameters: [
+        CommandDescriptor(.Math_abs, name: TermName("abs"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_sqrt, name: TermName("square root"), parameters: [
+        CommandDescriptor(.Math_sqrt, name: TermName("square root"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_sqrt, name: TermName("sqrt"), parameters: [
+        CommandDescriptor(.Math_sqrt, name: TermName("sqrt"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_sqrt, name: TermName("√"), parameters: [
+        CommandDescriptor(.Math_sqrt, name: TermName("√"), parameters: [
             ParameterDescriptor(.direct)
         ]),
-        CommandDescriptor(.math_cbrt, name: TermName("cube root"), parameters: [
+        CommandDescriptor(.Math_cbrt, name: TermName("cube root"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_cbrt, name: TermName("cubic root"), parameters: [
+        CommandDescriptor(.Math_cbrt, name: TermName("cubic root"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_cbrt, name: TermName("cbrt"), parameters: [
+        CommandDescriptor(.Math_cbrt, name: TermName("cbrt"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_square, name: TermName("square"), parameters: [
+        CommandDescriptor(.Math_square, name: TermName("square"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_square, name: TermName("squared"), parameters: [
+        CommandDescriptor(.Math_square, name: TermName("squared"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_cube, name: TermName("cube"), parameters: [
+        CommandDescriptor(.Math_cube, name: TermName("cube"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_cube, name: TermName("cubed"), parameters: [
+        CommandDescriptor(.Math_cube, name: TermName("cubed"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of"))
         ]),
-        CommandDescriptor(.math_pow, name: TermName("power"), parameters: [
+        CommandDescriptor(.Math_pow, name: TermName("power"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of")),
-            ParameterDescriptor(.math_pow_exponent, name: TermName("to the"))
+            ParameterDescriptor(.Math_pow_exponent, name: TermName("to the"))
         ]),
-        CommandDescriptor(.math_pow, name: TermName("pow"), parameters: [
+        CommandDescriptor(.Math_pow, name: TermName("pow"), parameters: [
             ParameterDescriptor(.direct, name: TermName("of")),
-            ParameterDescriptor(.math_pow_exponent, name: TermName("to the"))
+            ParameterDescriptor(.Math_pow_exponent, name: TermName("to the"))
         ]),
     ]
     
     private lazy var sequenceDictionary: [TermDescriptor] = [
-        CommandDescriptor(.sequence_join, name: TermName("join"), parameters: [
+        CommandDescriptor(.Sequence_join, name: TermName("join"), parameters: [
             ParameterDescriptor(.direct),
-            ParameterDescriptor(.sequence_join_with, name: TermName("with")),
-            ParameterDescriptor(.sequence_join_with, name: TermName("by"))
+            ParameterDescriptor(.Sequence_join_with, name: TermName("with")),
+            ParameterDescriptor(.Sequence_join_with, name: TermName("by"))
         ]),
     ]
     
     private lazy var stringDictionary: [TermDescriptor] = [
-        CommandDescriptor(.string_split, name: TermName("split"), parameters: [
+        CommandDescriptor(.String_split, name: TermName("split"), parameters: [
             ParameterDescriptor(.direct),
-            ParameterDescriptor(.string_split_by, name: TermName("by"))
+            ParameterDescriptor(.String_split_by, name: TermName("by"))
         ]),
     ]
     
     private lazy var guiDictionary: [TermDescriptor] = [
-        CommandDescriptor(.gui_notification, name: TermName("notification"), parameters: [
+        CommandDescriptor(.GUI_notification, name: TermName("notification"), parameters: [
             ParameterDescriptor(.direct, name: TermName("message")),
-            ParameterDescriptor(.gui_notification_title, name: TermName("title")),
-            ParameterDescriptor(.gui_notification_subtitle, name: TermName("subtitle")),
-            ParameterDescriptor(.gui_notification_sound, name: TermName("sound"))
+            ParameterDescriptor(.GUI_notification_title, name: TermName("title")),
+            ParameterDescriptor(.GUI_notification_subtitle, name: TermName("subtitle")),
+            ParameterDescriptor(.GUI_notification_sound, name: TermName("sound"))
         ]),
-        CommandDescriptor(.gui_alert, name: TermName("alert"), parameters: [
+        CommandDescriptor(.GUI_alert, name: TermName("alert"), parameters: [
             ParameterDescriptor(.direct, name: TermName("heading")),
-            ParameterDescriptor(.gui_alert_message, name: TermName("message")),
-            ParameterDescriptor(.gui_alert_kind, name: TermName("kind")),
-            ParameterDescriptor(.gui_alert_buttons, name: TermName("buttons")),
-            ParameterDescriptor(.gui_alert_default, name: TermName("default")),
-            ParameterDescriptor(.gui_alert_cancel, name: TermName("cancel")),
-            ParameterDescriptor(.gui_alert_timeout, name: TermName("timeout")),
+            ParameterDescriptor(.GUI_alert_message, name: TermName("message")),
+            ParameterDescriptor(.GUI_alert_kind, name: TermName("kind")),
+            ParameterDescriptor(.GUI_alert_buttons, name: TermName("buttons")),
+            ParameterDescriptor(.GUI_alert_default, name: TermName("default")),
+            ParameterDescriptor(.GUI_alert_cancel, name: TermName("cancel")),
+            ParameterDescriptor(.GUI_alert_timeout, name: TermName("timeout")),
         ]),
-        CommandDescriptor(.gui_chooseFrom, name: TermName("choose from"), parameters: [
+        CommandDescriptor(.GUI_chooseFrom, name: TermName("choose from"), parameters: [
             ParameterDescriptor(.direct, name: TermName("list")),
-            ParameterDescriptor(.gui_chooseFrom_title, name: TermName("title")),
-            ParameterDescriptor(.gui_chooseFrom_prompt, name: TermName("prompt")),
-            ParameterDescriptor(.gui_chooseFrom_default, name: TermName("default")),
-            ParameterDescriptor(.gui_chooseFrom_confirm, name: TermName("confirm")),
-            ParameterDescriptor(.gui_chooseFrom_cancel, name: TermName("cancel")),
-            ParameterDescriptor(.gui_chooseFrom_multipleSelection, name: TermName("multiple selection")),
-            ParameterDescriptor(.gui_chooseFrom_noSelection, name: TermName("no selection"))
+            ParameterDescriptor(.GUI_chooseFrom_title, name: TermName("title")),
+            ParameterDescriptor(.GUI_chooseFrom_prompt, name: TermName("prompt")),
+            ParameterDescriptor(.GUI_chooseFrom_default, name: TermName("default")),
+            ParameterDescriptor(.GUI_chooseFrom_confirm, name: TermName("confirm")),
+            ParameterDescriptor(.GUI_chooseFrom_cancel, name: TermName("cancel")),
+            ParameterDescriptor(.GUI_chooseFrom_multipleSelection, name: TermName("multiple selection")),
+            ParameterDescriptor(.GUI_chooseFrom_noSelection, name: TermName("no selection"))
         ]),
     ]
     
     private lazy var cliDictionary: [TermDescriptor] = [
-        CommandDescriptor(.cli_log, name: TermName("log"), parameters: [
+        CommandDescriptor(.CLI_log, name: TermName("log"), parameters: [
             ParameterDescriptor(.direct, name: TermName("message"))
         ]),
     ]
     
     public lazy var defaultTerms: [TermDescriptor] = [
-        DictionaryDescriptor("bushel.dictionary.bushelscript", name: TermName("BushelScript"), contents: mainDictionary),
-        DictionaryDescriptor("bushel.dictionary.math", name: TermName("Math"), contents: mathDictionary),
-        DictionaryDescriptor("bushel.dictionary.sequence", name: TermName("Sequence"), contents: sequenceDictionary),
-        DictionaryDescriptor("bushel.dictionary.string", name: TermName("String"), contents: stringDictionary),
-        DictionaryDescriptor("bushel.dictionary.gui", name: TermName("GUI"), contents: guiDictionary),
-        DictionaryDescriptor("bushel.dictionary.cli", name: TermName("CLI"), contents: cliDictionary),
+        DictionaryDescriptor(TermUID(.dictionary, .id("BushelScript")), name: TermName("BushelScript"), contents: mainDictionary),
+        DictionaryDescriptor(TermUID(.dictionary, .id("Math")), name: TermName("Math"), contents: mathDictionary),
+        DictionaryDescriptor(TermUID(.dictionary, .id("Sequence")), name: TermName("Sequence"), contents: sequenceDictionary),
+        DictionaryDescriptor(TermUID(.dictionary, .id("String")), name: TermName("String"), contents: stringDictionary),
+        DictionaryDescriptor(TermUID(.dictionary, .id("GUI")), name: TermName("GUI"), contents: guiDictionary),
+        DictionaryDescriptor(TermUID(.dictionary, .id("CLI")), name: TermName("CLI"), contents: cliDictionary),
     ]
     
     public let prefixOperators: [TermName : UnaryOperation] = [
@@ -379,19 +379,19 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         guard let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: [":"]) else {
             throw ParseError(description: "expected function name", location: SourceLocation(source.range, source: entireSource))
         }
-        let functionNameTerm = Located(VariableTerm(lexicon.makeUID("variable", termName), name: termName), at: termLocation)
+        let functionNameTerm = Located(VariableTerm(TermUID(.variable, .id(termName.normalized)), name: termName), at: termLocation)
         
         var parameters: [Located<ParameterTerm>] = []
         var arguments: [Located<VariableTerm>] = []
         if tryEating(prefix: ":") {
             while let (parameterTermName, parameterTermLocation) = try parseTermNameLazily() {
-                parameters.append(Located(ParameterTerm(lexicon.makeUID("parameter", termName, parameterTermName), name: parameterTermName, code: nil), at: parameterTermLocation))
+                parameters.append(Located(ParameterTerm(TermUID(.parameter, .id(parameterTermName.normalized)), name: parameterTermName), at: parameterTermLocation))
                 
                 var (argumentName, argumentLocation) = try parseTermNameEagerly(stoppingAt: [","]) ?? (parameterTermName, parameterTermLocation)
                 if argumentName.words.isEmpty {
                     (argumentName, argumentLocation) = (parameterTermName, parameterTermLocation)
                 }
-                arguments.append(Located(VariableTerm(lexicon.makeUID("variable", termName, argumentName), name: argumentName), at: argumentLocation))
+                arguments.append(Located(VariableTerm(TermUID(.variable, .id(argumentName.normalized)), name: argumentName), at: argumentLocation))
                 
                 if !tryEating(prefix: ",") {
                     break
@@ -401,7 +401,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         let parameterTerms = parameters.map { $0.term }
         
-        let commandTerm = CommandTerm(lexicon.makeUID("command", termName), name: termName, codes: nil, parameters: ParameterTermDictionary(contents: parameterTerms))
+        let commandTerm = CommandTerm(TermUID(.command, .id(termName.normalized)), name: termName, parameters: ParameterTermDictionary(contents: parameterTerms))
         lexicon.add(commandTerm)
         
         guard tryEating(prefix: "\n") else {
@@ -504,7 +504,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         guard let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: ["be"]) else {
             throw ParseError(description: "expected variable name following ‘let’", location: SourceLocation(source.range, source: entireSource))
         }
-        let term = Located(VariableTerm(lexicon.makeUID("variable", termName), name: termName), at: termLocation)
+        let term = Located(VariableTerm(TermUID(.variable, .id(termName.normalized)), name: termName), at: termLocation)
         
         var initialValue: Expression? = nil
         if tryEating(prefix: "be") {
@@ -538,11 +538,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         let term: Term & TermDictionaryDelayedInitContainer
         let resource: Resource
         if byBundleID {
-            let idTerm = Located(ApplicationIDTerm(name.normalized, name: name, bundle: bundle), at: nameLocation)
+            let idTerm = Located(ApplicationIDTerm(TermUID(.applicationID, .id(name.normalized)), name: name, bundle: bundle), at: nameLocation)
             term = idTerm.term
             resource = .applicationByID(idTerm)
         } else {
-            let nameTerm = Located(ApplicationNameTerm(name.normalized, name: name, bundle: bundle), at: nameLocation)
+            let nameTerm = Located(ApplicationNameTerm(TermUID(.applicationName, .id(name.normalized)), name: name, bundle: bundle), at: nameLocation)
             term = nameTerm.term
             resource = .applicationByName(nameTerm)
         }
@@ -594,16 +594,16 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             
             var parameters: [(Located<ParameterTerm>, Expression)] = []
             func parseParameter() throws -> Bool {
-                guard case let (parameterTermString, parameterTerm?) = try term.parameters.findTerm(in: source.prefix(while: { !$0.isNewline })) else {
+                guard case let (parameterTermString, parameterTerm?) = try findTerm(in: source.prefix(while: { !$0.isNewline }), terminology: term.parameters) else {
                     return false
                 }
                 source.removeFirst(parameterTermString.count)
-                let locatedParamterTerm = Located(parameterTerm, at: SourceLocation(parameterTermString.range, source: entireSource))
+                let locatedParameterTerm = Located(parameterTerm, at: SourceLocation(parameterTermString.range, source: entireSource))
                 
                 guard let parameterValue = try parsePrimary() else {
                     throw ParseError(description: "expected expression after parameter name, but found end of script", location: currentLocation)
                 }
-                parameters.append((locatedParamterTerm, parameterValue))
+                parameters.append((locatedParameterTerm, parameterValue))
                 return true
             }
             func result() -> Expression.Kind {
@@ -627,7 +627,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                         }
                         directParameterValue = dpValue
                     }
-                    parameters.append((Located(lexicon.pool.term(forID: ParameterUID.direct.rawValue) as! ParameterTerm, at: directParameterLocation), directParameterValue))
+                    parameters.append((Located(lexicon.pool.term(forUID: TermUID(ParameterUID.direct)) as! ParameterTerm, at: directParameterLocation), directParameterValue))
                 }
             }
             

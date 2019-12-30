@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "InAnyCase",
+        "repositoryURL": "https://github.com/ThatsJustCheesy/InAnyCase.git",
+        "state": {
+          "branch": "master",
+          "revision": "c9f2151e6cfee4c1487dceb127702a5c83c6217a",
+          "version": null
+        }
+      },
+      {
         "package": "KVODelegate",
         "repositoryURL": "https://github.com/ThatsJustCheesy/KVODelegate.git",
         "state": {
@@ -47,11 +56,20 @@
         }
       },
       {
+        "package": "Regex",
+        "repositoryURL": "https://github.com/sharplet/Regex.git",
+        "state": {
+          "branch": null,
+          "revision": "a819aed0e9555268c29a62500fe6fb781ae7f57d",
+          "version": "2.1.0"
+        }
+      },
+      {
         "package": "SDEFinitely",
         "repositoryURL": "https://github.com/ThatsJustCheesy/SDEFinitely.git",
         "state": {
           "branch": "master",
-          "revision": "97d91fe2ad9935201284d383f06e814fb81f78e4",
+          "revision": "08b517e76fbb78b4e417b80739c62bc91ff6262d",
           "version": null
         }
       },

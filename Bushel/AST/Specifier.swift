@@ -15,11 +15,11 @@ public class Specifier {
     
     /// The class of data specified.
     /// Eventually encoded as `keyAEDesiredClass`.
-    public var idTerm: Located<ConstantTerm>
+    public var idTerm: Located<Term>
     
     public var kind: Kind
     
-    public init(class: Located<ConstantTerm>, kind: Kind, parent: Expression? = nil) {
+    public init(class: Located<Term>, kind: Kind, parent: Expression? = nil) {
         self.idTerm = `class`
         self.kind = kind
         self.parent = parent

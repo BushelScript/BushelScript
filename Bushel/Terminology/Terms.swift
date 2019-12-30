@@ -1,39 +1,44 @@
 import Foundation
 
-public protocol NamedTerm: PrettyPrintable {
+public protocol NamedTerm: CustomStringConvertible, PrettyPrintable {
     
+    var uid: TermUID { get }
     var name: TermName? { get }
-    var displayName: String { get }
     
 }
 
-public protocol FCCCodedTerm {
+public extension NamedTerm {
     
-    var code: OSType? { get }
+    var ae4Code: OSType? {
+        uid.ae4Code
+    }
+    
+    var ae8Code: (class: AEEventClass, id: AEEventID)? {
+        uid.ae8Code
+    }
+    
+    var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {
+        uid.ae12Code
+    }
     
 }
 
-public /*abstract*/ class Term: NamedTerm, Comparable, Hashable {
+public /*abstract*/ class Term: NamedTerm, Hashable {
     
-    public let uid: String
+    public let uid: TermUID
     public let name: TermName?
     
     // Swift is *sorely* in need of abstract classes… 😫
+    public class var kind: TermUID.Kind {
+        fatalError("abstract method called")
+    }
     public var enumerated: TermKind {
         fatalError("abstract method called")
     }
     
-    public var displayName: String {
-        name?.normalized ?? uid
-    }
-    
-    public init(_ uid: String, name: TermName?) {
+    public required init?(_ uid: TermUID, name: TermName?) {
         self.uid = uid
         self.name = name
-    }
-    
-    public static func < (lhs: Term, rhs: Term) -> Bool {
-        return lhs.uid < rhs.uid
     }
     
     public static func == (lhs: Term, rhs: Term) -> Bool {
@@ -44,55 +49,36 @@ public /*abstract*/ class Term: NamedTerm, Comparable, Hashable {
         hasher.combine(uid)
     }
     
-}
-
-public /*abstract*/ class ConstantTerm: Term, FCCCodedTerm, CustomStringConvertible {
-    
-    public var code: OSType?
-    
-    public required init(_ uid: String, name: TermName?, code: OSType?) {
-        self.code = code
-        super.init(uid, name: name)
-    }
-    
-    public override var displayName: String {
-        name?.normalized ?? description
-    }
-    
     public var description: String {
-        fatalError("abstract method called")
-    }
-    
-}
-
-private extension ConstantTerm {
-    
-    func describe(tag: String) -> String {
-        if !(name?.words.isEmpty ?? true) {
-            return String(describing: name)
-        } else if let code = code {
-            return "«\(tag) \(String(fourCharCode: code))»"
+        if
+            let name = name,
+            !name.words.isEmpty
+        {
+            return "\(name)"
         } else {
-            return "«\(tag)»"
+            return "«\(uid.kind) \(uid.name)»"
         }
     }
     
 }
 
-public final class EnumeratorTerm: ConstantTerm {
+public final class EnumeratorTerm: Term {
     
     public override var enumerated: TermKind {
         return .enumerator(self)
     }
     
-    public override var description: String {
-        describe(tag: "constant")
+    public required init(_ uid: TermUID, name: TermName?) {
+        super.init(uid, name: name)!
     }
     
 }
 
 public final class DictionaryTerm: Term, TermDictionaryContainer {
     
+    public override class var kind: TermUID.Kind {
+        .dictionary
+    }
     public override var enumerated: TermKind {
         return .dictionary(self)
     }
@@ -103,15 +89,22 @@ public final class DictionaryTerm: Term, TermDictionaryContainer {
         return dictionary
     }
     
-    public init(_ uid: String, name: TermName?, terminology: TermDictionary) {
+    public init(_ uid: TermUID, name: TermName?, terminology: TermDictionary) {
         self.dictionary = terminology
-        super.init(uid, name: name)
+        super.init(uid, name: name)!
+    }
+    
+    public required init?(_ uid: TermUID, name: TermName?) {
+        return nil
     }
     
 }
 
-public final class ClassTerm: ConstantTerm, TermDictionaryDelayedInitContainer {
+public final class ClassTerm: Term, TermDictionaryDelayedInitContainer {
     
+    public override class var kind: TermUID.Kind {
+        .type
+    }
     public override var enumerated: TermKind {
         return .class_(self)
     }
@@ -132,13 +125,13 @@ public final class ClassTerm: ConstantTerm, TermDictionaryDelayedInitContainer {
     
     public var parentClass: ClassTerm?
     
-    public init(_ uid: String, name: TermName?, code: OSType?, parentClass: ClassTerm?) {
+    public init(_ uid: TermUID, name: TermName?, parentClass: ClassTerm?) {
         self.parentClass = parentClass
-        super.init(uid, name: name, code: code)
+        super.init(uid, name: name)!
     }
     
-    public required convenience init(_ uid: String, name: TermName?, code: OSType?) {
-        self.init(uid, name: name, code: code, parentClass: nil)
+    public required convenience init(_ uid: TermUID, name: TermName?) {
+        self.init(uid, name: name, parentClass: nil)
     }
     
     public func isA(_ other: ClassTerm) -> Bool {
@@ -154,75 +147,71 @@ public final class ClassTerm: ConstantTerm, TermDictionaryDelayedInitContainer {
         }
     }
     
-    public override var description: String {
-        describe(tag: "class")
-    }
-    
 }
 
-public final class PropertyTerm: ConstantTerm {
+public final class PropertyTerm: Term {
     
+    public override class var kind: TermUID.Kind {
+        .property
+    }
     public override var enumerated: TermKind {
         return .property(self)
     }
     
-    public required init(_ uid: String, name: TermName?, code: OSType? = nil) {
-        super.init(uid, name: name, code: code)
-    }
-    
-    public override var description: String {
-        describe(tag: "property")
+    public required init(_ uid: TermUID, name: TermName?) {
+        super.init(uid, name: name)!
     }
     
 }
 
 public final class CommandTerm: Term {
     
-    public let codes: (class: AEEventClass, id: AEEventID)?
     public var parameters: ParameterTermDictionary
     
+    public override class var kind: TermUID.Kind {
+        .command
+    }
     public override var enumerated: TermKind {
-        return .command(self)
+        .command(self)
     }
     
-    public init(_ uid: String, name: TermName?, codes: (class: AEEventClass, id: AEEventID)?, parameters: ParameterTermDictionary) {
-        self.codes = codes
+    public init(_ uid: TermUID, name: TermName?, parameters: ParameterTermDictionary) {
         self.parameters = parameters
-        super.init(uid, name: name)
+        super.init(uid, name: name)!
     }
     
-    public override var displayName: String {
-        name?.normalized ?? describe()
-    }
-    
-    private func describe() -> String {
-        if !(name?.words.isEmpty ?? true) {
-            return String(describing: name)
-        } else if let (classCode, idCode) = codes {
-            return "«command \(String(fourCharCode: classCode))\(String(fourCharCode: idCode))»"
-        } else {
-            return "«command»"
-        }
+    public required convenience init(_ uid: TermUID, name: TermName?) {
+        self.init(uid, name: name, parameters: ParameterTermDictionary())
     }
     
 }
 
-public final class ParameterTerm: ConstantTerm {
+public final class ParameterTerm: Term {
     
+    public override class var kind: TermUID.Kind {
+        .parameter
+    }
     public override var enumerated: TermKind {
-        return .parameter(self)
+        .parameter(self)
     }
     
-    public override var description: String {
-        describe(tag: "parameter")
+    public required init(_ uid: TermUID, name: TermName?) {
+        super.init(uid, name: name)!
     }
     
 }
 
 public final class VariableTerm: Term {
     
+    public override class var kind: TermUID.Kind {
+        .variable
+    }
     public override var enumerated: TermKind {
-        return .variable(self)
+        .variable(self)
+    }
+    
+    public required init(_ uid: TermUID, name: TermName?) {
+        super.init(uid, name: name)!
     }
     
 }
@@ -236,13 +225,20 @@ public final class ApplicationNameTerm: Term, TermDictionaryDelayedInitContainer
         true
     }
     
+    public override class var kind: TermUID.Kind {
+        .applicationName
+    }
     public override var enumerated: TermKind {
-        return .applicationName(self)
+        .applicationName(self)
     }
     
-    public init(_ uid: String, name: TermName, bundle: Bundle) {
+    public init(_ uid: TermUID, name: TermName, bundle: Bundle) {
         self.bundle = bundle
-        super.init(uid, name: name)
+        super.init(uid, name: name)!
+    }
+    
+    public required init?(_ uid: TermUID, name: TermName?) {
+        return nil
     }
     
 }
@@ -256,13 +252,20 @@ public final class ApplicationIDTerm: Term, TermDictionaryDelayedInitContainer {
         true
     }
     
+    public override class var kind: TermUID.Kind {
+        .applicationID
+    }
     public override var enumerated: TermKind {
-        return .applicationID(self)
+        .applicationID(self)
     }
     
-    public init(_ uid: String, name: TermName, bundle: Bundle) {
+    public init(_ uid: TermUID, name: TermName, bundle: Bundle) {
         self.bundle = bundle
-        super.init(uid, name: name)
+        super.init(uid, name: name)!
+    }
+    
+    public required init?(_ uid: TermUID, name: TermName?) {
+        return nil
     }
     
 }

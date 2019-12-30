@@ -21,16 +21,25 @@ public struct Lexicon: TerminologySource {
         push()
     }
     
+    public func term(forUID uid: TermUID) -> Term? {
+        findTerm { dictionary in dictionary.term(forUID: uid) }
+    }
+    
     public func term(named name: TermName) -> Term? {
-        func find<Dictionaries: Collection>(in dictionaries: Dictionaries) -> Term? where Dictionaries.Element == TermDictionary {
-            for dictionary in dictionaries {
-                if let term = dictionary.term(named: name) {
-                    return term
-                }
+        findTerm { dictionary in dictionary.term(named: name) }
+    }
+    
+    private func findTerm(_ extractTerm: (TermDictionary) -> Term?) -> Term? {
+        find(in: dictionaryStack.reversed(), extractTerm) ?? find(in: allExportingDictionaries.reversed(), extractTerm)
+    }
+    
+    private func find<Dictionaries: Collection>(in dictionaries: Dictionaries, _ extractTerm: (TermDictionary) -> Term?) -> Term? where Dictionaries.Element == TermDictionary {
+        for dictionary in dictionaries {
+            if let term = extractTerm(dictionary) {
+                return term
             }
-            return nil
         }
-        return find(in: dictionaryStack.reversed()) ?? find(in: allExportingDictionaries.reversed())
+        return nil
     }
     
     public func makeUID(_ kind: String, _ names: TermName...) -> String {
@@ -42,6 +51,13 @@ public struct Lexicon: TerminologySource {
         let dictionary =
             name.flatMap { self.dictionary(named: $0) } ??
             TermDictionary(pool: pool, name: name, exports: false)
+        dictionaryStack.append(dictionary)
+        return dictionary
+    }
+    
+    @discardableResult
+    public mutating func push(uid: TermUID, name: TermName? = nil) -> TermDictionary {
+        let dictionary = self.dictionary(forUID: uid) ?? TermDictionary(pool: pool, name: name, exports: false)
         dictionaryStack.append(dictionary)
         return dictionary
     }

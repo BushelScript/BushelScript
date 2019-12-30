@@ -7,6 +7,7 @@ private let log = OSLog(subsystem: logSubsystem, category: "RT info")
 public class RTInfo {
     
     public let termPool: TermPool
+    public let topScript: RT_Script
     
     private let objectPool = NSMapTable<RT_Object, NSNumber>(keyOptions: [.strongMemory, .objectPointerPersonality], valueOptions: .copyIn)
     
@@ -14,6 +15,7 @@ public class RTInfo {
     
     public init(termPool: TermPool) {
         self.termPool = termPool
+        self.topScript = RT_Script()
         
         func typeInfo(for classTerm: Bushel.ClassTerm) -> TypeInfo {
             var tags: Set<TypeInfo.Tag> = []
@@ -23,10 +25,10 @@ public class RTInfo {
             if let supertype = classTerm.parentClass.map({ typeInfo(for: $0) }) {
                 tags.insert(.supertype(supertype))
             }
-            return TypeInfo(classTerm.uid, classTerm.code, tags)
+            return TypeInfo(classTerm.uid, tags)
         }
         
-        for term in termPool.byID.values {
+        for term in termPool.byUID.values {
             switch term.enumerated {
             case .enumerator(_):
                 break
@@ -44,17 +46,17 @@ public class RTInfo {
                 if let name = term.name {
                     typesByName[name] = type
                 }
-                if let code = term.code {
+                if let code = term.ae4Code {
                     typesByCode[code] = type
                 }
             case .property(let term):
-                let property = PropertyInfo(term.uid, term.code, [])
+                let property = PropertyInfo(term.uid, [])
                 propertiesByUID[property.uid] = property
-                if let code = term.code {
+                if let code = term.ae4Code {
                     propertiesByCode[code] = property
                 }
             case .command(let term):
-                let command = CommandInfo(term.uid, term.codes, [])
+                let command = CommandInfo(term.uid, [])
                 commandsByUID[command.uid] = command
             case .parameter(_):
                 break
@@ -68,12 +70,12 @@ public class RTInfo {
         }
     }
     
-    private var typesByUID: [String : TypeInfo] = [:]
+    private var typesByUID: [TermUID : TypeInfo] = [:]
     private var typesBySupertype: [TypeInfo : [TypeInfo]] = [:]
     private var typesByName: [TermName : TypeInfo] = [:]
     private var typesByCode: [OSType : TypeInfo] = [:]
     
-    public func type(forUID uid: String) -> TypeInfo? {
+    public func type(forUID uid: TermUID) -> TypeInfo? {
         typesByUID[uid]
     }
     public func subtypes(of type: TypeInfo) -> [TypeInfo] {
@@ -86,19 +88,19 @@ public class RTInfo {
         typesByCode[code]
     }
     
-    private var propertiesByUID: [String : PropertyInfo] = [:]
+    private var propertiesByUID: [TermUID : PropertyInfo] = [:]
     private var propertiesByCode: [OSType : PropertyInfo] = [:]
     
-    public func property(forUID uid: String) -> PropertyInfo? {
+    public func property(forUID uid: TermUID) -> PropertyInfo? {
         propertiesByUID[uid]
     }
     public func property(for code: OSType) -> PropertyInfo? {
         propertiesByCode[code]
     }
     
-    private var commandsByUID: [String : CommandInfo] = [:]
+    private var commandsByUID: [TermUID : CommandInfo] = [:]
     
-    public func command(forUID uid: String) -> CommandInfo? {
+    public func command(forUID uid: TermUID) -> CommandInfo? {
         commandsByUID[uid]
     }
     

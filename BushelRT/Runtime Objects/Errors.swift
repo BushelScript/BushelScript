@@ -7,11 +7,11 @@ public struct Unpackable: LocalizedError {
 }
 
 public struct NoPropertyExists: LocalizedError {
-    public let className: String
+    public let type: TypeInfo
     public let property: PropertyInfo
     
     public var errorDescription: String? {
-        "Objects of class \(className) do not have a property named \(property.displayName)"
+        "Objects of type \(type) do not have a property named \(property)"
     }
     
 }
@@ -32,7 +32,7 @@ public struct UnsupportedIndexForm: LocalizedError {
     public let `class`: TypeInfo
     
     public var errorDescription: String? {
-        "The indexing form ‘\(indexForm)’ is unsupported by items of type \(`class`.displayName)"
+        "The indexing form ‘\(indexForm)’ is unsupported by items of type \(`class`)"
     }
 }
 

@@ -1,27 +1,6 @@
 import Bushel
 
-public class ParameterInfo: Hashable {
-    
-    public struct ID: Hashable {
-        
-        public var uid: String
-        public var aeCode: OSType?
-        
-        public init(_ uid: String, _ aeCode: OSType? = nil) {
-            self.uid = uid
-            self.aeCode = aeCode
-        }
-        
-        public static func == (lhs: ID, rhs: ID) -> Bool {
-            return lhs.uid == rhs.uid || (lhs.aeCode != nil && lhs.aeCode == rhs.aeCode)
-        }
-        
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(uid)
-            hasher.combine(aeCode)
-        }
-        
-    }
+public class ParameterInfo: TermInfo, Hashable {
     
     public enum Tag {
         
@@ -30,7 +9,7 @@ public class ParameterInfo: Hashable {
         
     }
     
-    public var id: ID
+    public var uid: TermUID
     public var tags: Set<Tag> = []
     
     public var name: TermName? {
@@ -39,58 +18,22 @@ public class ParameterInfo: Hashable {
         }
         return nil
     }
-    public var uid: String {
-        id.uid
-    }
-    public var code: OSType? {
-        id.aeCode
-    }
     
     public static func == (lhs: ParameterInfo, rhs: ParameterInfo) -> Bool {
-        return lhs.id == rhs.id
+        return lhs.uid == rhs.uid
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(uid)
     }
     
     public convenience init(_ predefined: ParameterUID, _ tags: Set<Tag> = []) {
-        self.init(predefined.rawValue, predefined.aeCode, tags)
+        self.init(TermUID(predefined), tags)
     }
     
-    public convenience init(_ uid: String, _ tags: Set<Tag>) {
-        self.init(id: ID(uid), tags)
-    }
-    
-    public convenience init(_ uid: String, _ aeCode: OSType?, _ tags: Set<Tag>) {
-        self.init(id: ID(uid, aeCode), tags)
-    }
-    
-    public init(id: ID, _ tags: Set<Tag>) {
-        self.id = id
+    public init(_ uid: TermUID, _ tags: Set<Tag> = []) {
+        self.uid = uid
         self.tags = tags
-    }
-    
-}
-
-public extension ParameterInfo {
-    
-    var displayName: String {
-        if let name = name {
-            return name.normalized
-        } else if let code = code {
-            return "«parameter \(String(fourCharCode: code))»"
-        } else {
-            return "«parameter»"
-        }
-    }
-    
-}
-
-extension ParameterInfo: CustomDebugStringConvertible {
-    
-    public var debugDescription: String {
-        "[ParameterInfo: \(uid)\(code.map { " / '\(String(fourCharCode: $0))'" } ?? "")\(name.map { " / ”\($0)“" } ?? "")]"
     }
     
 }

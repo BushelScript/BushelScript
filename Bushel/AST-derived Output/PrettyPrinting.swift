@@ -86,7 +86,7 @@ extension Sequence: PrettyPrintable {
 extension NamedTerm {
     
     public func prettified(source: String, level: Int) -> String {
-        displayName
+        String(describing: self)
     }
     
 }
@@ -97,7 +97,7 @@ extension Resource {
         switch self {
         case .applicationByName(let term as NamedTerm),
              .applicationByID(let term as NamedTerm):
-            return term.displayName
+            return String(describing: term)
         }
     }
     

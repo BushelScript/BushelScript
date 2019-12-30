@@ -30,7 +30,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
         case .tell(let target, let to):
             return "tell \(format(target, level: level))\n\(format(to, level: level + 1, indentFirstLine: true))\n\(indentation(for: level))end tell"
         case .let_(let term, let initialValue):
-            var formatted = "let \(term.displayName)"
+            var formatted = "let \(term)"
             if let initialValue = initialValue {
                 formatted += " be \(format(initialValue, level: level))"
             }
@@ -112,22 +112,22 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             
             return "\(format(lhs, level: level)) \(formattedOperator) \(format(rhs, level: level))"
         case let .coercion(of: expression, to: type):
-            return "\(format(expression, level: level)) as \(type.displayName)"
+            return "\(format(expression, level: level)) as \(type)"
         case .variable(let term as NamedTerm),
              .enumerator(let term as NamedTerm),
              .class_(let term as NamedTerm):
-            return term.displayName
+            return "\(term)"
         case .command(let term, var parameters):
-            var formatted = "\(term.displayName)"
+            var formatted = "\(term)"
             
             // Do direct parameter first
-            if parameters.first?.key.term.uid == ParameterUID.direct.rawValue {
+            if parameters.first?.key.term.uid == TermUID(ParameterUID.direct) {
                 formatted += " \(format(parameters.removeFirst().value, level: level))"
             }
             
             // Other (named) parameters
             for (parameterTerm, parameterValue) in parameters {
-                formatted += " \(parameterTerm.displayName) \(format(parameterValue, level: level))"
+                formatted += " \(parameterTerm) \(format(parameterValue, level: level))"
             }
             
             return formatted
@@ -140,7 +140,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
         case .specifier(let specifier):
             var formatted: String
             
-            let className = specifier.idTerm.displayName
+            let className = "\(specifier.idTerm.term)"
             switch specifier.kind {
             case .simple(let dataExpression):
                 formatted = "\(className) \(format(dataExpression, level: level))"
@@ -193,9 +193,9 @@ extension Resource {
     public var formattedForUseStatement: String {
         switch self {
         case .applicationByName(let term):
-            return "application \(term.displayName)"
+            return "application \(term)"
         case .applicationByID(let term):
-            return "application id \(term.displayName)"
+            return "application id \(term)"
         }
     }
     
@@ -203,7 +203,7 @@ extension Resource {
         switch self {
         case .applicationByName(let term as LocatedTerm),
              .applicationByID(let term as LocatedTerm):
-            return "\(term.displayName)"
+            return "\(term)"
         }
     }
     

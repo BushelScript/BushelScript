@@ -10,7 +10,7 @@ public class RT_Null: RT_Object, AEEncodable {
     }
     
     
-    private static let typeInfo_ = TypeInfo(TypeUID.null.rawValue, TypeUID.null.aeCode, [.supertype(RT_Object.typeInfo), .name(TermName("null"))])
+    private static let typeInfo_ = TypeInfo(.null)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }
@@ -23,7 +23,7 @@ public class RT_Null: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch type.code {
+        switch type.uid.ae4Code {
         case typeUnicodeText:
             return RT_String(value: "null")
         default:

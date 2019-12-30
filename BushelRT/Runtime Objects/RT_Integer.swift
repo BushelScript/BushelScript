@@ -76,19 +76,19 @@ public class RT_Integer: RT_Object, AEEncodable {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
-        switch CommandUID(rawValue: command.uid) {
-        case .math_abs:
+        switch CommandUID(command.uid) {
+        case .Math_abs:
             return RT_Integer(value: abs(self.value))
-        case .math_sqrt:
+        case .Math_sqrt:
             return RT_Real(value: sqrt(self.numericValue))
-        case .math_cbrt:
+        case .Math_cbrt:
             return RT_Real(value: cbrt(self.numericValue))
-        case .math_square:
+        case .Math_square:
             return RT_Integer(value: self.value * self.value)
-        case .math_cube:
+        case .Math_cube:
             return RT_Integer(value: self.value * self.value * self.value)
-        case .math_pow:
-            guard let exponent = arguments[ParameterInfo(.math_pow_exponent)] as? RT_Numeric else {
+        case .Math_pow:
+            guard let exponent = arguments[ParameterInfo(.Math_pow_exponent)] as? RT_Numeric else {
                 // FIXME: Throw error
                 return RT_Null.null
             }
@@ -99,7 +99,7 @@ public class RT_Integer: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch TypeUID(rawValue: type.uid) {
+        switch TypeUID(type.uid) {
         case .real:
             return RT_Real(value: Double(value))
         default:

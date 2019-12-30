@@ -23,12 +23,16 @@ public struct Located<Term: Bushel.Term>: LocatedTerm, Hashable {
         self.location = location
     }
     
+    public var uid: TermUID {
+        term.uid
+    }
+    
     public var name: TermName? {
         term.name
     }
     
-    public var displayName: String {
-        term.displayName
+    public var description: String {
+        String(describing: term)
     }
     
     public var wrappedTerm: Bushel.Term {

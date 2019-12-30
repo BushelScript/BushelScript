@@ -11,7 +11,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override var description: String {
-        value
+        "\"\(value)\""
     }
     
     private static let typeInfo_ = TypeInfo(.string)
@@ -38,8 +38,8 @@ public class RT_String: RT_Object, AEEncodable {
         super.properties + [length]
     }
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(rawValue: property.uid) {
-        case .sequence_length:
+        switch PropertyUID(property.uid) {
+        case .Sequence_length:
             return length
         default:
             return try super.property(property)
@@ -76,7 +76,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch TypeUID(rawValue: type.uid) {
+        switch TypeUID(type.uid) {
         case .character:
             guard value.count == 1 else {
                 return nil
@@ -114,9 +114,9 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
-        switch CommandUID(rawValue: command.uid) {
-        case .string_split:
-            guard let separator = arguments[ParameterInfo(.string_split_by)]?.coerce() as? RT_String else {
+        switch CommandUID(command.uid) {
+        case .String_split:
+            guard let separator = arguments[ParameterInfo(.String_split_by)]?.coerce() as? RT_String else {
                 // TODO: Throw error
                 return nil
             }

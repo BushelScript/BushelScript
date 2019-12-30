@@ -38,34 +38,35 @@ public class RT_Record: RT_Object, AEEncodable {
         if let key = contents.keys.first(where: { $0.uid == property.uid }) {
             return contents[key]!
         }
-        switch PropertyUID(rawValue: property.uid) {
-        case .sequence_length:
+        switch PropertyUID(property.uid) {
+        case .Sequence_length:
             return length
         default:
             return try super.property(property)
         }
     }
     
-    public override func compare(with other: RT_Object) -> ComparisonResult? {
-        guard let other = other as? RT_Record else {
-            return nil
-        }
-        let keysCompared = contents.keys <=> other.contents.keys
-        if keysCompared == .orderedSame {
-            return contents.values <=> other.contents.values
-        } else {
-            return keysCompared
-        }
-    }
+    // TODO: Repair or delete
+//    public override func compare(with other: RT_Object) -> ComparisonResult? {
+//        guard let other = other as? RT_Record else {
+//            return nil
+//        }
+//        let keysCompared = contents.keys <=> other.contents.keys
+//        if keysCompared == .orderedSame {
+//            return contents.values <=> other.contents.values
+//        } else {
+//            return keysCompared
+//        }
+//    }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         return try contents.reduce(into: NSAppleEventDescriptor.record()) { (descriptor, entry) in
             let (key, value) = entry
             if
-                let code = (key as? ConstantTerm)?.code,
+                let aeCode = key.ae4Code,
                 let value = value as? AEEncodable
             {
-                descriptor.setDescriptor(try value.encodeAEDescriptor(appData), forKeyword: code)
+                descriptor.setDescriptor(try value.encodeAEDescriptor(appData), forKeyword: aeCode)
             }
         }
     }

@@ -1,49 +1,118 @@
 import Foundation
+import InAnyCase
 
 public protocol TermUIDPredefinedValue {
     
-    var rawValue: String { get }
-    var aeCode: OSType? { get }
-    var aeDoubleCode: (class: AEEventClass, id: AEEventID)? { get }
+    var kind: TermUID.Kind { get }
+    var ae4Code: OSType? { get }
+    var ae8Code: (class: AEEventClass, id: AEEventID)? { get }
+    var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? { get }
+    var idName: String? { get }
+    
+    init?(_ uidName: TermUID.Name)
     
 }
 
 public extension TermUIDPredefinedValue {
     
-    var aeCode: OSType? {
+    var ae4Code: OSType? {
         nil
     }
     
-    var aeDoubleCode: (class: AEEventClass, id: AEEventID)? {
+    var ae8Code: (class: AEEventClass, id: AEEventID)? {
         nil
+    }
+    
+    var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {
+        nil
+    }
+    
+}
+
+extension TermUIDPredefinedValue where Self: RawRepresentable, RawValue == String {
+    
+    public var idName: String? {
+        rawValue
+            .split(separator: "_")
+            .map { String($0).transformed(from: .camel, to: .space, case: $0.first!.isUppercase ? .preserve : .lower) }
+            .joined(separator: " : ")
+    }
+    
+    internal init?(idName: String) {
+        self.init(rawValue: makeRawValue(from: idName))
+    }
+    
+}
+
+private func makeRawValue(from idName: String) -> String {
+    idName
+        .components(separatedBy: " : ")
+        .map { String($0).transformed(from: .space, to: .camel, case: $0.first!.isUppercase ? .preserve : .lowerUpper ) }
+        .joined(separator: "_")
+}
+
+public extension TermUIDPredefinedValue {
+    
+    init?(_ uid: TermUID) {
+        self.init(uid.name)
+    }
+    
+}
+
+public extension TermUID {
+    
+    init(_ predefined: TermUIDPredefinedValue) {
+        guard
+            let name: Name = {
+                if let aeCode = predefined.ae4Code {
+                    return .ae4(code: aeCode)
+                } else if let (aeClassCode, aeIDCode) = predefined.ae8Code {
+                    return .ae8(class: aeClassCode, id: aeIDCode)
+                } else if let (aeClassCode, aeIDCode, aeCode) = predefined.ae12Code {
+                    return .ae12(class: aeClassCode, id: aeIDCode, code: aeCode)
+                } else if let idName = predefined.idName {
+                    return .id(idName)
+                } else {
+                    return nil
+                }
+            }()
+        else {
+            preconditionFailure("Predefined term UID \(predefined) has no identification method")
+        }
+        self.init(predefined.kind, name)
     }
     
 }
 
 public enum TypeUID: String, TermUIDPredefinedValue {
     
-    case item = "bushel.type.item"
-    case list = "bushel.type.list"
-    case record = "bushel.type.record"
-    case constant = "bushel.type.constant"
-    case boolean = "bushel.type.boolean"
-    case string = "bushel.type.string"
-    case character = "bushel.type.character"
-    case number = "bushel.type.number"
-    case integer = "bushel.type.integer"
-    case real = "bushel.type.real"
-    case date = "bushel.type.date"
-    case window = "bushel.type.window"
-    case document = "bushel.type.document"
-    case file = "bushel.type.file"
-    case alias = "bushel.type.alias"
-    case application = "bushel.type.application"
-    case specifier = "bushel.type.specifier"
-    case `class` = "bushel.type.class"
-    case null = "bushel.type.null"
-    case global = "bushel.type.global"
+    case item
+    case list
+    case record
+    case constant
+    case boolean
+    case string
+    case character
+    case number
+    case integer
+    case real
+    case date
+    case window
+    case document
+    case file
+    case alias
+    case application
+    case specifier
+    case `class`
+    case null
+    case global
+    case script
     
-    public var aeCode: OSType? {
+    public var kind: TermUID.Kind {
+        .type
+    }
+    
+    public var ae4Code: OSType? {
         switch self {
         case .item:
             return cItem
@@ -83,7 +152,59 @@ public enum TypeUID: String, TermUIDPredefinedValue {
             return typeType
         case .null:
             return try! FourCharCode(fourByteString: "msng")
-        case .global:
+        case .global, .script:
+            return nil
+        }
+    }
+    
+    public init?(_ uidName: TermUID.Name) {
+        switch uidName {
+        case .ae4(let aeCode):
+            switch aeCode {
+            case cItem:
+                self = .item
+            case typeAEList:
+                self = .list
+            case typeAERecord:
+                self = .record
+            case typeEnumerated:
+                self = .constant
+            case typeBoolean:
+                self = .boolean
+            case typeUnicodeText:
+                self = .string
+            case cChar:
+                self = .character
+            case try! FourCharCode(fourByteString: "nmbr"):
+                self = .number
+            case typeSInt64:
+                self = .integer
+            case typeIEEE64BitFloatingPoint:
+                self = .real
+            case typeLongDateTime:
+                self = .date
+            case cWindow:
+                self = .window
+            case cDocument:
+                self = .document
+            case cFile:
+                self = .file
+            case typeAlias:
+                self = .alias
+            case cApplication:
+                self = .application
+            case cObjectSpecifier:
+                self = .specifier
+            case typeType:
+                self = .class
+            case try! FourCharCode(fourByteString: "msng"):
+                self = .null
+            default:
+                return nil
+            }
+        case .id(let name):
+            self.init(idName: name)
+        default:
             return nil
         }
     }
@@ -92,40 +213,79 @@ public enum TypeUID: String, TermUIDPredefinedValue {
 
 public enum PropertyUID: String, TermUIDPredefinedValue {
     
-    case properties = "bushel.property.properties"
-    case name = "bushel.property.name"
-    case id = "bushel.property.id"
-    case index = "bushel.property.index"
+    case properties
+    case type
+    case name
+    case id
+    case index
     
-    case currentDate = "bushel.property.currentDate"
+    case topScript
     
-    case sequence_length = "bushel.sequence.property.length"
-    case sequence_reverse = "bushel.sequence.property.reverse"
-    case sequence_tail = "bushel.sequence.property.tail"
+    case currentDate
     
-    case date_seconds = "bushel.date.property.seconds"
-    case date_minutes = "bushel.date.property.minutes"
-    case date_hours = "bushel.date.property.hours"
+    case Sequence_length
+    case Sequence_reverse
+    case Sequence_tail
     
-    case math_pi = "bushel.math.property.pi"
-    case math_e = "bushel.math.property.e"
+    case date_seconds
+    case date_minutes
+    case date_hours
     
-    public var aeCode: OSType? {
+    case Math_pi
+    case Math_e
+    
+    public var kind: TermUID.Kind {
+        .property
+    }
+    
+    public var ae4Code: OSType? {
         switch self {
         case .properties:
             return try! FourCharCode(fourByteString: "pALL")
+        case .type:
+            return pClass
         case .name:
             return pName
         case .id:
             return pID
         case .index:
             return pIndex
-        case .sequence_length:
+        case .Sequence_length:
             return try! FourCharCode(fourByteString: "leng")
-        case .sequence_reverse:
+        case .Sequence_reverse:
             return try! FourCharCode(fourByteString: "rvse")
-        case .sequence_tail:
+        case .Sequence_tail:
             return try! FourCharCode(fourByteString: "rest")
+        default:
+            return nil
+        }
+    }
+    
+    public init?(_ uidName: TermUID.Name) {
+        switch uidName {
+        case .ae4(let aeCode):
+            switch aeCode {
+            case try! FourCharCode(fourByteString: "pALL"):
+                self = .properties
+            case pClass:
+                self = .type
+            case pName:
+                self = .name
+            case pID:
+                self = .id
+            case pIndex:
+                self = .index
+            case try! FourCharCode(fourByteString: "leng"):
+                self = .Sequence_length
+            case try! FourCharCode(fourByteString: "rvse"):
+                self = .Sequence_reverse
+            case try! FourCharCode(fourByteString: "rest"):
+                self = .Sequence_tail
+            default:
+                return nil
+            }
+        case .id(let name):
+            self.init(idName: name)
         default:
             return nil
         }
@@ -135,10 +295,14 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
 
 public enum ConstantUID: String, TermUIDPredefinedValue {
     
-    case `true` = "bushel.constant.true"
-    case `false` = "bushel.constant.false"
+    case `true`
+    case `false`
     
-    public var aeCode: OSType? {
+    public var kind: TermUID.Kind {
+        .enumerator
+    }
+    
+    public var ae4Code: OSType? {
         switch self {
         case .`true`:
             return OSType(1)
@@ -147,39 +311,61 @@ public enum ConstantUID: String, TermUIDPredefinedValue {
         }
     }
     
+    public init?(_ uidName: TermUID.Name) {
+        switch uidName {
+        case .ae4(let aeCode):
+            switch aeCode {
+            case OSType(1):
+                self = .true
+            case OSType(0):
+                self = .false
+            default:
+                return nil
+            }
+        case .id(let name):
+            self.init(idName: name)
+        default:
+            return nil
+        }
+    }
+    
 }
 
 public enum CommandUID: String, TermUIDPredefinedValue {
     
-    case get = "bushel.command.get"
-    case set = "bushel.command.set"
+    case get
+    case set
     
-    case run = "bushel.command.run"
-    case reopen = "bushel.command.reopen"
-    case open = "bushel.command.open"
-    case print = "bushel.command.print"
-    case quit = "bushel.command.quit"
+    case run
+    case reopen
+    case open
+    case print
+    case quit
     
-    case delay = "bushel.command.delay"
+    case delay
     
-    case math_abs = "bushel.math.command.abs"
-    case math_sqrt = "bushel.math.command.sqrt"
-    case math_cbrt = "bushel.math.command.cbrt"
-    case math_square = "bushel.math.command.square"
-    case math_cube = "bushel.math.command.cube"
-    case math_pow = "bushel.math.command.pow"
+    case Math_abs
+    case Math_sqrt
+    case Math_cbrt
+    case Math_square
+    case Math_cube
+    case Math_pow
     
-    case sequence_join = "bushel.sequence.command.join"
+    case Sequence_join
     
-    case string_split = "bushel.sequence.command.split"
+    case String_split
     
-    case gui_notification = "bushel.gui.command.notification"
-    case gui_alert = "bushel.gui.command.alert"
-    case gui_chooseFrom = "bushel.gui.chooseFrom"
+    case GUI_notification
+    case GUI_alert
+    case GUI_chooseFrom
     
-    case cli_log = "bushel.cli.command.log"
+    case CLI_log
     
-    public var aeDoubleCode: (class: AEEventClass, id: AEEventID)? {
+    public var kind: TermUID.Kind {
+        .command
+    }
+    
+    public var ae8Code: (class: AEEventClass, id: AEEventID)? {
         switch self {
         case .get:
             return (class: kAECoreSuite, id: kAEGetData)
@@ -195,26 +381,46 @@ public enum CommandUID: String, TermUIDPredefinedValue {
             return (class: kCoreEventClass, id: kAEPrintDocuments)
         case .quit:
             return (class: kCoreEventClass, id: kAEQuitApplication)
-//        case .math_abs:
-//            return (class: try! FourCharCode(fourByteString: "BMAT"), id: try! FourCharCode(fourByteString: "abs "))
-//        case .math_sqrt:
-//            return (class: try! FourCharCode(fourByteString: "BMAT"), id: try! FourCharCode(fourByteString: "sqrt"))
-//        case .math_cbrt:
-//            return (class: try! FourCharCode(fourByteString: "BMAT"), id: try! FourCharCode(fourByteString: "cbrt"))
-//        case .math_square:
-//            return (class: try! FourCharCode(fourByteString: "BMAT"), id: try! FourCharCode(fourByteString: "squr"))
-//        case .math_cube:
-//            return (class: try! FourCharCode(fourByteString: "BMAT"), id: try! FourCharCode(fourByteString: "cube"))
-//        case .math_pow:
-//            return (class: try! FourCharCode(fourByteString: "BMAT"), id: try! FourCharCode(fourByteString: "powr"))
-        case .gui_notification:
+        case .GUI_notification:
             return (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "notf"))
-        case .gui_alert:
+        case .GUI_alert:
             return (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "disA"))
-        case .gui_chooseFrom:
+        case .GUI_chooseFrom:
             return (class: try! FourCharCode(fourByteString: "gtqp"), id: try! FourCharCode(fourByteString: "chlt"))
-//        case .cli_log:
-//            return (class: try! FourCharCode(fourByteString: "BCLI"), id: try! FourCharCode(fourByteString: "log "))
+        default:
+            return nil
+        }
+    }
+    
+    public init?(_ uidName: TermUID.Name) {
+        switch uidName {
+        case .ae8(let aeCodes):
+            switch aeCodes {
+            case (class: kAECoreSuite, id: kAEGetData):
+                self = .get
+            case (class: kAECoreSuite, id: kAESetData):
+                self = .set
+            case (class: kCoreEventClass, id: kAEOpenApplication):
+                self = .run
+            case (class: kCoreEventClass, id: kAEReopenApplication):
+                self = .reopen
+            case (class: kCoreEventClass, id: kAEOpenDocuments):
+                self = .open
+            case (class: kCoreEventClass, id: kAEPrintDocuments):
+                self = .print
+            case (class: kCoreEventClass, id: kAEQuitApplication):
+                self = .quit
+            case (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "notf")):
+                self = .GUI_notification
+            case (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "disA")):
+                self = .GUI_alert
+            case (class: try! FourCharCode(fourByteString: "gtqp"), id: try! FourCharCode(fourByteString: "chlt")):
+                self = .GUI_chooseFrom
+            default:
+                return nil
+            }
+        case .id(let name):
+            self.init(idName: name)
         default:
             return nil
         }
@@ -224,75 +430,153 @@ public enum CommandUID: String, TermUIDPredefinedValue {
 
 public enum ParameterUID: String, TermUIDPredefinedValue {
     
-    case direct = "bushel.parameter.direct"
-    case set_to = "bushel.parameter.set.to"
-    case open_searchText = "bushel.parameter.open.searchText"
+    case direct
+    case set_to
+    case open_searchText
     
-    case math_pow_exponent = "bushel.math.parameter.pow.exponent"
+    case Math_pow_exponent
     
-    case sequence_join_with = "bushel.sequence.parameter.join.with"
+    case Sequence_join_with
     
-    case string_split_by = "bushel.string.parameter.split.by"
+    case String_split_by
     
-    case gui_notification_title = "bushel.gui.parameter.notification.title"
-    case gui_notification_subtitle = "bushel.gui.parameter.notification.subtitle"
-    case gui_notification_sound = "bushel.gui.parameter.notification.sound"
-    case gui_alert_message = "bushel.gui.parameter.alert.message"
-    case gui_alert_kind = "bushel.gui.parameter.alert.kind"
-    case gui_alert_buttons = "bushel.gui.parameter.alert.buttons"
-    case gui_alert_default = "bushel.gui.parameter.alert.default"
-    case gui_alert_cancel = "bushel.gui.parameter.alert.cancel"
-    case gui_alert_timeout = "bushel.gui.parameter.alert.timeout"
-    case gui_chooseFrom_title = "bushel.gui.parameter.chooseFrom.title"
-    case gui_chooseFrom_prompt = "bushel.gui.parameter.chooseFrom.prompt"
-    case gui_chooseFrom_default = "bushel.gui.parameter.chooseFrom.default"
-    case gui_chooseFrom_confirm = "bushel.gui.parameter.chooseFrom.confirm"
-    case gui_chooseFrom_cancel = "bushel.gui.parameter.chooseFrom.cancel"
-    case gui_chooseFrom_multipleSelection = "bushel.gui.parameter.chooseFrom.multipleSelection"
-    case gui_chooseFrom_noSelection = "bushel.gui.parameter.chooseFrom.noSelection"
+    case GUI_notification_title
+    case GUI_notification_subtitle
+    case GUI_notification_sound
+    case GUI_alert_message
+    case GUI_alert_kind
+    case GUI_alert_buttons
+    case GUI_alert_default
+    case GUI_alert_cancel
+    case GUI_alert_timeout
+    case GUI_chooseFrom_title
+    case GUI_chooseFrom_prompt
+    case GUI_chooseFrom_default
+    case GUI_chooseFrom_confirm
+    case GUI_chooseFrom_cancel
+    case GUI_chooseFrom_multipleSelection
+    case GUI_chooseFrom_noSelection
     
-    public var aeCode: OSType? {
+    public var kind: TermUID.Kind {
+        .parameter
+    }
+    
+    public var ae4Code: OSType? {
         switch self {
         case .direct:
             return keyDirectObject
-        case .set_to:
-            return keyAEData
-        case .open_searchText:
-            return keyAESearchText
-        case .math_pow_exponent:
-            return try! FourCharCode(fourByteString: "expo")
-        case .gui_notification_title:
-            return try! FourCharCode(fourByteString: "appr")
-        case .gui_notification_subtitle:
-            return try! FourCharCode(fourByteString: "subt")
-        case .gui_notification_sound:
-            return try! FourCharCode(fourByteString: "nsou")
-        case .gui_alert_message:
-            return try! FourCharCode(fourByteString: "mesS")
-        case .gui_alert_kind:
-            return try! FourCharCode(fourByteString: "EAlT")
-        case .gui_alert_buttons:
-            return try! FourCharCode(fourByteString: "btns")
-        case .gui_alert_default:
-            return try! FourCharCode(fourByteString: "dflt")
-        case .gui_alert_cancel:
-            return try! FourCharCode(fourByteString: "cbtn")
-        case .gui_alert_timeout:
-            return try! FourCharCode(fourByteString: "givu")
-        case .gui_chooseFrom_title:
-            return try! FourCharCode(fourByteString: "appr")
-        case .gui_chooseFrom_prompt:
-            return try! FourCharCode(fourByteString: "prmp")
-        case .gui_chooseFrom_default:
-            return try! FourCharCode(fourByteString: "inSL")
-        case .gui_chooseFrom_confirm:
-            return try! FourCharCode(fourByteString: "okbt")
-        case .gui_chooseFrom_cancel:
-            return try! FourCharCode(fourByteString: "cnbt")
-        case .gui_chooseFrom_multipleSelection:
-            return try! FourCharCode(fourByteString: "mlsl")
-        case .gui_chooseFrom_noSelection:
-            return try! FourCharCode(fourByteString: "empL")
+        default:
+            return nil
+        }
+    }
+    
+    public var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {
+        guard
+            let commandAndCode: (command: CommandUID, code: AEKeyword) = {
+                switch self {
+                case .set_to:
+                    return (.set, keyAEData)
+                case .open_searchText:
+                    return (.open, keyAESearchText)
+                case .GUI_notification_title:
+                    return (.GUI_notification, try! FourCharCode(fourByteString: "appr"))
+                case .GUI_notification_subtitle:
+                    return (.GUI_notification, try! FourCharCode(fourByteString: "subt"))
+                case .GUI_notification_sound:
+                    return (.GUI_notification, try! FourCharCode(fourByteString: "nsou"))
+                case .GUI_alert_message:
+                    return (.GUI_alert, try! FourCharCode(fourByteString: "mesS"))
+                case .GUI_alert_kind:
+                    return (.GUI_alert, try! FourCharCode(fourByteString: "EAlT"))
+                case .GUI_alert_buttons:
+                    return (.GUI_alert, try! FourCharCode(fourByteString: "btns"))
+                case .GUI_alert_default:
+                    return (.GUI_alert, try! FourCharCode(fourByteString: "dflt"))
+                case .GUI_alert_cancel:
+                    return (.GUI_alert, try! FourCharCode(fourByteString: "cbtn"))
+                case .GUI_alert_timeout:
+                    return (.GUI_alert, try! FourCharCode(fourByteString: "givu"))
+                case .GUI_chooseFrom_title:
+                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "appr"))
+                case .GUI_chooseFrom_prompt:
+                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "prmp"))
+                case .GUI_chooseFrom_default:
+                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "inSL"))
+                case .GUI_chooseFrom_confirm:
+                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "okbt"))
+                case .GUI_chooseFrom_cancel:
+                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "cnbt"))
+                case .GUI_chooseFrom_multipleSelection:
+                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "mlsl"))
+                case .GUI_chooseFrom_noSelection:
+                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "empL"))
+                default:
+                    return nil
+                }
+            }(),
+            let (`class`, id) = commandAndCode.command.ae8Code
+        else {
+            return nil
+        }
+        return (class: `class`, id: id, code: commandAndCode.code)
+    }
+    
+    public init?(_ uidName: TermUID.Name) {
+        switch uidName {
+        case .ae4(let aeCode):
+            switch aeCode {
+            case keyDirectObject:
+                self = .direct
+            default:
+                return nil
+            }
+        case .ae12(let aeCodes):
+            if aeCodes.code == keyDirectObject {
+                self = .direct
+                return
+            }
+            switch (CommandUID(TermUID.Name.ae8(class: aeCodes.class, id: aeCodes.id)), aeCodes.code) {
+            case (.set, keyAEData):
+                self = .set_to
+            case (.open, keyAESearchText):
+                self = .open_searchText
+            case (.GUI_notification, try! FourCharCode(fourByteString: "appr")):
+                self = .GUI_notification_title
+            case (.GUI_notification, try! FourCharCode(fourByteString: "subt")):
+                self = .GUI_notification_subtitle
+            case (.GUI_notification, try! FourCharCode(fourByteString: "nsou")):
+                self = .GUI_notification_sound
+            case (.GUI_alert, try! FourCharCode(fourByteString: "mesS")):
+                self = .GUI_alert_message
+            case (.GUI_alert, try! FourCharCode(fourByteString: "EAlT")):
+                self = .GUI_alert_kind
+            case (.GUI_alert, try! FourCharCode(fourByteString: "btns")):
+                self = .GUI_alert_buttons
+            case (.GUI_alert, try! FourCharCode(fourByteString: "dflt")):
+                self = .GUI_alert_default
+            case (.GUI_alert, try! FourCharCode(fourByteString: "cbtn")):
+                self = .GUI_alert_cancel
+            case (.GUI_alert, try! FourCharCode(fourByteString: "givu")):
+                self = .GUI_alert_timeout
+            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "appr")):
+                self = .GUI_chooseFrom_title
+            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "prmp")):
+                self = .GUI_chooseFrom_prompt
+            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "inSL")):
+                self = .GUI_chooseFrom_default
+            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "okbt")):
+                self = .GUI_chooseFrom_confirm
+            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "cnbt")):
+                self = .GUI_chooseFrom_cancel
+            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "mlsl")):
+                self = .GUI_chooseFrom_multipleSelection
+            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "empL")):
+                self = .GUI_chooseFrom_noSelection
+            default:
+                return nil
+            }
+        case .id(let name):
+            self.init(idName: name)
         default:
             return nil
         }

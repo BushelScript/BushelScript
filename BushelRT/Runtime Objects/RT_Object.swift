@@ -3,7 +3,7 @@ import Bushel
 /// Base type for all runtime objects.
 @objc public class RT_Object: NSObject {
     
-    private static let typeInfo_ = TypeInfo(TypeUID.item.rawValue, TypeUID.item.aeCode, [.root, .name(TermName("item"))])
+    private static let typeInfo_ = TypeInfo(.item, [.root])
     public class var typeInfo: TypeInfo {
         typeInfo_
     }
@@ -17,13 +17,13 @@ import Bushel
         []
     }
     public func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch property.code {
-        case try! FourCharCode(fourByteString: "pALL"):
+        switch PropertyUID(property.uid) {
+        case .properties:
             return RT_List(contents: self.properties)
-        case pClass:
+        case .type:
             return RT_Class(value: self.dynamicTypeInfo)
         default:
-            throw NoPropertyExists(className: self.dynamicTypeInfo.displayName, property: property)
+            throw NoPropertyExists(type: self.dynamicTypeInfo, property: property)
         }
     }
     
@@ -31,7 +31,7 @@ import Bushel
         if dynamicTypeInfo.isA(type) {
             return self
         } else {
-            switch TypeUID(rawValue: type.uid) {
+            switch TypeUID(type.uid) {
             case .boolean:
                 return RT_Boolean.withValue(self.truthy)
             case .string:

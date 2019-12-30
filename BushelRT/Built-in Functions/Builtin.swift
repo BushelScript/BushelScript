@@ -36,11 +36,11 @@ enum Builtin {
     }
     
     static func throwError(message: String) {
-        _ = RT_Global(rt).perform(command: CommandInfo(.gui_alert), arguments: [
-            ParameterInfo(.gui_alert_kind): RT_Integer(value: 2),
+        _ = RT_Global(rt).perform(command: CommandInfo(.GUI_alert), arguments: [
+            ParameterInfo(.GUI_alert_kind): RT_Integer(value: 2),
             ParameterInfo(.direct): RT_String(value: "An error occurred:"),
-            ParameterInfo(.gui_alert_message): RT_String(value: message + "\n\nThe script will be terminated."),
-            ParameterInfo(.gui_alert_buttons): RT_List(contents: [
+            ParameterInfo(.GUI_alert_message): RT_String(value: message + "\n\nThe script will be terminated."),
+            ParameterInfo(.GUI_alert_buttons): RT_List(contents: [
                 RT_String(value: "OK")
             ])
         ])
@@ -85,7 +85,7 @@ enum Builtin {
         let lhs = fromOpaque(lhs)
         let rhs = fromOpaque(rhs)
         guard let lhsNumeric = lhs as? RT_Numeric else {
-            throwError(message: "loop variable must be of numeric type, not ‘\(lhs.dynamicTypeInfo.displayName))’")
+            throwError(message: "loop variable must be of numeric type, not ‘\(lhs.dynamicTypeInfo))’")
             
             // Basically, we want to stop the currently executing loop
             // if there is no comparison defined between the operands.
@@ -93,7 +93,7 @@ enum Builtin {
             return true
         }
         guard let rhsNumeric = rhs as? RT_Numeric else {
-            throwError(message: "loop variable must be of numeric type, not ‘\(rhs.dynamicTypeInfo.displayName))’")
+            throwError(message: "loop variable must be of numeric type, not ‘\(rhs.dynamicTypeInfo))’")
             
             // Ditto.
             return true
@@ -164,7 +164,7 @@ enum Builtin {
         let term = termFromOpaque(termPointer)
         return toOpaque(
             record.contents[term] ??
-            record.contents[Bushel.ParameterTerm(ParameterUID.direct.rawValue, name: TermName(""), code: ParameterUID.direct.aeCode)] ??
+            record.contents[Bushel.ParameterTerm(TermUID(ParameterUID.direct), name: TermName(""))] ??
             RT_Null.null
         )
     }
@@ -239,7 +239,8 @@ enum Builtin {
     
     static func newSpecifier0(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
-        let uid = (fromOpaque(uidPointer) as! RT_String).value
+        let uidString = (fromOpaque(uidPointer) as! RT_String).value
+        let uid = TermUID(normalized: uidString)!
         let newSpecifier: RT_Specifier
         let kind = RT_Specifier.Kind(rawValue: rawKind)!
         if kind == .property {
@@ -256,7 +257,8 @@ enum Builtin {
     }
     static func newSpecifier1(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
-        let uid = (fromOpaque(uidPointer) as! RT_String).value
+        let uidString = (fromOpaque(uidPointer) as! RT_String).value
+        let uid = TermUID(normalized: uidString)!
         let data1 = fromOpaque(data1Pointer)
         let newSpecifier: RT_Specifier
         let kind = RT_Specifier.Kind(rawValue: rawKind)!
@@ -274,7 +276,8 @@ enum Builtin {
     }
     static func newSpecifier2(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer, _ data2Pointer: RTObjectPointer) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
-        let uid = (fromOpaque(uidPointer) as! RT_String).value
+        let uidString = (fromOpaque(uidPointer) as! RT_String).value
+        let uid = TermUID(normalized: uidString)!
         let data1 = fromOpaque(data1Pointer)
         let data2 = fromOpaque(data2Pointer)
         let newSpecifier: RT_Specifier
@@ -293,7 +296,7 @@ enum Builtin {
     }
     
     private static func propertyInfo(for code: OSType) -> PropertyInfo {
-        rt.property(for: code) ?? PropertyInfo("dynamic.property.«\(String(fourCharCode: code))»", code, [])
+        rt.property(for: code) ?? PropertyInfo(TermUID(.property, .ae4(code: code)))
     }
     
     static func evaluateSpecifier(_ objectPointer: RTObjectPointer) -> RTObjectPointer {
@@ -407,7 +410,7 @@ enum Builtin {
     }
     
     private static func evaluateSpecifierByAppleEvent(_ specifier: RT_Specifier, targetApplication: RT_Application) -> RTObjectPointer {
-        let getCommand = rt.command(forUID: CommandUID.get.rawValue)!
+        let getCommand = rt.command(forUID: TermUID(CommandUID.get))!
         return toOpaque(retain(specifier.perform(command: getCommand, arguments: [ParameterInfo(.direct): specifier]) ?? RT_Null.null))
     }
     
@@ -424,7 +427,7 @@ enum Builtin {
             if let name = term.name {
                 tags.insert(.name(name))
             }
-            return (key: ParameterInfo(term.uid, term.code, tags), value: value)
+            return (key: ParameterInfo(term.uid, tags), value: value)
         })
     }
     
@@ -433,7 +436,7 @@ enum Builtin {
         
         let directParameter = arguments.first(where: { (kv: (key: ParameterInfo, value: RT_Object)) -> Bool in
             let (parameter, _) = kv
-            return parameter.code == keyDirectObject
+            return parameter.uid == TermUID(ParameterUID.direct)
         })?.value
         
         if let result = directParameter?.perform(command: command, arguments: arguments) {
@@ -443,7 +446,9 @@ enum Builtin {
                 if let result = qualifiedTarget.perform(command: command, arguments: arguments) {
                     return toOpaque(retain(result))
                 } else {
-                    arguments[ParameterInfo(.direct)] = qualifiedTarget
+                    if arguments[ParameterInfo(.direct)] == nil {
+                        arguments[ParameterInfo(.direct)] = qualifiedTarget
+                    }
                 }
             }
             return toOpaque(retain(RT_Global(rt).perform(command: command, arguments: arguments) ?? RT_Null.null))
@@ -486,7 +491,7 @@ enum Builtin {
         process.standardError = error
         
         let inputWriteFileHandle = input.fileHandleForWriting
-        inputWriteFileHandle.write(((inputObject.coerce(to: rt.type(forUID: TypeUID.string.rawValue)!) as? RT_String)?.value ?? String(describing: inputObject)).data(using: .utf8)!)
+        inputWriteFileHandle.write(((inputObject.coerce(to: rt.type(forUID: TermUID(TypeUID.string))!) as? RT_String)?.value ?? String(describing: inputObject)).data(using: .utf8)!)
         inputWriteFileHandle.closeFile()
         
         try! process.run()
@@ -534,7 +539,7 @@ extension SwiftAutomation.Specifier {
     }
     
     func sendEvent(for command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> ReplyEventDescriptor {
-        guard let codes = command.doubleCode else {
+        guard let codes = command.uid.ae8Code else {
             throw Unpackable()
         }
         return try self.sendAppleEvent(codes.class, codes.id, arguments)
@@ -622,13 +627,13 @@ extension SwiftAutomation.Symbol {
         let name = TermName(self.name ?? "")
         switch type {
         case typeType:
-            return Bushel.ClassTerm("dynamic.type.«\(String(fourCharCode: code))»", name: name, code: code, parentClass: Bushel.ClassTerm(TypeUID.item.rawValue, name: TermName("item"), code: TypeUID.item.aeCode, parentClass: nil))
+            return Bushel.ClassTerm(TermUID(.type, .ae4(code: code)), name: name, parentClass: Bushel.ClassTerm(TermUID(TypeUID.item), name: nil, parentClass: nil))
         case typeEnumerated:
-            return Bushel.EnumeratorTerm("dynamic.constant.«\(String(fourCharCode: code))»", name: name, code: code)
+            return Bushel.EnumeratorTerm(TermUID(.enumerator, .ae4(code: code)), name: name)
         case typeKeyword:
-            return Bushel.ParameterTerm("dynamic.parameter.«\(String(fourCharCode: code))»", name: name, code: code)
+            return Bushel.ParameterTerm(TermUID(.parameter, .ae4(code: code)), name: name)
         case typeProperty:
-            return Bushel.PropertyTerm("dynamic.property.«\(String(fourCharCode: code))»", name: name, code: code)
+            return Bushel.PropertyTerm(TermUID(.property, .ae4(code: code)), name: name)
         default:
             fatalError("invalid descriptor type for Symbol")
         }
@@ -638,7 +643,7 @@ extension SwiftAutomation.Symbol {
         let name = TermName(self.name ?? "")
         switch type {
         case typeType:
-            return RT_Class(value: rt.type(for: code) ?? TypeInfo("dynamic.type.«\(String(fourCharCode: code))»", code, [.name(name)]))
+            return RT_Class(value: rt.type(for: code) ?? TypeInfo(TermUID(.type, .ae4(code: code)), [.name(name)]))
         case typeEnumerated, typeKeyword, typeProperty:
             return RT_Constant(value: code)
         default:

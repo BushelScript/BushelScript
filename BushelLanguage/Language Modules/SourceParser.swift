@@ -79,6 +79,7 @@ public extension SourceParser {
             lexicon.add(descriptor.realize(lexicon.pool))
         }
         
+        lexicon.push(uid: TermUID(.dictionary, .id("script")))
         do {
             let ast: Expression
             if let sequence = try parseSequence(TermName("")) {
@@ -596,7 +597,7 @@ public extension SourceParser {
     }
     
     func eatTerm() throws -> (termString: Substring, term: Term?) {
-        let result = try lexicon.findTerm(in: source.prefix(while: { !$0.isNewline }))
+        let result = try findTerm(in: source.prefix(while: { !$0.isNewline }), terminology: lexicon)
         source.removeFirst(result.termString.count)
         if let name = result.term?.name {
             currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized, styling: .variable))
@@ -653,10 +654,7 @@ public extension SourceParser {
             let appBundle: Bundle
             switch expression.kind {
             case .specifier(let specifier):
-                guard
-                    let code = (specifier.idTerm.term as? Bushel.ClassTerm)?.code,
-                    code == cApplication
-                else {
+                guard specifier.idTerm.term.uid == TermUID(TypeUID.application) else {
                     break noTerminology
                 }
                 
@@ -739,6 +737,78 @@ public extension SourceParser {
         SourceLocation(expressionStartIndex..<currentIndex, source: entireSource)
     }
     
+    func findTerm<Terminology: TerminologySource>(in source: Substring, terminology: Terminology) throws -> (termString: Substring, term: Terminology.Term?) {
+        var termString = source
+        while let lastNonWhitespace = termString.lastIndex(where: { !$0.isWhitespace }) {
+            termString = termString[...lastNonWhitespace]
+            
+            var termName = TermName(String(termString))
+            let scopes = termName.scopes
+            
+            if scopes.isEmpty {
+                if let term = terminology.term(named: termName) {
+                    return (termString, term)
+                } else {
+                    termString.removeLast(termName.words.last!.count)
+                }
+            } else {
+                let outerDict = terminology.dictionary(named: scopes.first!)
+                guard
+                    let innermostDict = scopes.dropFirst().reduce(outerDict, { (dict: TermDictionary?, scopeName: TermName) -> TermDictionary? in
+                        dict?.dictionary(named: scopeName)
+                    })
+                else {
+                    throw ParseError(description: "no such dictionary ‘\(termName.normalizedScopes)’", location: SourceLocation(termString.range, source: entireSource))
+                }
+                
+                let scopelessTermName = TermName(termName.words)
+                if let term = innermostDict.term(named: scopelessTermName) as? Terminology.Term {
+                    return (termString, term)
+                } else {
+                    termString.removeLast(termName.words.last!.count)
+                    termName = TermName(termString)
+                }
+            }
+        }
+        
+        let startIndex = source.startIndex
+        if var rawFormString = source.removingPrefix("«") {
+            rawFormString.removeLeadingWhitespace()
+            
+            let kindString = rawFormString.prefix(while: { !$0.isWhitespace })
+            rawFormString.removeFirst(kindString.count)
+            guard let kind = TermUID.Kind(rawValue: String(kindString)) else {
+                throw ParseError(description: "invalid raw specifier type", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
+            }
+            
+            rawFormString.removeLeadingWhitespace()
+            
+            guard let closeRange = rawFormString.range(of: "»") else {
+                throw ParseError(description: "expected »", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
+            }
+            
+            guard let uidName = TermUID.Name(normalized: String(rawFormString[..<closeRange.lowerBound])) else {
+                throw ParseError(description: "expected term UID", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
+            }
+            
+            let uid = TermUID(kind, uidName)
+            var maybeTerm = lexicon.term(forUID: uid)
+            if maybeTerm == nil {
+                maybeTerm = Terminology.Term.init(uid, name: TermName(""))
+                guard maybeTerm != nil else {
+                    throw ParseError(description: "this term is undefined and cannot be ad-hoc constructed", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
+                }
+            }
+
+            guard let term = maybeTerm as? Terminology.Term else {
+                throw ParseError(description: "wrong type of term for context", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
+            }
+            return (source[startIndex..<rawFormString.endIndex], term)
+        }
+        
+        return (termString, nil)
+    }
+    
 }
 
 public extension StringProtocol {
@@ -747,18 +817,4 @@ public extension StringProtocol {
         return startIndex..<endIndex
     }
     
-}
-
-// TODO: Make private once findTerm(in:) moves to this file
-enum RawSpecifierKind {
-    case constant, class_, property, parameter
-    
-    var termType: ConstantTerm.Type {
-        switch self {
-        case .constant: return EnumeratorTerm.self
-        case .class_: return ClassTerm.self
-        case .property: return PropertyTerm.self
-        case .parameter: return ParameterTerm.self
-        }
-    }
 }
