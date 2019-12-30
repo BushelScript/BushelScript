@@ -38,7 +38,7 @@ public class RT_Record: RT_Object, AEEncodable {
         if let key = contents.keys.first(where: { $0.uid == property.uid }) {
             return contents[key]!
         }
-        switch PropertyUID(property.uid) {
+        switch PropertyUID(property.typedUID) {
         case .Sequence_length:
             return length
         default:

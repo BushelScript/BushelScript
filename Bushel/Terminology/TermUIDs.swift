@@ -3,13 +3,13 @@ import InAnyCase
 
 public protocol TermUIDPredefinedValue {
     
-    var kind: TermUID.Kind { get }
+    var kind: TypedTermUID.Kind { get }
     var ae4Code: OSType? { get }
     var ae8Code: (class: AEEventClass, id: AEEventID)? { get }
     var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? { get }
     var idName: String? { get }
     
-    init?(_ uidName: TermUID.Name)
+    init?(_ uidName: TermUID)
     
 }
 
@@ -53,8 +53,8 @@ private func makeRawValue(from idName: String) -> String {
 
 public extension TermUIDPredefinedValue {
     
-    init?(_ uid: TermUID) {
-        self.init(uid.name)
+    init?(_ uid: TypedTermUID) {
+        self.init(uid.uid)
     }
     
 }
@@ -63,7 +63,7 @@ public extension TermUID {
     
     init(_ predefined: TermUIDPredefinedValue) {
         guard
-            let name: Name = {
+            let uid: TermUID = {
                 if let aeCode = predefined.ae4Code {
                     return .ae4(code: aeCode)
                 } else if let (aeClassCode, aeIDCode) = predefined.ae8Code {
@@ -79,7 +79,15 @@ public extension TermUID {
         else {
             preconditionFailure("Predefined term UID \(predefined) has no identification method")
         }
-        self.init(predefined.kind, name)
+        self = uid
+    }
+    
+}
+
+public extension TypedTermUID {
+    
+    init(_ predefined: TermUIDPredefinedValue) {
+        self.init(predefined.kind, TermUID(predefined))
     }
     
 }
@@ -108,7 +116,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
     case global
     case script
     
-    public var kind: TermUID.Kind {
+    public var kind: TypedTermUID.Kind {
         .type
     }
     
@@ -157,7 +165,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uidName: TermUID.Name) {
+    public init?(_ uidName: TermUID) {
         switch uidName {
         case .ae4(let aeCode):
             switch aeCode {
@@ -234,7 +242,7 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
     case Math_pi
     case Math_e
     
-    public var kind: TermUID.Kind {
+    public var kind: TypedTermUID.Kind {
         .property
     }
     
@@ -261,7 +269,7 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uidName: TermUID.Name) {
+    public init?(_ uidName: TermUID) {
         switch uidName {
         case .ae4(let aeCode):
             switch aeCode {
@@ -298,7 +306,7 @@ public enum ConstantUID: String, TermUIDPredefinedValue {
     case `true`
     case `false`
     
-    public var kind: TermUID.Kind {
+    public var kind: TypedTermUID.Kind {
         .enumerator
     }
     
@@ -311,7 +319,7 @@ public enum ConstantUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uidName: TermUID.Name) {
+    public init?(_ uidName: TermUID) {
         switch uidName {
         case .ae4(let aeCode):
             switch aeCode {
@@ -361,7 +369,7 @@ public enum CommandUID: String, TermUIDPredefinedValue {
     
     case CLI_log
     
-    public var kind: TermUID.Kind {
+    public var kind: TypedTermUID.Kind {
         .command
     }
     
@@ -392,7 +400,7 @@ public enum CommandUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uidName: TermUID.Name) {
+    public init?(_ uidName: TermUID) {
         switch uidName {
         case .ae8(let aeCodes):
             switch aeCodes {
@@ -457,7 +465,7 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
     case GUI_chooseFrom_multipleSelection
     case GUI_chooseFrom_noSelection
     
-    public var kind: TermUID.Kind {
+    public var kind: TypedTermUID.Kind {
         .parameter
     }
     
@@ -521,7 +529,7 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
         return (class: `class`, id: id, code: commandAndCode.code)
     }
     
-    public init?(_ uidName: TermUID.Name) {
+    public init?(_ uidName: TermUID) {
         switch uidName {
         case .ae4(let aeCode):
             switch aeCode {
@@ -535,7 +543,7 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
                 self = .direct
                 return
             }
-            switch (CommandUID(TermUID.Name.ae8(class: aeCodes.class, id: aeCodes.id)), aeCodes.code) {
+            switch (CommandUID(TermUID.ae8(class: aeCodes.class, id: aeCodes.id)), aeCodes.code) {
             case (.set, keyAEData):
                 self = .set_to
             case (.open, keyAESearchText):

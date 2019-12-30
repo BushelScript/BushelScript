@@ -8,7 +8,7 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
     public var name: TermName?
     public let exports: Bool
     
-    private var contentsByUID: [TermUID : Term]
+    private var contentsByUID: [TypedTermUID : Term]
     private var contentsByName: [TermName : Term]
     
     private(set) public var dictionaryContainers: [TermName : TermDictionaryContainer] = [:]
@@ -18,7 +18,7 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
         self.pool = pool
         self.name = name
         self.exports = exports
-        self.contentsByUID = Dictionary(uniqueKeysWithValues: contents.map { (key: $0.uid, value: $0) })
+        self.contentsByUID = Dictionary(uniqueKeysWithValues: contents.map { (key: $0.typedUID, value: $0) })
         self.contentsByName = Dictionary(uniqueKeysWithValues:
             contents.compactMap { term in
                 term.name.flatMap { (key: $0, value: term) }
@@ -39,7 +39,7 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
         self.exportingDictionaryContainers = new.exportingDictionaryContainers.merging(old.exportingDictionaryContainers, uniquingKeysWith: { $1 })
     }
     
-    public func term(forUID uid: TermUID) -> Term? {
+    public func term(forUID uid: TypedTermUID) -> Term? {
         contentsByUID[uid]
     }
     
@@ -48,7 +48,7 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
     }
     
     public func add(_ term: Term) {
-        contentsByUID[term.uid] = term
+        contentsByUID[term.typedUID] = term
         if let name = term.name {
             contentsByName[name] = term
         }
@@ -57,7 +57,7 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
     }
     
     public func add(_ terms: [Term]) {
-        contentsByUID.merge(terms.map { (key: $0.uid, value: $0) }, uniquingKeysWith: TermDictionary.whichTermWins)
+        contentsByUID.merge(terms.map { (key: $0.typedUID, value: $0) }, uniquingKeysWith: TermDictionary.whichTermWins)
         contentsByName.merge(
             terms.compactMap { term in
                 term.name.flatMap { (key: $0, value: term) }
@@ -106,11 +106,11 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
 
 public class ParameterTermDictionary: TerminologySource {
     
-    private var contentsByUID: [TermUID : ParameterTerm]
+    private var contentsByUID: [TypedTermUID : ParameterTerm]
     private var contentsByName: [TermName : ParameterTerm]
     
     public init(contents: [ParameterTerm] = []) {
-        self.contentsByUID = Dictionary(contents.map { (key: $0.uid, value: $0) }, uniquingKeysWith: { x, _ in x })
+        self.contentsByUID = Dictionary(contents.map { (key: $0.typedUID, value: $0) }, uniquingKeysWith: { x, _ in x })
         self.contentsByName = Dictionary(
             contents.compactMap { term in
                 term.name.flatMap { (key: $0, value: term) }
@@ -119,7 +119,7 @@ public class ParameterTermDictionary: TerminologySource {
         )
     }
     
-    public func term(forUID uid: TermUID) -> ParameterTerm? {
+    public func term(forUID uid: TypedTermUID) -> ParameterTerm? {
         return contentsByUID[uid]
     }
     
@@ -128,7 +128,7 @@ public class ParameterTermDictionary: TerminologySource {
     }
     
     public func add(_ term: ParameterTerm) {
-        contentsByUID[term.uid] = term
+        contentsByUID[term.typedUID] = term
         if let name = term.name {
             contentsByName[name] = term
         }
@@ -166,20 +166,20 @@ private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
     var terms: [Term] = []
     
     func addType(_ term: SDEFinitely.KeywordTerm) {
-        add(ClassTerm(TermUID(.type, .ae4(code: term.code)), name: term.termName, parentClass: (lexicon.pool.term(forUID: TermUID(TypeUID.item)) as! ClassTerm)))
+        add(ClassTerm(.ae4(code: term.code), name: term.termName, parentClass: (lexicon.pool.term(forUID: TypedTermUID(TypeUID.item)) as! ClassTerm)))
     }
     func addClass(_ term: SDEFinitely.ClassTerm) {
-        add(ClassTerm(TermUID(.type, .ae4(code: term.code)), name: term.termName, parentClass: (lexicon.pool.term(forUID: TermUID(TypeUID.item)) as! ClassTerm)))
+        add(ClassTerm(.ae4(code: term.code), name: term.termName, parentClass: (lexicon.pool.term(forUID: TypedTermUID(TypeUID.item)) as! ClassTerm)))
     }
     func addProperty(_ term: SDEFinitely.KeywordTerm) {
-        add(PropertyTerm(TermUID(.property, .ae4(code: term.code)), name: TermName(term.name)))
+        add(PropertyTerm(.ae4(code: term.code), name: TermName(term.name)))
     }
     func addEnumerator(_ term: SDEFinitely.KeywordTerm) {
-        add(EnumeratorTerm(TermUID(.enumerator, .ae4(code: term.code)), name: TermName(term.name)))
+        add(EnumeratorTerm(.ae4(code: term.code), name: TermName(term.name)))
     }
     func addCommand(_ term: SDEFinitely.CommandTerm) {
         add(
-            CommandTerm(TermUID(.command, .ae8(class: term.eventClass, id: term.eventID)),
+            CommandTerm(.ae8(class: term.eventClass, id: term.eventID),
             name: TermName(term.name),
             parameters: ParameterTermDictionary(contents: term.parameters.map { convertParameterTerm($0, term) })
             )
@@ -187,7 +187,7 @@ private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
     }
     
     private func convertParameterTerm(_ parameterTerm: SDEFinitely.KeywordTerm, _ commandTerm: SDEFinitely.CommandTerm) -> ParameterTerm {
-        return ParameterTerm(TermUID(.parameter, .ae4(code: parameterTerm.code)), name: TermName(parameterTerm.name))
+        return ParameterTerm(.ae4(code: parameterTerm.code), name: TermName(parameterTerm.name))
     }
     
     private func add(_ term: Term) {

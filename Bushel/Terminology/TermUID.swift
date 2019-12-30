@@ -1,7 +1,14 @@
 import Foundation
 
 /// The compiler-internal name of a term.
-public struct TermUID {
+public enum TermUID {
+    case ae4(code: OSType)
+    case ae8(class: AEEventClass, id: AEEventID)
+    case ae12(class: AEEventClass, id: AEEventID, code: AEKeyword)
+    case id(_ name: String)
+}
+
+public struct TypedTermUID {
     
     public enum Kind: String {
         case enumerator
@@ -15,62 +22,44 @@ public struct TermUID {
         case applicationID
     }
     
-    public enum Name {
-        case ae4(code: OSType)
-        case ae8(class: AEEventClass, id: AEEventID)
-        case ae12(class: AEEventClass, id: AEEventID, code: AEKeyword)
-        case id(_ name: String)
-    }
-    
     public var kind: Kind
-    public var name: Name
+    public var uid: TermUID
     
-    /// Initializes from component `Kind` and `Name` parts.
-    public init(_ kind: Kind, _ name: Name) {
+    /// Initializes from component `Kind` and `TermUID` parts.
+    public init(_ kind: Kind, _ name: TermUID) {
         self.kind = kind
-        self.name = name
+        self.uid = name
         
         if case let .id(name) = name {
-            assert(!name.isEmpty, "Empty identifier string for TermUID.Name.id!")
+            assert(!name.isEmpty, "Empty identifier string for TermUID.id!")
         }
     }
     
     public var ae4Code: OSType? {
-        if case let .ae4(code) = name {
-            return code
-        } else if case let .ae12(_, _, code) = name {
-            return code
-        }
-        return nil
+        uid.ae4Code
     }
     
     public var ae8Code: (class: AEEventClass, id: AEEventID)? {
-        if case let .ae8(codes) = name {
-            return codes
-        }
-        return nil
+        uid.ae8Code
     }
     
     public var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {
-        if case let .ae12(codes) = name {
-            return codes
-        }
-        return nil
+        uid.ae12Code
     }
     
 }
 
-extension TermUID: Hashable {
+extension TypedTermUID: Hashable {
 }
 
-extension TermUID: CustomStringConvertible {
+extension TypedTermUID: CustomStringConvertible {
     
     public var description: String {
         normalized
     }
     
     public var normalized: String {
-        "\(kind)/\(name)"
+        "\(kind)/\(uid)"
     }
     
     public init?<S: StringProtocol>(normalized: S) where S.SubSequence == Substring {
@@ -84,17 +73,17 @@ extension TermUID: CustomStringConvertible {
     public init?<S: StringProtocol>(kind: S, name: S) where S.SubSequence == Substring {
         guard
             let kind = Kind(rawValue: String(kind)),
-            let name = Name(normalized: String(name))
+            let name = TermUID(normalized: String(name))
         else {
             return nil
         }
         self.kind = kind
-        self.name = name
+        self.uid = name
     }
     
 }
 
-extension TermUID.Kind: CustomStringConvertible {
+extension TypedTermUID.Kind: CustomStringConvertible {
     
     public var description: String {
         rawValue
@@ -102,10 +91,37 @@ extension TermUID.Kind: CustomStringConvertible {
     
 }
 
-extension TermUID.Name: Hashable {
+extension TermUID {
+    
+    public var ae4Code: OSType? {
+        if case let .ae4(code) = self {
+            return code
+        } else if case let .ae12(_, _, code) = self {
+            return code
+        }
+        return nil
+    }
+    
+    public var ae8Code: (class: AEEventClass, id: AEEventID)? {
+        if case let .ae8(codes) = self {
+            return codes
+        }
+        return nil
+    }
+    
+    public var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {
+        if case let .ae12(codes) = self {
+            return codes
+        }
+        return nil
+    }
+    
 }
 
-extension TermUID.Name: CustomStringConvertible {
+extension TermUID: Hashable {
+}
+
+extension TermUID: CustomStringConvertible {
     
     public var description: String {
         normalized
@@ -151,17 +167,16 @@ extension TermUID.Name: CustomStringConvertible {
     
 }
 
-extension TermUID.Name {
+extension TermUID {
     
-    /// Reconstructs a `Name` structure from its normalized string
+    /// Reconstructs a `TermUID` structure from its normalized string
     /// representation.
     ///
     /// Valid inputs take the form `"kind:data"`, where `kind` identifies one of
     /// a set of predefined "namespaces", while `data` creates a unique name
     /// within said namespace.
-    /// The set of allowable values values for `data` is determined by the
-    /// `kind`. e.g., for `kind` `"ae4"`, `data` must be a valid
-    /// four-byte AE code.
+    /// The set of allowable values for `data` is determined by the `kind`.
+    /// e.g., for `kind` `"ae4"`, `data` must be a valid four-byte AE code.
     public init?(normalized: String) {
         let components = normalized.split(separator: ":", maxSplits: 1)
         guard components.count == 2 else {

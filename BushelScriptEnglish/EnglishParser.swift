@@ -75,7 +75,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             ParameterDescriptor(.direct)
         ]),
         
-        DictionaryDescriptor(TermUID(.dictionary, .id("script")), name: TermName("script"), contents: []),
+        DictionaryDescriptor(.id("script"), name: TermName("script"), contents: []),
     
         PropertyDescriptor(.currentDate, name: TermName("current date")),
     ]
@@ -180,12 +180,12 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     ]
     
     public lazy var defaultTerms: [TermDescriptor] = [
-        DictionaryDescriptor(TermUID(.dictionary, .id("BushelScript")), name: TermName("BushelScript"), contents: mainDictionary),
-        DictionaryDescriptor(TermUID(.dictionary, .id("Math")), name: TermName("Math"), contents: mathDictionary),
-        DictionaryDescriptor(TermUID(.dictionary, .id("Sequence")), name: TermName("Sequence"), contents: sequenceDictionary),
-        DictionaryDescriptor(TermUID(.dictionary, .id("String")), name: TermName("String"), contents: stringDictionary),
-        DictionaryDescriptor(TermUID(.dictionary, .id("GUI")), name: TermName("GUI"), contents: guiDictionary),
-        DictionaryDescriptor(TermUID(.dictionary, .id("CLI")), name: TermName("CLI"), contents: cliDictionary),
+        DictionaryDescriptor(.id("BushelScript"), name: TermName("BushelScript"), contents: mainDictionary),
+        DictionaryDescriptor(.id("Math"), name: TermName("Math"), contents: mathDictionary),
+        DictionaryDescriptor(.id("Sequence"), name: TermName("Sequence"), contents: sequenceDictionary),
+        DictionaryDescriptor(.id("String"), name: TermName("String"), contents: stringDictionary),
+        DictionaryDescriptor(.id("GUI"), name: TermName("GUI"), contents: guiDictionary),
+        DictionaryDescriptor(.id("CLI"), name: TermName("CLI"), contents: cliDictionary),
     ]
     
     public let prefixOperators: [TermName : UnaryOperation] = [
@@ -379,19 +379,19 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         guard let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: [":"]) else {
             throw ParseError(description: "expected function name", location: SourceLocation(source.range, source: entireSource))
         }
-        let functionNameTerm = Located(VariableTerm(TermUID(.variable, .id(termName.normalized)), name: termName), at: termLocation)
+        let functionNameTerm = Located(VariableTerm(.id(termName.normalized), name: termName), at: termLocation)
         
         var parameters: [Located<ParameterTerm>] = []
         var arguments: [Located<VariableTerm>] = []
         if tryEating(prefix: ":") {
             while let (parameterTermName, parameterTermLocation) = try parseTermNameLazily() {
-                parameters.append(Located(ParameterTerm(TermUID(.parameter, .id(parameterTermName.normalized)), name: parameterTermName), at: parameterTermLocation))
+                parameters.append(Located(ParameterTerm(.id(parameterTermName.normalized), name: parameterTermName), at: parameterTermLocation))
                 
                 var (argumentName, argumentLocation) = try parseTermNameEagerly(stoppingAt: [","]) ?? (parameterTermName, parameterTermLocation)
                 if argumentName.words.isEmpty {
                     (argumentName, argumentLocation) = (parameterTermName, parameterTermLocation)
                 }
-                arguments.append(Located(VariableTerm(TermUID(.variable, .id(argumentName.normalized)), name: argumentName), at: argumentLocation))
+                arguments.append(Located(VariableTerm(.id(argumentName.normalized), name: argumentName), at: argumentLocation))
                 
                 if !tryEating(prefix: ",") {
                     break
@@ -401,7 +401,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         let parameterTerms = parameters.map { $0.term }
         
-        let commandTerm = CommandTerm(TermUID(.command, .id(termName.normalized)), name: termName, parameters: ParameterTermDictionary(contents: parameterTerms))
+        let commandTerm = CommandTerm(.id(termName.normalized), name: termName, parameters: ParameterTermDictionary(contents: parameterTerms))
         lexicon.add(commandTerm)
         
         guard tryEating(prefix: "\n") else {
@@ -504,7 +504,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         guard let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: ["be"]) else {
             throw ParseError(description: "expected variable name following ‘let’", location: SourceLocation(source.range, source: entireSource))
         }
-        let term = Located(VariableTerm(TermUID(.variable, .id(termName.normalized)), name: termName), at: termLocation)
+        let term = Located(VariableTerm(.id(termName.normalized), name: termName), at: termLocation)
         
         var initialValue: Expression? = nil
         if tryEating(prefix: "be") {
@@ -538,11 +538,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         let term: Term & TermDictionaryDelayedInitContainer
         let resource: Resource
         if byBundleID {
-            let idTerm = Located(ApplicationIDTerm(TermUID(.applicationID, .id(name.normalized)), name: name, bundle: bundle), at: nameLocation)
+            let idTerm = Located(ApplicationIDTerm(.id(name.normalized), name: name, bundle: bundle), at: nameLocation)
             term = idTerm.term
             resource = .applicationByID(idTerm)
         } else {
-            let nameTerm = Located(ApplicationNameTerm(TermUID(.applicationName, .id(name.normalized)), name: name, bundle: bundle), at: nameLocation)
+            let nameTerm = Located(ApplicationNameTerm(.id(name.normalized), name: name, bundle: bundle), at: nameLocation)
             term = nameTerm.term
             resource = .applicationByName(nameTerm)
         }
@@ -627,7 +627,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                         }
                         directParameterValue = dpValue
                     }
-                    parameters.append((Located(lexicon.pool.term(forUID: TermUID(ParameterUID.direct)) as! ParameterTerm, at: directParameterLocation), directParameterValue))
+                    parameters.append((Located(lexicon.pool.term(forUID: TypedTermUID(ParameterUID.direct)) as! ParameterTerm, at: directParameterLocation), directParameterValue))
                 }
             }
             

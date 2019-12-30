@@ -17,7 +17,7 @@ import Bushel
         []
     }
     public func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(property.uid) {
+        switch PropertyUID(property.typedUID) {
         case .properties:
             return RT_List(contents: self.properties)
         case .type:
@@ -31,7 +31,7 @@ import Bushel
         if dynamicTypeInfo.isA(type) {
             return self
         } else {
-            switch TypeUID(type.uid) {
+            switch TypeUID(type.typedUID) {
             case .boolean:
                 return RT_Boolean.withValue(self.truthy)
             case .string:

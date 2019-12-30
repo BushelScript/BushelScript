@@ -6,8 +6,8 @@ public class TermPool: TerminologySource {
     
     public typealias Term = Bushel.Term
     
-    private(set) public var byUID: [TermUID : Term] = [:]
-    private(set) public var byUIDName: [TermUID.Name : Term] = [:]
+    private(set) public var byUID: [TypedTermUID : Term] = [:]
+    private(set) public var byUIDName: [TermUID : Term] = [:]
     private(set) public var byName: [TermName : Term] = [:]
     
     public init(contents: Set<Term> = []) {
@@ -16,7 +16,7 @@ public class TermPool: TerminologySource {
         }
     }
     
-    public func term(forUID uid: TermUID) -> Term? {
+    public func term(forUID uid: TypedTermUID) -> Term? {
         return byUID[uid]
     }
     
@@ -29,7 +29,7 @@ public class TermPool: TerminologySource {
     }
     
     public func add(_ term: Term) {
-        byUID[term.uid] = term
+        byUID[term.typedUID] = term
         if let name = term.name {
             byName[name] = term
         }

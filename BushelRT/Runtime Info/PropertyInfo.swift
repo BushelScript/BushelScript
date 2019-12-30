@@ -12,6 +12,10 @@ public class PropertyInfo: TermInfo, Hashable {
     public var uid: TermUID
     public var tags: Set<Tag> = []
     
+    public var kind: TypedTermUID.Kind {
+        .property
+    }
+    
     public var name: TermName? {
         for case .name(let name) in tags {
             return name

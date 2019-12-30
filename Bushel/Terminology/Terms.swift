@@ -29,7 +29,7 @@ public /*abstract*/ class Term: NamedTerm, Hashable {
     public let name: TermName?
     
     // Swift is *sorely* in need of abstract classes… 😫
-    public class var kind: TermUID.Kind {
+    public class var kind: TypedTermUID.Kind {
         fatalError("abstract method called")
     }
     public var enumerated: TermKind {
@@ -56,14 +56,21 @@ public /*abstract*/ class Term: NamedTerm, Hashable {
         {
             return "\(name)"
         } else {
-            return "«\(uid.kind) \(uid.name)»"
+            return "«\(type(of: self).kind) \(uid)»"
         }
+    }
+    
+    public var typedUID: TypedTermUID {
+        TypedTermUID(type(of: self).kind, uid)
     }
     
 }
 
 public final class EnumeratorTerm: Term {
     
+    public override class var kind: TypedTermUID.Kind {
+        .enumerator
+    }
     public override var enumerated: TermKind {
         return .enumerator(self)
     }
@@ -76,7 +83,7 @@ public final class EnumeratorTerm: Term {
 
 public final class DictionaryTerm: Term, TermDictionaryContainer {
     
-    public override class var kind: TermUID.Kind {
+    public override class var kind: TypedTermUID.Kind {
         .dictionary
     }
     public override var enumerated: TermKind {
@@ -102,7 +109,7 @@ public final class DictionaryTerm: Term, TermDictionaryContainer {
 
 public final class ClassTerm: Term, TermDictionaryDelayedInitContainer {
     
-    public override class var kind: TermUID.Kind {
+    public override class var kind: TypedTermUID.Kind {
         .type
     }
     public override var enumerated: TermKind {
@@ -151,7 +158,7 @@ public final class ClassTerm: Term, TermDictionaryDelayedInitContainer {
 
 public final class PropertyTerm: Term {
     
-    public override class var kind: TermUID.Kind {
+    public override class var kind: TypedTermUID.Kind {
         .property
     }
     public override var enumerated: TermKind {
@@ -168,7 +175,7 @@ public final class CommandTerm: Term {
     
     public var parameters: ParameterTermDictionary
     
-    public override class var kind: TermUID.Kind {
+    public override class var kind: TypedTermUID.Kind {
         .command
     }
     public override var enumerated: TermKind {
@@ -188,7 +195,7 @@ public final class CommandTerm: Term {
 
 public final class ParameterTerm: Term {
     
-    public override class var kind: TermUID.Kind {
+    public override class var kind: TypedTermUID.Kind {
         .parameter
     }
     public override var enumerated: TermKind {
@@ -203,7 +210,7 @@ public final class ParameterTerm: Term {
 
 public final class VariableTerm: Term {
     
-    public override class var kind: TermUID.Kind {
+    public override class var kind: TypedTermUID.Kind {
         .variable
     }
     public override var enumerated: TermKind {
@@ -225,7 +232,7 @@ public final class ApplicationNameTerm: Term, TermDictionaryDelayedInitContainer
         true
     }
     
-    public override class var kind: TermUID.Kind {
+    public override class var kind: TypedTermUID.Kind {
         .applicationName
     }
     public override var enumerated: TermKind {
@@ -252,7 +259,7 @@ public final class ApplicationIDTerm: Term, TermDictionaryDelayedInitContainer {
         true
     }
     
-    public override class var kind: TermUID.Kind {
+    public override class var kind: TypedTermUID.Kind {
         .applicationID
     }
     public override var enumerated: TermKind {

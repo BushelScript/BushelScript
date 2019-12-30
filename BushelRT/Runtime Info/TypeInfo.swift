@@ -24,6 +24,10 @@ public class TypeInfo: TermInfo, Hashable {
     public var uid: TermUID
     public var tags: Set<Tag> = []
     
+    public var kind: TypedTermUID.Kind {
+        .type
+    }
+    
     public var supertype: TypeInfo? {
         for case .supertype(let supertype) in tags {
             return supertype

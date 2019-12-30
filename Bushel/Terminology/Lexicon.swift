@@ -21,7 +21,7 @@ public struct Lexicon: TerminologySource {
         push()
     }
     
-    public func term(forUID uid: TermUID) -> Term? {
+    public func term(forUID uid: TypedTermUID) -> Term? {
         findTerm { dictionary in dictionary.term(forUID: uid) }
     }
     
@@ -56,7 +56,7 @@ public struct Lexicon: TerminologySource {
     }
     
     @discardableResult
-    public mutating func push(uid: TermUID, name: TermName? = nil) -> TermDictionary {
+    public mutating func push(uid: TypedTermUID, name: TermName? = nil) -> TermDictionary {
         let dictionary = self.dictionary(forUID: uid) ?? TermDictionary(pool: pool, name: name, exports: false)
         dictionaryStack.append(dictionary)
         return dictionary

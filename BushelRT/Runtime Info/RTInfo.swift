@@ -36,7 +36,7 @@ public class RTInfo {
                 break
             case .class_(let term):
                 let type = typeInfo(for: term)
-                typesByUID[type.uid] = type
+                typesByUID[type.typedUID] = type
                 if let supertype = type.supertype {
                     if typesBySupertype[supertype] == nil {
                         typesBySupertype[supertype] = []
@@ -50,14 +50,14 @@ public class RTInfo {
                     typesByCode[code] = type
                 }
             case .property(let term):
-                let property = PropertyInfo(term.uid, [])
-                propertiesByUID[property.uid] = property
+                let property = PropertyInfo(term.uid)
+                propertiesByUID[property.typedUID] = property
                 if let code = term.ae4Code {
                     propertiesByCode[code] = property
                 }
             case .command(let term):
-                let command = CommandInfo(term.uid, [])
-                commandsByUID[command.uid] = command
+                let command = CommandInfo(term.uid)
+                commandsByUID[command.typedUID] = command
             case .parameter(_):
                 break
             case .variable(_):
@@ -70,12 +70,12 @@ public class RTInfo {
         }
     }
     
-    private var typesByUID: [TermUID : TypeInfo] = [:]
+    private var typesByUID: [TypedTermUID : TypeInfo] = [:]
     private var typesBySupertype: [TypeInfo : [TypeInfo]] = [:]
     private var typesByName: [TermName : TypeInfo] = [:]
     private var typesByCode: [OSType : TypeInfo] = [:]
     
-    public func type(forUID uid: TermUID) -> TypeInfo? {
+    public func type(forUID uid: TypedTermUID) -> TypeInfo? {
         typesByUID[uid]
     }
     public func subtypes(of type: TypeInfo) -> [TypeInfo] {
@@ -88,19 +88,19 @@ public class RTInfo {
         typesByCode[code]
     }
     
-    private var propertiesByUID: [TermUID : PropertyInfo] = [:]
+    private var propertiesByUID: [TypedTermUID : PropertyInfo] = [:]
     private var propertiesByCode: [OSType : PropertyInfo] = [:]
     
-    public func property(forUID uid: TermUID) -> PropertyInfo? {
+    public func property(forUID uid: TypedTermUID) -> PropertyInfo? {
         propertiesByUID[uid]
     }
     public func property(for code: OSType) -> PropertyInfo? {
         propertiesByCode[code]
     }
     
-    private var commandsByUID: [TermUID : CommandInfo] = [:]
+    private var commandsByUID: [TypedTermUID : CommandInfo] = [:]
     
-    public func command(forUID uid: TermUID) -> CommandInfo? {
+    public func command(forUID uid: TypedTermUID) -> CommandInfo? {
         commandsByUID[uid]
     }
     

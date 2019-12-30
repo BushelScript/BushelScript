@@ -79,7 +79,7 @@ public extension SourceParser {
             lexicon.add(descriptor.realize(lexicon.pool))
         }
         
-        lexicon.push(uid: TermUID(.dictionary, .id("script")))
+        lexicon.push(uid: TypedTermUID(.dictionary, .id("script")))
         do {
             let ast: Expression
             if let sequence = try parseSequence(TermName("")) {
@@ -777,9 +777,10 @@ public extension SourceParser {
             
             let kindString = rawFormString.prefix(while: { !$0.isWhitespace })
             rawFormString.removeFirst(kindString.count)
-            guard let kind = TermUID.Kind(rawValue: String(kindString)) else {
+            guard let kind = TypedTermUID.Kind(rawValue: String(kindString)) else {
                 throw ParseError(description: "invalid raw specifier type", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
             }
+            
             
             rawFormString.removeLeadingWhitespace()
             
@@ -787,14 +788,15 @@ public extension SourceParser {
                 throw ParseError(description: "expected »", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
             }
             
-            guard let uidName = TermUID.Name(normalized: String(rawFormString[..<closeRange.lowerBound])) else {
+            guard let uid = TermUID(normalized: String(rawFormString[..<closeRange.lowerBound])) else {
                 throw ParseError(description: "expected term UID", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
             }
             
-            let uid = TermUID(kind, uidName)
-            var maybeTerm = lexicon.term(forUID: uid)
+            
+            var maybeTerm = lexicon.term(forUID: TypedTermUID(kind, uid))
             if maybeTerm == nil {
-                maybeTerm = Terminology.Term.init(uid, name: TermName(""))
+                let termType = kind.termType
+                maybeTerm = termType.init(uid, name: TermName(""))
                 guard maybeTerm != nil else {
                     throw ParseError(description: "this term is undefined and cannot be ad-hoc constructed", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
                 }
@@ -815,6 +817,33 @@ public extension StringProtocol {
     
     var range: Range<Index> {
         return startIndex..<endIndex
+    }
+    
+}
+
+public extension TypedTermUID.Kind {
+    
+    var termType: Term.Type {
+        switch self {
+        case .enumerator:
+            return EnumeratorTerm.self
+        case .dictionary:
+            return DictionaryTerm.self
+        case .type:
+            return ClassTerm.self
+        case .property:
+            return PropertyTerm.self
+        case .command:
+            return CommandTerm.self
+        case .parameter:
+            return ParameterTerm.self
+        case .variable:
+            return VariableTerm.self
+        case .applicationName:
+            return ApplicationNameTerm.self
+        case .applicationID:
+            return ApplicationIDTerm.self
+        }
     }
     
 }

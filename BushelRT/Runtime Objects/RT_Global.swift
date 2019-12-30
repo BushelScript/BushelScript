@@ -18,7 +18,7 @@ public class RT_Global: RT_Object {
     }
     
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(property.uid) {
+        switch PropertyUID(property.typedUID) {
         case .topScript:
             return rt.topScript
         case .currentDate:
@@ -33,15 +33,15 @@ public class RT_Global: RT_Object {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
-        let commandClass = command.uid.ae8Code?.class
+        let commandClass = command.typedUID.ae8Code?.class
         if commandClass == (try! FourCharCode(fourByteString: "syso")) || commandClass == (try! FourCharCode(fourByteString: "gtqp")) {
             // Run command from StandardAdditions.osax
             return RT_Application(rt, currentApplication: ()).perform(command: command, arguments: arguments)
         }
         
-        switch CommandUID(command.uid) {
+        switch CommandUID(command.typedUID) {
         case .delay:
-            let delaySeconds = (arguments[ParameterInfo(.direct)]?.coerce(to: rt.type(forUID: TermUID(TypeUID.real))!) as? RT_Numeric)?.numericValue ?? 1.0
+            let delaySeconds = (arguments[ParameterInfo(.direct)]?.coerce(to: rt.type(forUID: TypedTermUID(TypeUID.real))!) as? RT_Numeric)?.numericValue ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)
             return RT_Null.null
         case .CLI_log:

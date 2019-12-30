@@ -47,7 +47,7 @@ public struct TypeDescriptor: TermDescriptor {
     }
     
     public func realize(_ pool: TermPool) -> Term {
-        ClassTerm(uid, name: name, parentClass: pool.term(forUID: parentUID) as? ClassTerm)
+        ClassTerm(uid, name: name, parentClass: pool.term(forUID: TypedTermUID(.type, parentUID)) as? ClassTerm)
     }
     
 }

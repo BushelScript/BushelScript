@@ -4,14 +4,14 @@ public protocol TerminologySource {
     
     associatedtype Term: Bushel.Term
     
-    func term(forUID uid: TermUID) -> Term?
+    func term(forUID uid: TypedTermUID) -> Term?
     func term(named name: TermName) -> Term?
     
 }
 
 extension TerminologySource {
     
-    public func dictionary(forUID uid: TermUID) -> TermDictionary? {
+    public func dictionary(forUID uid: TypedTermUID) -> TermDictionary? {
         (term(forUID: uid) as? TermDictionaryContainer)?.terminology
     }
     

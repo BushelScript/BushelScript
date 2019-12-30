@@ -19,7 +19,7 @@ public class RT_AEObject: RT_Object {
         typeInfo_
     }
     public override var dynamicTypeInfo: TypeInfo {
-        TypeInfo(TermUID(.type, .ae4(code: descriptor.descriptorType)), [])
+        TypeInfo(.ae4(code: descriptor.descriptorType))
     }
     
     public override var description: String {
@@ -28,7 +28,7 @@ public class RT_AEObject: RT_Object {
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
         guard
-            let code = type.uid.ae4Code,
+            let code = type.typedUID.ae4Code,
             let coercedDescriptor = descriptor.coerce(toDescriptorType: code)
         else {
             return nil

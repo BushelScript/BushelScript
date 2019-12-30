@@ -119,10 +119,10 @@ public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
         }
         
         if case .property = kind {
-            return parentSpecifier.property(property!.uid.ae4Code!)
+            return parentSpecifier.property(property!.typedUID.ae4Code!)
         }
         
-        guard let code = type?.uid.ae4Code else {
+        guard let code = type?.typedUID.ae4Code else {
             // TODO: handle these errors more gracefully (should make this a throwing method)
             fatalError("must have code to evaluate by Apple Event")
         }

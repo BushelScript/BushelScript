@@ -338,14 +338,14 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
         let fn = builder.addFunction(".make-application-specifier", type: FunctionType([PointerType.toVoid], PointerType.toVoid))
         let block = fn.appendBasicBlock(named: "entry")
         builder.positionAtEnd(of: block)
-        let result = builder.buildCall(toExternalFunction: .newSpecifier1, args: [PointerType.toVoid.null(), builder.buildGlobalString(TermUID(TypeUID.application).normalized).asRTString(builder: builder), IntType.int32.constant(RT_Specifier.Kind.name.rawValue), fn.parameter(at: 0)!])
+        let result = builder.buildCall(toExternalFunction: .newSpecifier1, args: [PointerType.toVoid.null(), builder.buildGlobalString(TypedTermUID(TypeUID.application).normalized).asRTString(builder: builder), IntType.int32.constant(RT_Specifier.Kind.name.rawValue), fn.parameter(at: 0)!])
         builder.buildRet(result)
     }
     do {
         let fn = builder.addFunction(".make-application-id-specifier", type: FunctionType([PointerType.toVoid], PointerType.toVoid))
         let block = fn.appendBasicBlock(named: "entry")
         builder.positionAtEnd(of: block)
-        let result = builder.buildCall(toExternalFunction: .newSpecifier1, args: [PointerType.toVoid.null(), builder.buildGlobalString(TermUID(TypeUID.application).normalized).asRTString(builder: builder), IntType.int32.constant(RT_Specifier.Kind.id.rawValue), fn.parameter(at: 0)!])
+        let result = builder.buildCall(toExternalFunction: .newSpecifier1, args: [PointerType.toVoid.null(), builder.buildGlobalString(TypedTermUID(TypeUID.application).normalized).asRTString(builder: builder), IntType.int32.constant(RT_Specifier.Kind.id.rawValue), fn.parameter(at: 0)!])
         builder.buildRet(result)
     }
     
@@ -568,7 +568,7 @@ extension Expression {
         case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
             return builder.buildCall(toExternalFunction: .binaryOp, args: [IntType.int64.constant(operation.rawValue), try lhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult), try rhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)])
         case .coercion(of: let expression, to: let type): // MARK: .coercion
-            return builder.buildCall(toExternalFunction: .coerce, args: [try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult), rt.type(forUID: type.term.uid)!.irPointerValue(builder: builder)])
+            return builder.buildCall(toExternalFunction: .coerce, args: [try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult), rt.type(forUID: type.term.typedUID)!.irPointerValue(builder: builder)])
         case .variable(let term): // MARK: .variable
             let termIRValue = term.irPointerValue(builder: builder)
             
@@ -598,8 +598,8 @@ extension Expression {
                 
                 return builder.buildCall(toExternalFunctionReturningVoid: .setVariableValue, args: [termIRValue, newValueIRValue])
             } else {
-                let directParameterTermIRValue = rt.termPool.term(forUID: TermUID(ParameterUID.direct))!.irPointerValue(builder: builder)
-                let toParameterTermIRValue = rt.termPool.term(forUID: TermUID(ParameterUID.set_to))!.irPointerValue(builder: builder)
+                let directParameterTermIRValue = rt.termPool.term(forUID: TypedTermUID(ParameterUID.direct))!.irPointerValue(builder: builder)
+                let toParameterTermIRValue = rt.termPool.term(forUID: TypedTermUID(ParameterUID.set_to))!.irPointerValue(builder: builder)
                 let expressionIRValue = try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
                 let newValueIRValue = try newValueExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
                 
@@ -607,7 +607,7 @@ extension Expression {
                 builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, directParameterTermIRValue, expressionIRValue])
                 builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, toParameterTermIRValue, newValueIRValue])
                 
-                let command = rt.command(forUID: TermUID(CommandUID.set))!
+                let command = rt.command(forUID: TypedTermUID(CommandUID.set))!
                 let setCommandIRValue = command.irPointerValue(builder: builder)
                 
                 return builder.buildCall(toExternalFunction: .call, args: [setCommandIRValue, arguments])
@@ -632,7 +632,7 @@ extension Expression {
             {
                 return builder.buildCall(function, args: [arguments])
             } else {
-                let commandIRValue = rt.command(forUID: term.term.uid)!.irPointerValue(builder: builder)
+                let commandIRValue = rt.command(forUID: term.term.typedUID)!.irPointerValue(builder: builder)
                 return builder.buildCall(toExternalFunction: .call, args: [commandIRValue, arguments])
             }
             
@@ -755,7 +755,7 @@ extension PropertyInfo: IRPointerConvertible {}
 extension Specifier {
     
     public func generateLLVMIR(_ builder: IRBuilder, _ rt: RTInfo, _ stack: inout StaticStack, options: CodeGenOptions, lastResult: IRValue) throws -> IRValue {
-        let uidIRValue = builder.buildGlobalString(idTerm.term.uid.normalized).asRTString(builder: builder)
+        let uidIRValue = builder.buildGlobalString(idTerm.term.typedUID.normalized).asRTString(builder: builder)
         
         let parentIRValue = try parent?.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false) ?? PointerType.toVoid.null()
         let dataExpressionIRValues = try allDataExpressions().map { dataExpression in

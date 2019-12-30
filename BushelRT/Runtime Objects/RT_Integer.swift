@@ -76,7 +76,7 @@ public class RT_Integer: RT_Object, AEEncodable {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
-        switch CommandUID(command.uid) {
+        switch CommandUID(command.typedUID) {
         case .Math_abs:
             return RT_Integer(value: abs(self.value))
         case .Math_sqrt:
@@ -99,7 +99,7 @@ public class RT_Integer: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch TypeUID(type.uid) {
+        switch TypeUID(type.typedUID) {
         case .real:
             return RT_Real(value: Double(value))
         default:

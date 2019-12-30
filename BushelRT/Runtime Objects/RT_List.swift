@@ -57,7 +57,7 @@ public class RT_List: RT_Object, AEEncodable {
         return super.properties + [length, reverse, tail]
     }
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(property.uid) {
+        switch PropertyUID(property.typedUID) {
         case .Sequence_length:
             return length
         case .Sequence_reverse:
@@ -127,7 +127,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
-        switch CommandUID(command.uid) {
+        switch CommandUID(command.typedUID) {
         case .Sequence_join:
             guard let separator = arguments[ParameterInfo(.Sequence_join_with)]?.coerce() as? RT_String else {
                 // TODO: Throw error
