@@ -573,13 +573,13 @@ extension Expression {
             let termIRValue = term.irPointerValue(builder: builder)
             
             return builder.buildCall(toExternalFunction: .getVariableValue, args: [termIRValue])
-        case .use(let resource), // MARK: .use
-             .resource(let resource): // MARK: .resource
-            switch resource {
-            case .applicationByName(let term): // MARK: .applicationByName
+        case .use(let term), // MARK: .use
+             .resource(let term): // MARK: .resource
+            switch term.term.resource {
+            case .applicationByName: // MARK: .applicationByName
                 let appNameIRValue = builder.module.addGlobalString(name: "app-name", value: term.description).asRTString(builder: builder)
                 return builder.buildCall(builder.module.function(named: ".make-application-specifier")!, args: [appNameIRValue])
-            case .applicationByID(let term): // MARK: .applicationByID
+            case .applicationByID: // MARK: .applicationByID
                 let appIDIRValue = builder.module.addGlobalString(name: "app-id", value: term.description).asRTString(builder: builder)
                 return builder.buildCall(builder.module.function(named: ".make-application-id-specifier")!, args: [appIDIRValue])
             }
@@ -588,7 +588,7 @@ extension Expression {
             if let code = term.ae4Code {
                 return builder.buildCall(toExternalFunction: .newConstant, args: [IntType.int32.constant(code)])
             } else {
-                return builder.buildCall(toExternalFunction: .newSymbolicConstant, args: [builder.module.addGlobalString(name: "const_symbol", value: term.description).asRTString(builder: builder)])
+                return builder.buildCall(toExternalFunction: .newSymbolicConstant, args: [builder.module.addGlobalString(name: "const_symbol", value: term.typedUID.normalized).asRTString(builder: builder)])
             }
         case .set(let expression, to: let newValueExpression): // MARK: .set
             if case .variable(let variableTerm) = expression.kind {

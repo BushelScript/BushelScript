@@ -32,7 +32,7 @@ public struct Located<Term: Bushel.Term>: LocatedTerm, Hashable {
     }
     
     public var description: String {
-        String(describing: term)
+        term.description
     }
     
     public var wrappedTerm: Bushel.Term {

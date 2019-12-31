@@ -79,7 +79,7 @@ public extension SourceParser {
             lexicon.add(descriptor.realize(lexicon.pool))
         }
         
-        lexicon.push(uid: TypedTermUID(.dictionary, .id("script")))
+        lexicon.push(uid: .id("script"))
         do {
             let ast: Expression
             if let sequence = try parseSequence(TermName("")) {
@@ -682,14 +682,10 @@ public extension SourceParser {
                 let dictionary = lexicon.push()
                 terminologyPushed = true
                 try loadTerminology(at: appBundle.bundleURL, into: dictionary)
-            case .use(let resource),
-                 .resource(let resource):
-                switch resource {
-                case .applicationByName(let term as LocatedTerm),
-                     .applicationByID(let term as LocatedTerm):
-                    lexicon.push(name: term.name)
-                    terminologyPushed = true
-                }
+            case .use(let term),
+                 .resource(let term):
+                lexicon.push(for: term.term)
+                terminologyPushed = true
             default:
                 break noTerminology
             }
@@ -839,10 +835,8 @@ public extension TypedTermUID.Kind {
             return ParameterTerm.self
         case .variable:
             return VariableTerm.self
-        case .applicationName:
-            return ApplicationNameTerm.self
-        case .applicationID:
-            return ApplicationIDTerm.self
+        case .resource:
+            return ResourceTerm.self
         }
     }
     

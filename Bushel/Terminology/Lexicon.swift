@@ -47,17 +47,34 @@ public struct Lexicon: TerminologySource {
     }
     
     @discardableResult
-    public mutating func push(name: TermName? = nil) -> TermDictionary {
+    public mutating func push(for term: Term & TermDictionaryContainer) -> TermDictionary {
+        let dictionary: TermDictionary = {
+            if let dictionary = term.terminology {
+                return dictionary
+            } else if let term = term as? TermDictionaryDelayedInitContainer {
+                return term.makeDictionary(under: pool)
+            } else {
+                return TermDictionary(pool: pool, name: term.name, exports: false)
+            }
+        }()
+        dictionaryStack.append(dictionary)
+        return dictionary
+    }
+    
+    @discardableResult
+    public mutating func push(uid: TermUID, name: TermName? = nil) -> TermDictionary {
         let dictionary =
-            name.flatMap { self.dictionary(named: $0) } ??
+            self.dictionary(forUID: TypedTermUID(.dictionary, uid)) ??
             TermDictionary(pool: pool, name: name, exports: false)
         dictionaryStack.append(dictionary)
         return dictionary
     }
     
     @discardableResult
-    public mutating func push(uid: TypedTermUID, name: TermName? = nil) -> TermDictionary {
-        let dictionary = self.dictionary(forUID: uid) ?? TermDictionary(pool: pool, name: name, exports: false)
+    public mutating func push(name: TermName? = nil) -> TermDictionary {
+        let dictionary =
+            name.flatMap { self.dictionary(named: $0) } ??
+            TermDictionary(pool: pool, name: name, exports: false)
         dictionaryStack.append(dictionary)
         return dictionary
     }

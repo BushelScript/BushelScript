@@ -90,15 +90,3 @@ extension NamedTerm {
     }
     
 }
-
-extension Resource {
-    
-    public var prettified: String {
-        switch self {
-        case .applicationByName(let term as NamedTerm),
-             .applicationByID(let term as NamedTerm):
-            return String(describing: term)
-        }
-    }
-    
-}

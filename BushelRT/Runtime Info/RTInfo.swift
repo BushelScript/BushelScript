@@ -62,9 +62,7 @@ public class RTInfo {
                 break
             case .variable(_):
                 break
-            case .applicationName(_):
-                break
-            case .applicationID(_):
+            case .resource(_):
                 break
             }
         }

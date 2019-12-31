@@ -18,8 +18,7 @@ public struct TypedTermUID {
         case command
         case parameter
         case variable
-        case applicationName
-        case applicationID
+        case resource
     }
     
     public var kind: Kind

@@ -41,10 +41,10 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                 formatted += " \(format(returnValue, level: level))"
             }
             return formatted
-        case .use(let resource):
-            return "use \(resource.formattedForUseStatement)"
+        case .use(let resourceTerm):
+            return "use \(resourceTerm.term.formattedForUseStatement)"
         case .resource(let resource):
-            return resource.formatted
+            return "\(resource)"
         case .that:
             return "that"
         case .it:
@@ -188,22 +188,14 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
     
 }
 
-extension Resource {
+extension ResourceTerm {
     
     public var formattedForUseStatement: String {
-        switch self {
+        switch resource {
         case .applicationByName(let term):
             return "application \(term)"
         case .applicationByID(let term):
             return "application id \(term)"
-        }
-    }
-    
-    public var formatted: String {
-        switch self {
-        case .applicationByName(let term as LocatedTerm),
-             .applicationByID(let term as LocatedTerm):
-            return "\(term)"
         }
     }
     

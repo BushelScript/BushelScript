@@ -223,9 +223,9 @@ public final class VariableTerm: Term {
     
 }
 
-public final class ApplicationNameTerm: Term, TermDictionaryDelayedInitContainer {
+public final class ResourceTerm: Term, TermDictionaryDelayedInitContainer {
     
-    public let bundle: Bundle
+    public let resource: Resource
     
     public var terminology: TermDictionary?
     public var exportsTerminology: Bool {
@@ -233,14 +233,14 @@ public final class ApplicationNameTerm: Term, TermDictionaryDelayedInitContainer
     }
     
     public override class var kind: TypedTermUID.Kind {
-        .applicationName
+        .resource
     }
     public override var enumerated: TermKind {
-        .applicationName(self)
+        .resource(self)
     }
     
-    public init(_ uid: TermUID, name: TermName, bundle: Bundle) {
-        self.bundle = bundle
+    public init(_ uid: TermUID, name: TermName, resource: Resource) {
+        self.resource = resource
         super.init(uid, name: name)!
     }
     
@@ -250,30 +250,10 @@ public final class ApplicationNameTerm: Term, TermDictionaryDelayedInitContainer
     
 }
 
-public final class ApplicationIDTerm: Term, TermDictionaryDelayedInitContainer {
+public enum Resource {
     
-    public let bundle: Bundle
-    
-    public var terminology: TermDictionary?
-    public var exportsTerminology: Bool {
-        true
-    }
-    
-    public override class var kind: TypedTermUID.Kind {
-        .applicationID
-    }
-    public override var enumerated: TermKind {
-        .applicationID(self)
-    }
-    
-    public init(_ uid: TermUID, name: TermName, bundle: Bundle) {
-        self.bundle = bundle
-        super.init(uid, name: name)!
-    }
-    
-    public required init?(_ uid: TermUID, name: TermName?) {
-        return nil
-    }
+    case applicationByName(bundle: Bundle)
+    case applicationByID(bundle: Bundle)
     
 }
 
@@ -303,12 +283,8 @@ public enum TermKind: Hashable {
     case parameter(ParameterTerm)
     /// A user-defined variable.
     case variable(VariableTerm)
-    /// An application constant specified by name.
-    /// Contains an exporting dictionary.
-    case applicationName(ApplicationNameTerm)
-    /// An application constant specified by bundle ID.
-    /// Contains an exporting dictionary.
-    case applicationID(ApplicationIDTerm)
+    /// An imported resource.
+    case resource(ResourceTerm)
     
     /// The parts of this kind of term that are common to all kinds of terms.
     var generalized: Term {
@@ -320,8 +296,7 @@ public enum TermKind: Hashable {
              .command(let term as Term),
              .parameter(let term as Term),
              .variable(let term as Term),
-             .applicationName(let term as Term),
-             .applicationID(let term as Term):
+             .resource(let term as Term):
             return term
         }
     }

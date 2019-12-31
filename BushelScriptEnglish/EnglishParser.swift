@@ -529,27 +529,18 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         let nameStartIndex = currentIndex
         guard let (name, nameLocation) = try parseTermNameEagerly() else {
-            throw ParseError(description: "expected application name", location: SourceLocation(source.range, source: entireSource))
+            throw ParseError(description: "expected application \(byBundleID ? "identifier" : "name")", location: SourceLocation(source.range, source: entireSource))
         }
         guard let bundle = byBundleID ? Bundle(applicationBundleIdentifier: name.normalized) : Bundle(applicationName: name.normalized) else {
             throw ParseError(description: "this script requires \(byBundleID ? "an application with identifier" : "the application") “\(name)”, which was not found on your system", location: SourceLocation(nameStartIndex..<currentIndex, source: entireSource))
         }
         
-        let term: Term & TermDictionaryDelayedInitContainer
-        let resource: Resource
-        if byBundleID {
-            let idTerm = Located(ApplicationIDTerm(.id(name.normalized), name: name, bundle: bundle), at: nameLocation)
-            term = idTerm.term
-            resource = .applicationByID(idTerm)
-        } else {
-            let nameTerm = Located(ApplicationNameTerm(.id(name.normalized), name: name, bundle: bundle), at: nameLocation)
-            term = nameTerm.term
-            resource = .applicationByName(nameTerm)
-        }
+        let resource: Resource = byBundleID ? .applicationByID(bundle: bundle) : .applicationByName(bundle: bundle)
+        let term = Located(ResourceTerm(.id(name.normalized), name: name, resource: resource), at: nameLocation)
         
-        try loadTerminology(at: bundle.bundleURL, into: term)
+        try loadTerminology(at: bundle.bundleURL, into: term.term)
         lexicon.add(term)
-        return .use(resource: resource)
+        return .use(resource: term)
     }
     
     private func handleSet() throws -> Expression.Kind? {
@@ -640,10 +631,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             throw ParseError(description: "parameter term outside of a command invocation", location: expressionLocation)
         case .variable(let term): // MARK: .variable
             return .variable(term)
-        case .applicationName(let term): // MARK: .applicationName
-            return .resource(.applicationByName(Located(term, at: expressionLocation)))
-        case .applicationID(let term): // MARK: .applicationID
-            return .resource(.applicationByID(Located(term, at: expressionLocation)))
+        case .resource(let term): // MARK: .resource
+            return .resource(Located(term, at: expressionLocation))
         }
     }
     
