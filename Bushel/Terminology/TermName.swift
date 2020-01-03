@@ -4,18 +4,10 @@ import Foundation
 public struct TermName: Hashable, Codable, CustomStringConvertible {
     
     public var words: [String] = []
-    public var scopes: [TermName] = []
-    
-    public var normalizedWords: String {
-        words.joined(separator: " ")
-    }
-    public var normalizedScopes: String {
-        scopes.isEmpty ? "" : scopes.map { $0.normalized }.joined(separator: " : ")
-    }
     
     public var normalized: String {
         get {
-            (scopes.isEmpty ? "" : normalizedScopes + " : ") + normalizedWords
+            words.joined(separator: " ")
         }
         set {
             self = TermName(newValue)
@@ -23,21 +15,11 @@ public struct TermName: Hashable, Codable, CustomStringConvertible {
     }
     
     public var description: String {
-        return normalized
+        normalized
     }
     
     public init<S: StringProtocol>(_ string: S) where S.SubSequence == Substring {
-        var scopeNames = string.split(separator: ":")
-        guard !scopeNames.isEmpty else {
-            return
-        }
-        let mainName = scopeNames.removeLast()
-        
-        for scopeName in scopeNames {
-            scopes.append(TermName(scopeName))
-        }
-        
-        words = TermName.words(in: mainName)
+        self.init(TermName.words(in: string))
     }
     
     public init(_ words: [String]) {
@@ -45,11 +27,11 @@ public struct TermName: Hashable, Codable, CustomStringConvertible {
     }
     
     public static func words<S: StringProtocol>(in string: S) -> [String] where S.SubSequence == Substring {
-        return string.split { $0.isWhitespace }.flatMap { brokenByPunctuation($0) }
+        string.split { $0.isWhitespace }.flatMap { brokenByPunctuation($0) }
     }
     
     public static func nextWord<S: StringProtocol>(in string: S) -> String? where S.SubSequence == Substring {
-        return words(in: string).first
+        words(in: string).first
     }
     
 }
@@ -90,11 +72,7 @@ private let wordBreakingCharacters: CharacterSet =
 extension TermName: Comparable {
     
     public static func < (lhs: TermName, rhs: TermName) -> Bool {
-        if lhs.scopes != rhs.scopes {
-            return lhs.scopes < rhs.scopes
-        } else {
-            return lhs.words < rhs.words
-        }
+        lhs.words < rhs.words
     }
     
 }
