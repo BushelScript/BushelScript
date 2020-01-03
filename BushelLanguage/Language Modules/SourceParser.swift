@@ -775,17 +775,17 @@ public extension SourceParser {
             let kindString = source.prefix(while: { !$0.isWhitespace })
             source.removeFirst(kindString.count)
             guard let kind = TypedTermUID.Kind(rawValue: String(kindString)) else {
-                throw ParseError(description: "invalid raw specifier type", location: currentLocation)
+                throw ParseError(description: "invalid raw term type", location: currentLocation)
             }
             
             eatCommentsAndWhitespace()
             
             guard let closeBracketRange = source.range(of: "»") else {
-                throw ParseError(description: "expected »", location: currentLocation)
+                throw ParseError(description: "expected term UID followed by ‘»’", location: currentLocation)
             }
             let uidString = source[..<closeBracketRange.lowerBound]
-            source.removeFirst(uidString.count)
-            guard let uid = TermUID(normalized: String()) else {
+            source = source[closeBracketRange.upperBound...]
+            guard let uid = TermUID(normalized: String(uidString)) else {
                 throw ParseError(description: "expected term UID", location: currentLocation)
             }
             

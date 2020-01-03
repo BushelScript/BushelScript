@@ -35,7 +35,7 @@ extension TermUIDPredefinedValue where Self: RawRepresentable, RawValue == Strin
         rawValue
             .split(separator: "_")
             .map { String($0).transformed(from: .camel, to: .space, case: $0.first!.isUppercase ? .preserve : .lower) }
-            .joined(separator: " : ")
+            .joined(separator: ":")
     }
     
     internal init?(idName: String) {
@@ -46,7 +46,7 @@ extension TermUIDPredefinedValue where Self: RawRepresentable, RawValue == Strin
 
 private func makeRawValue(from idName: String) -> String {
     idName
-        .components(separatedBy: " : ")
+        .components(separatedBy: ":")
         .map { String($0).transformed(from: .space, to: .camel, case: $0.first!.isUppercase ? .preserve : .lowerUpper ) }
         .joined(separator: "_")
 }
