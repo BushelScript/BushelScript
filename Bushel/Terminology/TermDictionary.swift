@@ -1,7 +1,7 @@
 import Foundation
 import SDEFinitely
 
-public class TermDictionary: TerminologySource, CustomStringConvertible {
+public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
     
     private(set) public var pool: TermPool
     
@@ -98,8 +98,8 @@ public class TermDictionary: TerminologySource, CustomStringConvertible {
         return new
     }
     
-    public var description: String {
-        return "[TermDictionary ‘\(name?.normalized ?? "(unnamed)")’:\n\t\(contentsByName)\n]"
+    public var debugDescription: String {
+        return "[TermDictionary ‘\(name?.normalized ?? "(unnamed)")’:\n\t\(contentsByUID)\n]"
     }
     
 }

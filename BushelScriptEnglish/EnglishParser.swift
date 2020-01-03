@@ -585,11 +585,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             
             var parameters: [(Located<ParameterTerm>, Expression)] = []
             func parseParameter() throws -> Bool {
-                guard case let (parameterTermString, parameterTerm?) = try findTerm(in: source.prefix(while: { !$0.isNewline }), terminology: term.parameters) else {
+                let startIndex = currentIndex
+                guard let parameterTerm = try eatTerm(terminology: term.parameters) as? ParameterTerm else {
                     return false
                 }
-                source.removeFirst(parameterTermString.count)
-                let locatedParameterTerm = Located(parameterTerm, at: SourceLocation(parameterTermString.range, source: entireSource))
+                let locatedParameterTerm = Located(parameterTerm, at: SourceLocation(startIndex..<currentIndex, source: entireSource))
                 
                 guard let parameterValue = try parsePrimary() else {
                     throw ParseError(description: "expected expression after parameter name, but found end of script", location: currentLocation)

@@ -297,8 +297,9 @@ public extension SourceParser {
     
     private func parseUnprocessedPrimary() throws -> Expression? {
         eatCommentsAndWhitespace()
+        expressionStartIndex = currentIndex
+        
         if let hashbang = eatHashbang() {
-            expressionStartIndex = hashbang.location.range.lowerBound
             var hashbangs = [hashbang]
             var endHashbangLocation: SourceLocation?
             var bodies = [""]
@@ -340,16 +341,14 @@ public extension SourceParser {
             }
             
             return Expression(.scoped(Sequence(expressions: weaves, location: expressionLocation)), at: expressionLocation)
-        } else if case let (termString, termName?) = eatKeyword() {
-            expressionStartIndex = termString.startIndex
+        } else if let termName = eatKeyword() {
             if let kind = try keywords[termName]!() {
                 return Expression(kind, currentElements.last!, at: expressionLocation)
             } else {
                 return nil
             }
-        } else if case let (termString, term?) = try eatTerm() {
-            expressionStartIndex = termString.startIndex
-            if let kind = try handle(term: Located(term, at: SourceLocation(termString.range, source: entireSource))) {
+        } else if let term = try eatTerm() {
+            if let kind = try handle(term: Located(term, at: expressionLocation)) {
                 return Expression(kind, currentElements.last!, at: expressionLocation)
             } else {
                 return nil
@@ -539,13 +538,13 @@ public extension SourceParser {
         return result.termName != nil
     }
     
-    func eatKeyword() -> (termString: Substring, termName: TermName?) {
+    func eatKeyword() -> TermName? {
         let result = Array(keywords.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
         source.removeFirst(result.termString.count)
         if let name = result.termName {
             currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized))
         }
-        return result
+        return result.termName
     }
     
     func findPrefixOperator() -> (termName: TermName, operator: UnaryOperation)? {
@@ -596,13 +595,12 @@ public extension SourceParser {
         currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized, styling: .operator))
     }
     
-    func eatTerm() throws -> (termString: Substring, term: Term?) {
-        let result = try findTerm(in: source.prefix(while: { !$0.isNewline }), terminology: lexicon)
-        source.removeFirst(result.termString.count)
-        if let name = result.term?.name {
+    func eatTerm() throws -> Term? {
+        let term = try eatTerm(terminology: lexicon)
+        if let name = term?.name {
             currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized, styling: .variable))
         }
-        return result
+        return term
     }
     
     func tryEating(termName: TermName) -> Bool {
@@ -733,78 +731,80 @@ public extension SourceParser {
         SourceLocation(expressionStartIndex..<currentIndex, source: entireSource)
     }
     
-    func findTerm<Terminology: TerminologySource>(in source: Substring, terminology: Terminology) throws -> (termString: Substring, term: Terminology.Term?) {
-        var termString = source
-        while let lastNonWhitespace = termString.lastIndex(where: { !$0.isWhitespace }) {
-            termString = termString[...lastNonWhitespace]
-            
-            var termName = TermName(String(termString))
-            let scopes = termName.scopes
-            
-            if scopes.isEmpty {
-                if let term = terminology.term(named: termName) {
-                    return (termString, term)
-                } else {
-                    termString.removeLast(termName.words.last!.count)
+    func eatTerm<Terminology: TerminologySource>(terminology: Terminology) throws -> Term? {
+        func eatDefinedTerm() -> Term? {
+            func findTerm<Terminology: TerminologySource>(in dictionary: Terminology) -> (termString: Substring, term: Term)? {
+                eatCommentsAndWhitespace()
+                var termString = source.prefix { !$0.isWordBreaking || $0 == ":" }
+                while let lastNonBreakingIndex = termString.lastIndex(where: { !$0.isWordBreaking }) {
+                    termString = termString[...lastNonBreakingIndex]
+                    let termName = TermName(String(termString))
+                    if let term = dictionary.term(named: termName) {
+                        return (termString, term)
+                    } else {
+                        termString.removeLast(termName.words.last!.count)
+                    }
                 }
-            } else {
-                let outerDict = terminology.dictionary(named: scopes.first!)
-                guard
-                    let innermostDict = scopes.dropFirst().reduce(outerDict, { (dict: TermDictionary?, scopeName: TermName) -> TermDictionary? in
-                        dict?.dictionary(named: scopeName)
-                    })
-                else {
-                    throw ParseError(description: "no such dictionary ‘\(termName.normalizedScopes)’", location: SourceLocation(termString.range, source: entireSource))
-                }
-                
-                let scopelessTermName = TermName(termName.words)
-                if let term = innermostDict.term(named: scopelessTermName) as? Terminology.Term {
-                    return (termString, term)
-                } else {
-                    termString.removeLast(termName.words.last!.count)
-                    termName = TermName(termString)
-                }
+                return nil
             }
+            
+            guard var (termString, term) = findTerm(in: terminology) else {
+                return nil
+            }
+            source.removeFirst(termString.count)
+            while tryEating(prefix: ":") {
+                eatCommentsAndWhitespace()
+                guard let dictionary = (term as? TermDictionaryContainer)?.terminology else {
+                    return nil
+                }
+                guard let result = findTerm(in: dictionary) else {
+                    return nil
+                }
+                (termString, term) = result
+                source.removeFirst(termString.count)
+            }
+            return term
         }
-        
-        let startIndex = source.startIndex
-        if var rawFormString = source.removingPrefix("«") {
-            rawFormString.removeLeadingWhitespace()
+        func eatRawFormTerm() throws -> Term? {
+            guard source.removePrefix("«") else {
+                return nil
+            }
             
-            let kindString = rawFormString.prefix(while: { !$0.isWhitespace })
-            rawFormString.removeFirst(kindString.count)
+            eatCommentsAndWhitespace()
+            
+            let kindString = source.prefix(while: { !$0.isWhitespace })
+            source.removeFirst(kindString.count)
             guard let kind = TypedTermUID.Kind(rawValue: String(kindString)) else {
-                throw ParseError(description: "invalid raw specifier type", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
+                throw ParseError(description: "invalid raw specifier type", location: currentLocation)
             }
             
+            eatCommentsAndWhitespace()
             
-            rawFormString.removeLeadingWhitespace()
-            
-            guard let closeRange = rawFormString.range(of: "»") else {
-                throw ParseError(description: "expected »", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
+            guard let closeBracketRange = source.range(of: "»") else {
+                throw ParseError(description: "expected »", location: currentLocation)
             }
-            
-            guard let uid = TermUID(normalized: String(rawFormString[..<closeRange.lowerBound])) else {
-                throw ParseError(description: "expected term UID", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
+            let uidString = source[..<closeBracketRange.lowerBound]
+            source.removeFirst(uidString.count)
+            guard let uid = TermUID(normalized: String()) else {
+                throw ParseError(description: "expected term UID", location: currentLocation)
             }
-            
             
             var maybeTerm = lexicon.term(forUID: TypedTermUID(kind, uid))
             if maybeTerm == nil {
                 let termType = kind.termType
                 maybeTerm = termType.init(uid, name: TermName(""))
                 guard maybeTerm != nil else {
-                    throw ParseError(description: "this term is undefined and cannot be ad-hoc constructed", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
+                    throw ParseError(description: "this term is undefined and cannot be ad-hoc constructed", location: currentLocation)
                 }
             }
-
+            
             guard let term = maybeTerm as? Terminology.Term else {
-                throw ParseError(description: "wrong type of term for context", location: SourceLocation(at: rawFormString.startIndex, source: entireSource))
+                throw ParseError(description: "wrong type of term for context", location: currentLocation)
             }
-            return (source[startIndex..<rawFormString.endIndex], term)
+            return term
         }
         
-        return (termString, nil)
+        return try eatDefinedTerm() ?? eatRawFormTerm()
     }
     
 }
