@@ -73,20 +73,28 @@ func newRecord() -> Builtin.RTObjectPointer {
     return Builtin.newRecord()
 }
 
+func newArgumentRecord() -> Builtin.RTObjectPointer {
+    return Builtin.newArgumentRecord()
+}
+
 func addToList(_ list: Builtin.RTObjectPointer, _ value: Builtin.RTObjectPointer) {
     return Builtin.addToList(list, value)
 }
 
-func addToRecord(_ record: Builtin.RTObjectPointer, _ term: Builtin.TermPointer, _ value: Builtin.RTObjectPointer) {
-    return Builtin.addToRecord(record, term, value)
+func addToRecord(_ record: Builtin.RTObjectPointer, _ key: Builtin.RTObjectPointer, _ value: Builtin.RTObjectPointer) {
+    return Builtin.addToRecord(record, key, value)
 }
 
-func getFromRecord(_ record: Builtin.RTObjectPointer, _ term: Builtin.TermPointer) -> Builtin.RTObjectPointer {
-    return Builtin.getFromRecord(record, term)
+func addToArgumentRecord(_ record: Builtin.RTObjectPointer, _ key: Builtin.RTObjectPointer, _ value: Builtin.RTObjectPointer) {
+    return Builtin.addToArgumentRecord(record, key, value)
 }
 
-func getFromRecordWithDirectParamFallback(_ record: Builtin.RTObjectPointer, _ term: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
-    return Builtin.getFromRecordWithDirectParamFallback(record, term)
+func getFromArgumentRecord(_ record: Builtin.RTObjectPointer, _ term: Builtin.TermPointer) -> Builtin.RTObjectPointer {
+    return Builtin.getFromArgumentRecord(record, term)
+}
+
+func getFromArgumentRecordWithDirectParamFallback(_ record: Builtin.RTObjectPointer, _ term: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
+    return Builtin.getFromArgumentRecordWithDirectParamFallback(record, term)
 }
 
 func unaryOp(_ operation: Int64, _ operand: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
@@ -173,9 +181,9 @@ enum BuiltinFunction: String {
     case isTruthy
     case numericEqual
     case newReal, newInteger, newBoolean, newString, newConstant, newSymbolicConstant
-    case newList, newRecord
-    case addToList, addToRecord
-    case getFromRecord, getFromRecordWithDirectParamFallback
+    case newList, newRecord, newArgumentRecord
+    case addToList, addToRecord, addToArgumentRecord
+    case getFromArgumentRecord, getFromArgumentRecordWithDirectParamFallback
     case unaryOp, binaryOp
     case coerce
     case newSpecifier0, newSpecifier1, newSpecifier2
@@ -217,10 +225,12 @@ enum BuiltinFunction: String {
         case .newSymbolicConstant: return ([object], object)
         case .newList: return ([], object)
         case .newRecord: return ([], object)
+        case .newArgumentRecord: return ([], object)
         case .addToList: return ([object, object], void)
         case .addToRecord: return ([object, object, object], void)
-        case .getFromRecord: return ([object, object], object)
-        case .getFromRecordWithDirectParamFallback: return ([object, object], object)
+        case .addToArgumentRecord: return ([object, object, object], void)
+        case .getFromArgumentRecord: return ([object, object], object)
+        case .getFromArgumentRecordWithDirectParamFallback: return ([object, object], object)
         case .unaryOp: return ([int64, object], object)
         case .binaryOp: return ([int64, object, object], object)
         case .coerce: return ([object, object], object)
@@ -297,17 +307,23 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     let newRecord: @convention(c) () -> Builtin.RTObjectPointer = BushelRT.newRecord
     builder.addExternalFunctionAsGlobal(newRecord, .newRecord)
     
+    let newArgumentRecord: @convention(c) () -> Builtin.RTObjectPointer = BushelRT.newArgumentRecord
+    builder.addExternalFunctionAsGlobal(newArgumentRecord, .newArgumentRecord)
+    
     let addToList: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Void = BushelRT.addToList
     builder.addExternalFunctionAsGlobal(addToList, .addToList)
     
     let addToRecord: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Void = BushelRT.addToRecord
     builder.addExternalFunctionAsGlobal(addToRecord, .addToRecord)
     
-    let getFromRecord: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.getFromRecord
-    builder.addExternalFunctionAsGlobal(getFromRecord, .getFromRecord)
+    let addToArgumentRecord: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Void = BushelRT.addToArgumentRecord
+    builder.addExternalFunctionAsGlobal(addToArgumentRecord, .addToArgumentRecord)
     
-    let getFromRecordWithDirectParamFallback: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.getFromRecordWithDirectParamFallback
-    builder.addExternalFunctionAsGlobal(getFromRecordWithDirectParamFallback, .getFromRecordWithDirectParamFallback)
+    let getFromArgumentRecord: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.getFromArgumentRecord
+    builder.addExternalFunctionAsGlobal(getFromArgumentRecord, .getFromArgumentRecord)
+    
+    let getFromArgumentRecordWithDirectParamFallback: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.getFromArgumentRecordWithDirectParamFallback
+    builder.addExternalFunctionAsGlobal(getFromArgumentRecordWithDirectParamFallback, .getFromArgumentRecordWithDirectParamFallback)
     
     let unaryOp: @convention(c) (Int64, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.unaryOp
     builder.addExternalFunctionAsGlobal(unaryOp, .unaryOp)
@@ -563,6 +579,17 @@ extension Expression {
             }
             
             return listIRValue
+        case .record(let keyValues): // MARK: .record
+            let recordIRValue = builder.buildCall(toExternalFunction: .newRecord, args: [])
+            
+            for (key, value) in keyValues {
+                let keyIRValue = try key.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
+                let valueIRValue = try value.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+                
+                builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [recordIRValue, keyIRValue, valueIRValue])
+            }
+            
+            return recordIRValue
         case .prefixOperator(let operation, let operand), .postfixOperator(let operation, let operand): // MARK: .prefixOperator, .postfixOperator
             return builder.buildCall(toExternalFunction: .unaryOp, args: [IntType.int64.constant(operation.rawValue), try operand.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)])
         case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
@@ -603,9 +630,9 @@ extension Expression {
                 let expressionIRValue = try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
                 let newValueIRValue = try newValueExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
                 
-                let arguments = builder.buildCall(toExternalFunction: .newRecord, args: [])
-                builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, directParameterTermIRValue, expressionIRValue])
-                builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, toParameterTermIRValue, newValueIRValue])
+                let arguments = builder.buildCall(toExternalFunction: .newArgumentRecord, args: [])
+                builder.buildCall(toExternalFunctionReturningVoid: .addToArgumentRecord, args: [arguments, directParameterTermIRValue, expressionIRValue])
+                builder.buildCall(toExternalFunctionReturningVoid: .addToArgumentRecord, args: [arguments, toParameterTermIRValue, newValueIRValue])
                 
                 let command = rt.command(forUID: TypedTermUID(CommandUID.set))!
                 let setCommandIRValue = command.irPointerValue(builder: builder)
@@ -621,9 +648,9 @@ extension Expression {
                 return (termIRValue, valueIRValue)
             }
             
-            let arguments = builder.buildCall(toExternalFunction: .newRecord, args: [])
+            let arguments = builder.buildCall(toExternalFunction: .newArgumentRecord, args: [])
             for parameter in parameterIRValues {
-                builder.buildCall(toExternalFunctionReturningVoid: .addToRecord, args: [arguments, parameter.term, parameter.value])
+                builder.buildCall(toExternalFunctionReturningVoid: .addToArgumentRecord, args: [arguments, parameter.term, parameter.value])
             }
             
             if
@@ -672,13 +699,13 @@ extension Expression {
                 let firstArg = arguments.first
             {
                 let firstArgVariableTermIRValue = firstArg.term.irPointerValue(builder: builder)
-                let firstArgValueIRValue = builder.buildCall(toExternalFunction: .getFromRecordWithDirectParamFallback, args: [actualArguments, firstParam.term.irPointerValue(builder: builder)])
+                let firstArgValueIRValue = builder.buildCall(toExternalFunction: .getFromArgumentRecordWithDirectParamFallback, args: [actualArguments, firstParam.term.irPointerValue(builder: builder)])
                 builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [firstArgVariableTermIRValue, firstArgValueIRValue])
             }
             
             for (parameter, argument) in zip(parameters, arguments).dropFirst() {
                 let argumentVariableTermIRValue = argument.term.irPointerValue(builder: builder)
-                let argumentValueIRValue = builder.buildCall(toExternalFunction: .getFromRecord, args: [actualArguments, parameter.term.irPointerValue(builder: builder)])
+                let argumentValueIRValue = builder.buildCall(toExternalFunction: .getFromArgumentRecord, args: [actualArguments, parameter.term.irPointerValue(builder: builder)])
                 builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [argumentVariableTermIRValue, argumentValueIRValue])
             }
             

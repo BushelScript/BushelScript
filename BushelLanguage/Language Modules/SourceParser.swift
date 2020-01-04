@@ -735,7 +735,7 @@ public extension SourceParser {
         func eatDefinedTerm() -> Term? {
             func findTerm<Terminology: TerminologySource>(in dictionary: Terminology) -> (termString: Substring, term: Term)? {
                 eatCommentsAndWhitespace()
-                var termString = source.prefix { !$0.isWordBreaking || $0 == ":" }
+                var termString = source.prefix { !$0.isWordBreaking || $0.isWhitespace || $0 == ":" }
                 while let lastNonBreakingIndex = termString.lastIndex(where: { !$0.isWordBreaking }) {
                     termString = termString[...lastNonBreakingIndex]
                     let termName = TermName(String(termString))
@@ -752,16 +752,31 @@ public extension SourceParser {
                 return nil
             }
             source.removeFirst(termString.count)
+            eatCommentsAndWhitespace()
+            var sourceWithColon: Substring = source
             while tryEating(prefix: ":") {
-                eatCommentsAndWhitespace()
-                guard let dictionary = (term as? TermDictionaryContainer)?.terminology else {
-                    return nil
+                // For explicit term specification Lhs : rhs,
+                // avoid eating the colon unless:
+                //  a) Lhs contains a dictionary, *and*
+                //  b) rhs is a term defined by that dictionary.
+                guard
+                    let dictionary = (term as? TermDictionaryContainer)?.terminology,
+                    let result = findTerm(in: dictionary)
+                else {
+                    // Restore the colon. It may have come from some other construct,
+                    // e.g., a record key such as: {Math : pi: "the constant pi"}
+                    source = sourceWithColon
+                    
+                    return term
                 }
-                guard let result = findTerm(in: dictionary) else {
-                    return nil
-                }
+                
+                // Eat rhs.
                 (termString, term) = result
                 source.removeFirst(termString.count)
+                eatCommentsAndWhitespace()
+                
+                // We're committed to this colon forming an explicit specification
+                sourceWithColon = source
             }
             return term
         }

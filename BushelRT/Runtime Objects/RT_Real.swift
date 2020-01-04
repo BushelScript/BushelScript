@@ -57,7 +57,7 @@ public class RT_Real: RT_Object, AEEncodable {
         return RT_Real(value: self.value / other.numericValue)
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
         switch CommandUID(command.typedUID) {
         case .Math_abs:
             return RT_Real(value: abs(self.value))
@@ -76,7 +76,7 @@ public class RT_Real: RT_Object, AEEncodable {
             }
             return RT_Real(value: pow(self.value, exponent.numericValue))
         default:
-            return super.perform(command: command, arguments: arguments)
+            return try super.perform(command: command, arguments: arguments)
         }
     }
     

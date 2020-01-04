@@ -58,6 +58,7 @@ public struct Expression {
         case double(Double)
         case string(String)
         case list([Expression])
+        case record([(key: Expression, value: Expression)])
         case prefixOperator(operation: UnaryOperation, operand: Expression)
         case postfixOperator(operation: UnaryOperation, operand: Expression)
         case infixOperator(operation: BinaryOperation, lhs: Expression, rhs: Expression)

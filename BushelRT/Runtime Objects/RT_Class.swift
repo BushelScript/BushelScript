@@ -22,6 +22,10 @@ public class RT_Class: RT_Object {
         value == (other as? RT_Class)?.value
     }
     
+    public override var hash: Int {
+        value.hashValue
+    }
+    
 }
 
 extension RT_Class {

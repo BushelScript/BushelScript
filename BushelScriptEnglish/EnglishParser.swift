@@ -338,29 +338,61 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     private func handleOpenBrace() throws -> Expression.Kind? {
-        try awaiting(endMarkers: [TermName("}"), TermName(",")]) {
+        try awaiting(endMarkers: [TermName("}"), TermName(","), TermName(":")]) {
             eatCommentsAndWhitespace(eatingNewlines: true)
             guard !tryEating(prefix: "}") else {
                 return .list([])
             }
-            
-            var items: [Expression] = []
-            do {
-                repeat {
-                    eatCommentsAndWhitespace(eatingNewlines: true)
-                    guard let item = try parsePrimary() else {
-                        throw ParseError(description: "expected list item", location: currentLocation)
-                    }
-                    items.append(item)
-                    eatCommentsAndWhitespace(eatingNewlines: true)
-                } while tryEating(prefix: ",")
+            guard !tryEating(prefix: ":") else {
                 guard tryEating(prefix: "}") else {
-                    throw ParseError(description: "expected ‘}’ to end list", location: currentLocation)
+                    throw ParseError(description: "expected key expression before ‘:’, or ‘}’ after for an empty record", location: currentLocation)
                 }
+                return .record([])
             }
             
-            return .list(items)
+            let first = try parseListItem(as: "list item or record key")
+            
+            if tryEating(prefix: "}") {
+                return .list([first])
+            } else if tryEating(prefix: ",") {
+                var items: [Expression] = [first]
+                repeat {
+                    items.append(try parseListItem(as: "list item"))
+                } while tryEating(prefix: ",")
+                
+                guard tryEating(prefix: "}") else {
+                    throw ParseError(description: "expected ‘}’ to end list or ‘,’ to separate additional items", location: currentLocation)
+                }
+                return .list(items)
+            } else if tryEating(prefix: ":") {
+                let first = (key: first, value: try parseListItem(as: "record item"))
+                var items: [(key: Expression, value: Expression)] = [first]
+                while tryEating(prefix: ",") {
+                    let key = try parseListItem(as: "record key")
+                    guard tryEating(prefix: ":") else {
+                        throw ParseError(description: "expected ‘:’ after key in record", location: currentLocation)
+                    }
+                    let value = try parseListItem(as: "record item")
+                    items.append((key: key, value: value))
+                }
+                
+                guard tryEating(prefix: "}") else {
+                    throw ParseError(description: "expected ‘}’ to end record or ‘,’ to separate additional items", location: currentLocation)
+                }
+                return .record(items)
+            } else {
+                throw ParseError(description: "expected ‘}’ to end list, ‘,’ to separate additional items or ‘:’ to make a record", location: currentLocation)
+            }
         }
+    }
+    
+    private func parseListItem(as location: String) throws -> Expression {
+        eatCommentsAndWhitespace(eatingNewlines: true)
+        guard let item = try parsePrimary() else {
+            throw ParseError(description: "expected \(location)", location: currentLocation)
+        }
+        eatCommentsAndWhitespace(eatingNewlines: true)
+        return item
     }
     
     private func handleEnd() throws -> Expression.Kind? {

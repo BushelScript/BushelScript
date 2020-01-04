@@ -32,11 +32,11 @@ public class RT_Global: RT_Object {
         }
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
         let commandClass = command.typedUID.ae8Code?.class
         if commandClass == (try! FourCharCode(fourByteString: "syso")) || commandClass == (try! FourCharCode(fourByteString: "gtqp")) {
             // Run command from StandardAdditions.osax
-            return RT_Application(rt, currentApplication: ()).perform(command: command, arguments: arguments)
+            return try RT_Application(rt, currentApplication: ()).perform(command: command, arguments: arguments)
         }
         
         switch CommandUID(command.typedUID) {
@@ -52,12 +52,16 @@ public class RT_Global: RT_Object {
             print((message.coerce() as? RT_String)?.value ?? String(describing: message))
             return RT_Null.null
         default:
-            return super.perform(command: command, arguments: arguments)
+            return try super.perform(command: command, arguments: arguments)
         }
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {
         other.dynamicTypeInfo.isA(dynamicTypeInfo)
+    }
+    
+    public override var hash: Int {
+        dynamicTypeInfo.hashValue
     }
     
 }

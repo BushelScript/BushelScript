@@ -1,12 +1,17 @@
 import Bushel
 
 public struct Unpackable: LocalizedError {
+    
+    public let object: Any
+    
     public var errorDescription: String? {
-        "An object couldn’t be sent in an AppleEvent because it can’t be represented as an AppleEvent descriptor"
+        "\(object) couldn’t be sent in an AppleEvent because it can’t be represented as an AppleEvent descriptor"
     }
+    
 }
 
 public struct NoPropertyExists: LocalizedError {
+    
     public let type: TypeInfo
     public let property: PropertyInfo
     
@@ -17,6 +22,7 @@ public struct NoPropertyExists: LocalizedError {
 }
 
 public struct UnsupportedIndexForm: LocalizedError {
+    
     public enum IndexForm: String {
         case index
         case name
@@ -34,12 +40,15 @@ public struct UnsupportedIndexForm: LocalizedError {
     public var errorDescription: String? {
         "The indexing form ‘\(indexForm)’ is unsupported by items of type \(`class`)"
     }
+    
 }
 
 public struct NoElementExists: LocalizedError {
+    
     public let locationDescription: String
     
     public var errorDescription: String? {
         "No element exists \(locationDescription)"
     }
+    
 }

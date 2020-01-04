@@ -36,7 +36,7 @@ enum Builtin {
     }
     
     static func throwError(message: String) {
-        _ = RT_Global(rt).perform(command: CommandInfo(.GUI_alert), arguments: [
+        _ = try! RT_Global(rt).perform(command: CommandInfo(.GUI_alert), arguments: [
             ParameterInfo(.GUI_alert_kind): RT_Integer(value: 2),
             ParameterInfo(.direct): RT_String(value: "An error occurred:"),
             ParameterInfo(.GUI_alert_message): RT_String(value: message + "\n\nThe script will be terminated."),
@@ -140,31 +140,42 @@ enum Builtin {
         return toOpaque(retain(RT_Record(contents: [:])))
     }
     
+    static func newArgumentRecord() -> RTObjectPointer {
+        return toOpaque(retain(RT_Private_ArgumentRecord()))
+    }
+    
     static func addToList(_ listPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
         let list = fromOpaque(listPointer) as! RT_List
         let value = fromOpaque(valuePointer)
         list.add(value)
     }
     
-    static func addToRecord(_ recordPointer: RTObjectPointer, _ termPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
+    static func addToRecord(_ recordPointer: RTObjectPointer, _ keyPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
         let record = fromOpaque(recordPointer) as! RT_Record
+        let key = fromOpaque(keyPointer)
+        let value = fromOpaque(valuePointer)
+        record.add(key: key, value: value)
+    }
+    
+    static func addToArgumentRecord(_ recordPointer: RTObjectPointer, _ termPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
+        let record = fromOpaque(recordPointer) as! RT_Private_ArgumentRecord
         let term = termFromOpaque(termPointer)
         let value = fromOpaque(valuePointer)
-        record.add(key: term, value: value)
+        record.contents[term.typedUID] = value
     }
     
-    static func getFromRecord(_ recordPointer: RTObjectPointer, _ termPointer: RTObjectPointer) -> RTObjectPointer {
-        let record = fromOpaque(recordPointer) as! RT_Record
+    static func getFromArgumentRecord(_ recordPointer: RTObjectPointer, _ termPointer: RTObjectPointer) -> RTObjectPointer {
+        let record = fromOpaque(recordPointer) as! RT_Private_ArgumentRecord
         let term = termFromOpaque(termPointer)
-        return toOpaque(record.contents[term] ?? RT_Null.null)
+        return toOpaque(record.contents[term.typedUID] ?? RT_Null.null)
     }
     
-    static func getFromRecordWithDirectParamFallback(_ recordPointer: RTObjectPointer, _ termPointer: RTObjectPointer) -> RTObjectPointer {
-        let record = fromOpaque(recordPointer) as! RT_Record
+    static func getFromArgumentRecordWithDirectParamFallback(_ recordPointer: RTObjectPointer, _ termPointer: RTObjectPointer) -> RTObjectPointer {
+        let record = fromOpaque(recordPointer) as! RT_Private_ArgumentRecord
         let term = termFromOpaque(termPointer)
         return toOpaque(
-            record.contents[term] ??
-            record.contents[Bushel.ParameterTerm(TermUID(ParameterUID.direct), name: TermName(""))] ??
+            record.contents[term.typedUID] ??
+            record.contents[TypedTermUID(ParameterUID.direct)] ??
             RT_Null.null
         )
     }
@@ -411,48 +422,58 @@ enum Builtin {
     
     private static func evaluateSpecifierByAppleEvent(_ specifier: RT_Specifier, targetApplication: RT_Application) -> RTObjectPointer {
         let getCommand = rt.command(forUID: TypedTermUID(CommandUID.get))!
-        return toOpaque(retain(specifier.perform(command: getCommand, arguments: [ParameterInfo(.direct): specifier]) ?? RT_Null.null))
+        return toOpaque(retain(try! specifier.perform(command: getCommand, arguments: [ParameterInfo(.direct): specifier]) ?? RT_Null.null))
     }
     
     static func call(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer) -> RTObjectPointer {
         let command = infoFromOpaque(commandPointer) as CommandInfo
-        let argumentsRecord = fromOpaque(argumentsPointer) as! RT_Record
-        return call(command: command, arguments: arguments(from: argumentsRecord, for: command))
+        let argumentsRecord = fromOpaque(argumentsPointer) as! RT_Private_ArgumentRecord
+        return call(command: command, arguments: arguments(from: argumentsRecord))
     }
     
-    private static func arguments(from record: RT_Record, for command: CommandInfo) -> [ParameterInfo : RT_Object] {
-        [ParameterInfo : RT_Object](uniqueKeysWithValues: (record.contents as! [Bushel.ParameterTerm : RT_Object]).map { kv in
-            let (term, value) = kv
-            var tags: Set<ParameterInfo.Tag> = []
-            if let name = term.name {
-                tags.insert(.name(name))
-            }
-            return (key: ParameterInfo(term.uid, tags), value: value)
-        })
+    private static func arguments(from record: RT_Private_ArgumentRecord) -> [ParameterInfo : RT_Object] {
+        [ParameterInfo : RT_Object](uniqueKeysWithValues:
+            record.contents.map { (key: ParameterInfo($0.key.uid), value: $0.value) }
+        )
     }
     
     private static func call(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RTObjectPointer {
         var arguments = qualify(arguments: arguments)
+        let qualifiedTarget = stack.qualifiedTarget
         
-        let directParameter = arguments.first(where: { (kv: (key: ParameterInfo, value: RT_Object)) -> Bool in
-            let (parameter, _) = kv
-            return parameter.typedUID == TypedTermUID(ParameterUID.direct)
-        })?.value
-        
-        if let result = directParameter?.perform(command: command, arguments: arguments) {
-            return toOpaque(retain(result))
-        } else {
-            if let qualifiedTarget = stack.qualifiedTarget {
-                if let result = qualifiedTarget.perform(command: command, arguments: arguments) {
-                    return toOpaque(retain(result))
-                } else {
-                    if arguments[ParameterInfo(.direct)] == nil {
-                        arguments[ParameterInfo(.direct)] = qualifiedTarget
-                    }
-                }
-            }
-            return toOpaque(retain(RT_Global(rt).perform(command: command, arguments: arguments) ?? RT_Null.null))
+        if
+            let qualifiedTarget = qualifiedTarget,
+            arguments[ParameterInfo(.direct)] == nil
+        {
+            arguments[ParameterInfo(.direct)] = qualifiedTarget
         }
+        let directParameter = arguments[ParameterInfo(.direct)]
+        
+        func catchingErrors(do action: () throws -> RT_Object?) -> RT_Object? {
+            do {
+                return try action()
+            } catch let error as Unpackable where error.object is CommandInfo {
+                // Tried to send a non-AE command to a remote object
+                // Ignore it and fall through to the next target
+            } catch {
+                Builtin.throwError(message: "\(error.localizedDescription)")
+            }
+            return nil
+        }
+        
+        return toOpaque(retain(
+            catchingErrors {
+                try directParameter?.perform(command: command, arguments: arguments)
+            } ??
+            catchingErrors {
+                directParameter == qualifiedTarget ?
+                    nil :
+                    try qualifiedTarget?.perform(command: command, arguments: arguments)
+            } ??
+            catchingErrors {
+                try RT_Global(rt).perform(command: command, arguments: arguments) ?? RT_Null.null
+            }!
+        ))
     }
     
     private static func qualify(arguments: [ParameterInfo : RT_Object]) -> [ParameterInfo : RT_Object] {
@@ -505,7 +526,7 @@ enum Builtin {
 
 extension SwiftAutomation.Specifier {
     
-    func perform(_ rt: RTInfo, command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) -> RT_Object {
+    func perform(_ rt: RTInfo, command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> RT_Object {
         do {
             let wrappedResultDescriptor = try sendEvent(for: command, arguments: arguments)
             guard let resultDescriptor = wrappedResultDescriptor.result else {
@@ -532,15 +553,13 @@ extension SwiftAutomation.Specifier {
             } else {
                 Builtin.throwError(message: "\(appData.target.description) got an error: \(error)")
             }
-        } catch {
-            Builtin.throwError(message: "unhandled error in perform(command:): \(error.localizedDescription)")
         }
         return RT_Null.null
     }
     
     func sendEvent(for command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> ReplyEventDescriptor {
         guard let codes = command.typedUID.ae8Code else {
-            throw Unpackable()
+            throw Unpackable(object: command)
         }
         return try self.sendAppleEvent(codes.class, codes.id, arguments)
     }
@@ -579,12 +598,11 @@ extension RT_Object {
             }
             return RT_List(contents: contents.map { $0! })
         case let dictionary as [SwiftAutomation.Symbol : Any]:
-            let values = dictionary.values.map({ RT_Object.fromEventResult(rt, $0) })
-            if values.contains(where: { $0 == nil }) {
+            guard let values = dictionary.values.map({ RT_Object.fromEventResult(rt, $0) }) as? [RT_Object] else {
                 return nil
             }
-            let keysAndValues = zip(dictionary.keys, values.map { $0! }).map { ($0.0.bushelTerm(rt), $0.1) }
-            let convertedDictionary = [Bushel.Term : RT_Object](uniqueKeysWithValues: keysAndValues)
+            let keysAndValues = zip(dictionary.keys, values).map { ($0.0.asRTObject(rt), $0.1) }
+            let convertedDictionary = [RT_Object : RT_Object](uniqueKeysWithValues: keysAndValues)
             return RT_Record(contents: convertedDictionary)
 //        case let url as URL:
 //            return RT_File // TODO: This
@@ -605,6 +623,7 @@ extension RT_Object {
             } else if let objectSpecifier = specifier as? SwiftAutomation.ObjectSpecifier {
                 return RT_Specifier(rt, saSpecifier: objectSpecifier)
             } else {
+                // TODO: insertion specifiers
                 return RT_String(value: "\(specifier)")
             }
         // TODO: There are more types
@@ -617,23 +636,12 @@ extension RT_Object {
 
 extension SwiftAutomation.Symbol {
     
-    func bushelTerm(_ rt: RTInfo) -> Bushel.Term {
-        // TODO: This could cause problems with the wrong term types being handed back;
-        //       Add a type predicate to term(forCode:) and friends to remedy this
-        if let existingTerm = rt.termPool.term(forCode: code) {
-            return existingTerm
-        }
-        
-        let name = TermName(self.name ?? "")
+    func asRTObject(_ rt: RTInfo) -> RT_Object {
         switch type {
         case typeType:
-            return Bushel.ClassTerm(.ae4(code: code), name: name, parentClass: Bushel.ClassTerm(TermUID(TypeUID.item), name: nil, parentClass: nil))
-        case typeEnumerated:
-            return Bushel.EnumeratorTerm(.ae4(code: code), name: name)
-        case typeKeyword:
-            return Bushel.ParameterTerm(.ae4(code: code), name: name)
-        case typeProperty:
-            return Bushel.PropertyTerm(.ae4(code: code), name: name)
+            return RT_Class(value: rt.type(for: code) ?? TypeInfo(.ae4(code: code), name == nil ? [] : [.name(TermName(name!))]))
+        case typeEnumerated, typeKeyword, typeProperty:
+            return RT_Constant(value: code)
         default:
             fatalError("invalid descriptor type for Symbol")
         }
@@ -650,5 +658,11 @@ extension SwiftAutomation.Symbol {
             fatalError("invalid descriptor type for Symbol")
         }
     }
+    
+}
+
+private class RT_Private_ArgumentRecord: RT_Object {
+    
+    public var contents: [TypedTermUID : RT_Object] = [:]
     
 }

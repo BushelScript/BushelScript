@@ -20,6 +20,10 @@ public class RT_SymbolicConstant: RT_Object {
         value == (other as? RT_SymbolicConstant)?.value
     }
     
+    public override var hash: Int {
+        value.hashValue
+    }
+    
 }
 
 extension RT_SymbolicConstant {

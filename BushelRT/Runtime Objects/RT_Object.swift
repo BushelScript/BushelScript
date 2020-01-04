@@ -59,8 +59,15 @@ import Bushel
     ///
     /// - Parameter other: The object to compare against.
     /// - Returns: Whether this object is equal to the other object.
+    ///
+    /// - Note: **If you override** `compareEqual(with:)`, **you must also override** `NSObject.hash`.
     public func compareEqual(with other: RT_Object) -> Bool {
         return self === other || (compare(with: other) == .orderedSame)
+    }
+    
+    public final override func isEqual(_ object: Any?) -> Bool {
+        guard let object = object as? RT_Object else { return false }
+        return self.compareEqual(with: object)
     }
     
     public func or(_ other: RT_Object) -> RT_Object? {
@@ -156,7 +163,7 @@ import Bushel
     ///   - arguments: The arguments to the command.
     /// - Returns: The result of this object executing the command, or
     ///            `nil` if the command was not handled.
-    public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Object? {
+    public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
         return nil
     }
     

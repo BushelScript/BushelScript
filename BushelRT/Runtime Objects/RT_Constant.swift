@@ -23,6 +23,10 @@ public class RT_Constant: RT_Object, AEEncodable {
         value == (other as? RT_Constant)?.value
     }
     
+    public override var hash: Int {
+        value.hashValue
+    }
+    
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         return NSAppleEventDescriptor(typeCode: value)
     }
