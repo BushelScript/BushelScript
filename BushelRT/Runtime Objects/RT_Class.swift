@@ -15,7 +15,7 @@ public class RT_Class: RT_Object {
     }
     
     public override var description: String {
-        return String(describing: value.name)
+        return "\(value.name as Any? ?? "«type \(value.uid)»")"
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {
