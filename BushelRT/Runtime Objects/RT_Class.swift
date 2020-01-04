@@ -1,7 +1,8 @@
 import Bushel
+import SwiftAutomation
 
 /// A runtime class reflected as a dynamic object.
-public class RT_Class: RT_Object {
+public class RT_Class: RT_Object, AEEncodable {
     
     public var value: TypeInfo
     
@@ -24,6 +25,13 @@ public class RT_Class: RT_Object {
     
     public override var hash: Int {
         value.hashValue
+    }
+    
+    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+        guard let aeCode = value.uid.ae4Code else {
+            throw Unpackable(object: self)
+        }
+        return NSAppleEventDescriptor(typeCode: aeCode)
     }
     
 }

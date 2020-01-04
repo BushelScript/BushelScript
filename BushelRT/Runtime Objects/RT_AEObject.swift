@@ -4,7 +4,7 @@ import SwiftAutomation
 /// Something that was received from an Apple Event but couldn't be unboxed
 /// to a Bushel runtime type. Can still be introspected by type and
 /// sent around in other Apple Events.
-public class RT_AEObject: RT_Object {
+public class RT_AEObject: RT_Object, AEEncodable {
     
     public let rt: RTInfo
     public var descriptor: NSAppleEventDescriptor
@@ -34,6 +34,10 @@ public class RT_AEObject: RT_Object {
             return nil
         }
         return RT_Object.fromEventResult(rt, coercedDescriptor)
+    }
+    
+    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+        descriptor
     }
     
 }
