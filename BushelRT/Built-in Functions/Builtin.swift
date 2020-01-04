@@ -127,9 +127,15 @@ enum Builtin {
         }
     }
     
-    static func newSymbolicConstant(_ valueObject: RTObjectPointer) -> RTObjectPointer {
-        let value = (fromOpaque(valueObject) as! RT_String).value
+    static func newSymbolicConstant(_ valuePointer: RTObjectPointer) -> RTObjectPointer {
+        let value = (fromOpaque(valuePointer) as! RT_String).value
         return toOpaque(retain(RT_SymbolicConstant(value: value)))
+    }
+    
+    static func newClass(_ uidPointer: RTObjectPointer) -> RTObjectPointer {
+        let uidString = (fromOpaque(uidPointer) as! RT_String).value
+        let uid = TypedTermUID(normalized: uidString)!
+        return toOpaque(retain(RT_Class(value: rt.type(forUID: uid) ?? TypeInfo(uid.uid))))
     }
     
     static func newList() -> RTObjectPointer {
@@ -203,6 +209,10 @@ enum Builtin {
                 return lhs.xor(rhs)
             case .and:
                 return lhs.and(rhs)
+            case .isA:
+                return (rhs.coerce() as? RT_Class).map { RT_Boolean.withValue(lhs.dynamicTypeInfo.isA($0.value)) }
+            case .isNotA:
+                return (rhs.coerce() as? RT_Class).map { RT_Boolean.withValue(!lhs.dynamicTypeInfo.isA($0.value)) }
             case .equal:
                 return lhs.equal(to: rhs)
             case .notEqual:

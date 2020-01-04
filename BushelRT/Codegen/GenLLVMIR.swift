@@ -65,6 +65,10 @@ func newSymbolicConstant(_ value: Builtin.RTObjectPointer) -> Builtin.RTObjectPo
     return Builtin.newSymbolicConstant(value)
 }
 
+func newClass(_ value: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
+    return Builtin.newClass(value)
+}
+
 func newList() -> Builtin.RTObjectPointer {
     return Builtin.newList()
 }
@@ -180,7 +184,7 @@ enum BuiltinFunction: String {
     case newVariable, getVariableValue, setVariableValue
     case isTruthy
     case numericEqual
-    case newReal, newInteger, newBoolean, newString, newConstant, newSymbolicConstant
+    case newReal, newInteger, newBoolean, newString, newConstant, newSymbolicConstant, newClass
     case newList, newRecord, newArgumentRecord
     case addToList, addToRecord, addToArgumentRecord
     case getFromArgumentRecord, getFromArgumentRecordWithDirectParamFallback
@@ -223,6 +227,7 @@ enum BuiltinFunction: String {
         case .newString: return ([PointerType.toVoid], object)
         case .newConstant: return ([int32], object)
         case .newSymbolicConstant: return ([object], object)
+        case .newClass: return ([object], object)
         case .newList: return ([], object)
         case .newRecord: return ([], object)
         case .newArgumentRecord: return ([], object)
@@ -300,6 +305,9 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     
     let newSymbolicConstant: @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.newSymbolicConstant
     builder.addExternalFunctionAsGlobal(newSymbolicConstant, .newSymbolicConstant)
+    
+    let newClass: @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.newClass
+    builder.addExternalFunctionAsGlobal(newClass, .newClass)
     
     let newList: @convention(c) () -> Builtin.RTObjectPointer = BushelRT.newList
     builder.addExternalFunctionAsGlobal(newList, .newList)
@@ -610,13 +618,14 @@ extension Expression {
                 let appIDIRValue = builder.module.addGlobalString(name: "app-id", value: term.description).asRTString(builder: builder)
                 return builder.buildCall(builder.module.function(named: ".make-application-id-specifier")!, args: [appIDIRValue])
             }
-        case .enumerator(let term as Term), // MARK: .enumerator
-             .class_(let term as Term): // MARK: .class_
+        case .enumerator(let term as Term): // MARK: .enumerator
             if let code = term.ae4Code {
                 return builder.buildCall(toExternalFunction: .newConstant, args: [IntType.int32.constant(code)])
             } else {
-                return builder.buildCall(toExternalFunction: .newSymbolicConstant, args: [builder.module.addGlobalString(name: "const_symbol", value: term.typedUID.normalized).asRTString(builder: builder)])
+                return builder.buildCall(toExternalFunction: .newSymbolicConstant, args: [builder.module.addGlobalString(name: "symbolic-constant-uid", value: term.typedUID.normalized).asRTString(builder: builder)])
             }
+        case .class_(let term as Term): // MARK: .class_
+            return builder.buildCall(toExternalFunction: .newClass, args: [builder.module.addGlobalString(name: "class-uid", value: term.typedUID.normalized).asRTString(builder: builder)])
         case .set(let expression, to: let newValueExpression): // MARK: .set
             if case .variable(let variableTerm) = expression.kind {
                 let newValueIRValue = try newValueExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)

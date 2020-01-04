@@ -25,11 +25,11 @@ public struct TypedTermUID {
     public var uid: TermUID
     
     /// Initializes from component `Kind` and `TermUID` parts.
-    public init(_ kind: Kind, _ name: TermUID) {
+    public init(_ kind: Kind, _ uid: TermUID) {
         self.kind = kind
-        self.uid = name
+        self.uid = uid
         
-        if case let .id(name) = name {
+        if case let .id(name) = uid {
             assert(!name.isEmpty, "Empty identifier string for TermUID.id!")
         }
     }
@@ -66,18 +66,17 @@ extension TypedTermUID: CustomStringConvertible {
         guard components.count == 2 else {
             return nil
         }
-        self.init(kind: components[0], name: components[1])
+        self.init(kind: components[0], uid: components[1])
     }
     
-    public init?<S: StringProtocol>(kind: S, name: S) where S.SubSequence == Substring {
+    public init?<S: StringProtocol>(kind: S, uid: S) where S.SubSequence == Substring {
         guard
             let kind = Kind(rawValue: String(kind)),
-            let name = TermUID(normalized: String(name))
+            let uid = TermUID(normalized: String(uid))
         else {
             return nil
         }
-        self.kind = kind
-        self.uid = name
+        self.init(kind, uid)
     }
     
 }

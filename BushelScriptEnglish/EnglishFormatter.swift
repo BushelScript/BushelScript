@@ -67,6 +67,8 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                 return "not \(format(operand, level: level))"
             }
         case .infixOperator(let operation, let lhs, let rhs):
+            let formattedRhs = format(rhs, level: level)
+            
             let formattedOperator: String = {
                 switch operation {
                 case .or:
@@ -75,6 +77,10 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                     return "xor"
                 case .and:
                     return "and"
+                case .isA:
+                    return "is \("aeiou".contains(formattedRhs.first!) ? "an" : "a")"
+                case .isNotA:
+                    return "is not \("aeiou".contains(formattedRhs.first!) ? "an" : "a")"
                 case .less:
                     return "<"
                 case .lessEqual:
@@ -112,7 +118,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                 }
             }()
             
-            return "\(format(lhs, level: level)) \(formattedOperator) \(format(rhs, level: level))"
+            return "\(format(lhs, level: level)) \(formattedOperator) \(formattedRhs)"
         case let .coercion(of: expression, to: type):
             return "\(format(expression, level: level)) as \(type)"
         case .variable(let term as NamedTerm),

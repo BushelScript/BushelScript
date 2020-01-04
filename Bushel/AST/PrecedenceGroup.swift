@@ -5,6 +5,7 @@ public enum PrecedenceGroup: Int, Comparable {
     case identity // Always has the lowest possible precedence.
     case or
     case and
+    case introspection
     case comparison
     case concatenation
     case addition
@@ -21,6 +22,8 @@ public enum PrecedenceGroup: Int, Comparable {
         case .or:
             return .left
         case .and:
+            return .left
+        case .introspection:
             return .left
         case .comparison:
             return .left

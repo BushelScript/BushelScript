@@ -5,6 +5,7 @@ public enum BinaryOperation: Int {
     // Ordered by precedence, ascending
     case or, xor
     case and
+    case isA, isNotA
     case equal, notEqual, less, lessEqual, greater, greaterEqual, startsWith, endsWith, contains, notContains, containedBy, notContainedBy
     case concatenate
     case add, subtract
@@ -16,6 +17,8 @@ public enum BinaryOperation: Int {
             return .or
         case .and:
             return .and
+        case .isA, .isNotA:
+            return .introspection
         case .equal, .notEqual, .less, .lessEqual, .greater, .greaterEqual, .startsWith, .endsWith, .contains, .notContains, .containedBy, .notContainedBy:
             return .comparison
         case .concatenate:
