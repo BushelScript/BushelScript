@@ -301,48 +301,17 @@ class DocumentViewController: NSViewController {
     }
     
     private var suggestionListWC = SuggestionListWC.instantiate()
-    private var prevSelection: NSRange?
     
 }
 
 // MARK: NSTextViewDelegate
 extension DocumentViewController: NSTextViewDelegate {
     
-    func textViewDidChangeSelection(_ notification: Notification) {
-        let ranges = textView.selectedRanges
-        guard !ranges.isEmpty else {
-            dismissSuggestionList()
-            return
-        }
-        
-        let nsrange = ranges[0].rangeValue
-        guard nsrange.length == 0 else {
-            dismissSuggestionList()
-            return
-        }
-        
-        guard nsrange != prevSelection else {
-            dismissSuggestionList()
-            return
-        }
-        prevSelection = nsrange
-        
+    func textDidChange(_ notification: Notification) {
         let text = textView.string
-        guard let range = Range<String.Index>(nsrange, in: text) else {
-            dismissSuggestionList()
-            return
-        }
-        
-        let sourceBeforeCaret = text[..<range.lowerBound]
-        guard !sourceBeforeCaret.isEmpty else {
-            return
-        }
-        #if DEBUG
-        print(sourceBeforeCaret)
-        #endif
         
         status = .compiling
-        compile(String(sourceBeforeCaret)) { (service, language, result) in
+        compile(text) { (service, language, result) in
             switch result {
             case .success(let program):
                 DispatchQueue.main.sync {
@@ -368,7 +337,7 @@ extension DocumentViewController: NSTextViewDelegate {
                         
                         let suggestions =
                             [ErrorSuggestionListItem(error: nsError)] +
-                            fixes.map { AutoFixSuggestionListItem(service: service, fix: $0 as SourceFixToken, source: sourceBeforeCaret) } as [SuggestionListItem]
+                            fixes.map { AutoFixSuggestionListItem(service: service, fix: $0 as SourceFixToken, source: Substring(text)) } as [SuggestionListItem]
                         DispatchQueue.main.sync {
                             self.showSuggestionList(with: suggestions)
                         }
@@ -376,6 +345,25 @@ extension DocumentViewController: NSTextViewDelegate {
                 }
             }
         }
+    }
+    
+    func textViewDidChangeSelection(_ notification: Notification) {
+        let ranges = textView.selectedRanges
+        guard !ranges.isEmpty else {
+            return dismissSuggestionList()
+        }
+        
+        let nsrange = ranges[0].rangeValue
+        guard nsrange.length == 0 else {
+            return dismissSuggestionList()
+        }
+        
+        let text = textView.string
+        guard let _ = Range<String.Index>(nsrange, in: text) else {
+            return dismissSuggestionList()
+        }
+        
+        repositionSuggestionWindow()
     }
     
     func textDidEndEditing(_ notification: Notification) {
