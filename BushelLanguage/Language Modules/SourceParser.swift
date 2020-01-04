@@ -341,14 +341,14 @@ public extension SourceParser {
             }
             
             return Expression(.scoped(Sequence(expressions: weaves, location: expressionLocation)), at: expressionLocation)
-        } else if let termName = eatKeyword() {
-            if let kind = try keywords[termName]!() {
+        } else if let term = try eatTerm() {
+            if let kind = try handle(term: Located(term, at: expressionLocation)) {
                 return Expression(kind, currentElements.last!, at: expressionLocation)
             } else {
                 return nil
             }
-        } else if let term = try eatTerm() {
-            if let kind = try handle(term: Located(term, at: expressionLocation)) {
+        } else if let termName = eatKeyword() {
+            if let kind = try keywords[termName]!() {
                 return Expression(kind, currentElements.last!, at: expressionLocation)
             } else {
                 return nil
