@@ -26,6 +26,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         ParameterDescriptor(.set_to, name: TermName("to")),
         
         PropertyDescriptor(.properties, name: TermName("properties")),
+        PropertyDescriptor(.type, name: TermName("type")),
         PropertyDescriptor(.index, name: TermName("index")),
         PropertyDescriptor(.name, name: TermName("name")),
         PropertyDescriptor(.id, name: TermName("id")),
