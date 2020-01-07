@@ -20,14 +20,14 @@ then
 fi
 
 # Make the installer package.
-pkgbuild --root install --identifier "$PKG_IDENTIFIER" --version "$PKG_VERSION" "$PKG_FILENAME"
+pkgbuild --root "$INSTALL_DIR" --identifier "$PKG_IDENTIFIER" --version "$PKG_VERSION" "$PKG_FILENAME"
 if [ $? -ne 0 ]
 then
 	echo "pkgbuild failed; not removing ${INSTALL_DIR}."
 	exit $?
 fi
 
-# Delete the `install` directory` unless `noclean` is specified.
+# Delete the install directory unless `noclean` is specified.
 if [ "$1" != "noclean" ]
 then
 	rm -r "$INSTALL_DIR"
