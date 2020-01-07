@@ -176,7 +176,6 @@ class DocumentViewController: NSViewController {
                 status = .running
                 
                 service.runProgram(program, currentApplicationID: Bundle(for: DocumentViewController.self).bundleIdentifier!) { result in
-                    service.releaseProgram(program, reply: { _ in })
                     self.status = nil
                     
                     DispatchQueue.main.async {
@@ -306,7 +305,13 @@ class DocumentViewController: NSViewController {
     }
     
     private var suggestionListWC = SuggestionListWC.instantiate()
-    private var program: (token: ProgramToken, source: String)?
+    private var program: (token: ProgramToken, source: String)? {
+        didSet {
+            if let (token, _) = oldValue {
+                service?.releaseProgram(token, reply: { _ in })
+            }
+        }
+    }
     
     @objc dynamic var expression: BushelExpression?
     
@@ -348,15 +353,10 @@ class DocumentViewController: NSViewController {
 extension DocumentViewController: NSTextViewDelegate {
     
     func textDidChange(_ notification: Notification) {
-        guard let service = service else {
-            return
-        }
-        
         let source = textView.string
         
-        if let program = program {
-            self.program = nil
-            service.releaseProgram(program.token, reply: { _ in })
+        if program != nil {
+            program = nil
         }
         
         status = .compiling
