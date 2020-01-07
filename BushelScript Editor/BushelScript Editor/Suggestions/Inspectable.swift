@@ -135,6 +135,48 @@ extension AutoFixSuggestionListItem: KVONotificationDelegator {
     
 }
 
+class BushelExpression: NSObject, ObjectInspectable {
+    
+    let service: BushelLanguageServiceProtocol
+    let expression: ExpressionToken
+    
+    @objc dynamic var kindName: String?
+    @objc dynamic var kindDescription: String?
+    
+    init(service: BushelLanguageServiceProtocol, expression: ExpressionToken) {
+        self.service = service
+        self.expression = expression
+        super.init()
+        service.copyKindName(forExpression: expression) { (kindName) in
+            DispatchQueue.main.async {
+                self.kindName = kindName
+            }
+        }
+        service.copyKindDescription(forExpression: expression) { (kindDescription) in
+            DispatchQueue.main.async {
+                self.kindDescription = kindDescription
+            }
+        }
+    }
+    
+    deinit {
+        service.releaseExpression(expression, reply: { _ in })
+    }
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        BushelExpression(service: service, expression: expression)
+    }
+    
+    var typeIdentifier: String {
+        "expression"
+    }
+    
+    var localizedTypeName: String {
+        "Expression"
+    }
+    
+}
+
 class BushelRTObject: NSObject, ObjectInspectable {
     
     let service: BushelLanguageServiceProtocol

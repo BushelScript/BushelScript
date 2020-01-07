@@ -94,14 +94,101 @@ public struct Expression {
     
 }
 
-public struct ParsedExpression {
+public extension Expression {
     
-    public let kind: Expression.Kind
-    public let elements: [PrettyPrintable]
+    var kindName: String {
+        kind.kindName
+    }
     
-    public init(kind: Expression.Kind, elements: [PrettyPrintable]) {
-        self.kind = kind
-        self.elements = elements
+    var kindDescription: String {
+        kind.kindDescription
+    }
+    
+}
+
+extension Expression.Kind {
+    
+    public var kindName: String {
+        kindDescriptionStrings.kindName
+    }
+    
+    public var kindDescription: String {
+        kindDescriptionStrings.kindDescription
+    }
+    
+    private var kindDescriptionStrings: (kindName: String, kindDescription: String) {
+        switch self {
+        case .topLevel:
+            return ("Top-level", "")
+        case .empty:
+            return ("Empty expression", "No effect.")
+        case .end:
+            return ("End of block", "Ends the last opened block. Pops its dictionary, if any, off the lexicon.")
+        case .that:
+            return ("Previous result specifier", "Specifies the result of the last expression executed in sequence.")
+        case .it:
+            return ("Current target specifier", "Specifies the current command target, as set by the nearest “tell” block.")
+        case .null:
+            return ("Null literal", "The absence of a value.")
+        case .scoped:
+            return ("Scoped block expression", "Provides a local dictionary that pops off the lexicon when the expression ends.")
+        case .parentheses:
+            return ("Parenthesized expression", "Contains an expression to allow for grouping.")
+        case .function:
+            return ("Function definition", "Defines a custom, reusable function.")
+        case .if_:
+            return ("Conditional expression", "Evaluates its condition. When the result is truthy, executes its “then” block. Otherwise, executes its ”else” block, if any.")
+        case .repeatTimes:
+            return ("Constant-bounded repeat expression", "Evaluates its ”times“ expression, then executes the contained block that many times.")
+        case .tell:
+            return ("Tell expression", "Changes the current command target and pushes the new target’s dictionary, if any, onto the lexicon.")
+        case .let_:
+            return ("Variable binding expression", "Defines a new variable term and assigns it the result of the initial value expression, or “null” if absent.")
+        case .return_:
+            return ("Return expression", "Immediately transfers control out of the current function. The result of the function is that of the specified expression, or “null” if absent.")
+        case .use:
+            return ("Use expression", "Acquires the specified resource and binds it to an exporting term of the same name. Produces a compile-time error if the resource cannot be found.")
+        case .resource:
+            return ("Resource reference", "A resource declared by a “use” statement.")
+        case .integer:
+            return ("Integer literal", "An integer with the specified value.")
+        case .double:
+            return ("Real literal", "A double-precision floating point number (roughly, a real number) with the specified value.")
+        case .string:
+            return ("String literal", "A string representing the specified text.")
+        case .list:
+            return ("List literal", "A heterogeneous list of items.")
+        case .record:
+            return ("Record literal", "A heterogeneous list of keys and values, indexed by key and stored as a hash table. Converts to an AppleScript-style record (with four-byte code keys) if possible when sent in an AppleEvent.")
+        case .prefixOperator:
+            return ("Prefix operator", "")
+        case .postfixOperator:
+            return ("Postfix operator", "")
+        case .infixOperator:
+            return ("Infix operator", "")
+        case .coercion:
+            return ("Coercion", "Attempts to convert the result of an expression to the specified type.")
+        case .variable:
+            return ("Variable reference", "A previously defined variable.")
+        case .enumerator:
+            return ("Constant reference", "An enumerated, symbolic constant whose semantics depend on the context of use.")
+        case .class_:
+            return ("Type reference", "A BushelScript type value.")
+        case .specifier:
+            return ("Specifier", "Refers to one or more object(s). Can be evaluated with a “get” command or passed around as a reference. Automatically evaluated in most contexts; use a reference expression to prevent this.")
+        case .reference:
+            return ("Reference expression", "Prevents the automatic evaluation of a specifier, producing an unevaluated reference as an object.")
+        case .get:
+            return ("Get command", "Explicitly evaluates a specifier, even in a nonevaluating context.")
+        case .set:
+            return ("Set command", "Assigns a new value to the target expression. The target may be a variable or a local or remote property.")
+        case .command:
+            return ("Command invocation", "Invokes the specified command with the given arguments.\n\nIf there is no direct object, the current command target is used as the direct object. First, asks the direct object to perform the command. If it cannot handle the command, and the current command target was not used as the direct object, asks the current command target to perform the command. In either case, if the command has still not been handled, asks the built-in top-level command target to perform the command.")
+        case .weave:
+            return ("Weave expression", "Calls out to an external shell program using the given hashbang line.\n\nInput and output: The result of the previous expression is coerced to a string and written to standard input; the weave expression’s result is a string containing whatever the program writes to standard output.\n\nHashbangs: If the hashbang line begins with a ‘/’, e.g., “#!/bin/sh”, it is used verbatim. Otherwise, the line is fed as input into ‘env’, e.g., “#!ruby” is transformed to “#!/usr/bin/env ruby”.\n\nEnding a weave: To end the weave, either write a new hashbang line with a different shell program, or write “#!bushelscript” to return to the previous BushelScript context.\n\nWeaves are an experimental feature and are likely to change with time.")
+        case .endWeave:
+            return ("End of weave expression", "Ends a weave expression and returns to the BushelScript context.")
+        }
     }
     
 }

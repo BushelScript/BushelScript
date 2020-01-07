@@ -4,6 +4,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef id LanguageModuleToken;
 typedef id ProgramToken;
+typedef id ExpressionToken;
 typedef id RTObjectToken;
 typedef id ErrorToken;
 typedef id SourceFixToken;
@@ -18,6 +19,12 @@ typedef id SourceFixToken;
 
 - (void)prettyPrintProgram:(ProgramToken)program reply:(void(^)(NSString *_Nullable))reply;
 - (void)reformatProgram:(ProgramToken)program usingLanguageModule:(LanguageModuleToken)module reply:(void(^)(NSString *_Nullable))reply;
+
+- (void)getExpressionAtLocation:(NSInteger)index inSourceOfProgram:(ProgramToken)program reply:(void(^)(_Nullable ExpressionToken))reply;
+
+- (void)copyKindNameForExpression:(ExpressionToken)expression reply:(void(^)(NSString *_Nullable))reply;
+- (void)copyKindDescriptionForExpression:(ExpressionToken)expression reply:(void(^)(NSString *_Nullable))reply;
+- (void)releaseExpression:(ExpressionToken)expression reply:(void(^)(BOOL))reply;
 
 - (void)runProgram:(ProgramToken)program currentApplicationID:(NSString *)currentApplicationID reply:(void(^)(_Nullable RTObjectToken))reply;
 

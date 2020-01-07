@@ -30,8 +30,9 @@ class ObjectInspectorVC: NSViewController {
     
     override var representedObject: Any? {
         didSet {
-            assert(representedObject != nil)
-            pushRepresentedObject()
+            if representedObject != nil {
+                pushRepresentedObject()
+            }
         }
     }
     
@@ -43,11 +44,6 @@ class ObjectInspectorVC: NSViewController {
             return
         }
         detailVC.representedObject = representedObject
-        
-        let selectedTypeIdentifier = representedObject.value(forKeyPath: #keyPath(ObjectInspectable.typeIdentifier))!
-        if !NSIsControllerMarker(selectedTypeIdentifier) {
-            detailVC.selectTabViewItem(withIdentifier: selectedTypeIdentifier)
-        }
     }
     
 }

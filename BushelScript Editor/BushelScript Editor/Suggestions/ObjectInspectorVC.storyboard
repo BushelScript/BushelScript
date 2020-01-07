@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="yr4-Go-aEi">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="yr4-Go-aEi">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15702"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -70,20 +69,21 @@
             </objects>
             <point key="canvasLocation" x="673" y="-137"/>
         </scene>
-        <!--Propagating Tab View Controller-->
+        <!--Object Inspector DetailVC-->
         <scene sceneID="Obe-6T-ShR">
             <objects>
-                <tabViewController selectedTabViewItemIndex="0" tabStyle="unspecified" id="wB6-IR-LiU" customClass="PropagatingTabViewController" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
+                <tabViewController storyboardIdentifier="ObjectInspectorDetailVC" selectedTabViewItemIndex="0" tabStyle="unspecified" id="wB6-IR-LiU" customClass="ObjectInspectorDetailVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <tabViewItems>
                         <tabViewItem identifier="noSelection" id="RAm-UN-uGk"/>
                         <tabViewItem identifier="error" id="G2E-oK-6uc"/>
                         <tabViewItem identifier="fix" id="Kxs-v5-6Vh"/>
                         <tabViewItem identifier="object" id="eMn-kI-hJM"/>
+                        <tabViewItem id="MC4-eR-dx1"/>
                     </tabViewItems>
-                    <tabView key="tabView" type="noTabsNoBorder" id="fou-ZB-joA">
+                    <tabView key="tabView" type="noTabsNoBorder" translatesAutoresizingMaskIntoConstraints="NO" id="fou-ZB-joA">
                         <rect key="frame" x="0.0" y="0.0" width="316" height="146"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <font key="font" metaFont="message"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <font key="font" metaFont="system"/>
                         <connections>
                             <outlet property="delegate" destination="wB6-IR-LiU" id="cIc-m1-yta"/>
                         </connections>
@@ -97,6 +97,7 @@
                         <segue destination="NBu-Dh-dWp" kind="relationship" relationship="tabItems" id="2GG-og-Ltz"/>
                         <segue destination="Rw8-vp-kUE" kind="relationship" relationship="tabItems" id="W46-GU-cBm"/>
                         <segue destination="Cdm-A7-W4v" kind="relationship" relationship="tabItems" id="QKG-Sc-cLN"/>
+                        <segue destination="Rd6-zn-dYu" kind="relationship" relationship="tabItems" id="TaE-6c-mUp"/>
                     </connections>
                 </tabViewController>
                 <customObject id="vZC-0f-RmH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -257,6 +258,14 @@
                 <customObject id="KQc-a3-KrV" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1115" y="-222"/>
+        </scene>
+        <!--ExpressionVC-->
+        <scene sceneID="64w-qg-reQ">
+            <objects>
+                <controllerPlaceholder storyboardIdentifier="ExpressionVC" storyboardName="ExpressionInspector" referencedIdentifier="ExpressionVC" id="Rd6-zn-dYu" sceneMemberID="viewController"/>
+                <customObject id="Ok8-MJ-RYi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1052.5" y="675"/>
         </scene>
     </scenes>
 </document>

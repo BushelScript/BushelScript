@@ -20,7 +20,8 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
         reply(loadedLanguageModules.release(module))
     }
     
-    private var programs = StoragePool<(Program, String)>()
+    private var programs = StoragePool<Program>()
+    private var expressions = StoragePool<Expression>()
     private var errors = StoragePool<Error>()
     private var objects = StoragePool<RT_Object>()
     
@@ -30,22 +31,22 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
         }
         do {
             let program = try module.parser(for: source).parse()
-            reply(programs.retain((program, source)), nil)
+            reply(programs.retain(program), nil)
         } catch {
             reply(nil, errors.retain(error))
         }
     }
     
-    func releaseProgram(_ expression: Any, reply: @escaping (Bool) -> Void) {
-        reply(programs.release(expression))
+    func releaseProgram(_ program: Any, reply: @escaping (Bool) -> Void) {
+        reply(programs.release(program))
     }
     
     func prettyPrintProgram(_ program: Any, reply: @escaping (String?) -> Void) {
-        guard let (program, source) = programs[program] else {
+        guard let program = programs[program] else {
             return reply(nil)
         }
         
-        reply(source) // TODO: Fix pretty printing and re-enable
+        reply(program.source) // TODO: Fix pretty printing and re-enable
         _ = program
         
         // Code to use once pretty printing is fixed:
@@ -55,15 +56,45 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
     func reformatProgram(_ program: Any, usingLanguageModule module: Any, reply: @escaping (String?) -> Void) {
         guard
             let module = loadedLanguageModules[module],
-            let (program, _) = programs[program]
+            let program = programs[program]
         else {
             return reply(nil)
         }
         reply(module.formatter().format(program.ast))
     }
     
+    func getExpressionAtLocation(_ index: Int, inSourceOfProgram program: Any, reply: @escaping (Any?) -> Void) {
+        guard let program = programs[program] else {
+            return reply(nil)
+        }
+        let source = program.source
+        let expressionsAtLocation = program.expressions(at: SourceLocation(at: source.index(source.startIndex, offsetBy: index), source: source))
+        guard let expression = expressionsAtLocation.first else {
+            return reply(nil)
+        }
+        reply(expressions.retain(expression))
+    }
+    
+    func copyKindName(forExpression expression: Any, reply: @escaping (String?) -> Void) {
+        guard let expression = expressions[expression] else {
+            return reply(nil)
+        }
+        reply(expression.kindName)
+    }
+    
+    func copyKindDescription(forExpression expression: Any, reply: @escaping (String?) -> Void) {
+        guard let expression = expressions[expression] else {
+            return reply(nil)
+        }
+        reply(expression.kindDescription)
+    }
+    
+    func releaseExpression(_ expression: Any, reply: @escaping (Bool) -> Void) {
+        reply(expressions.release(expression))
+    }
+    
     func runProgram(_ program: Any, currentApplicationID: String, reply: @escaping (Any?) -> Void) {
-        guard let (program, _) = programs[program] else {
+        guard let program = programs[program] else {
             return reply(nil)
         }
         let rt = RTInfo(termPool: program.terms)

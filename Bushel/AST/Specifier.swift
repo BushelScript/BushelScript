@@ -85,4 +85,24 @@ extension Specifier {
         return parentSpecifier.topParent()
     }
     
+    public func allDataExpressionsFromSelfAndAncestors() -> [Expression] {
+        var expressions: [Expression] = allDataExpressions()
+        
+        guard parent != nil else {
+            return expressions
+        }
+        
+        var specifier = self
+        while let parent = specifier.parent {
+            guard case .specifier(let parentSpecifier) = parent.kind else {
+                expressions.append(parent)
+                break
+            }
+            specifier = parentSpecifier
+            expressions.append(contentsOf: parentSpecifier.allDataExpressions())
+        }
+        
+        return expressions
+    }
+    
 }

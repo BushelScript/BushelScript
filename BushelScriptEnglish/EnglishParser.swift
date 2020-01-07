@@ -7,7 +7,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     public var entireSource: String
     public var source: Substring
-    public var expressionStartIndex: String.Index
+    public var expressionStartIndices: [String.Index] = []
     
     public var lexicon: Lexicon = Lexicon()
     public var currentElements: [[PrettyPrintable]] = []

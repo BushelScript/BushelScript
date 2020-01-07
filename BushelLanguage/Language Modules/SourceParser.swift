@@ -32,7 +32,7 @@ public protocol SourceParser: AnyObject {
     
     var entireSource: String { get }
     var source: Substring { get set }
-    var expressionStartIndex: String.Index { get set }
+    var expressionStartIndices: [String.Index] { get set }
     
     var lexicon: Lexicon { get set }
     var currentElements: [[PrettyPrintable]] { get set }
@@ -298,6 +298,9 @@ public extension SourceParser {
     private func parseUnprocessedPrimary() throws -> Expression? {
         eatCommentsAndWhitespace()
         expressionStartIndex = currentIndex
+        defer {
+            expressionStartIndices.removeLast()
+        }
         
         if let hashbang = eatHashbang() {
             var hashbangs = [hashbang]
@@ -361,8 +364,6 @@ public extension SourceParser {
             guard let c = source.first else {
                 return nil
             }
-            
-            expressionStartIndex = currentIndex
             
             if c.isNumber || c == "-" || c == "+" {
                 func parseInteger() -> Expression? {
@@ -729,6 +730,15 @@ public extension SourceParser {
     
     var expressionLocation: SourceLocation {
         SourceLocation(expressionStartIndex..<currentIndex, source: entireSource)
+    }
+    
+    var expressionStartIndex: String.Index {
+        get {
+            expressionStartIndices.last ?? entireSource.startIndex
+        }
+        set {
+            expressionStartIndices.append(newValue)
+        }
     }
     
     func eatTerm<Terminology: TerminologySource>(terminology: Terminology) throws -> Term? {
