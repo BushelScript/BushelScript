@@ -406,7 +406,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleEnd() throws -> Expression.Kind? {
         eatCommentsAndWhitespace()
-        if findExpressionEndKeyword() || source.hasPrefix("\n") {
+        if findExpressionEndKeyword() || source.hasPrefix("\n") || source.isEmpty {
             return .end
         }
         let endTag = sequenceEndTags.last!
