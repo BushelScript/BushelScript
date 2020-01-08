@@ -27,6 +27,7 @@ class DocumentViewController: NSViewController {
     
     enum Status {
         
+        case loadingLanguageModule
         case compiling
         case prettyPrinting
         case running
@@ -34,6 +35,8 @@ class DocumentViewController: NSViewController {
         
         var localizedDescription: String {
             switch self {
+            case .loadingLanguageModule:
+                return "Loading language module…"
             case .compiling:
                 return "Compiling…"
             case .prettyPrinting:
@@ -78,6 +81,7 @@ class DocumentViewController: NSViewController {
                 return
             }
             self.connection = nil
+            self.status = nil
             DispatchQueue.main.async {
                 let alert = NSAlert()
                 alert.messageText = "The Bushel Language Service has crashed."
@@ -151,6 +155,7 @@ class DocumentViewController: NSViewController {
                     if let wc = self.view.window?.windowController as? DocumentWindowController {
                         wc.updateLanguageMenu()
                     }
+                    self.compile(document.sourceCode, then: { _, _, _ in })
                 }
             }
             
@@ -174,7 +179,6 @@ class DocumentViewController: NSViewController {
             switch result {
             case .success(let program):
                 status = .running
-                
                 service.runProgram(program, currentApplicationID: Bundle(for: DocumentViewController.self).bundleIdentifier!) { result in
                     self.status = nil
                     
@@ -195,8 +199,9 @@ class DocumentViewController: NSViewController {
                     }
                 }
             case .failure(let error):
+                status = .fetchingData
                 service.copyNSError(fromError: error) { error in
-                    self.connectionInUse = false
+                    self.status = nil
                     DispatchQueue.main.async {
                         self.presentError(error)
                     }
@@ -216,7 +221,7 @@ class DocumentViewController: NSViewController {
         prettyPrint(document.sourceCode) { service, language, result in
             switch result {
             case .success(_):
-                self.status = nil
+                break
             case .failure(let error):
                 self.status = .fetchingData
                 service.copyNSError(fromError: error) { error in
@@ -231,13 +236,13 @@ class DocumentViewController: NSViewController {
     
     private func prettyPrint(_ source: String, then: @escaping (_ service: BushelLanguageServiceProtocol, _ language: LanguageModuleToken, _ result: Result<ProgramToken, ErrorToken>) -> Void) {
         compile(source) { service, language, result in
-            self.status = .prettyPrinting
-            
             switch result {
             case .failure(_):
                 break
             case .success(let program):
+                self.status = .prettyPrinting
                 service.prettyPrintProgram(program) { pretty in
+                    self.status = nil
                     guard let pretty = pretty else {
                         return
                     }
@@ -264,7 +269,6 @@ class DocumentViewController: NSViewController {
                 let service = service,
                 let language = language
             else {
-                self.status = nil
                 return
             }
             
@@ -285,16 +289,20 @@ class DocumentViewController: NSViewController {
             // We don't know what language module to use
             return
         }
-        
-        status = .compiling
         guard let service = self.service else {
             return then(nil, nil, nil, nil)
         }
+        
+        status = .loadingLanguageModule
         service.loadLanguageModule(withIdentifier: document.languageID) { language in
+            self.status = nil
             guard let language = language else {
                 return then(service, nil, nil, nil)
             }
+            
+            self.status = .compiling
             service.parseSource(source, usingLanguageModule: language) { (program, error) in
+                self.status = nil
                 then(service, language as LanguageModuleToken, program as ProgramToken?, error as ErrorToken?)
             }
         }
@@ -359,18 +367,15 @@ extension DocumentViewController: NSTextViewDelegate {
             program = nil
         }
         
-        status = .compiling
         compile(source) { (service, language, result) in
             switch result {
             case .success(_):
                 DispatchQueue.main.sync {
                     // No errors
                     self.dismissSuggestionList()
-                    self.status = nil
                 }
             case .failure(let error):
                 self.status = .fetchingData
-                
                 service.copyNSError(fromError: error) { nsError in
                     service.getSourceFixes(fromError: error) { fixes in
                         self.status = nil
