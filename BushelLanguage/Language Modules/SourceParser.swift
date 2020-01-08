@@ -389,10 +389,10 @@ public extension SourceParser {
                 return nil
             }
             
-            if c.isNumber || c == "-" || c == "+" {
+            if c.isNumber || c == "." {
                 func parseInteger() -> Expression? {
                     let slicedSourceCode = String(source)
-                    let regex = try! NSRegularExpression(pattern: "^[-+]?\\d++(?!\\.)", options: [.caseInsensitive])
+                    let regex = try! NSRegularExpression(pattern: "^\\d++(?!\\.)", options: [.caseInsensitive])
                     guard let numberNSRange = regex.firstMatch(in: slicedSourceCode, options: [], range: NSRange(source.range, in: source))?.range else {
                         return nil
                     }
@@ -408,7 +408,7 @@ public extension SourceParser {
                 }
                 func parseDouble() throws -> Expression {
                     let slicedSourceCode = String(source)
-                    let regex = try! NSRegularExpression(pattern: "^[-+]?\\d*(?:\\.\\d++(?:[ep][-+]?\\d+)?)?", options: [.caseInsensitive])
+                    let regex = try! NSRegularExpression(pattern: "^\\d*(?:\\.\\d++(?:[ep][-+]?\\d+)?)?", options: [.caseInsensitive])
                     guard let numberNSRange = regex.firstMatch(in: slicedSourceCode, options: [], range: NSRange(source.range, in: source))?.range else {
                         throw ParseError(description: "unable to parse number", location: currentLocation)
                     }
