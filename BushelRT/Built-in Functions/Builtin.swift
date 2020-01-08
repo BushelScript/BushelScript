@@ -431,8 +431,7 @@ enum Builtin {
     }
     
     private static func evaluateSpecifierByAppleEvent(_ specifier: RT_Specifier, targetApplication: RT_Application) -> RTObjectPointer {
-        let getCommand = rt.command(forUID: TypedTermUID(CommandUID.get))!
-        return toOpaque(retain(try! specifier.perform(command: getCommand, arguments: [ParameterInfo(.direct): specifier]) ?? RT_Null.null))
+        return toOpaque(retain(try! specifier.perform(command: CommandInfo(.get), arguments: [ParameterInfo(.direct): specifier]) ?? RT_Null.null))
     }
     
     static func call(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer) -> RTObjectPointer {
