@@ -21,6 +21,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     private lazy var mainDictionary: [TermDescriptor] = [
+        CommandDescriptor(.get, name: TermName("get")),
+        
         PropertyDescriptor(.properties, name: TermName("properties")),
         PropertyDescriptor(.type, name: TermName("type")),
         PropertyDescriptor(.index, name: TermName("index")),
