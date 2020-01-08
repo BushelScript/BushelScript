@@ -44,6 +44,7 @@ public protocol SourceParser: AnyObject {
     var prefixOperators: [TermName : UnaryOperation] { get }
     var postfixOperators: [TermName : UnaryOperation] { get }
     var binaryOperators: [TermName : BinaryOperation] { get }
+    var stringMarkers: [(begin: TermName, end: TermName)] { get }
     var lineCommentMarkers: [TermName] { get }
     var blockCommentMarkers: [(begin: TermName, end: TermName)] { get }
     
@@ -344,6 +345,29 @@ public extension SourceParser {
             }
             
             return Expression(.scoped(Sequence(expressions: weaves, location: expressionLocation)), at: expressionLocation)
+        } else if let (_, endMarker) = eatStringBeginMarker() {
+            let regex = try! NSRegularExpression(pattern: "(.*?)(?<!\\\\)\(endMarker)", options: [])
+            
+            let slicedSourceCode = String(source)
+            guard let match = regex.firstMatch(in: slicedSourceCode, options: [], range: NSRange(slicedSourceCode.range, in: slicedSourceCode)) else {
+                throw ParseError(description: "unable to parse string", location: currentLocation)
+            }
+            let totalNSRange = match.range
+            let stringNSRange = match.range(at: 1)
+            
+            let totalRange = Range(totalNSRange, in: slicedSourceCode)!
+            let stringRange = Range(stringNSRange, in: slicedSourceCode)!
+            
+            let totalEndIndexInSource = source.index(currentIndex, offsetBy: slicedSourceCode.distance(from: totalRange.lowerBound, to: totalRange.upperBound))
+            let stringEndIndexInSource = source.index(currentIndex, offsetBy: slicedSourceCode.distance(from: stringRange.lowerBound, to: stringRange.upperBound))
+            
+            let stringSource = source[currentIndex..<stringEndIndexInSource]
+            source.removeFirst(stringSource.count)
+            
+            let endMarkerLength = source.distance(from: stringEndIndexInSource, to: totalEndIndexInSource)
+            source.removeFirst(endMarkerLength)
+            
+            return Expression(.string(String(stringSource)), [Keyword(keyword: String(stringSource), styling: .string)], at: SourceLocation(stringSource.range, source: entireSource))
         } else if let term = try eatTerm() {
             if let kind = try handle(term: Located(term, at: expressionLocation)) {
                 return Expression(kind, currentElements.last!, at: expressionLocation)
@@ -400,20 +424,6 @@ public extension SourceParser {
                 }
                 
                 return try parseInteger() ?? parseDouble()
-            } else if c == "\"" {
-                let slicedSourceCode = String(source)
-                let regex = try! NSRegularExpression(pattern: "\".*?(?<!\\\\)\"", options: [])
-                guard let stringNSRange = regex.firstMatch(in: slicedSourceCode, options: [], range: NSRange(slicedSourceCode.range, in: slicedSourceCode))?.range else {
-                    throw ParseError(description: "unable to parse string", location: currentLocation)
-                }
-                let stringRange = Range(stringNSRange, in: slicedSourceCode)!
-                let stringEndIndex = source.index(currentIndex, offsetBy: slicedSourceCode.distance(from: stringRange.lowerBound, to: stringRange.upperBound))
-                
-                let stringSource = source[currentIndex..<stringEndIndex]
-                source.removeFirst(stringSource.count)
-                
-                let value = stringSource[stringSource.index(after: stringSource.startIndex)..<stringSource.index(before: stringSource.endIndex)] // Without quotes
-                return Expression(.string(String(value)), [Keyword(keyword: String(stringSource), styling: .string)], at: SourceLocation(stringSource.range, source: entireSource))
             } else {
                 #if DEBUG
                 print("undefined term source: \(source)")
@@ -594,6 +604,15 @@ public extension SourceParser {
             return
         }
         currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized, styling: .operator))
+    }
+    
+    func eatStringBeginMarker() -> (begin: TermName, end: TermName)? {
+        let result = stringMarkers.map { $0.begin }.findTermName(in: source.prefix(while: { !$0.isNewline }))
+        source.removeFirst(result.termString.count)
+        guard let termName = result.termName else {
+            return nil
+        }
+        return stringMarkers.first { $0.begin == termName }
     }
     
     func eatTerm() throws -> Term? {

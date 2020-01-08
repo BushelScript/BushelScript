@@ -276,6 +276,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("÷"): .divide,
     ]
     
+    public let stringMarkers: [(begin: TermName, end: TermName)] = [
+        (begin: TermName("\""), end: TermName("\"")),
+        (begin: TermName("“"), end: TermName("”"))
+    ]
+    
     public let lineCommentMarkers: [TermName] = [
         TermName("--")
     ]
