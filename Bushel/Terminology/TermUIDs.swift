@@ -111,6 +111,8 @@ public enum TypeUID: String, TermUIDPredefinedValue {
     case alias
     case application
     case specifier
+    case comparisonTestSpecifier
+    case logicalTestSpecifier
     case `class`
     case null
     case global
@@ -156,6 +158,10 @@ public enum TypeUID: String, TermUIDPredefinedValue {
             return cApplication
         case .specifier:
             return cObjectSpecifier
+        case .comparisonTestSpecifier:
+            return typeCompDescriptor
+        case .logicalTestSpecifier:
+            return typeLogicalDescriptor
         case .class:
             return typeType
         case .null:
@@ -203,6 +209,10 @@ public enum TypeUID: String, TermUIDPredefinedValue {
                 self = .application
             case cObjectSpecifier:
                 self = .specifier
+            case typeCompDescriptor:
+                self = .comparisonTestSpecifier
+            case typeLogicalDescriptor:
+                self = .logicalTestSpecifier
             case typeType:
                 self = .class
             case try! FourCharCode(fourByteString: "msng"):

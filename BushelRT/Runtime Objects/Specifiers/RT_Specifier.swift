@@ -1,8 +1,41 @@
 import Bushel
 import SwiftAutomation
 
+public protocol RT_HierarchicalSpecifier: AnyObject {
+    
+    var parent: RT_Object { get set }
+    
+    func clone() -> Self
+    
+}
+
+extension RT_HierarchicalSpecifier {
+    
+    func setRootAncestor(_ newTopParent: RT_Object) {
+        topHierarchicalAncestor().parent = newTopParent
+    }
+    
+    public func topHierarchicalAncestor() -> RT_HierarchicalSpecifier {
+        if let parent = parent as? RT_HierarchicalSpecifier {
+            return parent.topHierarchicalAncestor()
+        } else {
+            return self
+        }
+    }
+    
+    public func rootAncestor() -> RT_Object {
+        if let parent = parent as? RT_HierarchicalSpecifier {
+            return parent.rootAncestor()
+        } else {
+            return parent
+        }
+    }
+
+    
+}
+
 /// An unevaluated object specifier.
-public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
+public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_AESpecifierProtocol {
     
     public enum Kind: UInt32 {
         case simple, index, name, id
@@ -36,26 +69,6 @@ public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
             parent = specifier.clone()
         }
         return RT_Specifier(rt, parent: parent, type: type, property: property, data: data, kind: kind)
-    }
-    
-    func addTopParent(_ newTopParent: RT_Object) {
-        rootSpecifier().parent = newTopParent
-    }
-    
-    public func rootAncestor() -> RT_Object {
-        if let parent = parent as? RT_Specifier {
-            return parent.rootAncestor()
-        } else {
-            return parent
-        }
-    }
-
-    public func rootSpecifier() -> RT_Specifier {
-        if let parent = parent as? RT_Specifier {
-            return parent.rootSpecifier()
-        } else {
-            return self
-        }
     }
     
     public func rootApplication() -> (application: RT_Application?, isSelf: Bool) {
@@ -165,7 +178,10 @@ public final class RT_Specifier: RT_Object, RT_AESpecifierProtocol {
         case .range:
             return elements[data[0], data[1]]
         case .test:
-            fatalError("unimplemented")
+            guard let testClause = (data[0] as? RT_TestSpecifier)?.saTestClause(appData: appData) else {
+                return nil
+            }
+            return elements[testClause]
         case .property:
             fatalError("unreachable")
         }

@@ -123,6 +123,10 @@ func newSpecifier2(_ parent: Builtin.RTObjectPointer?, _ uid: Builtin.RTObjectPo
     return Builtin.newSpecifier2(parent, uid, kind, data1, data2)
 }
 
+func newTestSpecifier(_ operation: UInt32, _ lhs: Builtin.RTObjectPointer, _ rhs: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
+    return Builtin.newTestSpecifier(operation, lhs, rhs)
+}
+
 func evaluateSpecifier(_ specifier: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
     return Builtin.evaluateSpecifier(specifier)
 }
@@ -191,6 +195,7 @@ enum BuiltinFunction: String {
     case unaryOp, binaryOp
     case coerce
     case newSpecifier0, newSpecifier1, newSpecifier2
+    case newTestSpecifier
     case evaluateSpecifier
     case call
     case runWeave
@@ -242,6 +247,7 @@ enum BuiltinFunction: String {
         case .newSpecifier0: return ([object, object, int32], object)
         case .newSpecifier1: return ([object, object, int32, object], object)
         case .newSpecifier2: return ([object, object, int32, object, object], object)
+        case .newTestSpecifier: return ([int32, object, object], object)
         case .evaluateSpecifier: return ([object], object)
         case .call: return ([object, object], object)
         case .runWeave: return ([object, object, object], object)
@@ -348,6 +354,9 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     builder.addExternalFunctionAsGlobal(newSpecifier1, .newSpecifier1)
     let newSpecifier2: @convention(c) (Builtin.RTObjectPointer?, Builtin.RTObjectPointer, UInt32, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.newSpecifier2
     builder.addExternalFunctionAsGlobal(newSpecifier2, .newSpecifier2)
+    
+    let newTestSpecifier: @convention(c) (UInt32, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.newTestSpecifier
+    builder.addExternalFunctionAsGlobal(newTestSpecifier, .newTestSpecifier)
     
     let evaluateSpecifier: @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.evaluateSpecifier
     builder.addExternalFunctionAsGlobal(evaluateSpecifier, .evaluateSpecifier)
@@ -794,9 +803,36 @@ extension Specifier {
         let uidIRValue = builder.buildGlobalString(idTerm.term.typedUID.normalized).asRTString(builder: builder)
         
         let parentIRValue = try parent?.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false) ?? PointerType.toVoid.null()
-        let dataExpressionIRValues = try allDataExpressions().map { dataExpression in
-            return try dataExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
-                
+        
+        let dataExpressionIRValues: [IRValue]
+        if case .test(let expression) = kind {
+            guard
+                let (operation, lhs, rhs): (BinaryOperation, Expression, Expression) =
+                    {
+                        var expression = expression
+                        while true {
+                            switch expression.kind {
+                            case .parentheses(let subexpression):
+                                expression = subexpression
+                            case let .infixOperator(operation, lhs, rhs):
+                                return (operation, lhs, rhs)
+                            default:
+                                return nil
+                            }
+                        }
+                    }()
+            else {
+                fatalError("test clause expression improperly validated by the parser")
+            }
+            
+            let lhsIRValue = try lhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
+            let rhsIRValue = try rhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
+            
+            dataExpressionIRValues = [builder.buildCall(toExternalFunction: .newTestSpecifier, args: [IntType.int32.constant(operation.rawValue), lhsIRValue, rhsIRValue])]
+        } else {
+            dataExpressionIRValues = try allDataExpressions().map { dataExpression in
+                try dataExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+            }
         }
         
         switch kind {
@@ -825,7 +861,7 @@ extension Specifier {
         case .range:
             return builder.buildCall(toExternalFunction: .newSpecifier2, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.range.rawValue), dataExpressionIRValues[0], dataExpressionIRValues[1]])
         case .test:
-            fatalError("unimplemented")
+            return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.test.rawValue), dataExpressionIRValues[0]])
         case .property:
             return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.property.rawValue)])
         }

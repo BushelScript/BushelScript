@@ -82,7 +82,7 @@ public struct StackFrame {
         if let application = target as? RT_Application {
             target = RT_Specifier(rt, parent: nil, type: application.dynamicTypeInfo, data: [RT_String(value: application.bundleIdentifier)], kind: .id)
         }
-        newSpecifier.addTopParent(target)
+        newSpecifier.setRootAncestor(target)
         return newSpecifier
     }
     

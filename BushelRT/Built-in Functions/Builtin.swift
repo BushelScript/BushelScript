@@ -316,6 +316,13 @@ enum Builtin {
         return toOpaque(retain(newSpecifier))
     }
     
+    static func newTestSpecifier(_ operation: UInt32, _ lhsPointer: RTObjectPointer, _ rhsPointer: RTObjectPointer) -> RTObjectPointer {
+        let operation = BinaryOperation(rawValue: Int(operation))!
+        let lhs = fromOpaque(lhsPointer)
+        let rhs = fromOpaque(rhsPointer)
+        return toOpaque(retain(RT_TestSpecifier(rt, operation: operation, lhs: lhs, rhs: rhs)))
+    }
+    
     private static func propertyInfo(for code: OSType) -> PropertyInfo {
         rt.property(for: code) ?? PropertyInfo(.ae4(code: code))
     }
@@ -344,7 +351,7 @@ enum Builtin {
         var root = specifier.rootAncestor()
         if root is RT_RootSpecifier {
             let global = RT_Global(rt)
-            specifier.addTopParent(global)
+            specifier.setRootAncestor(global)
             root = global
         }
         do {
