@@ -138,6 +138,11 @@ public extension RTInfo {
             os_log("Module verification error: %@", log: log, type: .error, String(describing: error))
         }
         
+        let pipeliner = PassPipeliner(module: module)
+        pipeliner.addStandardModulePipeline("std_module")
+        pipeliner.addStandardFunctionPipeline("std_fn")
+        pipeliner.execute()
+        
         // Load StandardAdditions.osax
         do {
             try NSAppleEventDescriptor(eventClass: FourCharCode(fourByteString: "ascr"), eventID: FourCharCode(fourByteString: "gdut"), targetDescriptor: NSAppleEventDescriptor(bundleIdentifier: RT_Application(Builtin.rt, currentApplication: ()).bundleIdentifier), returnID: AEReturnID(kAutoGenerateReturnID), transactionID: AETransactionID(kAnyTransactionID)).sendEvent(options: .defaultOptions, timeout: TimeInterval(kNoTimeOut))

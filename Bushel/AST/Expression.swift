@@ -48,6 +48,7 @@ public struct Expression {
         case parentheses(Expression)
         case function(name: Located<VariableTerm>, parameters: [Located<ParameterTerm>], arguments: [Located<VariableTerm>], body: Expression)
         case if_(condition: Expression, then: Expression, else: Expression?)
+        case repeatWhile(condition: Expression, repeating: Expression)
         case repeatTimes(times: Expression, repeating: Expression)
         case tell(target: Expression, to: Expression)
         case let_(Located<VariableTerm>, initialValue: Expression?)
@@ -138,6 +139,8 @@ extension Expression.Kind {
             return ("Function definition", "Defines a custom, reusable function.")
         case .if_:
             return ("Conditional expression", "Evaluates its condition. When the result is truthy, executes its “then” block. Otherwise, executes its ”else” block, if any.")
+        case .repeatWhile:
+            return ("Conditional repeat expression", "Executes the contained block as long as its condition is truthy.")
         case .repeatTimes:
             return ("Constant-bounded repeat expression", "Evaluates its ”times“ expression, then executes the contained block that many times.")
         case .tell:

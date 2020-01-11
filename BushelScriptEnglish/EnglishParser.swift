@@ -447,7 +447,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         lexicon.add(commandTerm)
         
         guard tryEating(prefix: "\n") else {
-            throw ParseError(description: "expected line break to begin function body", location: currentLocation)
+            throw ParseError(description: "expected line break to begin function body", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
         }
         let body = try withScope {
             lexicon.add(Set(arguments.map { $0.term }))
@@ -459,14 +459,14 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleIf() throws -> Expression.Kind? {
         guard let condition = try parsePrimary() else {
-            throw ParseError(description: "expected condition-expression after ‘if’", location: currentLocation)
+            throw ParseError(description: "expected condition expression after ‘if’", location: currentLocation)
         }
         
         let thenStartIndex = currentIndex
         let foundThen = tryEating(prefix: "then")
         let foundNewline = tryEating(prefix: "\n")
         guard foundThen || foundNewline else {
-            throw ParseError(description: "expected ‘then’ or line break after condition-expression to begin ‘if’-block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
+            throw ParseError(description: "expected ‘then’ or line break after condition expression to begin ‘if’-block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
         }
         
         let thenExpr: Expression
@@ -494,22 +494,36 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     private func handleRepeat(_ endTag: TermName) throws -> Expression.Kind? {
-        guard let times = try parsePrimary() else {
-            throw ParseError(description: "expected times-expression after ‘\(expressionLocation.snippet(in: entireSource))’", location: currentLocation)
+        func parseRepeatBlock() throws -> Expression {
+            try withScope {
+                try parseSequence(endTag) ?? Sequence.empty(at: currentIndex)
+            }
         }
         
-        guard tryEating(prefix: "times") else {
-            throw ParseError(description: "expected ‘times’ after times-expression", location: currentLocation, fixes: [AppendingFix(appending: " times", at: currentLocation)])
+        if tryEating(prefix: "while") {
+            guard let condition = try parsePrimary() else {
+                throw ParseError(description: "expected condition expression after ‘\(endTag) while’", location: currentLocation)
+            }
+            
+            guard tryEating(prefix: "\n") else {
+                throw ParseError(description: "expected line break to begin repeat block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
+            }
+            
+            return .repeatWhile(condition: condition, repeating: try parseRepeatBlock())
+        } else {
+            guard let times = try parsePrimary() else {
+                throw ParseError(description: "expected times expression after ‘\(expressionLocation.snippet(in: entireSource))’", location: currentLocation)
+            }
+            
+            guard tryEating(prefix: "times") else {
+                throw ParseError(description: "expected ‘times’ after times expression", location: currentLocation, fixes: [AppendingFix(appending: " times", at: currentLocation)])
+            }
+            guard tryEating(prefix: "\n") else {
+                throw ParseError(description: "expected line break after ‘times’ to begin repeat block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
+            }
+            
+            return .repeatTimes(times: times, repeating: try parseRepeatBlock())
         }
-        guard tryEating(prefix: "\n") else {
-            throw ParseError(description: "expected line break after ‘times’ to begin ‘repeat’-block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
-        }
-        
-        let repeatingBlock = try withScope {
-            return try parseSequence(endTag) ?? Sequence.empty(at: currentIndex)
-        }
-        
-        return .repeatTimes(times: times, repeating: repeatingBlock)
     }
     
     private func handleTell() throws -> Expression.Kind? {

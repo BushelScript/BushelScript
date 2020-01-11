@@ -393,11 +393,6 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
         fatalError("unhandled error \(error)")
     }
     
-    let pipeliner = PassPipeliner(module: module)
-    pipeliner.addStandardModulePipeline("std_module")
-    pipeliner.addStandardFunctionPipeline("std_fn")
-    pipeliner.execute()
-    
     #if DEBUG
     module.dump()
     #endif
@@ -465,24 +460,7 @@ extension Expression {
         case let .if_(condition, then, else_): // MARK: .if_
             let conditionValue = try condition.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             
-            var conditionTest: IRValue!
-            switch LLVMGetTypeKind(LLVMTypeOf(conditionValue.asLLVM())!) {
-            case LLVMIntegerTypeKind:
-                conditionTest = builder.buildICmp(conditionValue, IntType.int64.constant(0), .notEqual)
-            case LLVMDoubleTypeKind:
-                conditionTest = builder.buildFCmp(conditionValue, FloatType.double.constant(0.0), .orderedNotEqual)
-            default: // pointer to RT_Object
-                conditionTest = builder.buildCall(toExternalFunction: .isTruthy, args: [conditionValue])
-            }
-            
-            if options.stackIntrospectability {
-                builder.buildCall(toExternalFunctionReturningVoid: .pushFrame, args: [])
-            }
-            defer {
-                if options.stackIntrospectability {
-                    builder.buildCall(toExternalFunctionReturningVoid: .popFrame, args: [])
-                }
-            }
+            let conditionTest = builder.buildCall(toExternalFunction: .isTruthy, args: [conditionValue])
             
             var thenBlock = function.appendBasicBlock(named: "then")
             var elseBlock = BasicBlock(context: builder.module.context, name: "else")
@@ -525,23 +503,46 @@ extension Expression {
             case (true, true):
                 return builder.buildUnreachable()
             }
-        case .repeatTimes(times: let times, repeating: let repeating): // MARK: .repeatTimes
-            let repeatBlock = BasicBlock(context: builder.module.context, name: "repeat")
+        case .repeatWhile(let condition, let repeating): // MARK: .repeatWhile
+            let lastBlock = builder.insertBlock!
+            let repeatBlock = function.appendBasicBlock(named: "repeat")
             let afterRepeatBlock = BasicBlock(context: builder.module.context, name: "after-repeat")
             
-            let result: IRValue
+            func evalConditionAndCondBr() throws {
+                let conditionValue = try condition.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+                let conditionTest = builder.buildCall(toExternalFunction: .isTruthy, args: [conditionValue])
+                
+                builder.buildCondBr(condition: conditionTest, then: repeatBlock, else: afterRepeatBlock)
+            }
+            
+            try evalConditionAndCondBr()
+            
+            builder.positionAtEnd(of: repeatBlock)
+            
+            let result = try repeating.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+            
+            try evalConditionAndCondBr()
+            
+            function.append(afterRepeatBlock)
+            builder.positionAtEnd(of: afterRepeatBlock)
+            
+            let phiResult = builder.buildPhi(PointerType.toVoid, name: "repeat-result-or-that")
+            phiResult.addIncoming([(result, repeatBlock), (lastResult, lastBlock)])
+            
+            return result
+        case .repeatTimes(let times, let repeating): // MARK: .repeatTimes
+            let repeatBlock = function.appendBasicBlock(named: "repeat")
+            let afterRepeatBlock = BasicBlock(context: builder.module.context, name: "after-repeat")
             
             let timesValue = try times.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             
             builder.buildBr(repeatBlock)
-            
-            function.append(repeatBlock)
             builder.positionAtEnd(of: repeatBlock)
             
             let repeatCount = builder.buildPhi(FloatType.double)
             repeatCount.addIncoming([(FloatType.double.constant(0), currentBlock)])
             
-            result = try repeating.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+            let result = try repeating.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             
             let newRepeatCount = builder.buildBinaryOperation(.fadd, repeatCount, FloatType.double.constant(1))
             repeatCount.addIncoming([(newRepeatCount, repeatBlock)])
@@ -580,9 +581,9 @@ extension Expression {
             let returnIRValue = (try returnValue?.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult) ?? builder.rtNull)
             
             return builder.buildRet(returnIRValue)
-        case .integer(let value):
+        case .integer(let value): // MARK: .integer
             return IntType.int64.constant(value).asRTInteger(builder: builder)
-        case .double(let value): // MARK: .number
+        case .double(let value): // MARK: .double
             return FloatType.double.constant(value).asRTReal(builder: builder)
         case .string(let value): // MARK: .string
             return builder.addGlobalString(name: "str", value: value).asRTString(builder: builder)

@@ -25,7 +25,9 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             }
             formatted += "\n\(indentation(for: level))end if"
             return formatted
-        case let .repeatTimes(times: times, repeating: repeating):
+        case let .repeatWhile(condition, repeating):
+            return "repeat while \(condition)\n\(format(repeating, level: level + 1, indentFirstLine: true))"
+        case let .repeatTimes(times, repeating):
             return "repeat \(times) times\n\(format(repeating, level: level + 1, indentFirstLine: true))"
         case .tell(let target, let to):
             return "tell \(format(target, level: level))\n\(format(to, level: level + 1, indentFirstLine: true))\n\(indentation(for: level))end tell"

@@ -33,6 +33,8 @@ private extension Expression {
                 return [body]
             case let .if_(condition, then, `else`):
                 return `else`.map { [condition, then, $0] } ?? [condition, then]
+            case let .repeatWhile(condition, repeating):
+                return [condition, repeating]
             case let .repeatTimes(times, repeating):
                 return [times, repeating]
             case let .tell(target, to):
