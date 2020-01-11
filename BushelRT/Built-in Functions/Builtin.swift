@@ -438,7 +438,12 @@ enum Builtin {
     }
     
     private static func evaluateSpecifierByAppleEvent(_ specifier: RT_Specifier, targetApplication: RT_Application) -> RTObjectPointer {
-        return toOpaque(retain(try! specifier.perform(command: CommandInfo(.get), arguments: [ParameterInfo(.direct): specifier]) ?? RT_Null.null))
+        do {
+            return toOpaque(retain(try specifier.perform(command: CommandInfo(.get), arguments: [ParameterInfo(.direct): specifier]) ?? RT_Null.null))
+        } catch {
+            throwError(message: "error evaluating remote specifier: \(error.localizedDescription)")
+            return toOpaque(RT_Null.null)
+        }
     }
     
     static func call(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer) -> RTObjectPointer {
