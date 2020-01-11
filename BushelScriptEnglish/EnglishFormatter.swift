@@ -174,7 +174,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                 formatted = "\(className) after \(format(expression, level: level))"
             case .range(let from, let to):
                 formatted = "\(className) \(format(from, level: level)) thru \(format(to, level: level))"
-            case .test(let predicate):
+            case .test(let predicate, _):
                 formatted = "\(className) where \(format(predicate, level: level))"
             case .property:
                 formatted = "\(className)"

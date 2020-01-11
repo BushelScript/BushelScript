@@ -45,7 +45,7 @@ public class Specifier {
         case before(Expression)
         case after(Expression)
         case range(from: Expression, to: Expression)
-        case test(predicate: Expression)
+        case test(Expression, TestComponent)
         case property
         
         public func allDataExpressions() -> [Expression] {
@@ -61,13 +61,52 @@ public class Specifier {
                 return []
             case .range(let from, let to):
                 return [from, to]
-            case .test(let predicate):
-                return [predicate]
+            case .test(let expression, _):
+                return [expression]
             case .property:
                 return []
             }
         }
         
+    }
+    
+}
+
+public indirect enum TestComponent {
+    
+    case expression(Expression)
+    case predicate(TestPredicate)
+    
+}
+
+public struct TestPredicate {
+    
+    public var operation: BinaryOperation
+    public var lhs: TestComponent
+    public var rhs: TestComponent
+    
+    public init(operation: BinaryOperation, lhs: TestComponent, rhs: TestComponent) {
+        self.operation = operation
+        self.lhs = lhs
+        self.rhs = rhs
+    }
+    
+}
+
+extension Expression {
+    
+    public func asTestPredicate() -> TestComponent {
+        var expression = self
+        while true {
+            switch expression.kind {
+            case .parentheses(let subexpression):
+                expression = subexpression
+            case let .infixOperator(operation, lhs, rhs):
+                return .predicate(TestPredicate(operation: operation, lhs: lhs.asTestPredicate(), rhs: rhs.asTestPredicate()))
+            default:
+                return .expression(self)
+            }
+        }
     }
     
 }

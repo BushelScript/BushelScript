@@ -805,30 +805,8 @@ extension Specifier {
         let parentIRValue = try parent?.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false) ?? PointerType.toVoid.null()
         
         let dataExpressionIRValues: [IRValue]
-        if case .test(let expression) = kind {
-            guard
-                let (operation, lhs, rhs): (BinaryOperation, Expression, Expression) =
-                    {
-                        var expression = expression
-                        while true {
-                            switch expression.kind {
-                            case .parentheses(let subexpression):
-                                expression = subexpression
-                            case let .infixOperator(operation, lhs, rhs):
-                                return (operation, lhs, rhs)
-                            default:
-                                return nil
-                            }
-                        }
-                    }()
-            else {
-                fatalError("test clause expression improperly validated by the parser")
-            }
-            
-            let lhsIRValue = try lhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
-            let rhsIRValue = try rhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
-            
-            dataExpressionIRValues = [builder.buildCall(toExternalFunction: .newTestSpecifier, args: [IntType.int32.constant(operation.rawValue), lhsIRValue, rhsIRValue])]
+        if case .test(_, let testComponent) = kind {
+            dataExpressionIRValues = [try testComponent.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)]
         } else {
             dataExpressionIRValues = try allDataExpressions().map { dataExpression in
                 try dataExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
@@ -865,6 +843,23 @@ extension Specifier {
         case .property:
             return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.property.rawValue)])
         }
+    }
+    
+}
+
+extension TestComponent {
+    
+    public func generateLLVMIR(_ builder: IRBuilder, _ rt: RTInfo, _ stack: inout StaticStack, options: CodeGenOptions, lastResult: IRValue) throws -> IRValue {
+        switch self {
+        case .expression(let expression):
+            return try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
+        case .predicate(let predicate):
+            let lhsIRValue = try predicate.lhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+            let rhsIRValue = try predicate.rhs.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+            
+            return builder.buildCall(toExternalFunction: .newTestSpecifier, args: [IntType.int32.constant(predicate.operation.rawValue), lhsIRValue, rhsIRValue])
+        }
+        
     }
     
 }

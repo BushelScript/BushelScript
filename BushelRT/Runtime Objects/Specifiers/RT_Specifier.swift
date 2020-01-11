@@ -348,7 +348,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_AESpeci
         case .range:
             return "\(termString) from \(data[0]) to \(data[1])"
         case .test:
-            fatalError("unimplemented")
+            return "\(termString) where \(data[0])"
         case .property:
             return "\(termString)"
         }

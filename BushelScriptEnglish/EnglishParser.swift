@@ -727,8 +727,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
         case "whose", "where":
             source.removeFirst(firstWord.count)
-            return try parsePrimary().map { predicate in
-                return .test(predicate: predicate)
+            return try parsePrimary().map { expression in
+                return .test(expression, expression.asTestPredicate())
             }
         default:
             guard
