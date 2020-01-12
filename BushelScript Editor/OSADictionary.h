@@ -24,11 +24,11 @@
 @property(copy) NSData *data;
 @property(copy) NSString *name;
 - (void)dealloc;
-- (id)initWithContentsOfFile:(id)arg1 error:(id *)arg2;
-- (id)initWithContentsOfURL:(id)arg1 error:(id *)arg2;
-- (id)initWithData:(id)arg1 error:(id *)arg2;
+- (id)initWithContentsOfFile:(id)arg1 error:(NSError **)arg2;
+- (id)initWithContentsOfURL:(id)arg1 error:(NSError **)arg2;
+- (id)initWithData:(id)arg1 error:(NSError **)arg2;
 - (void)parse;
-- (BOOL)parseData:(id)arg1 error:(id *)arg2;
+- (BOOL)parseData:(id)arg1 error:(NSError **)arg2;
 - (id)displayNameForTypeName:(id)arg1;
 - (id)_objectValueForName:(id)arg1 fromElement:(id)arg2;
 - (id)definitionForUniqueIdentifier:(id)arg1;

@@ -10,7 +10,7 @@ import Cocoa
 import Defaults
 import os
 
-private let log = OSLog(subsystem: logSubsystem, category: "document read/write")
+private let log = OSLog(subsystem: logSubsystem, category: "Document read/write")
 
 class Document: NSDocument {
     

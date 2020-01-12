@@ -28,6 +28,20 @@
 			<key>NSDocumentClass</key>
 			<string>$(PRODUCT_MODULE_NAME).Document</string>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>sdef</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>AppleScript dictionary</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
+			<key>NSDocumentClass</key>
+			<string>$(PRODUCT_MODULE_NAME).DictionaryDocument</string>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
@@ -53,12 +67,18 @@
 	<string>This permission is needed for your scripts to communicate with this application when you run them from BushelScript Editor.
 
 Additionally, the Smart Suggestions feature retrieves data from this and other apps to provide you with relevant suggestions as you edit scripts. This data is not stored or used for any other purpose. Smart Suggestions can be disabled in Preferences &gt; Privacy.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>This permission is needed to be able to communicate with the Calendar app. If you deny, you will not be able to script Calendar from within the editor.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This permission is needed to be able to communicate with the Contacts app. If you deny, you will not be able to script Contacts from within the editor.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2019 Ian Gregory. All rights reserved.</string>
 	<key>NSMainStoryboardFile</key>
 	<string>Main</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>This permission is needed to be able to communicate with the Reminders app. If you deny, you will not be able to script Reminders from within the editor.</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -81,11 +101,5 @@ Additionally, the Smart Suggestions feature retrieves data from this and other a
 			</dict>
 		</dict>
 	</array>
-	<key>NSContactsUsageDescription</key>
-	<string>This permission is needed to be able to communicate with the Contacts app. If you deny, you will not be able to script Contacts from within the editor.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>This permission is needed to be able to communicate with the Calendar app. If you deny, you will not be able to script Calendar from within the editor.</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>This permission is needed to be able to communicate with the Reminders app. If you deny, you will not be able to script Reminders from within the editor.</string>
 </dict>
 </plist>

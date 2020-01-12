@@ -53,6 +53,7 @@
 		3C66A80C23CA6BC7005BA372 /* OSAKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C66A80B23CA6BC7005BA372 /* OSAKit.framework */; };
 		3C66AD3823C2E45D001E6C87 /* ExpressionInspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C66AD3723C2E45D001E6C87 /* ExpressionInspector.storyboard */; };
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
+		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
 		3C907703239F3DD000A01D8D /* KVODelegate in Frameworks */ = {isa = PBXBuildFile; productRef = 3C907702239F3DD000A01D8D /* KVODelegate */; };
 		3CCA1C85235D14120037058C /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566F823135690004CDB1A /* BushelLanguage.framework */; };
 		3CCA1C86235D14120037058C /* BushelLanguage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566F823135690004CDB1A /* BushelLanguage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -282,6 +283,7 @@
 		3C7A6C9E23CBC2D6007F5D84 /* OSADictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OSADictionary.h; sourceTree = "<group>"; };
 		3C7A6CBD23CBCB25007F5D84 /* OSADictionaryWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSADictionaryWindowController.h; sourceTree = "<group>"; };
 		3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSADictionaryWindowCustomization.swift; sourceTree = "<group>"; };
+		3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryDocument.swift; sourceTree = "<group>"; };
 		3CD1D0602319A07100DD01A9 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		3CEF504023529437008603E3 /* SwiftAutomation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEF50422352948E008603E3 /* BushelScript Editor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BushelScript Editor.entitlements"; sourceTree = "<group>"; };
@@ -372,6 +374,7 @@
 				3C3C1810231A20B100553072 /* DocumentWindowController.swift */,
 				3C0566AF23135673004CDB1A /* DocumentViewController.swift */,
 				3C0566B123135673004CDB1A /* Document.swift */,
+				3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */,
 				3C0566B523135675004CDB1A /* Main.storyboard */,
 				3C3C1812231AA65300553072 /* LinkOpener.swift */,
 				3C056716231359C6004CDB1A /* Errors.swift */,
@@ -770,6 +773,7 @@
 				3C0566B223135673004CDB1A /* Document.swift in Sources */,
 				3C3F06E323C1551C005BC0F2 /* ObjectInspectorDetailVC.swift in Sources */,
 				3C0430022314BECD00758339 /* ModelPropagation.swift in Sources */,
+				3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */,
 				3C3C181F231AB0BD00553072 /* LinkLabel.m in Sources */,
 				3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */,
 				3C04300A2314CF7900758339 /* PropagatingTabViewController.swift in Sources */,
