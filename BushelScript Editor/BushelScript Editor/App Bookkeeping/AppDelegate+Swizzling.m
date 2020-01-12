@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "BushelScript_Editor-Swift.h"
+#import "OSADictionaryWindowController.h"
 
 @class AppDelegate;
 
@@ -29,8 +30,7 @@ static void swizzleInstanceMethod(Class clas, SEL targetSel, SEL newSel) {
 + (void)initialize {
     swizzleInstanceMethod([NSViewController class], @selector(setRepresentedObject:), @selector(TJC_setRepresentedObject:));
     swizzleInstanceMethod([NSTabViewController class], @selector(tabView:willSelectTabViewItem:), @selector(TJC_tabView:willSelect:));
-//    swizzleInstanceMethod([NSTabViewController class], @selector(selectedTabViewItemIndex), @selector(TJC_selectedTabViewItemIndex));
-//    swizzleInstanceMethod([NSTabViewController class], @selector(setSelectedTabViewItemIndex:), @selector(setTJC_selectedTabViewItemIndex:));
+    swizzleInstanceMethod([NSWindowController class], @selector(windowDidLoad), @selector(TJC_windowDidLoad));
 }
 
 @end

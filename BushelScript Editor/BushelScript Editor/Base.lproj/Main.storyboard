@@ -100,6 +100,12 @@
                                                 </items>
                                             </menu>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Bgu-Gb-xUD"/>
+                                        <menuItem title="Open Dictionary…" keyEquivalent="O" id="ZYw-BE-j95">
+                                            <connections>
+                                                <action selector="chooseAndOpenDictionaries:" target="Ady-hI-5gd" id="82b-Mg-p9J"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="m54-Is-iLE"/>
                                         <menuItem title="Close" keyEquivalent="w" id="DVo-aG-piG">
                                             <connections>

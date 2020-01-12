@@ -52,18 +52,6 @@ extension NSTabViewController {
         }
     }
     
-//    @objc dynamic var TJC_selectedTabViewItemIndex: Int {
-//        get {
-//            self.TJC_selectedTabViewItemIndex // Swizzled in ObjC
-//        }
-//        set {
-//            if tabViewItems.indices.contains(newValue) {
-//                performPropagateRepresentedObject(to: tabViewItems[newValue])
-//            }
-//            self.TJC_selectedTabViewItemIndex = newValue // Swizzled in ObjC
-//        }
-//    }
-    
     fileprivate func performPropagateRepresentedObject(to tabViewItem: NSTabViewItem) {
         guard
             let self = self as? PropagatingTabViewController,

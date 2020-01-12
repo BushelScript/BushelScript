@@ -74,6 +74,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    @IBAction func chooseAndOpenDictionaries(_ sender: Any?) {
+        OSADictionary.choose()
+    }
+    
 }
 
 class ScriptLanguageMenuDelegate: NSObject, NSMenuDelegate {
