@@ -4,11 +4,15 @@
 
 See the [BushelScript website](https://bushelscript.github.io/) for more info: [About BushelScript](https://bushelscript.github.io/about/)
 
+## Prebuilt binaries
+
+There are none yet! But when v0.1 comes (soon!), there will be.
+
 ## Build BushelScript from source
 
-There's no automated installer yet. For now, you can build the project yourself, which is pretty straightforward if you have Xcode installed and know your way around the command line.
+Building from source is always an option, and is pretty straightforward if you have Xcode installed and know your way around the command line.
 
-To build BushelScript on your local machine and create an installer package:
+To build BushelScript and create an installer package:
 
 1. Clone this repository to your local machine. (`git clone https://github.com/BushelScript/BushelScript.git` in a Terminal prompt, or download the zip file from the web interface).
 2. Make sure [Homebrew](https://brew.sh) and [Xcode](https://developer.apple.com/xcode) are installed. 
