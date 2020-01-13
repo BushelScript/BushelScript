@@ -125,7 +125,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
     public var ae4Code: OSType? {
         switch self {
         case .item:
-            return cItem
+            return cObject
         case .list:
             return typeAEList
         case .record:
