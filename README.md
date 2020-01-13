@@ -8,14 +8,16 @@ See the [BushelScript website](https://bushelscript.github.io/) for more info: [
 
 There's no automated installer yet. For now, you can build the project yourself, which is pretty straightforward if you have Xcode installed and know your way around the command line.
 
-Following the below instructions will build the components of BushelScript on your local machine and prepare an installer package. Components include: core frameworks (`Bushel.framework`, `BushelLanguage.framework` and `BushelRT.framework`); language service (`BushelLanguageService.xpc`, `BushelLanguageServiceConnectionCreation.framework`); English language module (`bushelscript_en.framework`); BushelScript Editor (`BushelScript Editor.app`); and the `bushelscript` command-line tool.
+Following the below instructions will build the components of BushelScript on your local machine and prepare an installer package.
 
 1. Clone this repository to your local machine. (`git clone https://github.com/BushelScript/BushelScript.git` in a Terminal prompt, or download the zip file from the web interface).
 2. Make sure [Homebrew](https://brew.sh) and [Xcode](https://developer.apple.com/xcode) are installed. 
 3. Install LLVM as a system package: `brew install llvm`
 4. In the directory that `git clone` created: `./make-pkg.sh`
 
-Now, you can `open BushelScript.pkg` (or double-click it) to run the installer. Components are installed as follows:
+Now, you can `open BushelScript.pkg` (or double-click it) to run the installer.
+
+Installed components include: core frameworks (`Bushel.framework`, `BushelLanguage.framework` and `BushelRT.framework`); language service (`BushelLanguageService.xpc`, `BushelLanguageServiceConnectionCreation.framework`); English language module (`bushelscript_en.framework`); BushelScript Editor (`BushelScript Editor.app`); and the `bushelscript` command-line tool. Components are installed as follows:
 
 * Core frameworks: `/Library/Frameworks/*.framework`
 * Language service: embedded in `BushelScript Editor.app`
