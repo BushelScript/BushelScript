@@ -8,9 +8,6 @@ PKG_VERSION="$(git describe --tags)"
 INSTALL_DIR="$(pwd)/install"
 
 # Build everything into the installation directory.
-xcodebuild install -workspace Bushel.xcworkspace -scheme Bushel DSTROOT="$INSTALL_DIR"
-xcodebuild install -workspace Bushel.xcworkspace -scheme BushelLanguage DSTROOT="$INSTALL_DIR"
-xcodebuild install -workspace Bushel.xcworkspace -scheme BushelRT DSTROOT="$INSTALL_DIR"
 xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT="$INSTALL_DIR" # Includes all language modules.
 xcodebuild install -workspace Bushel.xcworkspace -scheme bushelscript DSTROOT="$INSTALL_DIR"
 if [ $? -ne 0 ]
