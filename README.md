@@ -21,7 +21,7 @@ To build BushelScript and create an installer package:
 
 Now you can `open BushelScript.pkg` (or double-click it) to run the installer.
 
-Installed components include: core frameworks (`Bushel.framework`, `BushelLanguage.framework` and `BushelRT.framework`); language service (`BushelLanguageService.xpc`, `BushelLanguageServiceConnectionCreation.framework`); English language module (`bushelscript_en.framework`); BushelScript Editor (`BushelScript Editor.app`); and the `bushelscript` command-line tool. Components are installed as follows:
+Installed components include: core frameworks (`SwiftAutomation.framework`, `Bushel.framework`, `BushelLanguage.framework`, `BushelRT.framework`); language service (`BushelLanguageService.xpc`, `BushelLanguageServiceConnectionCreation.framework`); English language module (`bushelscript_en.framework`); BushelScript Editor (`BushelScript Editor.app`); and the `bushelscript` command-line tool. Components are installed as follows:
 
 * Core frameworks: `/Library/Frameworks/*.framework`
 * Language service: embedded in `BushelScript Editor.app`
