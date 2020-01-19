@@ -16,8 +16,8 @@ public class LanguageModule {
         formatter: SourceFormatter.Type
     )
     
-    public func parser(for source: String) -> SourceParser {
-        return types.parser.init(source: source)
+    public func parser() -> SourceParser {
+        return types.parser.init()
     }
     public func formatter() -> SourceFormatter {
         return types.formatter.init()

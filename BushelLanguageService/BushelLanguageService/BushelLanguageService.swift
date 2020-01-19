@@ -30,7 +30,7 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
             return reply(nil, nil)
         }
         do {
-            let program = try module.parser(for: source).parse()
+            let program = try module.parser().parse(source: source)
             reply(programs.retain(program), nil)
         } catch {
             reply(nil, errors.retain(error))
@@ -97,9 +97,8 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
         guard let program = programs[program] else {
             return reply(nil)
         }
-        let rt = RTInfo(termPool: program.terms)
-        rt.currentApplicationBundleID = currentApplicationID
-        reply(objects.retain(rt.run(program.ast)))
+        let rt = RTInfo(currentApplicationBundleID: currentApplicationID)
+        reply(objects.retain(rt.run(program)))
     }
     
     func copyDescription(for object: Any, reply: @escaping (String?) -> Void) {

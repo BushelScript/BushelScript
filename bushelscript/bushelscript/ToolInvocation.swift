@@ -13,26 +13,37 @@ struct ToolInvocation {
     var scriptLines: [Substring] = []
     
     var language: String?
+    var interactive: Bool = false
     
-    private var rt = RTInfo(currentApplicationBundleID: "com.apple.systemevents")
+}
+
+private struct InvocationState {
+    
+    var storedLanguageModule: (module: LanguageModule, language: String)?
+    var storedParser: (parser: SourceParser, module: LanguageModule)?
+    var rt = RTInfo(currentApplicationBundleID: "com.apple.systemevents")
     
 }
 
 extension ToolInvocation {
     
     func run() throws {
+        var state = InvocationState()
         if !scriptLines.isEmpty {
-            try run(source: scriptLines.map { String($0) }.joined(separator: "\n"), fileName: "<command-line>")
+            try run(&state, source: scriptLines.map { String($0) }.joined(separator: "\n"), fileName: "<command-line>")
         }
         if !files.isEmpty {
             for file in files {
                 let file = String(file)
-                try run(source: try String(contentsOfFile: file), fileName: file)
+                try run(&state, source: try String(contentsOfFile: file), fileName: file)
             }
+        }
+        if interactive {
+            try runREPL(&state)
         }
     }
     
-    func run(source: String, fileName: String) throws {
+    private func run(_ state: inout InvocationState, source: String, fileName: String) throws {
         var source = source
         var language = self.language
         
@@ -55,19 +66,62 @@ extension ToolInvocation {
             )
         }
         
-        language = language ?? defaultLanguageID
-        guard let languageModule = LanguageModule(identifier: language!) else {
-            print("\nbushelscript: error: Language with identifier ‘\(language!)’ not found!\n")
-            exit(0)
-        }
-        
-        let parser: BushelLanguage.SourceParser = languageModule.parser(for: source)
         do {
-            let program = try parser.parse()
-            print(rt.run(program))
+            let program = try parser(&state, for: language).parse(source: source)
+            print(state.rt.run(program))
         } catch let error as ParseError {
             print(error: error, in: source, fileName: fileName)
         }
+    }
+    
+    private func runREPL(_ state: inout InvocationState) throws {
+        printShortVersion()
+        print("Type :exit or CTRL-D to exit")
+        
+        var lineNumber = 0
+        func prompt() -> String? {
+            print("\(lineNumber)> ", terminator: "")
+            lineNumber += 1
+            return readLine()
+        }
+        
+        while let line = prompt() {
+            guard !(Substring(line).trimmingWhitespace() == ":exit") else {
+                return
+            }
+            try run(&state, source: line, fileName: "<repl>")
+        }
+        print()
+    }
+    
+    private func parser(_ state: inout InvocationState, for language: String?) -> SourceParser {
+        let languageModule = module(&state, for: language)
+        if
+            let (parser, storedModule) = state.storedParser,
+            storedModule === languageModule
+        {
+            return parser
+        }
+        
+        let parser = languageModule.parser()
+        state.storedParser = (parser: parser, module: languageModule)
+        return parser
+    }
+    
+    private func module(_ state: inout InvocationState, for language: String?) -> LanguageModule {
+        if
+            let (module, storedLanguage) = state.storedLanguageModule,
+            storedLanguage == language
+        {
+            return module
+        }
+        
+        let language = language ?? defaultLanguageID
+        guard let languageModule = LanguageModule(identifier: language) else {
+            print("\nbushelscript: error: Language with identifier ‘\(language)’ not found!\n")
+            exit(0)
+        }
+        return languageModule
     }
     
 }

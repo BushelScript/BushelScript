@@ -33,7 +33,7 @@ public protocol SourceParser: AnyObject {
     
     static var sdefCache: [URL : Data] { get set }
     
-    var entireSource: String { get }
+    var entireSource: String { get set }
     var source: Substring { get set }
     var expressionStartIndices: [String.Index] { get set }
     
@@ -51,7 +51,7 @@ public protocol SourceParser: AnyObject {
     var lineCommentMarkers: [TermName] { get }
     var blockCommentMarkers: [(begin: TermName, end: TermName)] { get }
     
-    init(source: String)
+    init()
     
     func handle(term: LocatedTerm) throws -> Expression.Kind?
     
@@ -67,7 +67,7 @@ public protocol SourceParser: AnyObject {
 
 public extension SourceParser {
     
-    func parse() throws -> Program {
+    func parse(source: String) throws -> Program {
         signpostBegin()
         defer { signpostEnd() }
         
@@ -75,7 +75,10 @@ public extension SourceParser {
             return Program(Expression.empty(at: source.startIndex), source: entireSource, terms: TermPool())
         }
         
-        currentElements = []
+        self.entireSource = source
+        self.source = Substring(source)
+        self.expressionStartIndex = source.startIndex
+        self.currentElements = []
         
         lexicon.add(ParameterDescriptor(.direct, name: TermName("")).realize(lexicon.pool))
         
@@ -84,6 +87,7 @@ public extension SourceParser {
         }
         
         lexicon.push(uid: .id("script"))
+//        defer { lexicon.pop() }
         do {
             let ast: Expression
             if let sequence = try parseSequence(TermName("")) {

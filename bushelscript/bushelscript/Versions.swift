@@ -7,14 +7,19 @@ private let CFBundleShortVersionString = "CFBundleShortVersionString"
 
 private let toolVersion = "1.0"
 private let frameworks = ["Bushel", "BushelLanguage", "BushelRT", "SwiftAutomation"]
+private let frameworkForMainVersion = "Bushel"
+
+private func version(of framework: String) -> String? {
+    let frameworkBundle = Bundle(identifier: "com.justcheesy.\(framework)")
+    return frameworkBundle?.infoDictionary?[CFBundleShortVersionString].flatMap { version in
+        version as? String
+    }
+}
 
 // Returns exit status code.
 func printVersion() -> Int32 {
-    let frameworkVersions = [String : Any](uniqueKeysWithValues: frameworks.compactMap { frameworkName in
-        let frameworkBundle = Bundle(identifier: "com.justcheesy.\(frameworkName)")
-        return frameworkBundle?.infoDictionary?[CFBundleShortVersionString].map { version in
-            return (frameworkName, version)
-        }
+    let frameworkVersions = [String : String](uniqueKeysWithValues: frameworks.compactMap { frameworkName in
+        version(of: frameworkName).map { (frameworkName, $0) }
     })
     
     var exitStatusCode: Int32 = 0
@@ -37,4 +42,13 @@ BushelScript command-line interface version \(toolVersion)
 """)
     
     return exitStatusCode
+}
+
+// For the REPL intro.
+func printShortVersion() {
+    let versionDescription = version(of: frameworkForMainVersion).map {
+        "BushelScript version \($0)"
+    } ??
+        "No BushelScript installation detected!"
+    print("\(versionDescription) (tool version \(toolVersion))")
 }

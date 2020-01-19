@@ -68,6 +68,10 @@
             argument = "/Users/ian/Favourites/Loading\ Bay/Music\ Title\ Search.bushel"
             isEnabled = "YES">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-i"
+            isEnabled = "YES">
+         </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>
          <EnvironmentVariable

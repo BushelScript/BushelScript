@@ -26,6 +26,8 @@ func parse(shortOptions options: Substring) {
             optionAwaitingArgument = awaiting
         } else {
             switch option {
+            case "i":
+                invocation.interactive = true
             case "v":
                 exit(printVersion())
             case "h":

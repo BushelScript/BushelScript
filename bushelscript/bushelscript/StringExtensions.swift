@@ -24,6 +24,13 @@ public extension Substring {
         return copy
     }
     
+    func trimmingWhitespace(removingNewlines: Bool = false) -> Substring {
+        var copy = self
+        copy.removeLeadingWhitespace(removingNewlines: removingNewlines)
+        copy.removeTrailingWhitespace(removingNewlines: removingNewlines)
+        return copy
+    }
+    
     mutating func removeLeadingWhitespace(removingNewlines: Bool = false) {
         removeFirst(while: { $0.isWhitespace && (removingNewlines || !$0.isNewline) })
     }

@@ -5,8 +5,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     public static var sdefCache: [URL : Data] = [:]
     
-    public var entireSource: String
-    public var source: Substring
+    public var entireSource: String = ""
+    public lazy var source: Substring = Substring(entireSource)
     public var expressionStartIndices: [String.Index] = []
     
     public var lexicon: Lexicon = Lexicon()
@@ -14,10 +14,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     public var awaitingExpressionEndKeywords: [Set<TermName>] = []
     public var sequenceEndTags: [TermName] = []
     
-    public init(source: String) {
-        self.entireSource = source
-        self.source = Substring(source)
-        self.expressionStartIndex = source.startIndex
+    public init() {
     }
     
     private lazy var mainDictionary: [TermDescriptor] = [
