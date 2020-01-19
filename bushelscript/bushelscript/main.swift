@@ -15,10 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import Darwin
+
 var invocation = ToolInvocation()
 
-for argument in CommandLine.arguments.dropFirst() {
-    var argument = argument[argument.startIndex...]
+let arguments = CommandLine.arguments.dropFirst()
+guard !arguments.isEmpty else {
+    printUsage()
+    exit(0)
+}
+
+for argument in arguments {
+    var argument = Substring(argument)
     if argument.removePrefix("--") {
         parse(longOption: argument)
     } else if argument.removePrefix("-") {
