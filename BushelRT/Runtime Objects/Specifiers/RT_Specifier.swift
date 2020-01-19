@@ -318,7 +318,11 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_AESpeci
     }
     
     public override var description: String {
-        return "\(descriptionForSelf) of \(parent.description)"
+        if parent is RT_RootSpecifier {
+            return descriptionForSelf
+        } else {
+            return "\(descriptionForSelf) of \(parent.description)"
+        }
     }
     
     private static let typeInfo_ = TypeInfo(.specifier)
