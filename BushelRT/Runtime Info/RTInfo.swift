@@ -51,13 +51,15 @@ public class RTInfo {
                     typesByCode[code] = type
                 }
             case .property(let term):
-                let property = PropertyInfo(term.uid)
+                let tags: [PropertyInfo.Tag] = term.name.map { [.name($0)] } ?? []
+                let property = PropertyInfo(term.uid, Set(tags))
                 propertiesByUID[property.typedUID] = property
                 if let code = term.ae4Code {
                     propertiesByCode[code] = property
                 }
             case .command(let term):
-                let command = CommandInfo(term.uid)
+                let tags: [CommandInfo.Tag] = term.name.map { [.name($0)] } ?? []
+                let command = CommandInfo(term.uid, Set(tags))
                 commandsByUID[command.typedUID] = command
             case .parameter(_):
                 break

@@ -226,15 +226,22 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_AESpeci
             return nil
         }
         
-        guard let type = rt.type(for: saSpecifier.wantType.typeCodeValue) else {
-            return nil
-        }
+        let typeCode = saSpecifier.wantType.typeCodeValue
+        let type = rt.type(for: typeCode) ?? TypeInfo(.ae4(code: typeCode))
         
         let kind: Kind
         // See AppData.unpackAsObjectSpecifier(_:)
         switch saSpecifier.selectorForm.enumCodeValue {
         case OSType(formPropertyID):
-            kind = .property
+            guard
+                let code = (saSpecifier.selectorData as? NSAppleEventDescriptor)?.enumCodeValue,
+                code != 0
+            else {
+                return nil
+            }
+            let property = rt.property(for: code) ?? PropertyInfo(.ae4(code: code))
+            self.init(rt, parent: parent!, type: nil, property: property, data: [], kind: .property)
+            return
         case 0x75737270: // _formUserPropertyID:
             fatalError()
         case OSType(formRelativePosition):
@@ -301,13 +308,13 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_AESpeci
         case .test:
             fatalError("unimplemented")
         case .property:
-            data = []
+            fatalError("unreachable")
         }
-        if data.contains(where: { $0 == nil }) {
+        guard let nonNilData = data as? [RT_Object] else {
             return nil
         }
         
-        self.init(rt, parent: parent!, type: type, data: data.compactMap { $0 }, kind: kind)
+        self.init(rt, parent: parent!, type: type, data: nonNilData, kind: kind)
     }
     
     public override var description: String {
