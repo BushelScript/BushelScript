@@ -15,6 +15,8 @@ struct ToolInvocation {
     
     var language: String?
     
+    private var rt = RTInfo(currentApplicationBundleID: "com.apple.systemevents")
+    
 }
 
 extension ToolInvocation {
@@ -63,9 +65,7 @@ extension ToolInvocation {
         let parser: BushelLanguage.SourceParser = languageModule.parser(for: source)
         do {
             let program = try parser.parse()
-            let rt = RTInfo(termPool: program.terms)
-            rt.currentApplicationBundleID = "com.apple.systemevents" // TODO: Add an application ID here (similar to osascript)
-            print(rt.run(program.ast))
+            print(rt.run(program))
         } catch let error as ParseError {
             print(error: error, in: source, fileName: fileName)
         }

@@ -6,17 +6,18 @@ private let log = OSLog(subsystem: logSubsystem, category: "RT info")
 
 public class RTInfo {
     
-    public let termPool: TermPool
-    public let topScript: RT_Script
+    public let termPool = TermPool()
+    public let topScript = RT_Script()
     
     private let objectPool = NSMapTable<RT_Object, NSNumber>(keyOptions: [.strongMemory, .objectPointerPersonality], valueOptions: .copyIn)
     
     public var currentApplicationBundleID: String?
     
-    public init(termPool: TermPool) {
-        self.termPool = termPool
-        self.topScript = RT_Script()
-        
+    public init(currentApplicationBundleID: String? = nil) {
+        self.currentApplicationBundleID = currentApplicationBundleID
+    }
+    
+    public func inject(terms: TermPool) {
         func typeInfo(for classTerm: Bushel.ClassTerm) -> TypeInfo {
             var tags: Set<TypeInfo.Tag> = []
             if let name = classTerm.name {
@@ -28,7 +29,7 @@ public class RTInfo {
             return TypeInfo(classTerm.uid, tags)
         }
         
-        for term in termPool.byUID.values {
+        for term in terms.byTypedUID.values {
             switch term.enumerated {
             case .enumerator(_):
                 break
@@ -125,10 +126,12 @@ public class RTInfo {
 
 public extension RTInfo {
     
+    func run(_ program: Program) -> RT_Object {
+        inject(terms: program.terms)
+        return run(program.ast)
+    }
+    
     func run(_ expression: Expression) -> RT_Object {
-        Builtin.termPool = termPool
-        Builtin.rt = self
-        
         let module = generateLLVMModule(from: expression, rt: self)
         
         // Let LLVM verify that the module's IR code is well-formed
@@ -152,15 +155,16 @@ public extension RTInfo {
         
         // JIT-compile the module's IR for the current machine
         let jit = try! JIT(machine: TargetMachine())
-        typealias FnPtr = @convention(c) () -> UnsafeMutableRawPointer
         _ = try! jit.addEagerlyCompiledIR(module, { (name) -> JIT.TargetAddress in
             return JIT.TargetAddress()
         })
         
         // Call the main function in the module and return the result
+        typealias MainPtr = @convention(c) () -> UnsafeMutableRawPointer
         let address = try! jit.address(of: "main")
-        let fn = unsafeBitCast(address, to: FnPtr.self)
-        let resultObject = Unmanaged<RT_Object>.fromOpaque(fn()).takeUnretainedValue()
+        let main = unsafeBitCast(address, to: MainPtr.self)
+        Builtin.rt = self
+        let resultObject = Unmanaged<RT_Object>.fromOpaque(main()).takeUnretainedValue()
         #if DEBUG
         print(resultObject)
         #endif

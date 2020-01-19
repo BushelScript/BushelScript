@@ -64,6 +64,10 @@
             argument = "--version"
             isEnabled = "NO">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/ian/Favourites/Loading\ Bay/Music\ Title\ Search.bushel"
+            isEnabled = "YES">
+         </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>
          <EnvironmentVariable

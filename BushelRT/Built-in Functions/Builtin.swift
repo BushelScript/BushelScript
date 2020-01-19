@@ -3,8 +3,10 @@ import SwiftAutomation
 
 enum Builtin {
     
-    static var termPool: TermPool!
-    static var rt = RTInfo(termPool: termPool)
+    static var rt = RTInfo()
+    static var termPool: TermPool {
+        rt.termPool
+    }
     static var stack = ProgramStack(rt)
     
     public typealias RTObjectPointer = UnsafeMutableRawPointer
