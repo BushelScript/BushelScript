@@ -165,9 +165,7 @@ public extension RTInfo {
         let main = unsafeBitCast(address, to: MainPtr.self)
         Builtin.rt = self
         let resultObject = Unmanaged<RT_Object>.fromOpaque(main()).takeUnretainedValue()
-        #if DEBUG
-        print(resultObject)
-        #endif
+        os_log("Execution result: %@", log: log, type: .debug, String(describing: resultObject))
         return resultObject
     }
     

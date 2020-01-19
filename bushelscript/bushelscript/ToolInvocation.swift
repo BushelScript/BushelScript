@@ -4,7 +4,6 @@
 import BushelLanguage
 import BushelRT
 import Bushel // TEMPORARY!!
-import os
 
 private var defaultLanguageID = "bushelscript_en"
 
@@ -75,9 +74,6 @@ extension ToolInvocation {
 
 private func print(error: ParseError, in source: String, fileName: String) {
     let location = error.location
-    #if DEBUG
-    print(description(of: location.range, mappedOnto: source))
-    #endif
 
     let lines = location.lines(in: source).colloquialStringRepresentation
     let columns = location.columns(in: source).colloquialStringRepresentation

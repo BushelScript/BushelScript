@@ -393,9 +393,12 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
         fatalError("unhandled error \(error)")
     }
     
-    #if DEBUG
-    module.dump()
-    #endif
+    if
+        let dump = ProcessInfo.processInfo.environment["BUSHEL_DUMP_LLVM"],
+        ["1", "true", "t", "yes", "y"].contains(dump.lowercased())
+    {
+        module.dump()
+    }
     
     return module
 }

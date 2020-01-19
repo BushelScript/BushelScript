@@ -1,5 +1,8 @@
 import Bushel
 import SDEFinitely
+import os
+
+private let log = OSLog(subsystem: logSubsystem, category: "Source parser")
 
 public struct ParseError: Error {
     
@@ -320,9 +323,6 @@ public extension SourceParser {
                     }
                 } else {
                     let line = String(source.prefix { !$0.isNewline })
-                    #if DEBUG
-                    print(source)
-                    #endif
                     bodies[bodies.index(before: bodies.endIndex)] += "\(line)\n"
                     source.removeFirst(line.count)
                 }
@@ -425,9 +425,7 @@ public extension SourceParser {
                 
                 return try parseInteger() ?? parseDouble()
             } else {
-                #if DEBUG
-                print("undefined term source: \(source)")
-                #endif
+                os_log("Undefined term source: %@", log: log, type: .debug, String(source))
                 throw ParseError(description: "undefined term; perhaps you made a typo?", location: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource))
             }
         }
