@@ -74,6 +74,7 @@ public extension SourceParser {
         guard !source.isEmpty else {
             return Program(Expression.empty(at: source.startIndex), source: entireSource, terms: TermPool())
         }
+        let source = source.last!.isNewline ? source : source + "\n"
         
         self.entireSource = source
         self.source = Substring(source)
@@ -316,16 +317,17 @@ public extension SourceParser {
             var bodies = [""]
             
             while !source.isEmpty {
-                source.removeFirst() // leading newline
+                source.removeFirst() // Eat leading newline
+                let rollbackSource = source // Preserve leading whitespace
                 if let newHashbang = eatHashbang() {
                     hashbangs.append(newHashbang)
+                    bodies.append("")
                     if newHashbang.invocation == "bushelscript" {
                         endHashbangLocation = newHashbang.location
                         break
-                    } else {
-                        bodies.append("")
                     }
                 } else {
+                    source = rollbackSource
                     let line = String(source.prefix { !$0.isNewline })
                     bodies[bodies.index(before: bodies.endIndex)] += "\(line)\n"
                     source.removeFirst(line.count)

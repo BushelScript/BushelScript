@@ -241,7 +241,8 @@ class DocumentViewController: NSViewController {
                 break
             case .success(let program):
                 self.status = .prettyPrinting
-                service.prettyPrintProgram(program) { pretty in
+                // TOOD: When pretty printing is fixed, change this back to: service.prettyPrintProgram(program)
+                service.reformatProgram(program, usingLanguageModule: language) { pretty in
                     self.status = nil
                     guard let pretty = pretty else {
                         return

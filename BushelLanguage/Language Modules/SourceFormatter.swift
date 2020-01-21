@@ -13,31 +13,49 @@ public protocol SourceFormatter {
 public extension SourceFormatter {
     
     func format(_ expression: Expression) -> String {
-        return format(expression, level: 0, indentFirstLine: true)
+        return format(expression, level: -1) + "\n"
     }
     
-    func format(_ expression: Expression, level: Int, indentFirstLine: Bool = false) -> String {
-        return formatAndIndent(expression: expression, level: level, indentFirstLine: indentFirstLine)
+    func format(_ expression: Expression, level: Int) -> String {
+        return reformat(expression: expression, level: level)
     }
     
     func format(_ sequence: Sequence, level: Int) -> String {
-        return sequence.expressions.map { format($0, level: level, indentFirstLine: true) }.filter { !$0.isEmpty }.joined(separator: "\n")
+        return sequence.expressions
+            .compactMap {
+                guard !$0.kind.omit else {
+                    return nil
+                }
+                let formatted = format($0, level: level + 1)
+                return indentation(for: $0.kind.deindent ? level : level + 1) + formatted
+            }
+            .joined(separator: "\n")
     }
     
     func indentation(for level: Int) -> String {
-        return String(repeating: "    ", count: level)
+        return String(repeating: "    ", count: level < 0 ? 0 : level)
     }
     
 }
 
-private extension SourceFormatter {
+private extension Expression.Kind {
     
-    func formatAndIndent(expression: Expression, level: Int, indentFirstLine: Bool = false) -> String {
-        if case .end = expression.kind {
-            return ""
+    var omit: Bool {
+        switch self {
+        case .end:
+            return true
+        default:
+            return false
         }
-        let formatted = reformat(expression: expression, level: level)
-        return indentFirstLine ? indentation(for: level) + formatted : formatted
+    }
+    
+    var deindent: Bool {
+        switch self {
+        case .weave, .endWeave:
+            return true
+        default:
+            return false
+        }
     }
     
 }

@@ -167,6 +167,25 @@ public extension String {
         return substring
     }
     
+    func trimmingWhitespace(removingNewlines: Bool = false) -> String {
+        var copy = self
+        copy.removeLeadingWhitespace(removingNewlines: removingNewlines)
+        copy.removeTrailingWhitespace(removingNewlines: removingNewlines)
+        return copy
+    }
+    
+    func removingLeadingWhitespace(removingNewlines: Bool = false) -> String {
+        var copy = self
+        copy.removeLeadingWhitespace(removingNewlines: removingNewlines)
+        return copy
+    }
+    
+    func removingTrailingWhitespace(removingNewlines: Bool = false) -> String {
+        var copy = self
+        copy.removeTrailingWhitespace(removingNewlines: removingNewlines)
+        return copy
+    }
+    
     mutating func removeLeadingWhitespace(removingNewlines: Bool = false) {
         removeFirst(while: { $0.isWhitespace && (removingNewlines || !$0.isNewline) })
     }
@@ -225,6 +244,25 @@ public extension Substring {
     func dropLast(while predicate: (Character) throws -> Bool) rethrows -> Substring {
         var copy = self
         try copy.removeLast(while: predicate)
+        return copy
+    }
+    
+    func trimmingWhitespace(removingNewlines: Bool = false) -> Substring {
+        var copy = self
+        copy.removeLeadingWhitespace(removingNewlines: removingNewlines)
+        copy.removeTrailingWhitespace(removingNewlines: removingNewlines)
+        return copy
+    }
+    
+    func removingLeadingWhitespace(removingNewlines: Bool = false) -> Substring {
+        var copy = self
+        copy.removeLeadingWhitespace(removingNewlines: removingNewlines)
+        return copy
+    }
+    
+    func removingTrailingWhitespace(removingNewlines: Bool = false) -> Substring {
+        var copy = self
+        copy.removeTrailingWhitespace(removingNewlines: removingNewlines)
         return copy
     }
     

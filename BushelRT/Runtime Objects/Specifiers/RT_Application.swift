@@ -38,7 +38,7 @@ public class RT_Application: RT_Object, RT_SASpecifierConvertible {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
-        return try performByAppleEvent(command: command, arguments: arguments, targetBundleID: bundleIdentifier)
+         return try performByAppleEvent(command: command, arguments: arguments, targetBundleID: bundleIdentifier)
     }
     
 }

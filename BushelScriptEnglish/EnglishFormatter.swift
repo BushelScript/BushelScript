@@ -11,26 +11,50 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
         case .topLevel:
             fatalError("Expression.Kind.topLevel should not be formatting itself!")
         case .empty:
-            return "\n"
+            return ""
         case .end:
             return ""
-        case .scoped(let expression):
-            return format(expression, level: level)
+        case .scoped(let sequence):
+            return format(sequence, level: level)
         case .parentheses(let expression):
-            return "(\(format(expression, level: level + 1)))"
+            return "(\(format(expression, level: level)))"
         case let .if_(condition, then, else_):
-            var formatted = "if \(format(condition, level: level + 1)) then\n\(format(then, level: level + 1, indentFirstLine: true))"
-            if let else_ = else_ {
-                formatted += "\n\(indentation(for: level))else\n\(format(else_, level: level + 1, indentFirstLine: true))"
+            var needsEnd: Bool = true
+            var formatted = "if \(format(condition, level: level))"
+            if case .scoped = then.kind {
+                formatted += "\n"
+            } else {
+                needsEnd = false
+                formatted += " then "
             }
-            formatted += "\n\(indentation(for: level))end if"
+            formatted += format(then, level: level)
+            
+            if let `else` = else_ {
+                formatted += "\n\(indentation(for: level))else"
+                if case .scoped = `else`.kind {
+                    needsEnd = true
+                    formatted += "\n"
+                } else {
+                    needsEnd = false
+                    formatted += " "
+                }
+                formatted += format(`else`, level: level)
+            }
+            
+            if needsEnd {
+                formatted += "\n\(indentation(for: level))end if"
+            }
             return formatted
         case let .repeatWhile(condition, repeating):
-            return "repeat while \(condition)\n\(format(repeating, level: level + 1, indentFirstLine: true))"
+            return "repeat while \(format(condition, level: level))\n\(format(repeating, level: level))\n\(indentation(for: level))end repeat"
         case let .repeatTimes(times, repeating):
-            return "repeat \(times) times\n\(format(repeating, level: level + 1, indentFirstLine: true))"
+            return "repeat \(format(times, level: level)) times\n\(format(repeating, level: level))\n\(indentation(for: level))end repeat"
         case .tell(let target, let to):
-            return "tell \(format(target, level: level))\n\(format(to, level: level + 1, indentFirstLine: true))\n\(indentation(for: level))end tell"
+            if case .scoped = to.kind {
+                return "tell \(format(target, level: level))\n\(format(to, level: level))\n\(indentation(for: level))end tell"
+            } else {
+                return "tell \(format(target, level: level)) to \(format(to, level: level))"
+            }
         case .let_(let term, let initialValue):
             var formatted = "let \(term)"
             if let initialValue = initialValue {
@@ -187,10 +211,34 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             }
             
             return formatted
-        case .function:
-            fatalError("unimplemented")
+        case .function(let name, let parameters, let arguments, let body):
+            var formatted = "on \(name)"
+            
+            if !parameters.isEmpty {
+                formatted += ":"
+                
+                func appendParameter(at index: Int) {
+                    let parameter = parameters[index]
+                    let argument = arguments[index]
+                    formatted += " \(parameter)"
+                    if argument.name != parameter.name {
+                        formatted += " \(argument)"
+                    }
+                }
+                
+                appendParameter(at: parameters.startIndex)
+                for index in parameters.indices.dropFirst() {
+                    formatted += ","
+                    appendParameter(at: index)
+                }
+            }
+            
+            formatted += "\n\(format(body, level: level))"
+            
+            formatted += "\n\(indentation(for: level))end \(name)"
+            return formatted
         case .weave(let hashbang, let body):
-            return "#!\(hashbang.invocation)\n\(body)"
+            return "#!\(hashbang.invocation)\n\(body.removingTrailingWhitespace(removingNewlines: true))"
         case .endWeave:
             return "#!bushelscript"
         }
@@ -201,11 +249,21 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
 extension ResourceTerm {
     
     public var formattedForUseStatement: String {
-        switch resource {
-        case .applicationByName(let term):
-            return "application \(term)"
-        case .applicationByID(let term):
-            return "application id \(term)"
+        resource.formattedForUseStatement
+    }
+    
+}
+
+extension Resource {
+    
+    public var formattedForUseStatement: String {
+        switch self {
+        case .applicationByName(let bundle):
+            return "application \(bundle.object(forInfoDictionaryKey: kCFBundleNameKey as String) ?? bundle.bundleURL.lastPathComponent)"
+        case .applicationByID(let bundle):
+            return
+                bundle.bundleIdentifier.map { "application id \($0))" } ??
+                Resource.applicationByName(bundle: bundle).formattedForUseStatement
         }
     }
     
