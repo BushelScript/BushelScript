@@ -2,10 +2,10 @@ import Bushel
 
 public struct ProgramStack {
     
-    private var frames: [StackFrame]
+    var frames: [StackFrame]
     
     public init(_ rt: RTInfo) {
-        self.init(frames: [StackFrame(rt, variables: [:])])
+        self.init(frames: [StackFrame(rt, variables: [:], target: RT_Global(rt))])
     }
     
     public init(frames: [StackFrame]) {
@@ -54,9 +54,10 @@ public struct StackFrame {
         self.variables = other.variables
         self.target = target ?? other.target
     }
-    init(_ rt: RTInfo, variables: [Bushel.TermName : RT_Object]) {
+    init(_ rt: RTInfo, variables: [Bushel.TermName : RT_Object], target: RT_Object?) {
         self.rt = rt
         self.variables = variables
+        self.target = target
     }
     
     /// Adds this stack frame's target object, if any, as the topmost parent

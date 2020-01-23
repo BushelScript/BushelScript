@@ -63,6 +63,10 @@ enum Builtin {
         stack.pop()
     }
     
+    static func getCurrentTarget() -> RTObjectPointer {
+        toOpaque(retain(stack.frames.first { $0.target != nil }!.target!))
+    }
+    
     static func newVariable(_ termPointer: TermPointer, _ initialValuePointer: RTObjectPointer) {
         let term = termFromOpaque(termPointer)
         let initialValue = fromOpaque(initialValuePointer)
@@ -358,7 +362,7 @@ enum Builtin {
         do {
             return toOpaque(retain(try specifier.evaluate()))
         } catch {
-            throwError(message: "error evaluating specifier: \(error.localizedDescription)")
+            throwError(message: "error evaluating specifier ‘\(specifier)’: \(error.localizedDescription)")
             return toOpaque(RT_Null.null)
         }
     }
@@ -621,7 +625,11 @@ extension RT_HierarchicalSpecifier {
                 }()
                 return try specifier.evaluateLocally(on: evaluatedParent)
             }
-            return try evaluateLocalSpecifier(self, from: rootAncestor())
+            var root = rootAncestor()
+            if root is RT_RootSpecifier {
+                root = RT_Global(rt)
+            }
+            return try evaluateLocalSpecifier(self, from: root)
         }
     }
     
