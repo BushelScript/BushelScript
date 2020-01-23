@@ -554,7 +554,10 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     private func handleLet() throws -> Expression.Kind? {
-        guard let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: ["be"]) else {
+        guard
+            let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: ["be"]),
+            !termName.words.isEmpty
+        else {
             throw ParseError(description: "expected variable name following ‘let’", location: SourceLocation(source.range, source: entireSource))
         }
         let term = Located(VariableTerm(.id(termName.normalized), name: termName), at: termLocation)
@@ -763,7 +766,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     public func parseSpecifierAfterQuantifier(kind: Specifier.Kind, startIndex: Substring.Index) throws -> Expression.Kind? {
-        guard let type = try parseClassTerm() else {
+        guard let type = try parseTypeTerm() else {
             throw ParseError(description: "expected type name", location: currentLocation)
         }
         let specifier = Specifier(class: Located(type.term, at: type.location), kind: kind)
@@ -771,30 +774,25 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     public func tryParseSpecifierPhrase(chainingTo chainTo: Expression) throws -> Expression.Kind? {
-        if
-            case .specifier(let childSpecifier) = chainTo.kind,
+        guard
+            let childSpecifier = chainTo.asSpecifier(),
             tryEating(prefix: "of") || tryEating(prefix: "in")
-        {
-            // Add new parent to top of specifier chain
-            // e.g., character 1 of "hello"
-            // First expression (chainTo) must be a specifier since it is the child
-            
-            guard let parentExpression = try parsePrimary() else {
-                // e.g., character 1 of
-                throw ParseError(description: "expected expression after ‘of’ or ‘in’", location: currentLocation)
-            }
-            
-            let prevTopExpression = childSpecifier.topParent() ?? chainTo
-            guard case .specifier(let prevTopSpecifier) = prevTopExpression.kind else {
-                // e.g., "hello" of application "Safari"
-                throw ParseError(description: "a non-specifier expression may only come last in an ‘of’-specifier-phrase", location: prevTopExpression.location)
-            }
-            
-            prevTopSpecifier.parent = parentExpression
-            return .specifier(childSpecifier)
-        } else {
+        else {
             return try tryParseSuffixSpecifier(chainingTo: chainTo)
         }
+        
+        // Add new parent to top of specifier chain
+        // e.g., character 1 of "hello"
+        // First expression (chainTo) must be a specifier since it is the child
+        
+        guard let parentExpression = try parsePrimary() else {
+            // e.g., character 1 of
+            throw ParseError(description: "expected expression after ‘of’ or ‘in’", location: currentLocation)
+        }
+
+        childSpecifier.setRootAncestor(parentExpression)
+        
+        return .specifier(childSpecifier)
     }
     
     public func tryParseSuffixSpecifier(chainingTo chainTo: Expression) throws -> Expression.Kind? {
@@ -814,7 +812,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             throw ParseError(description: "expected specifier after possessive, but found end of script", location: currentLocation, fixes: [DeletingFix(at: possessiveLocation)])
         }
         
-        guard case .specifier(let newChildSpecifier) = newChildExpression.kind else {
+        guard let newChildSpecifier = newChildExpression.asSpecifier() else {
             // e.g., "hello"'s 123
             throw ParseError(description: "a non-specifier expression may only come first in a possessive-specifier-phrase", location: newChildExpression.location)
         }
@@ -828,7 +826,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             return nil
         }
         
-        guard let toType = try parseClassTerm() else {
+        guard let toType = try parseTypeTerm() else {
             throw ParseError(description: "expected type name", location: currentLocation)
         }
         return .coercion(of: expression, to: toType)
