@@ -422,6 +422,22 @@ private func returningResult(_ builder: IRBuilder, from action: () throws -> IRV
     builder.buildRet(resultValue)
 }
 
+private func catchingEarlyReturn(_ builder: IRBuilder, branchingTo nextBlock: BasicBlock, from action: () throws -> IRValue) rethrows -> IRValue {
+    try catchingEarlyReturn(builder, branching: { builder.buildBr(nextBlock) }, from: action)
+}
+
+private func catchingEarlyReturn(_ builder: IRBuilder, branching: () throws -> Void, from action: () throws -> IRValue) rethrows -> IRValue {
+    let resultValue: IRValue
+    do {
+        resultValue = try action()
+    } catch let earlyReturn as EarlyReturn {
+        builder.buildRet(earlyReturn.value)
+        return PointerType.toVoid.undef()
+    }
+    try branching()
+    return resultValue
+}
+
 public struct CodeGenOptions {
     
     /// Whether the stack should be runtime-introspectable.
@@ -491,9 +507,9 @@ extension Expression {
             builder.buildCondBr(condition: conditionTest, then: thenBlock, else: elseBlock)
             
             builder.positionAtEnd(of: thenBlock)
-            let thenValue = try then.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
-            if !thenValue.isAReturnInst {
-                builder.buildBr(mergeBlock)
+            
+            let thenValue = try catchingEarlyReturn(builder, branchingTo: mergeBlock) {
+                try then.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
             }
             thenBlock = builder.insertBlock!
             
@@ -501,20 +517,19 @@ extension Expression {
             builder.positionAtEnd(of: elseBlock)
             let elseValue: IRValue
             if let else_ = else_ {
-                elseValue = try else_.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+                elseValue = try catchingEarlyReturn(builder, branchingTo: mergeBlock) {
+                    try else_.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+                }
                 elseBlock = builder.insertBlock!
             } else {
                 builder.buildBr(mergeBlock)
                 elseValue = lastResult
             }
-            if !elseValue.isAReturnInst {
-                builder.buildBr(mergeBlock)
-            }
             
             function.append(mergeBlock)
             builder.positionAtEnd(of: mergeBlock)
             
-            switch (thenValue.isAReturnInst, elseValue.isAReturnInst) {
+            switch (thenValue.isUndef, elseValue.isUndef) {
             case (false, false):
                 let phi = builder.buildPhi(PointerType.toVoid, name: "if-then-else")
                 phi.addIncoming([(thenValue, thenBlock), (elseValue, elseBlock)])
@@ -541,9 +556,9 @@ extension Expression {
             
             builder.positionAtEnd(of: repeatBlock)
             
-            let repeatResult = try repeating.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
-            
-            try evalConditionAndCondBr()
+            let repeatResult = try catchingEarlyReturn(builder, branching: evalConditionAndCondBr) {
+                try repeating.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+            }
             
             function.append(afterRepeatBlock)
             builder.positionAtEnd(of: afterRepeatBlock)
@@ -583,13 +598,15 @@ extension Expression {
             
             builder.positionAtEnd(of: repeatBlock)
             
-            let newRepeatResult = try repeating.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
-            repeatResult.addIncoming([(newRepeatResult, repeatBlock)])
-            
-            let newRepeatCount = builder.buildBinaryOperation(.add, repeatCount, IntType.int64.constant(1), name: "next-repeat-index")
-            repeatCount.addIncoming([(newRepeatCount, repeatBlock)])
-            
-            builder.buildBr(repeatHeaderBlock)
+            _ = try catchingEarlyReturn(builder, branchingTo: repeatHeaderBlock) {
+                let newRepeatResult = try repeating.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+                repeatResult.addIncoming([(newRepeatResult, builder.insertBlock!)])
+                
+                let newRepeatCount = builder.buildBinaryOperation(.add, repeatCount, IntType.int64.constant(1), name: "next-repeat-index")
+                repeatCount.addIncoming([(newRepeatCount, builder.insertBlock!)])
+                
+                return newRepeatResult
+            }
             
             function.append(afterRepeatBlock)
             builder.positionAtEnd(of: afterRepeatBlock)
