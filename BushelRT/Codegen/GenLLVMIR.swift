@@ -387,8 +387,9 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     builder.positionAtEnd(of: entry)
     var stack = StaticStack()
     do {
-        let resultIRValue = try expression.generateLLVMIR(builder, rt, &stack, options: CodeGenOptions(stackIntrospectability: false), lastResult: builder.rtNull)
-        builder.buildRet(resultIRValue)
+        try returningResult(builder) {
+            try expression.generateLLVMIR(builder, rt, &stack, options: CodeGenOptions(stackIntrospectability: false), lastResult: builder.rtNull)
+        }
     } catch {
         fatalError("unhandled error \(error)")
     }
@@ -401,6 +402,22 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     }
     
     return module
+}
+
+private struct EarlyReturn: Error {
+    
+    var value: IRValue
+    
+}
+
+private func returningResult(_ builder: IRBuilder, from action: () throws -> IRValue) rethrows {
+    let resultValue: IRValue
+    do {
+        resultValue = try action()
+    } catch let earlyReturn as EarlyReturn {
+        resultValue = earlyReturn.value
+    }
+    builder.buildRet(resultValue)
 }
 
 public struct CodeGenOptions {
@@ -597,7 +614,7 @@ extension Expression {
         case .return_(let returnValue): // MARK: .return_
             let returnIRValue = (try returnValue?.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult) ?? builder.rtNull)
             
-            return builder.buildRet(returnIRValue)
+            throw EarlyReturn(value: returnIRValue)
         case .integer(let value): // MARK: .integer
             return IntType.int64.constant(value).asRTInteger(builder: builder)
         case .double(let value): // MARK: .double
@@ -747,8 +764,9 @@ extension Expression {
             
             stack.currentFrame.add(function: function, for: name.name!)
             
-            let resultValue = try body.generateLLVMIR(builder, rt, &stack, options: CodeGenOptions(stackIntrospectability: false), lastResult: builder.rtNull)
-            builder.buildRet(resultValue)
+            try returningResult(builder) {
+                try body.generateLLVMIR(builder, rt, &stack, options: options, lastResult: builder.rtNull)
+            }
             
             builder.positionAtEnd(of: prevBlock)
             
