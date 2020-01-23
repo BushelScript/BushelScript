@@ -262,6 +262,19 @@ enum Builtin {
         return toOpaque(retain(object.coerce(to: type) ?? RT_Null.null))
     }
     
+    static func getResource(_ termPointer: TermPointer) -> RTObjectPointer {
+        return toOpaque(retain({
+            guard let term = termFromOpaque(termPointer) as? ResourceTerm else {
+                return RT_Null.null
+            }
+            switch term.resource {
+            case .applicationByName(let bundle),
+                 .applicationByID(let bundle):
+                return RT_Application(rt, bundle: bundle)
+            }
+        }() as RT_Object))
+    }
+    
     static func newSpecifier0(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
         let uidString = (fromOpaque(uidPointer) as! RT_String).value
@@ -269,7 +282,7 @@ enum Builtin {
         let newSpecifier: RT_Specifier
         let kind = RT_Specifier.Kind(rawValue: rawKind)!
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: uid), data: [], kind: .property)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: propertyInfo(for: uid), data: [], kind: .property)
         } else {
             if let type = rt.type(forUID: uid) {
                 newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [], kind: kind)
@@ -327,125 +340,25 @@ enum Builtin {
         return toOpaque(retain(RT_TestSpecifier(rt, operation: operation, lhs: lhs, rhs: rhs)))
     }
     
-    private static func propertyInfo(for code: OSType) -> PropertyInfo {
-        rt.property(for: code) ?? PropertyInfo(.ae4(code: code))
+    private static func propertyInfo(for typedUID: TypedTermUID) -> PropertyInfo {
+        rt.property(forUID: typedUID) ?? PropertyInfo(typedUID.uid)
+    }
+    
+    static func qualifySpecifier(_ objectPointer: RTObjectPointer) -> RTObjectPointer {
+        guard let specifier = fromOpaque(objectPointer) as? RT_Specifier else {
+            return objectPointer
+        }
+        return toOpaque(retain(stack.qualify(specifier: specifier)))
     }
     
     static func evaluateSpecifier(_ objectPointer: RTObjectPointer) -> RTObjectPointer {
         guard let specifier = fromOpaque(objectPointer) as? RT_Specifier else {
             return objectPointer
         }
-        
-        let combinedSpecifier = stack.qualify(specifier: specifier)
-        
-        if case (let targetApplication?, let isSelf) = combinedSpecifier.rootApplication() {
-            if isSelf {
-                // combinedSpecifier is an application specifier
-                return evaluateApplicationSpecifier(targetApplication: targetApplication)
-            } else {
-                // combinedSpecifier descends from an application specifier
-                return evaluateSpecifierByAppleEvent(combinedSpecifier, targetApplication: targetApplication)
-            }
-        } else {
-            return evaluateLocalSpecifier(combinedSpecifier)
-        }
-    }
-    
-    private static func evaluateLocalSpecifier(_ specifier: RT_Specifier) -> RTObjectPointer {
-        var root = specifier.rootAncestor()
-        if root is RT_RootSpecifier {
-            let global = RT_Global(rt)
-            specifier.setRootAncestor(global)
-            root = global
-        }
         do {
-            return toOpaque(retain(try evaluateLocalSpecifier(specifier, root: root)))
+            return toOpaque(retain(try specifier.evaluate()))
         } catch {
-            throwError(message: "error evaluating local specifier: \(error.localizedDescription)")
-            return toOpaque(RT_Null.null)
-        }
-    }
-    
-    private static func evaluateLocalSpecifier(_ specifier: RT_Specifier, root: RT_Object) throws -> RT_Object {
-        var parent = root
-        
-        // Start from the top and work down
-        if parent !== specifier.parent {
-            parent = try evaluateLocalSpecifier(specifier.parent as! RT_Specifier, root: parent)
-        }
-        
-        let kind = specifier.kind
-        
-        if case .property = kind {
-            return try parent.property(specifier.property!)
-        }
-        
-        let data = specifier.data
-        let type = specifier.type!
-        
-        switch kind {
-        case .index:
-            guard data[0] is RT_Numeric else {
-                throwError(message: "wrong type for by-index specifier")
-                return RT_Null.null
-            }
-            fallthrough
-        case .simple where data[0] is RT_Numeric:
-            return try parent.element(type, at: Int64((data[0] as! RT_Numeric).numericValue.rounded()))
-        case .name:
-            guard data[0] is RT_String else {
-                throwError(message: "wrong type for by-name specifier")
-                return RT_Null.null
-            }
-            fallthrough
-        case .simple where data[0] is RT_String:
-            return try parent.element(type, named: (data[0] as! RT_String).value)
-        case .simple:
-            throwError(message: "wrong type for simple specifier")
-            return RT_Null.null
-        case .id:
-            return try parent.element(type, id: data[0])
-        case .all:
-            return try parent.elements(type)
-        case .first:
-            return try parent.element(type, at: .first)
-        case .middle:
-            return try parent.element(type, at: .middle)
-        case .last:
-            return try parent.element(type, at: .last)
-        case .random:
-            return try parent.element(type, at: .random)
-        case .before:
-            return try parent.element(type, before: data[0])
-        case .after:
-            return try parent.element(type, after: data[0])
-        case .range:
-            return try parent.elements(type, from: data[0], thru: data[1])
-        case .test:
-            guard let predicate = data[0] as? RT_Specifier else {
-                throwError(message: "wrong type for test specifier")
-                return RT_Null.null
-            }
-            return try parent.elements(type, filtered: predicate)
-        case .property:
-            fatalError("unreachable")
-        }
-    }
-    
-    private static func evaluateApplicationSpecifier(targetApplication: RT_Application) -> RTObjectPointer {
-        let targetBundleID = targetApplication.bundleIdentifier
-        guard let bundle = Bundle(applicationBundleIdentifier: targetBundleID) else {
-            throwError(message: "application with identifier \(targetBundleID) not found!")
-            return toOpaque(RT_Null.null)
-        }
-        return toOpaque(retain(RT_Application(rt, bundle: bundle)))
-    }
-    
-    private static func evaluateSpecifierByAppleEvent(_ specifier: RT_Specifier, targetApplication: RT_Application) -> RTObjectPointer {
-        do {
-            return toOpaque(retain(try specifier.perform(command: CommandInfo(.get), arguments: [ParameterInfo(.direct): specifier]) ?? RT_Null.null))
-        } catch {
-            throwError(message: "error evaluating remote specifier: \(error.localizedDescription)")
+            throwError(message: "error evaluating specifier: \(error.localizedDescription)")
             return toOpaque(RT_Null.null)
         }
     }
@@ -463,14 +376,14 @@ enum Builtin {
     }
     
     private static func call(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RTObjectPointer {
-        var arguments = qualify(arguments: arguments)
-        let qualifiedTarget = stack.qualifiedTarget
+        var arguments = arguments
+        let target = stack.target
         
         if
-            let qualifiedTarget = qualifiedTarget,
+            let target = target,
             arguments[ParameterInfo(.direct)] == nil
         {
-            arguments[ParameterInfo(.direct)] = qualifiedTarget
+            arguments[ParameterInfo(.direct)] = target
         }
         let directParameter = arguments[ParameterInfo(.direct)]
         
@@ -491,23 +404,14 @@ enum Builtin {
                 try directParameter?.perform(command: command, arguments: arguments)
             } ??
             catchingErrors {
-                directParameter == qualifiedTarget ?
+                directParameter == target ?
                     nil :
-                    try qualifiedTarget?.perform(command: command, arguments: arguments)
+                    try target?.perform(command: command, arguments: arguments)
             } ??
             catchingErrors {
                 try RT_Global(rt).perform(command: command, arguments: arguments) ?? RT_Null.null
             }!
         ))
-    }
-    
-    private static func qualify(arguments: [ParameterInfo : RT_Object]) -> [ParameterInfo : RT_Object] {
-        return arguments.mapValues { (argument: RT_Object) -> RT_Object in
-            if let specifier = argument as? RT_Specifier {
-                return stack.qualify(specifier: specifier)
-            }
-            return argument
-        }
     }
     
     static func runWeave(_ hashbangPointer: RTObjectPointer, _ bodyPointer: RTObjectPointer, _ inputPointer: RTObjectPointer) -> RTObjectPointer {
@@ -689,5 +593,36 @@ extension SwiftAutomation.Symbol {
 private class RT_Private_ArgumentRecord: RT_Object {
     
     public var contents: [TypedTermUID : RT_Object] = [:]
+    
+}
+
+extension RT_HierarchicalSpecifier {
+    
+    public func evaluate() throws -> RT_Object {
+        switch rootAncestor() {
+        case let root as RT_SpecifierRemoteRoot:
+            // Let remote root handle evaluation.
+            return try root.evaluate(specifier: self)
+        default:
+            // Eval as a local specifier.
+            func evaluateLocalSpecifier(_ specifier: RT_HierarchicalSpecifier, from root: RT_Object) throws -> RT_Object {
+                // Start from the top and work down
+                let evaluatedParent: RT_Object = try {
+                    if
+                        let parent = specifier.parent as? RT_HierarchicalSpecifier,
+                        parent !== root
+                    {
+                        // Eval the parent specifier before working with this one.
+                        return try evaluateLocalSpecifier(parent, from: root)
+                    } else {
+                        // We are the specifier directly under the root.
+                        return root
+                    }
+                }()
+                return try specifier.evaluateLocally(on: evaluatedParent)
+            }
+            return try evaluateLocalSpecifier(self, from: rootAncestor())
+        }
+    }
     
 }

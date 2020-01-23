@@ -465,14 +465,15 @@ public extension SourceParser {
         return (TermName(words), SourceLocation(startIndex..<endIndex, source: entireSource))
     }
     
-    func parseClassTerm() throws -> Located<Bushel.ClassTerm>? {
+    func parseTypeTerm() throws -> Located<Bushel.ClassTerm>? {
+        let startIndex = currentIndex
         guard
-            let typeExpression = try parsePrimary(),
-            case .class_(let type) = typeExpression.kind
+            let term = try eatTerm(),
+            case .class_(let typeTerm) = term.enumerated
         else {
-            return nil
+            throw ParseError(description: "expected type name", location: currentLocation)
         }
-        return Located(type, at: typeExpression.location)
+        return Located(typeTerm, at: SourceLocation(startIndex..<currentIndex, source: entireSource))
     }
     
     func parseTermNameLazily() throws -> (TermName, SourceLocation)? {

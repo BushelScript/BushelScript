@@ -1,11 +1,19 @@
 import Bushel
 import SwiftAutomation
 
-public protocol RT_HierarchicalSpecifier: AnyObject {
+public protocol RT_HierarchicalSpecifier: RT_SASpecifierConvertible {
     
     var parent: RT_Object { get set }
     
+    func evaluateLocally(on evaluatedParent: RT_Object) throws -> RT_Object
+    
     func clone() -> Self
+    
+}
+
+public protocol RT_SpecifierRemoteRoot: RT_Object {
+    
+    func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object
     
 }
 
@@ -30,12 +38,11 @@ extension RT_HierarchicalSpecifier {
             return parent
         }
     }
-
     
 }
 
 /// An unevaluated object specifier.
-public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_AESpecifierProtocol {
+public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpecifierConvertible {
     
     public enum Kind: UInt32 {
         case simple, index, name, id
@@ -71,51 +78,60 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_AESpeci
         return RT_Specifier(rt, parent: parent, type: type, property: property, data: data, kind: kind)
     }
     
-    public func rootApplication() -> (application: RT_Application?, isSelf: Bool) {
-        if let bundle = rootApplicationBundle() {
-            return (Builtin.retain(RT_Application(rt, bundle: bundle)), isSelf: true)
-        } else {
-            return (application: (parent as? RT_AESpecifierProtocol)?.rootApplication().application, isSelf: false)
-        }
-    }
-    
-    private func rootApplicationBundle() -> Bundle? {
-        guard type?.isA(RT_Application.typeInfo) ?? false else {
-            return nil
+    public func evaluateLocally(on evaluatedParent: RT_Object) throws -> RT_Object {
+        if case .property = kind {
+            return try evaluatedParent.property(property!)
         }
         
-        let targetApp: TargetApplication
+        let type = self.type!
+        
         switch kind {
-        case .index,
-             .simple where data[0] is RT_Numeric:
-            return nil
+        case .index:
+            guard data[0] is RT_Numeric else {
+                Builtin.throwError(message: "wrong type for by-index specifier")
+                return RT_Null.null
+            }
+            fallthrough
+        case .simple where data[0] is RT_Numeric:
+            return try evaluatedParent.element(type, at: Int64((data[0] as! RT_Numeric).numericValue.rounded()))
         case .name:
             guard data[0] is RT_String else {
-                return nil
+                Builtin.throwError(message: "wrong type for by-name specifier")
+                return RT_Null.null
             }
             fallthrough
         case .simple where data[0] is RT_String:
-            targetApp = TargetApplication.name((data[0] as! RT_String).value)
+            return try evaluatedParent.element(type, named: (data[0] as! RT_String).value)
+        case .simple:
+            Builtin.throwError(message: "wrong type for simple specifier")
+            return RT_Null.null
         case .id:
-            targetApp = TargetApplication.bundleIdentifier((data[0] as! RT_String).value, false)
-        case .simple,
-             .all, .first, .middle, .last, .random,
-             .before, .after,
-             .range,
-             .test,
-             .property:
-            return nil
+            return try evaluatedParent.element(type, id: data[0])
+        case .all:
+            return try evaluatedParent.elements(type)
+        case .first:
+            return try evaluatedParent.element(type, at: .first)
+        case .middle:
+            return try evaluatedParent.element(type, at: .middle)
+        case .last:
+            return try evaluatedParent.element(type, at: .last)
+        case .random:
+            return try evaluatedParent.element(type, at: .random)
+        case .before:
+            return try evaluatedParent.element(type, before: data[0])
+        case .after:
+            return try evaluatedParent.element(type, after: data[0])
+        case .range:
+            return try evaluatedParent.elements(type, from: data[0], thru: data[1])
+        case .test:
+            guard let predicate = data[0] as? RT_Specifier else {
+                Builtin.throwError(message: "wrong type for test specifier")
+                return RT_Null.null
+            }
+            return try evaluatedParent.elements(type, filtered: predicate)
+        case .property:
+            fatalError("unreachable")
         }
-        
-        guard
-            let bundleID = targetApp.bundleIdentifier,
-            let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID),
-            let bundle = Bundle(url: url)
-        else {
-            return nil
-        }
-        
-        return bundle
     }
     
     public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
@@ -123,7 +139,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_AESpeci
             return saRootSpecifier()
         }
         
-        guard let parent = self.parent as? RT_AESpecifierProtocol else {
+        guard let parent = self.parent as? RT_SASpecifierConvertible else {
             return nil
         }
         guard let parentSpecifier = parent.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifierProtocol else {
@@ -362,14 +378,6 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_AESpeci
             return "\(termString) where \(data[0])"
         case .property:
             return "\(termString)"
-        }
-    }
-    
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
-        if case (let targetApplication?, _) = rootApplication() {
-            return try performByAppleEvent(command: command, arguments: arguments, targetBundleID: targetApplication.bundleIdentifier)
-        } else {
-            return nil
         }
     }
     

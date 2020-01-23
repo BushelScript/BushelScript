@@ -113,15 +113,24 @@ extension Expression {
 
 extension Specifier {
     
-    public func topParent() -> Expression? {
-        guard
-            let parent = parent,
-            case .specifier(let parentSpecifier) = parent.kind,
-            parentSpecifier.parent != nil
-        else {
-            return nil
+    public func setRootAncestor(_ newTopParent: Expression) {
+        topHierarchicalAncestor().parent = newTopParent
+    }
+    
+    public func topHierarchicalAncestor() -> Specifier {
+        if let parentSpecifier = parent?.asSpecifier() {
+            return parentSpecifier.topHierarchicalAncestor()
+        } else {
+            return self
         }
-        return parentSpecifier.topParent()
+    }
+    
+    public func rootAncestor() -> Expression? {
+        if let parentSepcifier = parent?.asSpecifier() {
+            return parentSepcifier.rootAncestor()
+        } else {
+            return parent
+        }
     }
     
     public func allDataExpressionsFromSelfAndAncestors() -> [Expression] {
@@ -142,6 +151,25 @@ extension Specifier {
         }
         
         return expressions
+    }
+    
+}
+
+extension Expression {
+    
+    public func asSpecifier() -> Specifier? {
+        switch kind {
+        case .parentheses(let subexpression):
+            return subexpression.asSpecifier()
+        case .specifier(let childSpecifier):
+            return childSpecifier
+        case .class_(let `class`):
+            return Specifier(class: Located(PropertyTerm(`class`.uid, name: `class`.name), at: location), kind: .property)
+        case .enumerator(let enumerator):
+            return Specifier(class: Located(PropertyTerm(enumerator.uid, name: enumerator.name), at: location), kind: .property)
+        default:
+            return nil
+        }
     }
     
 }

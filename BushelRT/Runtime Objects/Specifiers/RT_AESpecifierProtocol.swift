@@ -1,17 +1,11 @@
 import Bushel
 import SwiftAutomation
 
-public protocol RT_SASpecifierConvertible: AEEncodable {
+public protocol RT_SASpecifierConvertible: RT_Object, AEEncodable {
     
     func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier?
     
     var rt: RTInfo { get }
-    
-}
-
-public protocol RT_AESpecifierProtocol: RT_SASpecifierConvertible {
-    
-    func rootApplication() -> (application: RT_Application?, isSelf: Bool)
     
 }
 
@@ -48,8 +42,7 @@ extension RT_SASpecifierConvertible where Self: RT_Object {
         packedArguments = [OSType : NSAppleEventDescriptor](uniqueKeysWithValues: zip(keys, values))
         
         guard let saSpecifier = self.saSpecifier(appData: appData) else {
-            print(self)
-            fatalError("specifier cannot perform commands")
+            throw Unpackable(object: self)
         }
         return try saSpecifier.perform(rt, command: command, arguments: packedArguments)
     }

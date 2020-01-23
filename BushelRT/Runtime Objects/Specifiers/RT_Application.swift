@@ -1,7 +1,7 @@
 import Bushel
 import SwiftAutomation
 
-public class RT_Application: RT_Object, RT_SASpecifierConvertible {
+public class RT_Application: RT_Object, RT_SASpecifierConvertible, RT_SpecifierRemoteRoot {
     
     public let rt: RTInfo
     public let bundle: Bundle
@@ -31,6 +31,10 @@ public class RT_Application: RT_Object, RT_SASpecifierConvertible {
     private static let typeInfo_ = TypeInfo(TypeUID.application)
     public override class var typeInfo: TypeInfo {
         typeInfo_
+    }
+    
+    public func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
+        return try specifier.performByAppleEvent(command: CommandInfo(.get), arguments: [ParameterInfo(.direct): specifier], targetBundleID: bundleIdentifier) ?? RT_Null.null
     }
     
     public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {

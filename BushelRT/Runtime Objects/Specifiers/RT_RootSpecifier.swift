@@ -1,7 +1,7 @@
 import Bushel
 import SwiftAutomation
 
-public final class RT_RootSpecifier: RT_Object, RT_AESpecifierProtocol {
+public final class RT_RootSpecifier: RT_Object, RT_SASpecifierConvertible {
     
     public enum Kind {
         case application, container, specimen
@@ -13,12 +13,6 @@ public final class RT_RootSpecifier: RT_Object, RT_AESpecifierProtocol {
     public init(_ rt: RTInfo, kind: Kind) {
         self.rt = rt
         self.kind = kind
-    }
-    
-    public func rootApplication() -> (application: RT_Application?, isSelf: Bool) {
-        // If we got here, a non-application RT_Specifier called us
-        // and thus there is no application root
-        return (application: nil, isSelf: false)
     }
     
     public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {

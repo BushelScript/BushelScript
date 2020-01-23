@@ -113,6 +113,10 @@ func coerce(_ object: Builtin.RTObjectPointer, to type: Builtin.InfoPointer) -> 
     return Builtin.coerce(object, to: type)
 }
 
+func getResource(_ term: Builtin.TermPointer) -> Builtin.RTObjectPointer {
+    return Builtin.getResource(term)
+}
+
 func newSpecifier0(_ parent: Builtin.RTObjectPointer?, _ uid: Builtin.RTObjectPointer, _ kind: UInt32) -> Builtin.RTObjectPointer {
     return Builtin.newSpecifier0(parent, uid, kind)
 }
@@ -125,6 +129,10 @@ func newSpecifier2(_ parent: Builtin.RTObjectPointer?, _ uid: Builtin.RTObjectPo
 
 func newTestSpecifier(_ operation: UInt32, _ lhs: Builtin.RTObjectPointer, _ rhs: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
     return Builtin.newTestSpecifier(operation, lhs, rhs)
+}
+
+func qualifySpecifier(_ specifier: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
+    return Builtin.qualifySpecifier(specifier)
 }
 
 func evaluateSpecifier(_ specifier: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
@@ -194,9 +202,10 @@ enum BuiltinFunction: String {
     case getFromArgumentRecord, getFromArgumentRecordWithDirectParamFallback
     case unaryOp, binaryOp
     case coerce
+    case getResource
     case newSpecifier0, newSpecifier1, newSpecifier2
     case newTestSpecifier
-    case evaluateSpecifier
+    case qualifySpecifier, evaluateSpecifier
     case call
     case runWeave
     
@@ -244,10 +253,12 @@ enum BuiltinFunction: String {
         case .unaryOp: return ([int64, object], object)
         case .binaryOp: return ([int64, object, object], object)
         case .coerce: return ([object, object], object)
+        case .getResource: return ([object], object)
         case .newSpecifier0: return ([object, object, int32], object)
         case .newSpecifier1: return ([object, object, int32, object], object)
         case .newSpecifier2: return ([object, object, int32, object, object], object)
         case .newTestSpecifier: return ([int32, object, object], object)
+        case .qualifySpecifier: return ([object], object)
         case .evaluateSpecifier: return ([object], object)
         case .call: return ([object, object], object)
         case .runWeave: return ([object, object, object], object)
@@ -348,6 +359,9 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     let coerce: @convention(c) (Builtin.RTObjectPointer, Builtin.InfoPointer) -> Builtin.RTObjectPointer = BushelRT.coerce
     builder.addExternalFunctionAsGlobal(coerce, .coerce)
     
+    let getResource: @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.getResource
+    builder.addExternalFunctionAsGlobal(getResource, .getResource)
+    
     let newSpecifier0: @convention(c) (Builtin.RTObjectPointer?, Builtin.RTObjectPointer, UInt32) -> Builtin.RTObjectPointer = BushelRT.newSpecifier0
     builder.addExternalFunctionAsGlobal(newSpecifier0, .newSpecifier0)
     let newSpecifier1: @convention(c) (Builtin.RTObjectPointer?, Builtin.RTObjectPointer, UInt32, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.newSpecifier1
@@ -358,6 +372,9 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     let newTestSpecifier: @convention(c) (UInt32, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.newTestSpecifier
     builder.addExternalFunctionAsGlobal(newTestSpecifier, .newTestSpecifier)
     
+    let qualifySpecifier: @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.qualifySpecifier
+    builder.addExternalFunctionAsGlobal(qualifySpecifier, .qualifySpecifier)
+    
     let evaluateSpecifier: @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.evaluateSpecifier
     builder.addExternalFunctionAsGlobal(evaluateSpecifier, .evaluateSpecifier)
     
@@ -366,21 +383,6 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     
     let runWeave: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.runWeave
     builder.addExternalFunctionAsGlobal(runWeave, .runWeave)
-    
-    do {
-        let fn = builder.addFunction(".make-application-specifier", type: FunctionType([PointerType.toVoid], PointerType.toVoid))
-        let block = fn.appendBasicBlock(named: "entry")
-        builder.positionAtEnd(of: block)
-        let result = builder.buildCall(toExternalFunction: .newSpecifier1, args: [PointerType.toVoid.null(), builder.buildGlobalString(TypedTermUID(TypeUID.application).normalized).asRTString(builder: builder), IntType.int32.constant(RT_Specifier.Kind.name.rawValue), fn.parameter(at: 0)!])
-        builder.buildRet(result)
-    }
-    do {
-        let fn = builder.addFunction(".make-application-id-specifier", type: FunctionType([PointerType.toVoid], PointerType.toVoid))
-        let block = fn.appendBasicBlock(named: "entry")
-        builder.positionAtEnd(of: block)
-        let result = builder.buildCall(toExternalFunction: .newSpecifier1, args: [PointerType.toVoid.null(), builder.buildGlobalString(TypedTermUID(TypeUID.application).normalized).asRTString(builder: builder), IntType.int32.constant(RT_Specifier.Kind.id.rawValue), fn.parameter(at: 0)!])
-        builder.buildRet(result)
-    }
     
     let main = builder.addFunction("main", type: FunctionType([], PointerType.toVoid))
     let entry = main.appendBasicBlock(named: "entry")
@@ -502,6 +504,7 @@ extension Expression {
                 elseValue = try else_.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
                 elseBlock = builder.insertBlock!
             } else {
+                builder.buildBr(mergeBlock)
                 elseValue = lastResult
             }
             if !elseValue.isAReturnInst {
@@ -593,7 +596,7 @@ extension Expression {
             
             return repeatResult
         case .tell(let target, let to): // MARK: .tell
-            let targetValue = try target.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+            let targetValue = try target.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
             
             stack.currentTarget = targetValue
             
@@ -654,14 +657,7 @@ extension Expression {
             return builder.buildCall(toExternalFunction: .getVariableValue, args: [termIRValue])
         case .use(let term), // MARK: .use
              .resource(let term): // MARK: .resource
-            switch term.term.resource {
-            case .applicationByName: // MARK: .applicationByName
-                let appNameIRValue = builder.module.addGlobalString(name: "app-name", value: term.description).asRTString(builder: builder)
-                return builder.buildCall(builder.module.function(named: ".make-application-specifier")!, args: [appNameIRValue])
-            case .applicationByID: // MARK: .applicationByID
-                let appIDIRValue = builder.module.addGlobalString(name: "app-id", value: term.description).asRTString(builder: builder)
-                return builder.buildCall(builder.module.function(named: ".make-application-id-specifier")!, args: [appIDIRValue])
-            }
+            return builder.buildCall(toExternalFunction: .getResource, args: [term.term.irPointerValue(builder: builder)])
         case .enumerator(let term as Term): // MARK: .enumerator
             if let code = term.ae4Code {
                 return builder.buildCall(toExternalFunction: .newConstant, args: [IntType.int32.constant(code)])
@@ -849,36 +845,43 @@ extension Specifier {
             }
         }
         
-        switch kind {
-        case .simple:
-            return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.simple.rawValue), dataExpressionIRValues[0]])
-        case .index:
-            return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.index.rawValue), dataExpressionIRValues[0]])
-        case .name:
-            return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.name.rawValue), dataExpressionIRValues[0]])
-        case .id:
-            return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.id.rawValue), dataExpressionIRValues[0]])
-        case .all:
-            return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.all.rawValue)])
-        case .first:
-            return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.first.rawValue)])
-        case .middle:
-            return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.middle.rawValue)])
-        case .last:
-            return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.last.rawValue)])
-        case .random:
-            return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.random.rawValue)])
-        case .before:
-            return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.before.rawValue), dataExpressionIRValues[0]])
-        case .after:
-            return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.after.rawValue), dataExpressionIRValues[0]])
-        case .range:
-            return builder.buildCall(toExternalFunction: .newSpecifier2, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.range.rawValue), dataExpressionIRValues[0], dataExpressionIRValues[1]])
-        case .test:
-            return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.test.rawValue), dataExpressionIRValues[0]])
-        case .property:
-            return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.property.rawValue)])
+        func generate() -> IRValue {
+            switch kind {
+            case .simple:
+                return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.simple.rawValue), dataExpressionIRValues[0]])
+            case .index:
+                return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.index.rawValue), dataExpressionIRValues[0]])
+            case .name:
+                return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.name.rawValue), dataExpressionIRValues[0]])
+            case .id:
+                return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.id.rawValue), dataExpressionIRValues[0]])
+            case .all:
+                return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.all.rawValue)])
+            case .first:
+                return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.first.rawValue)])
+            case .middle:
+                return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.middle.rawValue)])
+            case .last:
+                return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.last.rawValue)])
+            case .random:
+                return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.random.rawValue)])
+            case .before:
+                return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.before.rawValue), dataExpressionIRValues[0]])
+            case .after:
+                return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.after.rawValue), dataExpressionIRValues[0]])
+            case .range:
+                return builder.buildCall(toExternalFunction: .newSpecifier2, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.range.rawValue), dataExpressionIRValues[0], dataExpressionIRValues[1]])
+            case .test:
+                return builder.buildCall(toExternalFunction: .newSpecifier1, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.test.rawValue), dataExpressionIRValues[0]])
+            case .property:
+                return builder.buildCall(toExternalFunction: .newSpecifier0, args: [parentIRValue, uidIRValue, IntType.int32.constant(RT_Specifier.Kind.property.rawValue)])
+            }
         }
+        
+        let resultIRValue = generate()
+        return (parent == nil) ?
+            builder.buildCall(toExternalFunction: .qualifySpecifier, args: [resultIRValue]) :
+            resultIRValue
     }
     
 }

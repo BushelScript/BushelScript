@@ -14,7 +14,7 @@ public struct ProgramStack {
     
     public var currentFrame: StackFrame {
         get {
-            return frames.last!
+            frames.last!
         }
         set {
             frames[frames.endIndex - 1] = newValue
@@ -22,16 +22,10 @@ public struct ProgramStack {
     }
     
     public var variables: [Bushel.TermName : RT_Object] {
-        return currentFrame.variables
+        currentFrame.variables
     }
     public var target: RT_Object? {
-        return currentFrame.target
-    }
-    public var qualifiedTarget: RT_Object? {
-        if let targetSpecifier = target as? RT_Specifier {
-            return ProgramStack(frames: frames.dropLast()).qualify(specifier: targetSpecifier)
-        }
-        return target
+        currentFrame.target
     }
     
     mutating func push(newTarget: RT_Object? = nil) {
@@ -44,7 +38,7 @@ public struct ProgramStack {
     }
     
     public func qualify(specifier: RT_Specifier) -> RT_Specifier {
-        return frames.reversed().reduce(specifier) { $1.qualify(specifier: $0) }
+        currentFrame.qualify(specifier: specifier)
     }
     
 }
@@ -75,13 +69,10 @@ public struct StackFrame {
     /// - Returns: The more qualified version of `specifier`. If no
     ///            modifications were necessary, simply returns `specifier`.
     public func qualify(specifier: RT_Specifier) -> RT_Specifier {
-        guard var target = target else {
+        guard let target = target else {
             return specifier
         }
         let newSpecifier = specifier.clone()
-        if let application = target as? RT_Application {
-            target = RT_Specifier(rt, parent: nil, type: application.dynamicTypeInfo, data: [RT_String(value: application.bundleIdentifier)], kind: .id)
-        }
         newSpecifier.setRootAncestor(target)
         return newSpecifier
     }
