@@ -29,6 +29,8 @@ public class RTInfo {
             return TypeInfo(classTerm.uid, tags)
         }
         
+        termPool.add(terms)
+        
         for term in terms.byTypedUID.values {
             switch term.enumerated {
             case .enumerator(_):

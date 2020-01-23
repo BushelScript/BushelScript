@@ -81,7 +81,10 @@ public extension SourceParser {
         self.expressionStartIndex = source.startIndex
         self.currentElements = []
         
-        lexicon.add(ParameterDescriptor(.direct, name: TermName("")).realize(lexicon.pool))
+        lexicon.add(ParameterDescriptor(.direct, name: nil).realize(lexicon.pool))
+        lexicon.add(CommandDescriptor(.get, name: nil).realize(lexicon.pool))
+        lexicon.add(ParameterDescriptor(.set_to, name: nil).realize(lexicon.pool))
+        lexicon.add(CommandDescriptor(.set, name: nil).realize(lexicon.pool))
         
         for descriptor in defaultTerms {
             lexicon.add(descriptor.realize(lexicon.pool))
