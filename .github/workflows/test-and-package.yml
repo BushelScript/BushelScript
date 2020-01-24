@@ -13,8 +13,10 @@ jobs:
       run: brew install llvm
     - name: Test
       run: ./test.sh
+      working-directory: .
     - name: Package
       run: ./make-pkg.sh
+      working-directory: .
     - name: Upload package
       if: success()
       uses: actions/upload-artifact@v1
