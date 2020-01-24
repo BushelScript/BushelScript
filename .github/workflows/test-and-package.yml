@@ -12,14 +12,16 @@ jobs:
     - name: Install LLVM
       run: brew install llvm
     - name: Test
-      run: ./test.sh
-      working-directory: .
+      run: |
+        cd $GITHUB_WORKSPACE
+        ./test.sh
     - name: Package
-      run: ./make-pkg.sh
-      working-directory: .
+      run: |
+        cd $GITHUB_WORKSPACE
+        ./make-pkg.sh
     - name: Upload package
       if: success()
       uses: actions/upload-artifact@v1
       with:
         name: BushelScript.pkg
-        path: BushelScript.pkg
+        path: ${{ env.GITHUB_WORKSPACE }}/BushelScript.pkg
