@@ -9,7 +9,7 @@ public protocol TermUIDPredefinedValue {
     var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? { get }
     var idName: String? { get }
     
-    init?(_ uidName: TermUID)
+    init?(_ uid: TermUID)
     
 }
 
@@ -171,8 +171,8 @@ public enum TypeUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uidName: TermUID) {
-        switch uidName {
+    public init?(_ uid: TermUID) {
+        switch uid {
         case .ae4(let aeCode):
             switch aeCode {
             case cItem:
@@ -279,8 +279,8 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uidName: TermUID) {
-        switch uidName {
+    public init?(_ uid: TermUID) {
+        switch uid {
         case .ae4(let aeCode):
             switch aeCode {
             case try! FourCharCode(fourByteString: "pALL"):
@@ -329,8 +329,8 @@ public enum ConstantUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uidName: TermUID) {
-        switch uidName {
+    public init?(_ uid: TermUID) {
+        switch uid {
         case .ae4(let aeCode):
             switch aeCode {
             case OSType(1):
@@ -410,8 +410,8 @@ public enum CommandUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uidName: TermUID) {
-        switch uidName {
+    public init?(_ uid: TermUID) {
+        switch uid {
         case .ae8(let aeCodes):
             switch aeCodes {
             case (class: kAECoreSuite, id: kAEGetData):
@@ -539,8 +539,8 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
         return (class: `class`, id: id, code: commandAndCode.code)
     }
     
-    public init?(_ uidName: TermUID) {
-        switch uidName {
+    public init?(_ uid: TermUID) {
+        switch uid {
         case .ae4(let aeCode):
             switch aeCode {
             case keyDirectObject:

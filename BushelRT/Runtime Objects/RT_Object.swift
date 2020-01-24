@@ -23,7 +23,7 @@ import Bushel
         case .type:
             return RT_Class(value: self.dynamicTypeInfo)
         default:
-            throw NoPropertyExists(type: self.dynamicTypeInfo, property: property)
+            return try RT_Global(Builtin.rt).property(property, originalObject: self)
         }
     }
     
@@ -190,7 +190,7 @@ import Bushel
     ///     - `UnsupportedIndexForm` if named access is unsupported by
     ///       the receiver.
     public func element(_ type: TypeInfo, named name: String) throws -> RT_Object {
-        throw UnsupportedIndexForm(indexForm: .name, class: dynamicTypeInfo)
+        return try RT_Global(Builtin.rt).element(type, named: name, originalObject: self)
     }
     
     /// Accesses the element with the given unique ID.
@@ -203,7 +203,7 @@ import Bushel
     ///     - `UnsupportedIndexForm` if ID access is unsupported by
     ///       the receiver.
     public func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object {
-        throw UnsupportedIndexForm(indexForm: .id, class: dynamicTypeInfo)
+        return try RT_Global(Builtin.rt).element(type, id: id, originalObject: self)
     }
     
     /// Accesses the element positioned relative to the receiver

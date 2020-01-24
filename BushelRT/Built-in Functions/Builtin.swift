@@ -64,7 +64,7 @@ enum Builtin {
     }
     
     static func getCurrentTarget() -> RTObjectPointer {
-        toOpaque(retain(stack.frames.first { $0.target != nil }!.target!))
+        toOpaque(retain(stack.frames.last { $0.target != nil }!.target!))
     }
     
     static func newVariable(_ termPointer: TermPointer, _ initialValuePointer: RTObjectPointer) {

@@ -1,4 +1,5 @@
 import Bushel
+import SwiftAutomation
 
 public class RT_Global: RT_Object {
     
@@ -17,8 +18,8 @@ public class RT_Global: RT_Object {
         "BushelScript"
     }
     
-    public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(property.typedUID) {
+    public func property(_ property: PropertyInfo, originalObject: RT_Object) throws -> RT_Object {
+        switch PropertyUID(property.uid) {
         case .topScript:
             return rt.topScript
         case .currentDate:
@@ -28,8 +29,56 @@ public class RT_Global: RT_Object {
         case .Math_e:
             return RT_Real(value: exp(1))
         default:
+            throw NoPropertyExists(type: originalObject.dynamicTypeInfo, property: property)
+        }
+    }
+    
+    public override func property(_ property: PropertyInfo) throws -> RT_Object {
+        do {
+            return try self.property(property, originalObject: self)
+        } catch {
+            // RT_Object handles some properties.
+            // If it fails, it will call us again, which will eventually rethrow the error.
             return try super.property(property)
         }
+    }
+    
+    public func element(_ type: TypeInfo, named name: String, originalObject: RT_Object) throws -> RT_Object {
+        switch TypeUID(type.uid) {
+        case .application:
+            guard
+                let appBundleID = TargetApplication.name(name).bundleIdentifier,
+                let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
+            else {
+                return RT_Null.null
+            }
+            return RT_Application(rt, bundle: appBundle)
+        default:
+            throw UnsupportedIndexForm(indexForm: .name, class: originalObject.dynamicTypeInfo)
+        }
+    }
+    
+    public override func element(_ type: TypeInfo, named name: String) throws -> RT_Object {
+        try element(type, named: name, originalObject: self)
+    }
+    
+    public func element(_ type: TypeInfo, id: RT_Object, originalObject: RT_Object) throws -> RT_Object {
+        switch TypeUID(type.uid) {
+        case .application:
+            guard
+                let appBundleID = (id.coerce() as RT_String?)?.value,
+                let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
+            else {
+                return RT_Null.null
+            }
+            return RT_Application(rt, bundle: appBundle)
+        default:
+            throw UnsupportedIndexForm(indexForm: .id, class: originalObject.dynamicTypeInfo)
+        }
+    }
+    
+    public override func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object {
+        try element(type, id: id, originalObject: self)
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
