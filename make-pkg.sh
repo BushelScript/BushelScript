@@ -1,3 +1,5 @@
+#!/bin/bash
+
 PKG_FILENAME="BushelScript.pkg"
 PKG_IDENTIFIER="com.justcheesy.BushelScript-Installer"
 PKG_VERSION="$(git describe --tags)"
@@ -6,14 +8,26 @@ PKG_VERSION="$(git describe --tags)"
 # Will be created automatically.
 # Will be deleted automatically after the pkg is made unless `noclean` is specified as the first script argument.
 INSTALL_DIR="$(pwd)/install"
+echo "Building to ${INSTALL_DIR}."
 
 # Build everything into the installation directory.
-xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT="$INSTALL_DIR" # Includes all language modules.
-xcodebuild install -workspace Bushel.xcworkspace -scheme bushelscript DSTROOT="$INSTALL_DIR"
-if [ $? -ne 0 ]
+echo 'Installing.'
+function install {
+	xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT="$INSTALL_DIR" # Includes all language modules.
+	xcodebuild install -workspace Bushel.xcworkspace -scheme bushelscript DSTROOT="$INSTALL_DIR"
+	if [ $? -ne 0 ]
+	then
+		echo 'xcodebuild install failed; not creating a pkg.'
+		exit $?
+	fi
+}
+if hash xcpretty 2>/dev/null
 then
-	echo 'xcodebuild install failed; not creating a pkg.'
-	exit $?
+	echo 'Using xcpretty'
+	install | xcpretty
+else
+	echo 'No xcpretty found (showing vanilla xcodebuild output)'
+	install
 fi
 
 # Make the installer package.
@@ -27,5 +41,6 @@ fi
 # Delete the install directory unless `noclean` is specified.
 if [ "$1" != "noclean" ]
 then
+	echo "Removing build directory $INSTALL_DIR (specify \`noclean\` to disable.)"
 	rm -r "$INSTALL_DIR"
 fi
