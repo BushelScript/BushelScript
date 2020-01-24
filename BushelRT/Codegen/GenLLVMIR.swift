@@ -21,6 +21,10 @@ func popFrame() {
     return Builtin.popFrame()
 }
 
+func getCurrentTarget() -> Builtin.RTObjectPointer {
+    return Builtin.getCurrentTarget()
+}
+
 func newVariable(_ term: Builtin.TermPointer, _ initialValue: Builtin.RTObjectPointer) {
     return Builtin.newVariable(term, initialValue)
 }
@@ -193,6 +197,7 @@ enum BuiltinFunction: String {
     
     case release
     case pushFrame, pushFrameWithTarget, popFrame
+    case getCurrentTarget
     case newVariable, getVariableValue, setVariableValue
     case isTruthy
     case numericEqual
@@ -230,6 +235,7 @@ enum BuiltinFunction: String {
         case .pushFrame: return ([], void)
         case .pushFrameWithTarget: return ([object], void)
         case .popFrame: return ([], void)
+        case .getCurrentTarget: return ([], object)
         case .newVariable: return ([object, object], void)
         case .getVariableValue: return ([object], object)
         case .setVariableValue: return ([object, object], void)
@@ -289,6 +295,9 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     
     let popFrame: @convention(c) () -> Void = BushelRT.popFrame
     builder.addExternalFunctionAsGlobal(popFrame, .popFrame)
+    
+    let getCurrentTarget: @convention(c) () -> Builtin.RTObjectPointer = BushelRT.getCurrentTarget
+    builder.addExternalFunctionAsGlobal(getCurrentTarget, .getCurrentTarget)
     
     let newVariable: @convention(c) (Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Void = BushelRT.newVariable
     builder.addExternalFunctionAsGlobal(newVariable, .newVariable)
@@ -474,7 +483,7 @@ extension Expression {
         case .empty, .end, .that: // MARK: .empty, .end., .that
             return lastResult
         case .it: // MARK: .it
-            return stack.currentTarget ?? builder.rtNull
+            return builder.buildCall(toExternalFunction: .getCurrentTarget, args: [])
         case .null: // MARK: .null
             return builder.rtNull
         case .scoped(let sequence): // MARK: .scoped
