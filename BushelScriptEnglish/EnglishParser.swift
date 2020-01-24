@@ -629,6 +629,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         case .class_(let term): // MARK: .class_
             if let specifierKind = try parseSpecifierAfterClassName() {
                 return .specifier(Specifier(class: Located(term, at: termLocation), kind: specifierKind))
+            } else if let specifier = try parseRelativeSpecifierAfterClassName(term, at: termLocation) {
+                return .specifier(specifier)
             } else {
                 // Just the class name
                 return .class_(term)
@@ -762,6 +764,24 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             default:
                 return .simple(firstExpression)
             }
+        }
+    }
+    
+    public func parseRelativeSpecifierAfterClassName(_ term: ClassTerm, at termLocation: SourceLocation) throws -> Specifier? {
+        if tryEating(prefix: "before") {
+            guard let parentExpression = try parsePrimary() else {
+                // e.g., window before
+                throw ParseError(description: "expected expression after ‘before’", location: currentLocation)
+            }
+            return Specifier(class: Located(term, at: termLocation), kind: .previous, parent: parentExpression)
+        } else if tryEating(prefix: "after") {
+            guard let parentExpression = try parsePrimary() else {
+                // e.g., window before
+                throw ParseError(description: "expected expression after ‘after’", location: currentLocation)
+            }
+            return Specifier(class: Located(term, at: termLocation), kind: .next, parent: parentExpression)
+        } else {
+            return nil
         }
     }
     

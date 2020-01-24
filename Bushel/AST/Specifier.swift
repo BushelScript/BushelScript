@@ -42,8 +42,8 @@ public class Specifier {
         case middle
         case last
         case random
-        case before(Expression)
-        case after(Expression)
+        case previous
+        case next
         case range(from: Expression, to: Expression)
         case test(Expression, TestComponent)
         case property
@@ -53,11 +53,9 @@ public class Specifier {
             case .simple(let dataExpression),
                  .index(let dataExpression),
                  .name(let dataExpression),
-                 .id(let dataExpression),
-                 .before(let dataExpression),
-                 .after(let dataExpression):
+                 .id(let dataExpression):
                 return [dataExpression]
-            case .all, .first, .middle, .last, .random:
+            case .all, .first, .middle, .last, .random, .previous, .next:
                 return []
             case .range(let from, let to):
                 return [from, to]

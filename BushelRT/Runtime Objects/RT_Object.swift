@@ -227,14 +227,6 @@ import Bushel
     
     // TODO: doc comments
     
-    public func element(_ type: TypeInfo, before child: RT_Object) throws -> RT_Object {
-        return try child.element(type, positioned: .before)
-    }
-    
-    public func element(_ type: TypeInfo, after child: RT_Object) throws -> RT_Object {
-        return try child.element(type, positioned: .after)
-    }
-    
     public func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object {
         switch positioning {
         case .first:

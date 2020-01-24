@@ -194,10 +194,10 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                 formatted = "last \(className)"
             case .random:
                 formatted = "some \(className)"
-            case .before(let expression):
-                formatted = "\(className) before \(format(expression, level: level))"
-            case .after(let expression):
-                formatted = "\(className) after \(format(expression, level: level))"
+            case .previous:
+                formatted = "\(className)\(specifier.parent.map { " before\(format($0, level: level))" } ?? "")"
+            case .next:
+                formatted = "\(className)\(specifier.parent.map { " after\(format($0, level: level))" } ?? "")"
             case .range(let from, let to):
                 formatted = "\(className) \(format(from, level: level)) thru \(format(to, level: level))"
             case .test(let predicate, _):
