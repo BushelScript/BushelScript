@@ -1,0 +1,23 @@
+name: CI (Test and Package)
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install LLVM
+      run: brew install llvm
+    - name: Test
+      run: ./test.sh
+    - name: Package
+      run: ./make-pkg.sh
+    - name: Upload package
+      if: success()
+      uses: actions/upload-artifact@v1
+      with:
+        name: BushelScript.pkg
+        path: BushelScript.pkg
