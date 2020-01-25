@@ -922,7 +922,7 @@
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_PACKAGE_DEPS_DIR = "${BUILD_DIR}/../../SourcePackages/checkouts";
+				SWIFT_PACKAGE_DEPS_DIR = "${OBJROOT}/../../SourcePackages/checkouts";
 			};
 			name = Debug;
 		};
@@ -977,7 +977,7 @@
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_PACKAGE_DEPS_DIR = "${BUILD_DIR}/../../SourcePackages/checkouts";
+				SWIFT_PACKAGE_DEPS_DIR = "${OBJROOT}/../../SourcePackages/checkouts";
 			};
 			name = Release;
 		};
