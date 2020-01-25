@@ -48,11 +48,11 @@
       },
       {
         "package": "LLVM",
-        "repositoryURL": "https://github.com/llvm-swift/LLVMSwift.git",
+        "repositoryURL": "https://github.com/ThatsJustCheesy/LLVMSwift.git",
         "state": {
-          "branch": null,
-          "revision": "b876a1b13d7679a8d81fcd4288e5ab1ff631a011",
-          "version": "0.6.0"
+          "branch": "llvm-9",
+          "revision": "5787cc1664a761670ea4deee6240af19256bcd0d",
+          "version": null
         }
       },
       {
