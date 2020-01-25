@@ -1410,7 +1410,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_PACKAGE_DEPS_DIR = "${OBJROOT}/../../SourcePackages/checkouts";
+				SWIFT_PACKAGE_DEPS_DIR = "${OBJROOT}/../../../../SourcePackages/checkouts";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
