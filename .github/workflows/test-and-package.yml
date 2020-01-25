@@ -14,7 +14,7 @@ jobs:
     - name: Make pkg-config file for LLVM
       run: |
         cd "$GITHUB_WORKSPACE"
-        . ./resolve_packges.sh
+        . ./resolve_packages.sh
         cd "$PACKAGES_DIR/checkouts/LLVMSwift"
         PATH="$(brew --prefix llvm)/bin:$PATH" swift utils/make-pkgconfig.swift
     - name: Test
