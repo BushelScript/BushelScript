@@ -3,7 +3,7 @@ name: CI (Test and Package)
 on: [push]
 
 jobs:
-  build:
+  test-and-package:
 
     runs-on: macos-latest
 
