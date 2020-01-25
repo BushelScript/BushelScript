@@ -169,7 +169,9 @@ private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
         add(ClassTerm(.ae4(code: term.code), name: term.termName, parentClass: (lexicon.pool.term(forUID: TypedTermUID(TypeUID.item)) as! ClassTerm)))
     }
     func addClass(_ term: SDEFinitely.ClassTerm) {
-        add(ClassTerm(.ae4(code: term.code), name: term.termName, parentClass: (lexicon.pool.term(forUID: TypedTermUID(TypeUID.item)) as! ClassTerm)))
+        let classTerm = ClassTerm(.ae4(code: term.code), name: term.termName, parentClass: (lexicon.pool.term(forUID: TypedTermUID(TypeUID.item)) as! ClassTerm))
+        add(classTerm)
+        add(PluralClassTerm(singularClass: classTerm, name: term.pluralTermName))
     }
     func addProperty(_ term: SDEFinitely.KeywordTerm) {
         add(PropertyTerm(.ae4(code: term.code), name: TermName(term.name)))
@@ -200,6 +202,14 @@ private extension SDEFinitely.TermProtocol {
     
     var termName: TermName {
         TermName(name)
+    }
+    
+}
+
+private extension SDEFinitely.ClassTerm {
+    
+    var pluralTermName: TermName {
+        TermName(pluralName)
     }
     
 }

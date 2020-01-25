@@ -1,11 +1,19 @@
 import Foundation
+import Regex
 
 /// The compiler-internal name of a term.
-public enum TermUID {
+public indirect enum TermUID {
+    
     case ae4(code: OSType)
     case ae8(class: AEEventClass, id: AEEventID)
     case ae12(class: AEEventClass, id: AEEventID, code: AEKeyword)
     case id(_ name: String)
+    case variant(Variant, TermUID)
+    
+    public enum Variant {
+        case plural
+    }
+    
 }
 
 public struct TypedTermUID {
@@ -92,26 +100,37 @@ extension TypedTermUID.Kind: CustomStringConvertible {
 extension TermUID {
     
     public var ae4Code: OSType? {
-        if case let .ae4(code) = self {
+        switch self {
+        case .ae4(let code),
+             .ae12(_, _, let code):
             return code
-        } else if case let .ae12(_, _, code) = self {
-            return code
+        case .variant(_, let uid):
+            return uid.ae4Code
+        default:
+            return nil
         }
-        return nil
     }
     
     public var ae8Code: (class: AEEventClass, id: AEEventID)? {
-        if case let .ae8(codes) = self {
+        switch self{
+        case .ae8(let codes):
             return codes
+        case .variant(_, let uid):
+            return uid.ae8Code
+        default:
+            return nil
         }
-        return nil
     }
     
     public var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {
-        if case let .ae12(codes) = self {
+        switch self{
+        case .ae12(let codes):
             return codes
+        case .variant(_, let uid):
+            return uid.ae12Code
+        default:
+            return nil
         }
-        return nil
     }
     
 }
@@ -146,6 +165,8 @@ extension TermUID: CustomStringConvertible {
             return "ae12"
         case .id:
             return "id"
+        case .variant(let variant, _):
+            return "var(\(variant))"
         }
     }
     
@@ -160,6 +181,23 @@ extension TermUID: CustomStringConvertible {
             return String(fourCharCode: `class`) + String(fourCharCode: id) + String(fourCharCode: code)
         case .id(let name):
             return name
+        case .variant(_, let uid):
+            return uid.normalized
+        }
+    }
+    
+}
+
+extension TermUID.Variant: CustomStringConvertible {
+    
+    public var description: String {
+        kind
+    }
+    
+    public var kind: String {
+        switch self {
+        case .plural:
+            return "plural"
         }
     }
     
@@ -211,6 +249,28 @@ extension TermUID {
             self = .ae12(class: `class`, id: id, code: code)
         case "id":
             self = .id(data)
+        case Regex("var\\((\\w+)\\)"):
+            let variantKind = Regex.lastMatch!.captures[0]!
+            guard
+                let variant = Variant(kind: variantKind),
+                let uid = TermUID(normalized: data)
+            else {
+                return nil
+            }
+            self = .variant(variant, uid)
+        default:
+            return nil
+        }
+    }
+    
+}
+
+extension TermUID.Variant {
+    
+    public init?(kind: String) {
+        switch kind {
+        case "plural":
+            self = .plural
         default:
             return nil
         }

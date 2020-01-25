@@ -18,15 +18,29 @@ public class RTInfo {
     }
     
     public func inject(terms: TermPool) {
-        func typeInfo(for classTerm: Bushel.ClassTerm) -> TypeInfo {
-            var tags: Set<TypeInfo.Tag> = []
-            if let name = classTerm.name {
-                tags.insert(.name(name))
+        func add(classTerm term: Bushel.ClassTerm) {
+            func typeInfo(for classTerm: Bushel.ClassTerm) -> TypeInfo {
+                var tags: Set<TypeInfo.Tag> = []
+                if let name = classTerm.name {
+                    tags.insert(.name(name))
+                }
+                if let supertype = classTerm.parentClass.map({ typeInfo(for: $0) }) {
+                    tags.insert(.supertype(supertype))
+                }
+                return TypeInfo(classTerm.uid, tags)
             }
-            if let supertype = classTerm.parentClass.map({ typeInfo(for: $0) }) {
-                tags.insert(.supertype(supertype))
+            
+            let type = typeInfo(for: term)
+            typesByUID[type.typedUID] = type
+            if let supertype = type.supertype {
+                if typesBySupertype[supertype] == nil {
+                    typesBySupertype[supertype] = []
+                }
+                typesBySupertype[supertype]!.append(type)
             }
-            return TypeInfo(classTerm.uid, tags)
+            if let name = term.name {
+                typesByName[name] = type
+            }
         }
         
         termPool.add(terms)
@@ -38,27 +52,13 @@ public class RTInfo {
             case .dictionary(_):
                 break
             case .class_(let term):
-                let type = typeInfo(for: term)
-                typesByUID[type.typedUID] = type
-                if let supertype = type.supertype {
-                    if typesBySupertype[supertype] == nil {
-                        typesBySupertype[supertype] = []
-                    }
-                    typesBySupertype[supertype]!.append(type)
-                }
-                if let name = term.name {
-                    typesByName[name] = type
-                }
-                if let code = term.ae4Code {
-                    typesByCode[code] = type
-                }
+                add(classTerm: term)
+            case .pluralClass(let term):
+                add(classTerm: term)
             case .property(let term):
                 let tags: [PropertyInfo.Tag] = term.name.map { [.name($0)] } ?? []
                 let property = PropertyInfo(term.uid, Set(tags))
                 propertiesByUID[property.typedUID] = property
-                if let code = term.ae4Code {
-                    propertiesByCode[code] = property
-                }
             case .command(let term):
                 let tags: [CommandInfo.Tag] = term.name.map { [.name($0)] } ?? []
                 let command = CommandInfo(term.uid, Set(tags))
@@ -76,7 +76,6 @@ public class RTInfo {
     private var typesByUID: [TypedTermUID : TypeInfo] = [:]
     private var typesBySupertype: [TypeInfo : [TypeInfo]] = [:]
     private var typesByName: [TermName : TypeInfo] = [:]
-    private var typesByCode: [OSType : TypeInfo] = [:]
     
     public func type(forUID uid: TypedTermUID) -> TypeInfo? {
         typesByUID[uid]
@@ -88,17 +87,16 @@ public class RTInfo {
         typesByName[name]
     }
     public func type(for code: OSType) -> TypeInfo? {
-        typesByCode[code]
+        typesByUID[TypedTermUID(.type, .ae4(code: code))]
     }
     
     private var propertiesByUID: [TypedTermUID : PropertyInfo] = [:]
-    private var propertiesByCode: [OSType : PropertyInfo] = [:]
     
     public func property(forUID uid: TypedTermUID) -> PropertyInfo? {
         propertiesByUID[uid]
     }
     public func property(for code: OSType) -> PropertyInfo? {
-        propertiesByCode[code]
+        propertiesByUID[TypedTermUID(.property, .ae4(code: code))]
     }
     
     private var commandsByUID: [TypedTermUID : CommandInfo] = [:]

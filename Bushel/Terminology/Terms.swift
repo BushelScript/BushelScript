@@ -107,7 +107,7 @@ public final class DictionaryTerm: Term, TermDictionaryContainer {
     
 }
 
-public final class ClassTerm: Term, TermDictionaryDelayedInitContainer {
+public class ClassTerm: Term, TermDictionaryDelayedInitContainer {
     
     public override class var kind: TypedTermUID.Kind {
         .type
@@ -137,7 +137,7 @@ public final class ClassTerm: Term, TermDictionaryDelayedInitContainer {
         super.init(uid, name: name)!
     }
     
-    public required convenience init(_ uid: TermUID, name: TermName?) {
+    public required convenience init?(_ uid: TermUID, name: TermName?) {
         self.init(uid, name: name, parentClass: nil)
     }
     
@@ -152,6 +152,25 @@ public final class ClassTerm: Term, TermDictionaryDelayedInitContainer {
             }
             classTerm = parent
         }
+    }
+    
+}
+
+public final class PluralClassTerm: ClassTerm {
+    
+    public override var enumerated: TermKind {
+        return .pluralClass(self)
+    }
+    
+    public var singularClass: ClassTerm
+    
+    public init(singularClass: ClassTerm, name: TermName) {
+        self.singularClass = singularClass
+        super.init(.variant(.plural, singularClass.uid), name: name, parentClass: singularClass.parentClass)
+    }
+    
+    public required init?(_ uid: TermUID, name: TermName?) {
+        return nil
     }
     
 }
@@ -275,6 +294,9 @@ public enum TermKind: Hashable {
     /// A datatype, possibly with a four-byte AppleEvent code.
     /// Contains a (non-exporting) dictionary.
     case class_(ClassTerm)
+    /// A plural datatype, possibly with a four-byte AppleEvent code.
+    /// Contains a (non-exporting) dictionary.
+    case pluralClass(PluralClassTerm)
     /// A property, possibly with a four-byte AppleEvent code.
     case property(PropertyTerm)
     /// A command, possibly with four-byte AppleEvent class and ID codes.
@@ -292,6 +314,7 @@ public enum TermKind: Hashable {
         case .enumerator(let term as Term),
              .dictionary(let term as Term),
              .class_(let term as Term),
+             .pluralClass(let term as Term),
              .property(let term as Term),
              .command(let term as Term),
              .parameter(let term as Term),

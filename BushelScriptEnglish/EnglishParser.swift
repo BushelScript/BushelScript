@@ -635,6 +635,14 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 // Just the class name
                 return .class_(term)
             }
+        case .pluralClass(let term): // MARK: .pluralClass
+            if let specifierKind = try parseSpecifierAfterClassName() {
+                return .specifier(Specifier(class: Located(term, at: termLocation), kind: specifierKind))
+            } else {
+                // Just the plural class name
+                // Equivalent to an "all" specifier
+                return .specifier(Specifier(class: Located(term, at: termLocation), kind: .all))
+            }
         case .property(let term): // MARK: .property
             let specifier = Specifier(class: Located(term, at: expressionLocation), kind: .property)
             return .specifier(specifier)
