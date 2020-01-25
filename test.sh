@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Run tests.
 echo 'Testing.'

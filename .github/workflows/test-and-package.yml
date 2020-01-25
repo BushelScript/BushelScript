@@ -14,11 +14,11 @@ jobs:
     - name: Test
       run: |
         cd "$GITHUB_WORKSPACE"
-        bash test.sh
+        ./test.sh
     - name: Package
       run: |
         cd "$GITHUB_WORKSPACE"
-        bash make-pkg.sh
+        ./make-pkg.sh
     - name: Upload package
       if: success()
       uses: actions/upload-artifact@v1
