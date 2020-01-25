@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 
 PKG_FILENAME="BushelScript.pkg"
 PKG_IDENTIFIER="com.justcheesy.BushelScript-Installer"

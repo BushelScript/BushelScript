@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 
 # Accessible from parent shell if this script is source'd.
 PACKAGES_DIR="${PACKAGES_DIR:-$(pwd)/swift-packages}"
