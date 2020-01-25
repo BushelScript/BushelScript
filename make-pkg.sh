@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eo pipefail
 
 PKG_FILENAME="BushelScript.pkg"
 PKG_IDENTIFIER="com.justcheesy.BushelScript-Installer"
@@ -7,8 +8,8 @@ PKG_VERSION="$(git describe --tags)"
 # The temporary installed products dir.
 # Will be created automatically.
 # Will be deleted automatically after the pkg is made unless `noclean` is specified as the first script argument.
-INSTALL_DIR="$(pwd)/install"
-echo "Building to ${INSTALL_DIR}."
+INSTALL_DIR="${INSTALL_DIR:-$(pwd)/install}"
+echo "Building to ${INSTALL_DIR}"
 
 # Build everything into the installation directory.
 echo 'Installing.'
