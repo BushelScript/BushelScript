@@ -11,12 +11,6 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install LLVM
       run: brew install llvm
-    - name: Make pkg-config file for LLVM
-      run: |
-        cd "$GITHUB_WORKSPACE"
-        . ./resolve-packages.sh
-        cd "$PACKAGES_DIR/checkouts/LLVMSwift"
-        PATH="$(brew --prefix llvm)/bin:$PATH" swift utils/make-pkgconfig.swift
     - name: Test
       run: |
         cd "$GITHUB_WORKSPACE"

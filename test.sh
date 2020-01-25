@@ -1,6 +1,9 @@
 #!/bin/bash
 set -eo pipefail
 
+# Set up LLVM in case that hasn't been done yet.
+./set-up-llvm.sh
+
 # Run tests.
 echo 'Testing.'
 function test {

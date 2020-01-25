@@ -1,6 +1,9 @@
 #!/bin/bash
 set -eo pipefail
 
+# Set up LLVM in case that hasn't been done yet.
+./set-up-llvm.sh
+
 PKG_FILENAME="BushelScript.pkg"
 PKG_IDENTIFIER="com.justcheesy.BushelScript-Installer"
 PKG_VERSION="$(git describe --tags)"
