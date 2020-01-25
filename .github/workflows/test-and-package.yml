@@ -12,6 +12,7 @@ jobs:
     - name: Install LLVM
       run: brew install llvm
     - name: Make pkg-config file for LLVM
+      run: |
         cd "$GITHUB_WORKSPACE"
         . ./resolve_packges.sh
         cd "$PACKAGES_DIR/checkouts/LLVMSwift"
