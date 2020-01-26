@@ -1,22 +1,22 @@
 import Bushel
 import SwiftAutomation
 
-/// A constant with an underlying four-byte code value.
+/// A symbolic constant.
 public class RT_Constant: RT_Object, AEEncodable {
     
-    public var value: OSType
+    public var value: ConstantInfo
     
-    public init(value: OSType) {
+    public init(value: ConstantInfo) {
         self.value = value
-    }
-    
-    public override var description: String {
-        "'\(String(fourCharCode: value))'"
     }
     
     private static let typeInfo_ = TypeInfo(.constant)
     public override class var typeInfo: TypeInfo {
         typeInfo_
+    }
+    
+    public override var description: String {
+        return "\(value.name as Any? ?? "«constant \(value.uid)»")"
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {
@@ -28,7 +28,10 @@ public class RT_Constant: RT_Object, AEEncodable {
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
-        return NSAppleEventDescriptor(typeCode: value)
+        guard let aeCode = value.uid.ae4Code else {
+            throw Unpackable(object: self)
+        }
+        return NSAppleEventDescriptor(typeCode: aeCode)
     }
     
 }
@@ -36,7 +39,7 @@ public class RT_Constant: RT_Object, AEEncodable {
 extension RT_Constant {
     
     public override var debugDescription: String {
-        super.description + "[value: \(value) '\(String(fourCharCode: value))']"
+        super.description + "[value: \(value)]"
     }
     
 }

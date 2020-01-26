@@ -874,7 +874,7 @@ public extension TypedTermUID.Kind {
     
     var termType: Term.Type {
         switch self {
-        case .enumerator:
+        case .constant:
             return EnumeratorTerm.self
         case .dictionary:
             return DictionaryTerm.self

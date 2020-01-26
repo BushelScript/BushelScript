@@ -69,7 +69,7 @@ public /*abstract*/ class Term: NamedTerm, Hashable {
 public final class EnumeratorTerm: Term {
     
     public override class var kind: TypedTermUID.Kind {
-        .enumerator
+        .constant
     }
     public override var enumerated: TermKind {
         return .enumerator(self)

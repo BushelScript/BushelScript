@@ -19,10 +19,10 @@ public indirect enum TermUID {
 public struct TypedTermUID {
     
     public enum Kind: String {
-        case enumerator
         case dictionary
         case type
         case property
+        case constant
         case command
         case parameter
         case variable

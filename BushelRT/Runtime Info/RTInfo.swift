@@ -47,8 +47,6 @@ public class RTInfo {
         
         for term in terms.byTypedUID.values {
             switch term.enumerated {
-            case .enumerator(_):
-                break
             case .dictionary(_):
                 break
             case .class_(let term):
@@ -59,6 +57,10 @@ public class RTInfo {
                 let tags: [PropertyInfo.Tag] = term.name.map { [.name($0)] } ?? []
                 let property = PropertyInfo(term.uid, Set(tags))
                 propertiesByUID[property.typedUID] = property
+            case .enumerator(let term):
+                let tags: [ConstantInfo.Tag] = term.name.map { [.name($0)] } ?? []
+                let constant = ConstantInfo(term.uid, Set(tags))
+                constantsByUID[constant.typedUID] = constant
             case .command(let term):
                 let tags: [CommandInfo.Tag] = term.name.map { [.name($0)] } ?? []
                 let command = CommandInfo(term.uid, Set(tags))
@@ -97,6 +99,15 @@ public class RTInfo {
     }
     public func property(for code: OSType) -> PropertyInfo? {
         propertiesByUID[TypedTermUID(.property, .ae4(code: code))]
+    }
+    
+    private var constantsByUID: [TypedTermUID : ConstantInfo] = [:]
+    
+    public func constant(forUID uid: TypedTermUID) -> ConstantInfo? {
+        constantsByUID[uid]
+    }
+    public func constant(for code: OSType) -> ConstantInfo? {
+        constantsByUID[TypedTermUID(.constant, .ae4(code: code))]
     }
     
     private var commandsByUID: [TypedTermUID : CommandInfo] = [:]

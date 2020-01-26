@@ -61,16 +61,12 @@ func newString(_ cString: UnsafePointer<CChar>) -> Builtin.RTObjectPointer {
     return Builtin.newString(cString)
 }
 
-func newConstant(_ value: OSType) -> Builtin.RTObjectPointer {
-    return Builtin.newConstant(value)
+func newConstant(_ uid: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
+    return Builtin.newConstant(uid)
 }
 
-func newSymbolicConstant(_ value: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
-    return Builtin.newSymbolicConstant(value)
-}
-
-func newClass(_ value: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
-    return Builtin.newClass(value)
+func newClass(_ uid: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
+    return Builtin.newClass(uid)
 }
 
 func newList() -> Builtin.RTObjectPointer {
@@ -201,7 +197,7 @@ enum BuiltinFunction: String {
     case newVariable, getVariableValue, setVariableValue
     case isTruthy
     case numericEqual
-    case newReal, newInteger, newBoolean, newString, newConstant, newSymbolicConstant, newClass
+    case newReal, newInteger, newBoolean, newString, newConstant, newClass
     case newList, newRecord, newArgumentRecord
     case addToList, addToRecord, addToArgumentRecord
     case getFromArgumentRecord, getFromArgumentRecordWithDirectParamFallback
@@ -245,8 +241,7 @@ enum BuiltinFunction: String {
         case .newInteger: return ([int64], object)
         case .newBoolean: return ([bool], object)
         case .newString: return ([PointerType.toVoid], object)
-        case .newConstant: return ([int32], object)
-        case .newSymbolicConstant: return ([object], object)
+        case .newConstant: return ([object], object)
         case .newClass: return ([object], object)
         case .newList: return ([], object)
         case .newRecord: return ([], object)
@@ -326,11 +321,8 @@ public func generateLLVMModule(from expression: Expression, rt: RTInfo) -> Modul
     let newString: @convention(c) (UnsafePointer<CChar>) -> Builtin.RTObjectPointer = BushelRT.newString
     builder.addExternalFunctionAsGlobal(newString, .newString)
     
-    let newConstant: @convention(c) (OSType) -> Builtin.RTObjectPointer = BushelRT.newConstant
+    let newConstant: @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.newConstant
     builder.addExternalFunctionAsGlobal(newConstant, .newConstant)
-    
-    let newSymbolicConstant: @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.newSymbolicConstant
-    builder.addExternalFunctionAsGlobal(newSymbolicConstant, .newSymbolicConstant)
     
     let newClass: @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = BushelRT.newClass
     builder.addExternalFunctionAsGlobal(newClass, .newClass)
@@ -685,11 +677,7 @@ extension Expression {
              .resource(let term): // MARK: .resource
             return builder.buildCall(toExternalFunction: .getResource, args: [term.term.irPointerValue(builder: builder)])
         case .enumerator(let term as Term): // MARK: .enumerator
-            if let code = term.ae4Code {
-                return builder.buildCall(toExternalFunction: .newConstant, args: [IntType.int32.constant(code)])
-            } else {
-                return builder.buildCall(toExternalFunction: .newSymbolicConstant, args: [builder.module.addGlobalString(name: "symbolic-constant-uid", value: term.typedUID.normalized).asRTString(builder: builder)])
-            }
+            return builder.buildCall(toExternalFunction: .newConstant, args: [builder.module.addGlobalString(name: "constant-uid", value: term.typedUID.normalized).asRTString(builder: builder)])
         case .class_(let term as Term): // MARK: .class_
             return builder.buildCall(toExternalFunction: .newClass, args: [builder.module.addGlobalString(name: "class-uid", value: term.typedUID.normalized).asRTString(builder: builder)])
         case .set(let expression, to: let newValueExpression): // MARK: .set

@@ -16,7 +16,7 @@ public class RT_Class: RT_Object, AEEncodable {
     }
     
     public override var description: String {
-        return "\(value.name as Any? ?? "«type \(value.uid)»")"
+        "\(value.name as Any? ?? "«type \(value.uid)»")"
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {

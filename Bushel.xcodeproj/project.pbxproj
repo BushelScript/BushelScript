@@ -21,7 +21,6 @@
 		3C12EF852354E32C0057E0CC /* RT_String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF842354E32C0057E0CC /* RT_String.swift */; };
 		3C12EF872354E3470057E0CC /* RT_Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF862354E3470057E0CC /* RT_Character.swift */; };
 		3C12EF892354E3590057E0CC /* RT_Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF882354E3590057E0CC /* RT_Constant.swift */; };
-		3C12EF8B2354E3720057E0CC /* RT_SymbolicConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF8A2354E3720057E0CC /* RT_SymbolicConstant.swift */; };
 		3C12EF8D2354E3870057E0CC /* RT_Class.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF8C2354E3870057E0CC /* RT_Class.swift */; };
 		3C12EF8F2354E4130057E0CC /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF8E2354E4130057E0CC /* Errors.swift */; };
 		3C12EF912354E4AA0057E0CC /* RT_Specifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF902354E4AA0057E0CC /* RT_Specifier.swift */; };
@@ -92,6 +91,7 @@
 		3CCE9EAC2325A9E200198564 /* SourceFix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9EAB2325A9E200198564 /* SourceFix.swift */; };
 		3CD113D422FB700000329583 /* Applications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113D322FB700000329583 /* Applications.swift */; };
 		3CD113DB22FC6E9300329583 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113DA22FC6E9300329583 /* Logging.swift */; };
+		3CD8397A23DCE4F6000F2516 /* ConstantInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8397923DCE4F6000F2516 /* ConstantInfo.swift */; };
 		3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */; };
 		3CE775092336C3DC00E0E7C6 /* StaticStackFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE775082336C3DC00E0E7C6 /* StaticStackFrame.swift */; };
 		3CEF505723529A1B008603E3 /* LLVM in Frameworks */ = {isa = PBXBuildFile; productRef = 3CEF505623529A1B008603E3 /* LLVM */; };
@@ -195,7 +195,6 @@
 		3C12EF842354E32C0057E0CC /* RT_String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_String.swift; sourceTree = "<group>"; };
 		3C12EF862354E3470057E0CC /* RT_Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Character.swift; sourceTree = "<group>"; };
 		3C12EF882354E3590057E0CC /* RT_Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Constant.swift; sourceTree = "<group>"; };
-		3C12EF8A2354E3720057E0CC /* RT_SymbolicConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_SymbolicConstant.swift; sourceTree = "<group>"; };
 		3C12EF8C2354E3870057E0CC /* RT_Class.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Class.swift; sourceTree = "<group>"; };
 		3C12EF8E2354E4130057E0CC /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3C12EF902354E4AA0057E0CC /* RT_Specifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Specifier.swift; sourceTree = "<group>"; };
@@ -295,6 +294,7 @@
 		3CCE9EAB2325A9E200198564 /* SourceFix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceFix.swift; sourceTree = "<group>"; };
 		3CD113D322FB700000329583 /* Applications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Applications.swift; sourceTree = "<group>"; };
 		3CD113DA22FC6E9300329583 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		3CD8397923DCE4F6000F2516 /* ConstantInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstantInfo.swift; sourceTree = "<group>"; };
 		3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_Script.swift; sourceTree = "<group>"; };
 		3CE775082336C3DC00E0E7C6 /* StaticStackFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticStackFrame.swift; sourceTree = "<group>"; };
 		3CF7487323B88C5500A2F981 /* TermInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermInfo.swift; sourceTree = "<group>"; };
@@ -381,7 +381,6 @@
 				3C12EF972354E5720057E0CC /* RT_Date.swift */,
 				3C12EF842354E32C0057E0CC /* RT_String.swift */,
 				3C12EF862354E3470057E0CC /* RT_Character.swift */,
-				3C12EF8A2354E3720057E0CC /* RT_SymbolicConstant.swift */,
 				3C12EF7C2354E2B50057E0CC /* RT_Boolean.swift */,
 				3C12EF882354E3590057E0CC /* RT_Constant.swift */,
 				3C12EF7A2354E29B0057E0CC /* RT_Integer.swift */,
@@ -604,6 +603,7 @@
 				3CB528EC23809DDD0051460B /* RTInfo.swift */,
 				3CC224932391D9D500448D25 /* CommandInfo.swift */,
 				3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */,
+				3CD8397923DCE4F6000F2516 /* ConstantInfo.swift */,
 				3CC224882391CFF300448D25 /* PropertyInfo.swift */,
 				3C327261232DBAE2001A527C /* TypeInfo.swift */,
 				3CF7487323B88C5500A2F981 /* TermInfo.swift */,
@@ -1200,6 +1200,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CD8397A23DCE4F6000F2516 /* ConstantInfo.swift in Sources */,
 				3C12EF812354E2F20057E0CC /* RT_List.swift in Sources */,
 				3CC224942391D9D500448D25 /* CommandInfo.swift in Sources */,
 				3C12EF7B2354E29B0057E0CC /* RT_Integer.swift in Sources */,
@@ -1214,7 +1215,6 @@
 				3C12EF892354E3590057E0CC /* RT_Constant.swift in Sources */,
 				3C8FEEF322DE2B8300C1F1CF /* Builtin.swift in Sources */,
 				3CB528EB237FAF8A0051460B /* TypeInfo.swift in Sources */,
-				3C12EF8B2354E3720057E0CC /* RT_SymbolicConstant.swift in Sources */,
 				3C12EF9A2354E5AC0057E0CC /* RT_Application.swift in Sources */,
 				3C12EF9E2354E6010057E0CC /* RT_Global.swift in Sources */,
 				3C12EF7F2354E2D40057E0CC /* RT_Null.swift in Sources */,

@@ -317,15 +317,15 @@ public enum ConstantUID: String, TermUIDPredefinedValue {
     case `false`
     
     public var kind: TypedTermUID.Kind {
-        .enumerator
+        .constant
     }
     
     public var ae4Code: OSType? {
         switch self {
         case .`true`:
-            return OSType(1)
+            return typeTrue
         case .`false`:
-            return OSType(0)
+            return typeFalse
         }
     }
     
@@ -333,9 +333,9 @@ public enum ConstantUID: String, TermUIDPredefinedValue {
         switch uid {
         case .ae4(let aeCode):
             switch aeCode {
-            case OSType(1):
+            case typeTrue:
                 self = .true
-            case OSType(0):
+            case typeFalse:
                 self = .false
             default:
                 return nil

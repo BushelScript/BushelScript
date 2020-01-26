@@ -126,18 +126,17 @@ enum Builtin {
         return toOpaque(retain(RT_String(value: String(cString: cString))))
     }
     
-    static func newConstant(_ value: OSType) -> RTObjectPointer {
-        switch value {
-        case 0...1:
-            return newBoolean(value == 1)
+    static func newConstant(_ uidPointer: RTObjectPointer) -> RTObjectPointer {
+        let uidString = (fromOpaque(uidPointer) as! RT_String).value
+        let uid = TypedTermUID(normalized: uidString)!
+        switch ConstantUID(uid) {
+        case .true:
+            return newBoolean(true)
+        case .false:
+            return newBoolean(false)
         default:
-            return toOpaque(retain(RT_Constant(value: value)))
+            return toOpaque(retain(RT_Constant(value: rt.constant(forUID: uid) ?? ConstantInfo(uid.uid))))
         }
-    }
-    
-    static func newSymbolicConstant(_ valuePointer: RTObjectPointer) -> RTObjectPointer {
-        let value = (fromOpaque(valuePointer) as! RT_String).value
-        return toOpaque(retain(RT_SymbolicConstant(value: value)))
     }
     
     static func newClass(_ uidPointer: RTObjectPointer) -> RTObjectPointer {
@@ -543,7 +542,7 @@ extension RT_Object {
         case is MissingValueType:
             return RT_Null.null // Intentional
         case let symbol as Symbol:
-            return symbol.unpacked(rt)
+            return symbol.asRTObject(rt)
         case let specifier as SwiftAutomation.Specifier:
             if let root = specifier as? SwiftAutomation.RootSpecifier {
                 guard
@@ -574,19 +573,7 @@ extension SwiftAutomation.Symbol {
         case typeType:
             return RT_Class(value: rt.type(for: code) ?? TypeInfo(.ae4(code: code), name == nil ? [] : [.name(TermName(name!))]))
         case typeEnumerated, typeKeyword, typeProperty:
-            return RT_Constant(value: code)
-        default:
-            fatalError("invalid descriptor type for Symbol")
-        }
-    }
-    
-    func unpacked(_ rt: RTInfo) -> RT_Object {
-        let name = TermName(self.name ?? "")
-        switch type {
-        case typeType:
-            return RT_Class(value: rt.type(for: code) ?? TypeInfo(.ae4(code: code), [.name(name)]))
-        case typeEnumerated, typeKeyword, typeProperty:
-            return RT_Constant(value: code)
+            return RT_Constant(value: rt.constant(for: code) ?? ConstantInfo(.ae4(code: code), name == nil ? [] : [.name(TermName(name!))]))
         default:
             fatalError("invalid descriptor type for Symbol")
         }
