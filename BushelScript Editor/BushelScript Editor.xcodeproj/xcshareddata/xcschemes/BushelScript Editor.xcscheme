@@ -57,6 +57,46 @@
                ReferencedContainer = "container:BushelScript Editor.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3C6B75762305AF3F0006C354"
+               BuildableName = "BushelLanguageTests.xctest"
+               BlueprintName = "BushelLanguageTests"
+               ReferencedContainer = "container:../Bushel.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3CCD8AB622CC45040049C74F"
+               BuildableName = "BushelRTTests.xctest"
+               BlueprintName = "BushelRTTests"
+               ReferencedContainer = "container:../Bushel.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3C6B759F2305B5990006C354"
+               BuildableName = "BushelScriptEnglishTests.xctest"
+               BlueprintName = "BushelScriptEnglishTests"
+               ReferencedContainer = "container:../Bushel.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3C35A5C322C81DE7002D4582"
+               BuildableName = "BushelTests.xctest"
+               BlueprintName = "BushelTests"
+               ReferencedContainer = "container:../Bushel.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
