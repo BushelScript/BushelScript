@@ -1,7 +1,7 @@
 import Foundation
 import os
 
-fileprivate let log = OSLog(subsystem: logSubsystem, category: "Language module management")
+private let log = OSLog(subsystem: logSubsystem, category: "Language module management")
 
 public class LanguageModule {
     
@@ -130,9 +130,8 @@ private var languageBundleDirectories: [URL] = {
     let devEnvironmentLanguageBundleDirectories: [URL] = mainLanguageBundleDirectories.map { url in
         url.appendingPathComponent("DevEnvironment")
     }
+    return devEnvironmentLanguageBundleDirectories
     #else
-    let devEnvironmentLanguageBundleDirectories: [URL] = []
+    return mainLanguageBundleDirectories
     #endif
-    return mainLanguageBundleDirectories + devEnvironmentLanguageBundleDirectories
-        
 }()
