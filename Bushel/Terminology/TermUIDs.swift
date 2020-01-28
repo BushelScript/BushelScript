@@ -448,7 +448,7 @@ public enum CommandUID: String, TermUIDPredefinedValue {
 
 public enum ParameterUID: String, TermUIDPredefinedValue {
     
-    case direct
+    case direct = "/direct"
     case set_to
     case open_searchText
     
@@ -477,15 +477,6 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
     
     public var kind: TypedTermUID.Kind {
         .parameter
-    }
-    
-    public var ae4Code: OSType? {
-        switch self {
-        case .direct:
-            return keyDirectObject
-        default:
-            return nil
-        }
     }
     
     public var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {

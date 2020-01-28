@@ -1,0 +1,158 @@
+translation:
+    format: 0.1
+    language: bushelscript_en
+    mappings:
+        dictionary:
+            id:
+                Math: Math
+                Sequence: Sequence
+                String: String
+                GUI: GUI
+                CLI: CLI
+        type:
+            ae4:
+                cobj: item
+                cwin: window
+                utf8:
+                    /standard: UTF-8 text
+                    /plural: UTF-8 text
+                list: list
+                reco: record
+                enum: constant
+                bool: boolean
+                utxt: string
+                'cha ': character
+                nmbr: number
+                comp: integer
+                doub: real
+                'ldt ': date
+                cwin: window
+                docu: document
+                file: file
+                alis:
+                    /standard: alias    # type/ae4:alis/standard
+                    /plural: aliases
+                capp:
+                    - application
+                    - app
+                'obj ': specifier
+                cmpd: comparison test specifier
+                logi: logical test specifier
+                type: type
+                msng: 'null'
+            id:
+                global: BushelScript
+                script: script
+        property:
+            ae4:
+                pALL: properties
+                pcls: type
+                pnam: name
+                'ID  ': id
+                pidx: index
+                leng: length
+                rvse: reverse
+                rest: tail
+            id:
+                top script: BushelScript
+                current date: current date
+                date:
+                    seconds: seconds    # property/id:date:seconds
+                    minutes: minutes
+                    hours: hours
+                Math:
+                    pi: pi
+                    e: e
+        constant:
+             ae4:
+                 'true': 'true'
+                 fals: 'false'
+        command:
+            ae8:
+                # Standard AE-based system commands.
+                aevtoapp: run
+                aevtrapp: reopen
+                aevtodoc: open
+                aevtpdoc: print documents   # Let's not have random sheets of paper coming out of people's printers.
+                aevtquit: quit
+                # StandardAdditions commands.
+                sysonotf: notification
+                sysodisA: alert
+                gtqpchlt: choose from
+            id:
+                delay:
+                    - delay
+                    - wait
+                Math:
+                    abs:
+                        - absolute value
+                        - abs
+                    sqrt:
+                        - square root
+                        - sqrt
+                        - √
+                    cbrt:
+                        - cube root
+                        - cubic root
+                        - cbrt
+                    square:
+                        - square
+                        - squared
+                    cube:
+                        - cube
+                        - cubed
+                    pow:
+                        - power
+                        - pow
+                Sequence:
+                    join: join
+                String:
+                    split: split
+                CLI:
+                    log: log
+        parameter:
+            ae12:
+                coresetddata: to
+                aevtodocstxt: search text
+                sysonotfappr: title
+                sysonotfsubt: subtitle
+                sysonotfnsou: sound
+                sysodisAmesS: message
+                sysodisAEAlT: kind
+                sysodisAbtns: buttons
+                sysodisAdflt: default
+                sysodisAcbtn: cancel
+                sysodisAgivu: timeout
+                gtqpchltappr: title
+                gtqpchltprmp: prompt
+                gtqpchltinSL: default
+                gtqpchltokbt: confirm
+                gtqpchltcnbt: cancel
+                gtqpchltmlsl: multiple selection
+                gtqpchltempL: empty selection
+            id:
+                Math:
+                    abs:
+                        /direct: of
+                    sqrt:
+                        /direct: of
+                    cbrt:
+                        /direct: of
+                    square:
+                        /direct: of
+                    cube:
+                        /direct: of
+                    pow:
+                        /direct: of
+                        exponent: to the
+                Sequence:
+                    join:
+                        with:
+                            - with
+                            - by
+                String:
+                    split:
+                        by: by
+                CLI:
+                    log:
+                        /direct: message

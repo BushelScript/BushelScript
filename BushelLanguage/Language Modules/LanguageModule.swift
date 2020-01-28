@@ -17,11 +17,13 @@ public class LanguageModule {
     )
     
     public func parser() -> SourceParser {
-        return types.parser.init()
+        types.parser.init(translations: translations)
     }
     public func formatter() -> SourceFormatter {
-        return types.formatter.init()
+        types.formatter.init()
     }
+    
+    public let translations: [Translation]
     
     public init?(identifier: String) {
         guard
@@ -67,6 +69,19 @@ public class LanguageModule {
             parser: parser,
             formatter: formatter
         )
+        
+        self.translations =
+            bundle.urls(forResourcesWithExtension: nil, subdirectory: "Translations").map { translationFileURLs in
+                 translationFileURLs.compactMap { translationFileURL in
+                    do {
+                        let translationContents = try String(contentsOf: translationFileURL)
+                        return try Translation(source: translationContents)
+                    } catch {
+                        os_log("Could not load translation file \"%@\" in language module \"%{public}@\": %@", log: log, error.localizedDescription)
+                        return nil
+                    }
+                }
+            } ?? []
     }
     
     public struct ModuleDescriptor {

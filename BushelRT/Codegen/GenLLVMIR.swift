@@ -89,16 +89,16 @@ func addToRecord(_ record: Builtin.RTObjectPointer, _ key: Builtin.RTObjectPoint
     return Builtin.addToRecord(record, key, value)
 }
 
-func addToArgumentRecord(_ record: Builtin.RTObjectPointer, _ key: Builtin.RTObjectPointer, _ value: Builtin.RTObjectPointer) {
-    return Builtin.addToArgumentRecord(record, key, value)
+func addToArgumentRecord(_ record: Builtin.RTObjectPointer, _ keyUID: Builtin.RTObjectPointer, _ value: Builtin.RTObjectPointer) {
+    return Builtin.addToArgumentRecord(record, keyUID, value)
 }
 
-func getFromArgumentRecord(_ record: Builtin.RTObjectPointer, _ term: Builtin.TermPointer) -> Builtin.RTObjectPointer {
-    return Builtin.getFromArgumentRecord(record, term)
+func getFromArgumentRecord(_ record: Builtin.RTObjectPointer, _ keyUID: Builtin.TermPointer) -> Builtin.RTObjectPointer {
+    return Builtin.getFromArgumentRecord(record, keyUID)
 }
 
-func getFromArgumentRecordWithDirectParamFallback(_ record: Builtin.RTObjectPointer, _ term: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
-    return Builtin.getFromArgumentRecordWithDirectParamFallback(record, term)
+func getFromArgumentRecordWithDirectParamFallback(_ record: Builtin.RTObjectPointer, _ keyUID: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
+    return Builtin.getFromArgumentRecordWithDirectParamFallback(record, keyUID)
 }
 
 func unaryOp(_ operation: Int64, _ operand: Builtin.RTObjectPointer) -> Builtin.RTObjectPointer {
@@ -677,9 +677,9 @@ extension Expression {
              .resource(let term): // MARK: .resource
             return builder.buildCall(toExternalFunction: .getResource, args: [term.term.irPointerValue(builder: builder)])
         case .enumerator(let term as Term): // MARK: .enumerator
-            return builder.buildCall(toExternalFunction: .newConstant, args: [builder.module.addGlobalString(name: "constant-uid", value: term.typedUID.normalized).asRTString(builder: builder)])
+            return builder.buildCall(toExternalFunction: .newConstant, args: [term.typedUID.normalizedAsRTString(builder: builder, name: "constant-uid")])
         case .class_(let term as Term): // MARK: .class_
-            return builder.buildCall(toExternalFunction: .newClass, args: [builder.module.addGlobalString(name: "class-uid", value: term.typedUID.normalized).asRTString(builder: builder)])
+            return builder.buildCall(toExternalFunction: .newClass, args: [term.typedUID.normalizedAsRTString(builder: builder, name: "class-uid")])
         case .set(let expression, to: let newValueExpression): // MARK: .set
             if case .variable(let variableTerm) = expression.kind {
                 let newValueIRValue = try newValueExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
@@ -688,14 +688,14 @@ extension Expression {
                 
                 return builder.buildCall(toExternalFunctionReturningVoid: .setVariableValue, args: [termIRValue, newValueIRValue])
             } else {
-                let directParameterTermIRValue = rt.termPool.term(forUID: TypedTermUID(ParameterUID.direct))!.irPointerValue(builder: builder)
-                let toParameterTermIRValue = rt.termPool.term(forUID: TypedTermUID(ParameterUID.set_to))!.irPointerValue(builder: builder)
+                let directParameterUIDIRValue = TypedTermUID(ParameterUID.direct).normalizedAsRTString(builder: builder, name: "dp-uid")
+                let toParameterUIDIRValue = TypedTermUID(ParameterUID.set_to).normalizedAsRTString(builder: builder, name: "dp-uid")
                 let expressionIRValue = try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult, evaluateSpecifiers: false)
                 let newValueIRValue = try newValueExpression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
                 
                 let arguments = builder.buildCall(toExternalFunction: .newArgumentRecord, args: [])
-                builder.buildCall(toExternalFunctionReturningVoid: .addToArgumentRecord, args: [arguments, directParameterTermIRValue, expressionIRValue])
-                builder.buildCall(toExternalFunctionReturningVoid: .addToArgumentRecord, args: [arguments, toParameterTermIRValue, newValueIRValue])
+                builder.buildCall(toExternalFunctionReturningVoid: .addToArgumentRecord, args: [arguments, directParameterUIDIRValue, expressionIRValue])
+                builder.buildCall(toExternalFunctionReturningVoid: .addToArgumentRecord, args: [arguments, toParameterUIDIRValue, newValueIRValue])
                 
                 let command = rt.command(forUID: TypedTermUID(CommandUID.set))!
                 let setCommandIRValue = command.irPointerValue(builder: builder)
@@ -704,16 +704,16 @@ extension Expression {
             }
             
         case .command(let term, let parameters): // MARK: .command
-            let parameterIRValues: [(term: IRValue, value: IRValue)] = try parameters.map { kv in
+            let parameterIRValues: [(uid: IRValue, value: IRValue)] = try parameters.map { kv in
                 let (parameterTerm, parameterValue) = kv
-                let termIRValue = parameterTerm.term.irPointerValue(builder: builder)
+                let uidIRValue = parameterTerm.term.typedUID.normalizedAsRTString(builder: builder, name: "parameter-uid")
                 let valueIRValue = try parameterValue.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
-                return (termIRValue, valueIRValue)
+                return (uidIRValue, valueIRValue)
             }
             
             let arguments = builder.buildCall(toExternalFunction: .newArgumentRecord, args: [])
             for parameter in parameterIRValues {
-                builder.buildCall(toExternalFunctionReturningVoid: .addToArgumentRecord, args: [arguments, parameter.term, parameter.value])
+                builder.buildCall(toExternalFunctionReturningVoid: .addToArgumentRecord, args: [arguments, parameter.uid, parameter.value])
             }
             
             if
@@ -744,32 +744,26 @@ extension Expression {
             builder.positionAtEnd(of: entry)
             
             let actualArguments = function.parameter(at: 0)!
-            
-            // This special-cases the first argument to allow it to fall back
-            // on the value of the direct parameter.
-            //
-            // e.g.,
-            //     to cat: l, with r
-            //         l & r
-            //     end
-            //     cat "hello, " with "world"
-            //
-            //  l = "hello" even though it's not explicitly specified.
-            //  Without this special-case, the call would have to be:
-            //     cat l "hello, " with "world"
-            if
-                let firstParam = parameters.first,
-                let firstArg = arguments.first
-            {
-                let firstArgVariableTermIRValue = firstArg.term.irPointerValue(builder: builder)
-                let firstArgValueIRValue = builder.buildCall(toExternalFunction: .getFromArgumentRecordWithDirectParamFallback, args: [actualArguments, firstParam.term.irPointerValue(builder: builder)])
-                builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [firstArgVariableTermIRValue, firstArgValueIRValue])
-            }
-            
-            for (parameter, argument) in zip(parameters, arguments).dropFirst() {
-                let argumentVariableTermIRValue = argument.term.irPointerValue(builder: builder)
-                let argumentValueIRValue = builder.buildCall(toExternalFunction: .getFromArgumentRecord, args: [actualArguments, parameter.term.irPointerValue(builder: builder)])
-                builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [argumentVariableTermIRValue, argumentValueIRValue])
+
+            for (index, (parameter, argument)) in zip(parameters, arguments).enumerated() {
+                // This special-cases the first argument to allow it to fall back
+                // on the value of the direct parameter.
+                //
+                // e.g.,
+                //     to cat: l, with r
+                //         l & r
+                //     end
+                //     cat "hello, " with "world"
+                //
+                //  l = "hello" even though it's not explicitly specified.
+                //  Without this special-case, the call would have to be:
+                //     cat l "hello, " with "world"
+                let getFunction: BuiltinFunction = (index == 0) ? .getFromArgumentRecordWithDirectParamFallback : .getFromArgumentRecord
+                
+                let parameterUIDIRValue = parameter.term.typedUID.normalizedAsRTString(builder: builder, name: "parameter-uid")
+                let argumentValueIRValue = builder.buildCall(toExternalFunction: getFunction, args: [actualArguments, parameterUIDIRValue])
+                let argumentTermIRValue = argument.term.irPointerValue(builder: builder)
+                builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [argumentTermIRValue, argumentValueIRValue])
             }
             
             stack.currentFrame.add(function: function, for: name.name!)
@@ -842,6 +836,14 @@ extension TypeInfo: IRPointerConvertible {}
 extension CommandInfo: IRPointerConvertible {}
 extension ParameterInfo: IRPointerConvertible {}
 extension PropertyInfo: IRPointerConvertible {}
+
+extension TypedTermUID {
+    
+    func normalizedAsRTString(builder: IRBuilder, name: String) -> IRValue {
+        builder.module.addGlobalString(name: "\(name).\(self)", value: normalized).asRTString(builder: builder)
+    }
+    
+}
 
 extension Specifier {
     

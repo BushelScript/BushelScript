@@ -1,92 +1,101 @@
 import XCTest
-@testable import bushelscript_en
+import BushelLanguage
 
 // Protip: ⌥⇧⌘← to fold all methods
 
+private let moduleID = "bushelscript_en"
+
 class LanguageConstructTests: XCTestCase {
     
+    lazy var module = LanguageModule(identifier: "bushelscript_en")!
+    
     func test_use_invalidResourceType_emitsError() {
-        XCTAssertThrowsError(try EnglishParser().parse(source: "use Finder"))
-        XCTAssertThrowsError(try EnglishParser().parse(source: "use appl Finder"))
-        XCTAssertThrowsError(try EnglishParser().parse(source: "use application \"Finder\""))
-        XCTAssertThrowsError(try EnglishParser().parse(source: "use com.apple.Finder"))
-        XCTAssertThrowsError(try EnglishParser().parse(source: "use appl com.apple.Finder"))
-        XCTAssertThrowsError(try EnglishParser().parse(source: "use id com.apple.Finder"))
-        XCTAssertThrowsError(try EnglishParser().parse(source: "use application id \"com.apple.Finder\""))
+        let parser = module.parser()
+        XCTAssertThrowsError(try parser.parse(source: "use Finder"))
+        XCTAssertThrowsError(try parser.parse(source: "use appl Finder"))
+        XCTAssertThrowsError(try parser.parse(source: "use application \"Finder\""))
+        XCTAssertThrowsError(try parser.parse(source: "use com.apple.Finder"))
+        XCTAssertThrowsError(try parser.parse(source: "use appl com.apple.Finder"))
+        XCTAssertThrowsError(try parser.parse(source: "use id com.apple.Finder"))
+        XCTAssertThrowsError(try parser.parse(source: "use application id \"com.apple.Finder\""))
     }
     
     func test_useApplication_notFound_emitsError() {
-        XCTAssertThrowsError(try EnglishParser().parse(source: "use app ThisAppDoesNotExistOnAnybodysSystem"))
-        XCTAssertThrowsError(try EnglishParser().parse(source: "use app id abc.xyz.ThisAppDoesNotExistOnAnybodysSystem"))
+        let parser = module.parser()
+        XCTAssertThrowsError(try parser.parse(source: "use app ThisAppDoesNotExistOnAnybodysSystem"))
+        XCTAssertThrowsError(try parser.parse(source: "use app id abc.xyz.ThisAppDoesNotExistOnAnybodysSystem"))
     }
     
     func test_useApplication_byName_findsApplication() {
-        XCTAssertNoThrow(try EnglishParser().parse(source: "use application Finder"))
-        XCTAssertNoThrow(try EnglishParser().parse(source: "use app Finder"))
+        let parser = module.parser()
+        XCTAssertNoThrow(try parser.parse(source: "use application Finder"))
+        XCTAssertNoThrow(try parser.parse(source: "use app Finder"))
     }
     
     func test_useApplication_byID_findsApplication() {
-        XCTAssertNoThrow(try EnglishParser().parse(source: "use application id com.apple.Finder"))
-        XCTAssertNoThrow(try EnglishParser().parse(source: "use app id com.apple.Finder"))
+        let parser = module.parser()
+        XCTAssertNoThrow(try parser.parse(source: "use application id com.apple.Finder"))
+        XCTAssertNoThrow(try parser.parse(source: "use app id com.apple.Finder"))
     }
     
     func test_if() {
+        let parser = module.parser()
         // if-end
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
     789
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
     789
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
     789
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
     789
@@ -94,63 +103,72 @@ end
 """))
         
         // single-line if
-        XCTAssertNoThrow(try EnglishParser().parse(source: "if 123 then 456"))
+        XCTAssertNoThrow(try parser.parse(source: "if 123 then 456"))
         
         // if-else-end
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
 else
     789
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
 else
     789
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
 else
     789
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
 else
     789
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
 else
     789
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
 else
     789
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
 else
     789
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
 else
     789
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
+    456
+    789
+else
+    654
+    321
+end if
+"""))
+        XCTAssertNoThrow(try parser.parse(source: """
+if 123
     456
     789
 else
@@ -158,16 +176,7 @@ else
     321
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
-if 123
-    456
-    789
-else
-    654
-    321
-end if
-"""))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
     789
@@ -176,7 +185,7 @@ else
     321
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
     789
@@ -185,41 +194,41 @@ else
     321
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
 else
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
 else
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
 else
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
 else
 end
 """))
         
         // single-line if with multi-line else
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then 456
 else 789
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then 456
 else
     789
 end if
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then 456
 else
     789
@@ -227,22 +236,22 @@ end
 """))
         
         // multi-line if with single-line else
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
 else 789
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
 else 789
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
 else 789
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
 else 789
@@ -250,37 +259,38 @@ else 789
     }
     
     func test_tell() {
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        let parser = module.parser()
+        XCTAssertNoThrow(try parser.parse(source: """
 tell 123
     456
 end tell
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 tell 123
     456
     789
 end tell
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 tell 123
 end tell
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 tell 123
     456
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 tell 123
     456
     789
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: """
+        XCTAssertNoThrow(try parser.parse(source: """
 tell 123
 end
 """))
-        XCTAssertNoThrow(try EnglishParser().parse(source: "tell 123 to 456"))
+        XCTAssertNoThrow(try parser.parse(source: "tell 123 to 456"))
     }
     
 }

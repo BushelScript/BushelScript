@@ -18,7 +18,7 @@ public indirect enum TermUID {
 
 public struct TypedTermUID {
     
-    public enum Kind: String {
+    public enum Kind: String, CaseIterable {
         case dictionary
         case type
         case property
@@ -104,6 +104,9 @@ extension TermUID {
         case .ae4(let code),
              .ae12(_, _, let code):
             return code
+        case .id(_):
+            // Special-case direct parameter
+            return isDirectParameter ? keyDirectObject : nil
         case .variant(_, let uid):
             return uid.ae4Code
         default:
@@ -112,7 +115,7 @@ extension TermUID {
     }
     
     public var ae8Code: (class: AEEventClass, id: AEEventID)? {
-        switch self{
+        switch self {
         case .ae8(let codes):
             return codes
         case .variant(_, let uid):
@@ -123,13 +126,65 @@ extension TermUID {
     }
     
     public var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {
-        switch self{
+        switch self {
         case .ae12(let codes):
             return codes
         case .variant(_, let uid):
             return uid.ae12Code
         default:
             return nil
+        }
+    }
+    
+    public var idName: String? {
+        switch self {
+        case .id(let name):
+            return name
+        case .variant(_, let uid):
+            return uid.idName
+        default:
+            return nil
+        }
+    }
+    
+    public var idNameScopes: [String]? {
+        idName.map { scopes(from: $0) }
+    }
+    
+    private func scopes(from idName: String) -> [String] {
+        idName.split(separator: ":").map { String($0) }
+    }
+    
+}
+
+extension TermUID {
+    
+    /// The UID for the corresponding command if this UID were to refer to
+    /// a parameter. `nil` if unavailable.
+    public var commandUIDFromParameterUID: TermUID? {
+        switch self {
+        case .ae12(let `class`, let id, _):
+            return .ae8(class: `class`, id: id)
+        case .id(let name):
+            let scopes = self.scopes(from: name)
+            guard scopes.count > 1 else {
+                return nil
+            }
+            return .id(scopes.dropLast().joined(separator: ":"))
+        default:
+            return nil
+        }
+    }
+    
+    public var isDirectParameter: Bool {
+        switch self {
+        case .ae4(let code),
+             .ae12(_, _, let code):
+            return code == keyDirectObject
+        case .id(let name):
+            return scopes(from: name).last == "/direct"
+        default:
+            return false
         }
     }
     

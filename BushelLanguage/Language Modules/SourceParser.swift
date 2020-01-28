@@ -43,7 +43,6 @@ public protocol SourceParser: AnyObject {
     var sequenceEndTags: [TermName] { get set }
     
     var keywords: [TermName : KeywordHandler] { get }
-    var defaultTerms: [TermDescriptor] { get }
     var prefixOperators: [TermName : UnaryOperation] { get }
     var postfixOperators: [TermName : UnaryOperation] { get }
     var binaryOperators: [TermName : BinaryOperation] { get }
@@ -67,6 +66,13 @@ public protocol SourceParser: AnyObject {
 
 public extension SourceParser {
     
+    init(translations: [Translation]) {
+        self.init()
+        for translation in translations {
+            lexicon.add(translation.makeTerms(under: lexicon.pool))
+        }
+    }
+    
     func parse(source: String) throws -> Program {
         signpostBegin()
         defer { signpostEnd() }
@@ -81,17 +87,10 @@ public extension SourceParser {
         self.expressionStartIndex = source.startIndex
         self.currentElements = []
         
-        lexicon.add(ParameterDescriptor(.direct, name: nil).realize(lexicon.pool))
-        lexicon.add(CommandDescriptor(.get, name: nil).realize(lexicon.pool))
-        lexicon.add(ParameterDescriptor(.set_to, name: nil).realize(lexicon.pool))
-        lexicon.add(CommandDescriptor(.set, name: nil).realize(lexicon.pool))
-        
-        for descriptor in defaultTerms {
-            lexicon.add(descriptor.realize(lexicon.pool))
-        }
+        lexicon.add(ParameterTerm(TermUID(ParameterUID.direct), name: nil))
         
         lexicon.push(uid: .id("script"))
-//        defer { lexicon.pop() }
+        defer { lexicon.pop() }
         do {
             let ast: Expression
             if let sequence = try parseSequence(TermName("")) {

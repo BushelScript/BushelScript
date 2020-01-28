@@ -36,7 +36,8 @@ public class ParameterInfo: TermInfo, Hashable {
     }
     
     public init(_ uid: TermUID, _ tags: Set<Tag> = []) {
-        self.uid = uid
+        // Normalize all "direct" parameters into one value for the sake of runtime comparisons
+        self.uid = uid.isDirectParameter ? TermUID(ParameterUID.direct) : uid
         self.tags = tags
     }
     

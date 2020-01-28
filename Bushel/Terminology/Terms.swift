@@ -42,11 +42,12 @@ public /*abstract*/ class Term: NamedTerm, Hashable {
     }
     
     public static func == (lhs: Term, rhs: Term) -> Bool {
-        return lhs.uid == rhs.uid
+        return lhs.uid == rhs.uid && lhs.name == rhs.name
     }
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(uid)
+        hasher.combine(name)
     }
     
     public var description: String {
@@ -62,6 +63,35 @@ public /*abstract*/ class Term: NamedTerm, Hashable {
     
     public var typedUID: TypedTermUID {
         TypedTermUID(type(of: self).kind, uid)
+    }
+
+    public static func make(for typedUID: TypedTermUID, name: TermName) -> Term? {
+        let termType: Term.Type
+        switch typedUID.kind {
+        case .dictionary:
+            termType = DictionaryTerm.self
+        case .type:
+            switch typedUID.uid {
+            case .variant(let variant, let singularUID) where variant == .plural:
+                let singularTerm = make(for: TypedTermUID(.type, singularUID), name: name) as! ClassTerm
+                return PluralClassTerm(singularClass: singularTerm, name: name)
+            default:
+                termType = ClassTerm.self
+            }
+        case .property:
+            termType = PropertyTerm.self
+        case .constant:
+            termType = EnumeratorTerm.self
+        case .command:
+            termType = CommandTerm.self
+        case .parameter:
+            termType = ParameterTerm.self
+        case .variable:
+            termType = VariableTerm.self
+        case .resource:
+            termType = ResourceTerm.self
+        }
+        return termType.init(typedUID.uid, name: name)
     }
     
 }
@@ -81,7 +111,7 @@ public final class EnumeratorTerm: Term {
     
 }
 
-public final class DictionaryTerm: Term, TermDictionaryContainer {
+public final class DictionaryTerm: Term, TermDictionaryDelayedInitContainer {
     
     public override class var kind: TypedTermUID.Kind {
         .dictionary
@@ -90,19 +120,23 @@ public final class DictionaryTerm: Term, TermDictionaryContainer {
         return .dictionary(self)
     }
     
-    public var dictionary: TermDictionary
-    
-    public var terminology: TermDictionary? {
-        return dictionary
-    }
+    public var terminology: TermDictionary?
+    public let exportsTerminology: Bool
     
     public init(_ uid: TermUID, name: TermName?, terminology: TermDictionary) {
-        self.dictionary = terminology
+        self.terminology = terminology
+        self.exportsTerminology = terminology.exports
         super.init(uid, name: name)!
     }
     
-    public required init?(_ uid: TermUID, name: TermName?) {
-        return nil
+    public init(_ uid: TermUID, name: TermName?, exports: Bool) {
+        self.terminology = nil
+        self.exportsTerminology = exports
+        super.init(uid, name: name)!
+    }
+    
+    public required convenience init(_ uid: TermUID, name: TermName?) {
+        self.init(uid, name: name, exports: true)
     }
     
 }

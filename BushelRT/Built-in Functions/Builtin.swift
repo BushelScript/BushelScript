@@ -21,6 +21,10 @@ enum Builtin {
         return BushelRT.fromOpaque(pointer) as! Bushel.Term
     }
     
+    static func typedUIDFromOpaque(_ stringPointer: RTObjectPointer) -> TypedTermUID {
+        return TypedTermUID(normalized: (fromOpaque(stringPointer) as! RT_String).value)!
+    }
+    
     static func infoFromOpaque<Result>(_ pointer: InfoPointer) -> Result {
         return BushelRT.fromOpaque(pointer) as! Result
     }
@@ -127,22 +131,20 @@ enum Builtin {
     }
     
     static func newConstant(_ uidPointer: RTObjectPointer) -> RTObjectPointer {
-        let uidString = (fromOpaque(uidPointer) as! RT_String).value
-        let uid = TypedTermUID(normalized: uidString)!
-        switch ConstantUID(uid) {
+        let typedUID = typedUIDFromOpaque(uidPointer)
+        switch ConstantUID(typedUID) {
         case .true:
             return newBoolean(true)
         case .false:
             return newBoolean(false)
         default:
-            return toOpaque(retain(RT_Constant(value: rt.constant(forUID: uid) ?? ConstantInfo(uid.uid))))
+            return toOpaque(retain(RT_Constant(value: rt.constant(forUID: typedUID) ?? ConstantInfo(typedUID.uid))))
         }
     }
     
     static func newClass(_ uidPointer: RTObjectPointer) -> RTObjectPointer {
-        let uidString = (fromOpaque(uidPointer) as! RT_String).value
-        let uid = TypedTermUID(normalized: uidString)!
-        return toOpaque(retain(RT_Class(value: rt.type(forUID: uid) ?? TypeInfo(uid.uid))))
+        let typedUID = typedUIDFromOpaque(uidPointer)
+        return toOpaque(retain(RT_Class(value: rt.type(forUID: typedUID) ?? TypeInfo(typedUID.uid))))
     }
     
     static func newList() -> RTObjectPointer {
@@ -170,24 +172,24 @@ enum Builtin {
         record.add(key: key, value: value)
     }
     
-    static func addToArgumentRecord(_ recordPointer: RTObjectPointer, _ termPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
+    static func addToArgumentRecord(_ recordPointer: RTObjectPointer, _ uidPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
         let record = fromOpaque(recordPointer) as! RT_Private_ArgumentRecord
-        let term = termFromOpaque(termPointer)
+        let typedUID = typedUIDFromOpaque(uidPointer)
         let value = fromOpaque(valuePointer)
-        record.contents[term.typedUID] = value
+        record.contents[typedUID] = value
     }
     
-    static func getFromArgumentRecord(_ recordPointer: RTObjectPointer, _ termPointer: RTObjectPointer) -> RTObjectPointer {
+    static func getFromArgumentRecord(_ recordPointer: RTObjectPointer, _ uidPointer: RTObjectPointer) -> RTObjectPointer {
         let record = fromOpaque(recordPointer) as! RT_Private_ArgumentRecord
-        let term = termFromOpaque(termPointer)
-        return toOpaque(record.contents[term.typedUID] ?? RT_Null.null)
+        let typedUID = typedUIDFromOpaque(uidPointer)
+        return toOpaque(record.contents[typedUID] ?? RT_Null.null)
     }
     
-    static func getFromArgumentRecordWithDirectParamFallback(_ recordPointer: RTObjectPointer, _ termPointer: RTObjectPointer) -> RTObjectPointer {
+    static func getFromArgumentRecordWithDirectParamFallback(_ recordPointer: RTObjectPointer, _ uidPointer: RTObjectPointer) -> RTObjectPointer {
         let record = fromOpaque(recordPointer) as! RT_Private_ArgumentRecord
-        let term = termFromOpaque(termPointer)
+        let typedUID = typedUIDFromOpaque(uidPointer)
         return toOpaque(
-            record.contents[term.typedUID] ??
+            record.contents[typedUID] ??
             record.contents[TypedTermUID(ParameterUID.direct)] ??
             RT_Null.null
         )
@@ -280,14 +282,13 @@ enum Builtin {
     
     static func newSpecifier0(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
-        let uidString = (fromOpaque(uidPointer) as! RT_String).value
-        let uid = TypedTermUID(normalized: uidString)!
+        let typedUID = typedUIDFromOpaque(uidPointer)
         let newSpecifier: RT_Specifier
         let kind = RT_Specifier.Kind(rawValue: rawKind)!
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: propertyInfo(for: uid), data: [], kind: .property)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: propertyInfo(for: typedUID), data: [], kind: .property)
         } else {
-            if let type = rt.type(forUID: uid) {
+            if let type = rt.type(forUID: typedUID) {
                 newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [], kind: kind)
             } else {
                 throwError(message: "unknown type")
@@ -298,15 +299,14 @@ enum Builtin {
     }
     static func newSpecifier1(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
-        let uidString = (fromOpaque(uidPointer) as! RT_String).value
-        let uid = TypedTermUID(normalized: uidString)!
+        let typedUID = typedUIDFromOpaque(uidPointer)
         let data1 = fromOpaque(data1Pointer)
         let newSpecifier: RT_Specifier
         let kind = RT_Specifier.Kind(rawValue: rawKind)!
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: uid), data: [data1], kind: .property)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [data1], kind: .property)
         } else {
-            if let type = rt.type(forUID: uid) {
+            if let type = rt.type(forUID: typedUID) {
                 newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [data1], kind: kind)
             } else {
                 throwError(message: "unknown type")
@@ -317,16 +317,15 @@ enum Builtin {
     }
     static func newSpecifier2(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer, _ data2Pointer: RTObjectPointer) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
-        let uidString = (fromOpaque(uidPointer) as! RT_String).value
-        let uid = TypedTermUID(normalized: uidString)!
+        let typedUID = typedUIDFromOpaque(uidPointer)
         let data1 = fromOpaque(data1Pointer)
         let data2 = fromOpaque(data2Pointer)
         let newSpecifier: RT_Specifier
         let kind = RT_Specifier.Kind(rawValue: rawKind)!
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: uid), data: [data1, data2], kind: .property)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [data1, data2], kind: .property)
         } else {
-            if let type = rt.type(forUID: uid) {
+            if let type = rt.type(forUID: typedUID) {
                 newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [data1, data2], kind: kind)
             } else {
                 throwError(message: "unknown type")
