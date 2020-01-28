@@ -101,20 +101,6 @@
 			remoteGlobalIDString = 3CCD8AAE22CC45040049C74F;
 			remoteInfo = BushelRT;
 		};
-		3C5722A52392146F00F9CF47 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C04302A2315AFA900758339 /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3CC224BD239207A500448D25;
-			remoteInfo = BushelScriptPirate;
-		};
-		3C5722A72392146F00F9CF47 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C04302A2315AFA900758339 /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3CC224CA239207A900448D25;
-			remoteInfo = BushelScriptPirateTests;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -213,12 +199,10 @@
 				3C04303B2315AFA900758339 /* BushelTests.xctest */,
 				3C04303D2315AFA900758339 /* BushelLanguage.framework */,
 				3C04303F2315AFA900758339 /* BushelLanguageTests.xctest */,
-				3C0430412315AFA900758339 /* bushelscript_en.framework */,
-				3C0430432315AFA900758339 /* BushelScriptEnglishTests.xctest */,
-				3C5722A62392146F00F9CF47 /* bushelscript_argh.framework */,
-				3C5722A82392146F00F9CF47 /* BushelScriptPirateTests.xctest */,
 				3C0430452315AFA900758339 /* BushelRT.framework */,
 				3C0430472315AFA900758339 /* BushelRTTests.xctest */,
+				3C0430412315AFA900758339 /* bushelscript_en.framework */,
+				3C0430432315AFA900758339 /* BushelScriptEnglishTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -395,20 +379,6 @@
 			fileType = wrapper.cfbundle;
 			path = BushelRTTests.xctest;
 			remoteRef = 3C0430462315AFA900758339 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C5722A62392146F00F9CF47 /* bushelscript_argh.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = bushelscript_argh.framework;
-			remoteRef = 3C5722A52392146F00F9CF47 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C5722A82392146F00F9CF47 /* BushelScriptPirateTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = BushelScriptPirateTests.xctest;
-			remoteRef = 3C5722A72392146F00F9CF47 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
