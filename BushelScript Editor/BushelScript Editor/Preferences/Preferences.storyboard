@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="tIW-kw-HeA">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="tIW-kw-HeA">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -94,7 +95,7 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="MJd-ru-GpH">
                                 <rect key="frame" x="134" y="71" width="298" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" title="Makes saved documents executable by passing them as input to the specified program." id="R8c-hI-jjK">
-                                    <font key="font" metaFont="message" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -229,7 +230,7 @@
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K3d-xb-cxu">
                                                 <rect key="frame" x="200" y="1" width="153" height="14"/>
                                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Disabled by Privacy settings" id="k9L-rV-Sgr">
-                                                    <font key="font" metaFont="message" size="11"/>
+                                                    <font key="font" metaFont="menu" size="11"/>
                                                     <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
@@ -315,7 +316,7 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="WqC-h4-gBF">
                                 <rect key="frame" x="38" y="20" width="394" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" title="When enabled, press Option-Escape to complete with words that appear previously in the document." id="9nM-aV-Ich">
-                                    <font key="font" metaFont="message" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -335,7 +336,7 @@
                                 <rect key="frame" x="188" y="244" width="258" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" selectable="YES" title="Note: not all of these features are implemented as of yet." id="VSm-da-CfP">
-                                    <font key="font" metaFont="message" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -417,51 +418,48 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dxa-dg-ow9">
                                 <rect key="frame" x="126" y="54" width="306" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" title="These features show you relevant data from applications on your system during editing." id="0Ue-Bm-qUi">
-                                    <font key="font" metaFont="message" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" fixedFrame="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jIH-S1-IVg">
-                                <rect key="frame" x="40" y="16" width="378" height="21"/>
+                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jIH-S1-IVg">
+                                <rect key="frame" x="40" y="20" width="350" height="17"/>
                                 <subviews>
-                                    <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="NWn-S3-gbL">
-                                        <rect key="frame" x="-2" y="-2" width="42" height="24"/>
-                                        <connections>
-                                            <binding destination="df4-8L-v29" name="value" keyPath="values.PrivacyFetchAppDataForSmartSuggestions" id="jqV-1f-PBD"/>
-                                        </connections>
-                                    </switch>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vbk-zK-5Hi">
-                                        <rect key="frame" x="44" y="2" width="336" height="16"/>
-                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Fetch data from scriptable apps for Smart Suggestions" id="D4p-BU-7Ko">
+                                    <button horizontalHuggingPriority="500" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bQy-Eg-kdA">
+                                        <rect key="frame" x="-2" y="0.0" width="354" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Fetch data from scriptable apps for Smart Suggestions" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="M3d-mk-xir">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="df4-8L-v29" name="value" keyPath="values.PrivacyFetchAppDataForSmartSuggestions" id="eTd-CX-Xlg"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <visibilityPriorities>
                                     <integer value="1000"/>
-                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="jIH-S1-IVg" secondAttribute="trailing" constant="20" symbolic="YES" id="0A5-ci-RHI"/>
+                            <constraint firstItem="jIH-S1-IVg" firstAttribute="leading" secondItem="MFZ-f2-bO8" secondAttribute="leading" priority="750" constant="40" id="2hj-kR-vbv"/>
+                            <constraint firstItem="jIH-S1-IVg" firstAttribute="top" secondItem="Bsm-Es-soP" secondAttribute="bottom" constant="8" id="5D4-a2-tIj"/>
                             <constraint firstAttribute="trailing" secondItem="Dxa-dg-ow9" secondAttribute="trailing" constant="20" symbolic="YES" id="5ax-Ag-PZa"/>
                             <constraint firstItem="Dxa-dg-ow9" firstAttribute="leading" secondItem="ZMX-lk-Fqu" secondAttribute="trailing" constant="8" symbolic="YES" id="6Yo-Ik-y7X"/>
-                            <constraint firstAttribute="bottom" secondItem="vbk-zK-5Hi" secondAttribute="bottom" constant="20" id="MlL-Zi-ORo"/>
+                            <constraint firstAttribute="bottom" secondItem="jIH-S1-IVg" secondAttribute="bottom" constant="20" symbolic="YES" id="6u4-ki-jMR"/>
                             <constraint firstItem="Bsm-Es-soP" firstAttribute="leading" secondItem="MFZ-f2-bO8" secondAttribute="leading" constant="20" symbolic="YES" id="O3C-HU-nxC"/>
                             <constraint firstItem="ZMX-lk-Fqu" firstAttribute="top" secondItem="MFZ-f2-bO8" secondAttribute="top" constant="20" symbolic="YES" id="PQa-5g-H4Q"/>
                             <constraint firstItem="Dxa-dg-ow9" firstAttribute="top" secondItem="ZMX-lk-Fqu" secondAttribute="top" id="Q3q-7y-LEX"/>
                             <constraint firstAttribute="trailing" secondItem="Bsm-Es-soP" secondAttribute="trailing" constant="20" symbolic="YES" id="WpY-Kf-3kf"/>
-                            <constraint firstItem="vbk-zK-5Hi" firstAttribute="top" secondItem="Bsm-Es-soP" secondAttribute="bottom" constant="9" id="cW9-Ym-Rut"/>
                             <constraint firstItem="Bsm-Es-soP" firstAttribute="top" secondItem="Dxa-dg-ow9" secondAttribute="bottom" constant="8" symbolic="YES" id="f5d-vd-KH0"/>
                             <constraint firstItem="Dxa-dg-ow9" firstAttribute="top" secondItem="MFZ-f2-bO8" secondAttribute="top" constant="20" symbolic="YES" id="kKw-VY-gkM"/>
                             <constraint firstItem="ZMX-lk-Fqu" firstAttribute="leading" secondItem="MFZ-f2-bO8" secondAttribute="leading" constant="20" symbolic="YES" id="lp2-j9-ZW6"/>
+                            <constraint firstItem="jIH-S1-IVg" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="MFZ-f2-bO8" secondAttribute="leading" constant="20" symbolic="YES" id="qqb-Ki-VT7"/>
                         </constraints>
                     </view>
                 </viewController>
