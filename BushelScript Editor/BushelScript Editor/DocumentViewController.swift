@@ -13,8 +13,6 @@ import BushelLanguageServiceConnectionCreation
 import BushelLanguage // For errors and fixes; TODO: Move to separate "BushelADay" framework
 import Defaults
 
-private var documentFont = NSFont(name: "SF Mono", size: 13) ?? NSFont.systemFont(ofSize: 13)
-
 class DocumentViewController: NSViewController {
     
     @IBOutlet var textView: NSTextView!
@@ -109,12 +107,16 @@ class DocumentViewController: NSViewController {
         })
     }
     
-    @objc dynamic var attributedSourceCode = NSAttributedString(string: "", attributes: [.font: documentFont]) {
+    private var documentFont: NSFont {
+        Defaults[.sourceCodeFont]
+    }
+    
+    @objc dynamic var sourceCode = "" {
         didSet {
             document.undoManager?.registerUndo(withTarget: self) {
-                $0.attributedSourceCode = oldValue
+                $0.sourceCode = oldValue
             }
-            document.sourceCode = attributedSourceCode.string
+            document.sourceCode = sourceCode
         }
     }
     
@@ -147,7 +149,7 @@ class DocumentViewController: NSViewController {
         didSet {
             document.undoManager?.disableUndoRegistration()
             defer { document.undoManager?.enableUndoRegistration() }
-            attributedSourceCode = NSAttributedString(string: document.sourceCode, attributes: [.font: documentFont])
+            sourceCode = document.sourceCode
             
             DispatchQueue.main.async {
                 self.documentLanguageIDObservation = self.document.observe(\.languageID, options: [.initial]) { [weak self] (document, change) in
@@ -249,7 +251,7 @@ class DocumentViewController: NSViewController {
                     }
                     DispatchQueue.main.sync {
                         self.document.undoManager?.setActionName("Pretty Print")
-                        self.attributedSourceCode = NSAttributedString(string: pretty, attributes: [.font: documentFont])
+                        self.sourceCode = pretty
                     }
                 }
             }
@@ -450,8 +452,10 @@ extension DocumentViewController {
     
     func apply(suggestion: AutoFixSuggestionListItem) {
         suggestion.service.applyFix(suggestion.fix, toSource: document.sourceCode) { fixedSource in
-            DispatchQueue.main.sync {
-                self.attributedSourceCode = NSAttributedString(string: fixedSource ?? self.document.sourceCode, attributes: [.font: documentFont])
+            if let fixedSource = fixedSource {
+                DispatchQueue.main.sync {
+                    self.sourceCode = fixedSource
+                }
             }
         }
     }

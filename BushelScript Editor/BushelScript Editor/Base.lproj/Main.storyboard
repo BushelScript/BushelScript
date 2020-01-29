@@ -781,7 +781,7 @@ CQ
                                             <rect key="frame" x="0.0" y="0.0" width="376" height="253"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <textView importsGraphics="NO" horizontallyResizable="YES" verticallyResizable="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" textCompletion="NO" smartInsertDelete="YES" id="hPn-VJ-vRi">
+                                                <textView importsGraphics="NO" richText="NO" horizontallyResizable="YES" verticallyResizable="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" textCompletion="NO" smartInsertDelete="YES" id="hPn-VJ-vRi">
                                                     <rect key="frame" x="0.0" y="60" width="376" height="253"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -804,7 +804,12 @@ CQ
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
-                                                        <binding destination="5gI-5U-AMq" name="attributedString" keyPath="attributedSourceCode" id="fhF-w3-3CD">
+                                                        <binding destination="unH-Oi-by7" name="font" keyPath="values.SourceCodeFont" id="R7O-8o-Zz7">
+                                                            <dictionary key="options">
+                                                                <string key="NSValueTransformerName">UnarchiveFontVT</string>
+                                                            </dictionary>
+                                                        </binding>
+                                                        <binding destination="5gI-5U-AMq" name="value" keyPath="sourceCode" id="sTv-df-2b1">
                                                             <dictionary key="options">
                                                                 <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                                             </dictionary>
@@ -916,6 +921,7 @@ CQ
                     </connections>
                 </viewController>
                 <customObject id="2Tp-Fl-jBw" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="unH-Oi-by7"/>
             </objects>
             <point key="canvasLocation" x="84" y="876.5"/>
         </scene>

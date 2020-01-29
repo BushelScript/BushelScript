@@ -52,6 +52,8 @@
 		3C3F06E323C1551C005BC0F2 /* ObjectInspectorDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06E223C1551C005BC0F2 /* ObjectInspectorDetailVC.swift */; };
 		3C66A80C23CA6BC7005BA372 /* OSAKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C66A80B23CA6BC7005BA372 /* OSAKit.framework */; };
 		3C66AD3823C2E45D001E6C87 /* ExpressionInspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C66AD3723C2E45D001E6C87 /* ExpressionInspector.storyboard */; };
+		3C76927123E0E635008FE565 /* UnarchiveFontVT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C76927023E0E635008FE565 /* UnarchiveFontVT.swift */; };
+		3C76927923E0FC76008FE565 /* GeneralPrefsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C76927823E0FC76008FE565 /* GeneralPrefsVC.swift */; };
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
 		3C907703239F3DD000A01D8D /* KVODelegate in Frameworks */ = {isa = PBXBuildFile; productRef = 3C907702239F3DD000A01D8D /* KVODelegate */; };
@@ -280,6 +282,8 @@
 		3C66A80B23CA6BC7005BA372 /* OSAKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OSAKit.framework; path = System/Library/Frameworks/OSAKit.framework; sourceTree = SDKROOT; };
 		3C66A80D23CA6F83005BA372 /* OSADictionaryController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OSADictionaryController.h; sourceTree = "<group>"; };
 		3C66AD3723C2E45D001E6C87 /* ExpressionInspector.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ExpressionInspector.storyboard; sourceTree = "<group>"; };
+		3C76927023E0E635008FE565 /* UnarchiveFontVT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnarchiveFontVT.swift; sourceTree = "<group>"; };
+		3C76927823E0FC76008FE565 /* GeneralPrefsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPrefsVC.swift; sourceTree = "<group>"; };
 		3C7A6C9E23CBC2D6007F5D84 /* OSADictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OSADictionary.h; sourceTree = "<group>"; };
 		3C7A6CBD23CBCB25007F5D84 /* OSADictionaryWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSADictionaryWindowController.h; sourceTree = "<group>"; };
 		3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSADictionaryWindowCustomization.swift; sourceTree = "<group>"; };
@@ -336,6 +340,7 @@
 			isa = PBXGroup;
 			children = (
 				3C249D472319C1D700F5826E /* PreferencesViewController.swift */,
+				3C76927823E0FC76008FE565 /* GeneralPrefsVC.swift */,
 				3C04308323199A2800758339 /* Preferences.storyboard */,
 			);
 			path = Preferences;
@@ -349,10 +354,7 @@
 				3C0566AC23135673004CDB1A /* BushelScript Editor */,
 				3C0566C123135675004CDB1A /* BushelScript EditorTests */,
 				3C0566CC23135675004CDB1A /* BushelScript EditorUITests */,
-				3C0430052314BFC100758339 /* BushelScript Editor-Bridging-Header.h */,
-				3C7A6CBD23CBCB25007F5D84 /* OSADictionaryWindowController.h */,
-				3C66A80D23CA6F83005BA372 /* OSADictionaryController.h */,
-				3C7A6C9E23CBC2D6007F5D84 /* OSADictionary.h */,
+				3C10565E23E0AD7C00877A5C /* Headers */,
 				3C0566AB23135673004CDB1A /* Products */,
 				3C05670C231356E7004CDB1A /* Frameworks */,
 			);
@@ -382,6 +384,7 @@
 				3C04308223199A1800758339 /* Preferences */,
 				3C3C1820231AB0CF00553072 /* About */,
 				3C3C1826231ADED200553072 /* App Bookkeeping */,
+				3C76927023E0E635008FE565 /* UnarchiveFontVT.swift */,
 				3CD1D0602319A07100DD01A9 /* Defaults.swift */,
 				3C3C1814231AA70B00553072 /* Logging.swift */,
 				3C0566B323135675004CDB1A /* Assets.xcassets */,
@@ -452,6 +455,17 @@
 				3C05672623138030004CDB1A /* Inspectable.swift */,
 			);
 			path = Suggestions;
+			sourceTree = "<group>";
+		};
+		3C10565E23E0AD7C00877A5C /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				3C0430052314BFC100758339 /* BushelScript Editor-Bridging-Header.h */,
+				3C7A6CBD23CBCB25007F5D84 /* OSADictionaryWindowController.h */,
+				3C66A80D23CA6F83005BA372 /* OSADictionaryController.h */,
+				3C7A6C9E23CBC2D6007F5D84 /* OSADictionary.h */,
+			);
+			name = Headers;
 			sourceTree = "<group>";
 		};
 		3C2E1346231B70AC00E0EB8E /* HashbangTests */ = {
@@ -783,6 +797,8 @@
 				3C05672723138030004CDB1A /* Inspectable.swift in Sources */,
 				3C20C0B1233FE00700CBB613 /* ObjectInspectorVC.swift in Sources */,
 				3C05672C23139D28004CDB1A /* SuggestionListWC.swift in Sources */,
+				3C76927923E0FC76008FE565 /* GeneralPrefsVC.swift in Sources */,
+				3C76927123E0E635008FE565 /* UnarchiveFontVT.swift in Sources */,
 				3C3C1815231AA70B00553072 /* Logging.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
