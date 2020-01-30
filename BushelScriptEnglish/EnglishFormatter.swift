@@ -262,7 +262,7 @@ extension Resource {
             return "application \(bundle.object(forInfoDictionaryKey: kCFBundleNameKey as String) ?? bundle.bundleURL.lastPathComponent)"
         case .applicationByID(let bundle):
             return
-                bundle.bundleIdentifier.map { "application id \($0))" } ??
+                bundle.bundleIdentifier.map { "application id \($0)" } ??
                 Resource.applicationByName(bundle: bundle).formattedForUseStatement
         }
     }
