@@ -1,5 +1,7 @@
 # BushelScript
 
+![BushelScript Editor demo](Images/editor-demo.gif)
+
 **BushelScript** is a next-generation open-source alternative to AppleScript.
 
 See the [BushelScript website](https://bushelscript.github.io/) for more info: [About BushelScript](https://bushelscript.github.io/about/)
