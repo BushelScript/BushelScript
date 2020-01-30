@@ -424,13 +424,21 @@ extension DocumentVC: NSTextViewDelegate {
             textView.typingAttributes[.backgroundColor] = nil
         }
         func addInlineErrorView() {
-            let firstLineRect = textView.firstRect(forCharacterRange: sourceRange, actualRange: nil)
-            guard firstLineRect != .zero else {
+            let firstLineScreenRect = textView.firstRect(forCharacterRange: sourceRange, actualRange: nil)
+            guard firstLineScreenRect != .zero else {
                 // Not visible in scroll view
                 return
             }
-            let firstLineMidYOnScreen = firstLineRect.midY
-            let firstLineMidYInClipView = ((textView.superview as! NSClipView).superview as! NSScrollView).documentVisibleRect.maxY - firstLineMidYOnScreen + 170
+            guard let window = view.window else {
+                return
+            }
+            // Convert from screen coordinates
+            let firstLineRect = window.convertFromScreen(firstLineScreenRect)
+            // Flip coordinates for text view
+            let firstLineFlippedRect = firstLineRect.applying(
+                CGAffineTransform(translationX: 0, y: textView.frame.height)
+                    .scaledBy(x: 1, y: -1)
+            )
             
             let inlineErrorVC = InlineErrorVC()
             self.inlineErrorVC = inlineErrorVC
@@ -439,11 +447,10 @@ extension DocumentVC: NSTextViewDelegate {
             let errorView = inlineErrorVC.view
             textView.addSubview(errorView)
             
-            errorView.translatesAutoresizingMaskIntoConstraints = false
+            let fontHeightAdjust = documentFont.capHeight * 2.0
+            errorView.frame.origin.y = firstLineFlippedRect.minY + errorView.frame.height + fontHeightAdjust
             errorView.leadingAnchor.constraint(greaterThanOrEqualTo: textView.leadingAnchor).isActive = true
             errorView.trailingAnchor.constraint(equalTo: textView.trailingAnchor).isActive = true
-            
-            errorView.centerYAnchor.constraint(equalTo: textView.topAnchor, constant: firstLineMidYInClipView).isActive = true
         }
         
         removeErrorDisplay()
