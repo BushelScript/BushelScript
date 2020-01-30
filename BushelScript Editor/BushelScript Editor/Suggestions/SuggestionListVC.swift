@@ -24,7 +24,7 @@ class SuggestionListVC: NSViewController {
         stopObservingWindow()
     }
     
-    var documentVC: DocumentViewController?
+    var documentVC: DocumentVC?
     
     override func viewDidAppear() {
         guard let inspectorPanel = inspectorPanelWC.window else {

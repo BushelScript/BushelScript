@@ -1,5 +1,5 @@
 //
-//  DocumentWindowController.swift
+//  DocumentWC.swift
 //  BushelScript Editor
 //
 //  Created by Ian Gregory on 30-08-2019.
@@ -9,7 +9,7 @@
 import Cocoa
 import BushelLanguage
 
-class DocumentWindowController: NSWindowController {
+class DocumentWC: NSWindowController {
     
     @IBOutlet var languageMenuDelegate: CurrentDocumentLanguageMenuDelegate!
     
@@ -42,7 +42,7 @@ class CurrentDocumentLanguageMenuDelegate: NSObject, NSMenuDelegate {
         var itemTitleToSelect: String?
         
         for module in LanguageModule.validModules() {
-            let item = menu.addItem(withTitle: module.localizedName, action: #selector(DocumentViewController.setLanguage(_:)), keyEquivalent: "")
+            let item = menu.addItem(withTitle: module.localizedName, action: #selector(DocumentVC.setLanguage(_:)), keyEquivalent: "")
             item.representedObject = module
             if module.identifier == currentDocument?.languageID {
                 item.state = .on

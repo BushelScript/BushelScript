@@ -86,7 +86,7 @@ class ScriptLanguageMenuDelegate: NSObject, NSMenuDelegate {
         menu.removeAllItems()
         
         for module in LanguageModule.validModules() {
-            let item = menu.addItem(withTitle: module.localizedName, action: #selector(DocumentViewController.setLanguage(_:)), keyEquivalent: "")
+            let item = menu.addItem(withTitle: module.localizedName, action: #selector(DocumentVC.setLanguage(_:)), keyEquivalent: "")
             item.representedObject = module
             if module.identifier == currentDocument?.languageID {
                 item.state = .on
