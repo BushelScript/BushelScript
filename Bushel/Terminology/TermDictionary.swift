@@ -5,17 +5,19 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
     
     private(set) public var pool: TermPool
     
+    public var uid: TermUID
     public var name: TermName?
     public let exports: Bool
     
     private var contentsByUID: [TypedTermUID : Term]
     private var contentsByName: [TermName : Term]
     
-    private(set) public var dictionaryContainers: [TermName : TermDictionaryContainer] = [:]
-    private(set) public var exportingDictionaryContainers: [TermName : TermDictionaryContainer] = [:]
+    private(set) public var dictionaryContainers: [TermUID : TermDictionaryContainer] = [:]
+    private(set) public var exportingDictionaryContainers: [TermUID : TermDictionaryContainer] = [:]
     
-    public init(pool: TermPool, name: TermName?, exports: Bool, contents: [Term] = []) {
+    public init(pool: TermPool, uid: TermUID, name: TermName?, exports: Bool, contents: [Term] = []) {
         self.pool = pool
+        self.uid = uid
         self.name = name
         self.exports = exports
         self.contentsByUID = Dictionary(uniqueKeysWithValues: contents.map { (key: $0.typedUID, value: $0) })
@@ -31,6 +33,7 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
     
     public init(merging new: TermDictionary, into old: TermDictionary) {
         self.pool = new.pool
+        self.uid = new.uid
         self.name = new.name
         self.exports = new.exports
         self.contentsByUID = new.contentsByUID.merging(old.contentsByUID, uniquingKeysWith: TermDictionary.whichTermWins)
@@ -77,14 +80,9 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
     
     private func catalogueDictionaryContainers<Terms: Collection>(in terms: Terms) where Terms.Element == Term {
         for case let containerTerm as TermDictionaryContainer in terms {
-            if
-                let dictionary = containerTerm.terminology,
-                let dictionaryName = containerTerm.terminology?.name
-            {
-                dictionaryContainers[dictionaryName] = containerTerm
-                if dictionary.exports {
-                    exportingDictionaryContainers[dictionaryName] = containerTerm
-                }
+            dictionaryContainers[containerTerm.uid] = containerTerm
+            if containerTerm.storedDictionary?.exports ?? containerTerm.exportsTerminology {
+                exportingDictionaryContainers[containerTerm.uid] = containerTerm
             }
         }
     }

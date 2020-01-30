@@ -88,7 +88,11 @@ public extension SourceParser {
         
         lexicon.add(ParameterTerm(TermUID(ParameterUID.direct), name: nil))
         
-        lexicon.push(uid: .id("script"))
+        let standardAdditionsDictionary = lexicon.pushDictionaryTerm(forUID: TermUID(DictionaryUID.StandardAdditions))
+        let standardAdditionsURL = URL(fileURLWithPath: "/System/Library/ScriptingAdditions/StandardAdditions.osax")
+        try loadTerminology(at: standardAdditionsURL, into: standardAdditionsDictionary)
+        
+        lexicon.pushDictionaryTerm(forUID: .id("script"))
         defer { lexicon.pop() }
         do {
             let ast: Expression
@@ -662,7 +666,7 @@ public extension SourceParser {
     }
     
     func withScope(parse: () throws -> Sequence) rethrows -> Expression {
-        lexicon.push()
+        lexicon.pushUnnamedDictionary()
         defer { lexicon.pop() }
         return Expression(.scoped(try parse()), at: expressionLocation)
     }
@@ -704,7 +708,7 @@ public extension SourceParser {
                     break noTerminology
                 }
                 
-                let dictionary = lexicon.push()
+                let dictionary = lexicon.pushUnnamedDictionary()
                 terminologyPushed = true
                 try loadTerminology(at: appBundle.bundleURL, into: dictionary)
             case .use(let term),
@@ -723,7 +727,7 @@ public extension SourceParser {
         return try parse()
     }
     
-    func loadTerminology(at url: URL, into dictionaryContainer: TermDictionaryDelayedInitContainer) throws {
+    func loadTerminology(at url: URL, into dictionaryContainer: TermDictionaryContainer) throws {
         try loadTerminology(at: url, into: dictionaryContainer.makeDictionary(under: lexicon.pool))
     }
     
@@ -796,7 +800,7 @@ public extension SourceParser {
                 //  a) Lhs contains a dictionary, *and*
                 //  b) rhs is a term defined by that dictionary.
                 guard
-                    let dictionary = (term as? TermDictionaryContainer)?.terminology,
+                    let dictionary = (term as? TermDictionaryContainer)?.storedDictionary,
                     let result = findTerm(in: dictionary)
                 else {
                     // Restore the colon. It may have come from some other construct,

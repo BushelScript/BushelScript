@@ -111,7 +111,7 @@ public final class EnumeratorTerm: Term {
     
 }
 
-public final class DictionaryTerm: Term, TermDictionaryDelayedInitContainer {
+public final class DictionaryTerm: Term, TermDictionaryContainer {
     
     public override class var kind: TypedTermUID.Kind {
         .dictionary
@@ -120,17 +120,17 @@ public final class DictionaryTerm: Term, TermDictionaryDelayedInitContainer {
         return .dictionary(self)
     }
     
-    public var terminology: TermDictionary?
+    public var storedDictionary: TermDictionary?
     public let exportsTerminology: Bool
     
     public init(_ uid: TermUID, name: TermName?, terminology: TermDictionary) {
-        self.terminology = terminology
+        self.storedDictionary = terminology
         self.exportsTerminology = terminology.exports
         super.init(uid, name: name)!
     }
     
     public init(_ uid: TermUID, name: TermName?, exports: Bool) {
-        self.terminology = nil
+        self.storedDictionary = nil
         self.exportsTerminology = exports
         super.init(uid, name: name)!
     }
@@ -141,7 +141,7 @@ public final class DictionaryTerm: Term, TermDictionaryDelayedInitContainer {
     
 }
 
-public class ClassTerm: Term, TermDictionaryDelayedInitContainer {
+public class ClassTerm: Term, TermDictionaryContainer {
     
     public override class var kind: TypedTermUID.Kind {
         .type
@@ -150,13 +150,13 @@ public class ClassTerm: Term, TermDictionaryDelayedInitContainer {
         return .class_(self)
     }
     
-    public var terminology: TermDictionary? = nil {
+    public var storedDictionary: TermDictionary? = nil {
         didSet {
             if
-                let myTerminology = terminology,
-                let parentTerminology = parentClass?.terminology
+                let myTerminology = storedDictionary,
+                let parentTerminology = parentClass?.storedDictionary
             {
-                terminology = TermDictionary(merging: parentTerminology, into: myTerminology)
+                storedDictionary = TermDictionary(merging: parentTerminology, into: myTerminology)
             }
         }
     }
@@ -276,11 +276,11 @@ public final class VariableTerm: Term {
     
 }
 
-public final class ResourceTerm: Term, TermDictionaryDelayedInitContainer {
+public final class ResourceTerm: Term, TermDictionaryContainer {
     
     public let resource: Resource
     
-    public var terminology: TermDictionary?
+    public var storedDictionary: TermDictionary?
     public var exportsTerminology: Bool {
         true
     }

@@ -206,7 +206,7 @@ extension TermUID: CustomStringConvertible {
         kind + ":" + data
     }
     
-    /// The kind of UID name; the "addressing method"; the "namespace".
+    /// The kind of UID name; the domain or "namespace".
     ///
     /// e.g., in `ae4:bool`, `ae4` specifies that the name data, `bool`, is a
     /// four-byte AE code.
@@ -263,11 +263,11 @@ extension TermUID {
     /// Reconstructs a `TermUID` structure from its normalized string
     /// representation.
     ///
-    /// Valid inputs take the form `"kind:data"`, where `kind` identifies one of
-    /// a set of predefined "namespaces", while `data` creates a unique name
-    /// within said namespace.
-    /// The set of allowable values for `data` is determined by the `kind`.
-    /// e.g., for `kind` `"ae4"`, `data` must be a valid four-byte AE code.
+    /// Valid inputs take the form `"domain:data"`, where `domain` identifies
+    /// one of a set of predefined domain "namespaces", while `data` creates a
+    /// unique name within said namespace.
+    /// The set of allowable values for `data` is determined by the `domain`.
+    /// e.g., for `domain` `"ae4"`, `data` must be a valid four-byte AE code.
     public init?(normalized: String) {
         let components = normalized.split(separator: ":", maxSplits: 1)
         guard components.count == 2 else {

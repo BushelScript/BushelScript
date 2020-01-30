@@ -10,7 +10,7 @@ public struct Lexicon: TerminologySource {
     private var allExportingDictionaries: [TermDictionary] {
         dictionaryStack.flatMap { dictionary in
             dictionary.exportingDictionaryContainers.values.compactMap({ dictionaryContainer in
-                dictionaryContainer.terminology
+                dictionaryContainer.storedDictionary
             })
         }
     }
@@ -18,7 +18,7 @@ public struct Lexicon: TerminologySource {
     private(set) public var pool = TermPool()
     
     public init() {
-        push()
+        pushRoot()
     }
     
     public func term(forUID uid: TypedTermUID) -> Term? {
@@ -42,41 +42,45 @@ public struct Lexicon: TerminologySource {
         return nil
     }
     
-    public func makeUID(_ kind: String, _ names: TermName...) -> String {
-        "\(dictionaryStack.compactMap { $0.name?.normalized }.joined(separator: ".")).\(kind).\(names.map { $0.normalized }.joined(separator: "."))"
+    /// Constructs a `TermUID` in the `id` domain that uniquely represents
+    /// a term defined in the current dictionary with the provided name.
+    /// - Parameter name: The name of the term residing in the current
+    ///                   dictionary.
+    public func makeUID(forName name: TermName) -> TermUID {
+        .id("\(dictionaryStack.compactMap { $0.name?.normalized }.joined(separator: ":")):\(name)")
+    }
+    /// Constructs a universally unique `TermUID` in the `id` domain.
+    public func makeAnonymousUUID() -> TermUID {
+        makeUID(forName: TermName(UUID().uuidString))
     }
     
     @discardableResult
-    public mutating func push(for term: Term & TermDictionaryContainer) -> TermDictionary {
-        let dictionary: TermDictionary = {
-            if let dictionary = term.terminology {
-                return dictionary
-            } else if let term = term as? TermDictionaryDelayedInitContainer {
-                return term.makeDictionary(under: pool)
-            } else {
-                return TermDictionary(pool: pool, name: term.name, exports: false)
-            }
-        }()
+    public mutating func push(dictionary: TermDictionary) -> TermDictionary {
         dictionaryStack.append(dictionary)
         return dictionary
     }
     
     @discardableResult
-    public mutating func push(uid: TermUID, name: TermName? = nil) -> TermDictionary {
-        let dictionary =
-            self.dictionary(forUID: TypedTermUID(.dictionary, uid)) ??
-            TermDictionary(pool: pool, name: name, exports: false)
-        dictionaryStack.append(dictionary)
-        return dictionary
+    public mutating func pushUnnamedDictionary(exports: Bool = false) -> TermDictionary {
+        push(dictionary: TermDictionary(pool: pool, uid: makeAnonymousUUID(), name: nil, exports: false))
     }
     
     @discardableResult
-    public mutating func push(name: TermName? = nil) -> TermDictionary {
-        let dictionary =
-            name.flatMap { self.dictionary(named: $0) } ??
-            TermDictionary(pool: pool, name: name, exports: false)
-        dictionaryStack.append(dictionary)
-        return dictionary
+    public mutating func push(for term: TermDictionaryContainer) -> TermDictionary {
+        push(dictionary: term.makeDictionary(under: pool))
+    }
+    
+    @discardableResult
+    public mutating func pushDictionaryTerm(forUID uid: TermUID, exports: Bool = false) -> TermDictionary {
+        let dictionaryTerm =
+            term(forUID: TypedTermUID(.dictionary, uid)) as? DictionaryTerm ??
+                add(DictionaryTerm(uid, name: nil, exports: exports))
+        return push(for: dictionaryTerm)
+    }
+    
+    private mutating func pushRoot() {
+        let rootUID = TermUID(DictionaryUID.BushelScript)
+        push(dictionary: TermDictionary(pool: pool, uid: rootUID, name: nil, exports: false))
     }
     
     public mutating func pop() {
@@ -85,24 +89,23 @@ public struct Lexicon: TerminologySource {
         }
     }
     
-    public mutating func add(_ term: Term) {
+    @discardableResult
+    public mutating func add<Term: Bushel.Term>(_ term: Term) -> Term {
         if dictionaryStack.isEmpty {
-            push()
+            pushRoot()
         }
         let dictionary = dictionaryStack[dictionaryStack.index(before: dictionaryStack.endIndex)]
         dictionary.add(term)
         pool.add(term)
+        return term
     }
     
-    public mutating func add(_ terms: Set<Term>) {
-        signpostBegin()
-        defer {
-            signpostEnd()
-        }
-        
+    @discardableResult
+    public mutating func add<Term: Bushel.Term>(_ terms: Set<Term>) -> Set<Term> {
         for term in terms {
             add(term)
         }
+        return terms
     }
     
 }

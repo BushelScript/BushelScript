@@ -257,9 +257,8 @@ public struct Translation {
                 {
                     // If the term type referred to by the scopes (e.g., Math) holds a dictionary
                     if let containerTerms = allTermsByUntypedIndex[.id(scopes.joined(separator: ":"))] as? [TermDictionaryContainer] {
-                        let dictionaries: [TermDictionary] = containerTerms.compactMap({ containerTerm in
-                            containerTerm.terminology ??
-                                (containerTerm as? TermDictionaryDelayedInitContainer)?.makeDictionary(under: pool)
+                        let dictionaries: [TermDictionary] = containerTerms.map({ containerTerm in
+                            containerTerm.makeDictionary(under: pool)
                         })
                         // Add the nested terms to the appropriate dictionary.
                         for dictionary in dictionaries {

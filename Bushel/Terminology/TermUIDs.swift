@@ -32,10 +32,7 @@ public extension TermUIDPredefinedValue {
 extension TermUIDPredefinedValue where Self: RawRepresentable, RawValue == String {
     
     public var idName: String? {
-        rawValue
-            .split(separator: "_")
-            .map { String($0).transformed(from: .camel, to: .space, case: $0.first!.isUppercase ? .preserve : .lower) }
-            .joined(separator: ":")
+        makeIDName(from: rawValue)
     }
     
     internal init?(idName: String) {
@@ -44,9 +41,16 @@ extension TermUIDPredefinedValue where Self: RawRepresentable, RawValue == Strin
     
 }
 
+private func makeIDName(from rawValue: String) -> String {
+    rawValue
+        .split(separator: "_")
+        .map { String($0).transformed(from: .camel, to: .space, case: $0.first!.isUppercase ? .preserve : .lower) }
+        .joined(separator: ":")
+}
+
 private func makeRawValue(from idName: String) -> String {
     idName
-        .components(separatedBy: ":")
+        .split(separator: ":")
         .map { String($0).transformed(from: .space, to: .camel, case: $0.first!.isUppercase ? .preserve : .lowerUpper ) }
         .joined(separator: "_")
 }
@@ -88,6 +92,44 @@ public extension TypedTermUID {
     
     init(_ predefined: TermUIDPredefinedValue) {
         self.init(predefined.kind, TermUID(predefined))
+    }
+    
+}
+
+public enum DictionaryUID: String, TermUIDPredefinedValue {
+    
+    case BushelScript
+    case StandardAdditions
+    case Math
+    case Sequence
+    case String
+    case GUI
+    case CLI
+    
+    public var kind: TypedTermUID.Kind {
+        .property
+    }
+    
+    public var idName: String? {
+        // We need to bypass the default implementation for a couple names
+        // that have capital letters that do not denote word breaks.
+        switch self {
+        case .BushelScript:
+            return "BushelScript"
+        case .StandardAdditions:
+            return "StandardAdditions"
+        default:
+            return makeIDName(from: rawValue)
+        }
+    }
+    
+    public init?(_ uid: TermUID) {
+        switch uid {
+        case .id(let name):
+            self.init(idName: name)
+        default:
+            return nil
+        }
     }
     
 }

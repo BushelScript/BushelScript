@@ -4,6 +4,7 @@ translation:
     mappings:
         dictionary:
             id:
+                StandardAdditions: StandardAdditions
                 Math: Math
                 Sequence: Sequence
                 String: String
