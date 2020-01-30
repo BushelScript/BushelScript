@@ -125,6 +125,28 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
         reply(errors.release(error))
     }
     
+    func copyLineRange(fromError error: Any, forSource source: String, reply: @escaping (NSValue?) -> Void) {
+        guard let error = errors[error] as? ParseError else {
+            return reply(nil)
+        }
+        let range = error.location.lines(in: source)
+        reply(NSValue(range: NSRange(range)))
+    }
+    func copyColumnRange(fromError error: Any, forSource source: String, reply: @escaping (NSValue?) -> Void) {
+        guard let error = errors[error] as? ParseError else {
+            return reply(nil)
+        }
+        let range = error.location.columns(in: source)
+        reply(NSValue(range: NSRange(range)))
+    }
+    func copySourceCharacterRange(fromError error: Any, forSource source: String, reply: @escaping (NSValue?) -> Void) {
+        guard let error = errors[error] as? ParseError else {
+            return reply(nil)
+        }
+        let range = error.location.range
+        reply(NSValue(range: NSRange(range, in: source)))
+    }
+    
     private var fixes = StoragePool<SourceFix>()
     
     func getSourceFixes(fromError error: Any, reply: @escaping ([Any]) -> Void) {

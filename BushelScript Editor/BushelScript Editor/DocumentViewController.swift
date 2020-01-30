@@ -358,6 +358,8 @@ class DocumentViewController: NSViewController {
         return vc
     }
     
+    private var inlineErrorVC: InlineErrorVC?
+    
 }
 
 // MARK: NSTextViewDelegate
@@ -375,54 +377,118 @@ extension DocumentViewController: NSTextViewDelegate {
             case .success(_):
                 DispatchQueue.main.sync {
                     // No errors
-                    self.dismissSuggestionList()
+                    self.removeErrorDisplay()
+//                    self.dismissSuggestionList()
                 }
             case .failure(let error):
                 self.status = .fetchingData
                 service.copyNSError(fromError: error) { nsError in
-                    service.getSourceFixes(fromError: error) { fixes in
+                    service.copySourceCharacterRange(fromError: error, forSource: source) { errorRangeValue in
                         self.status = nil
-                        
-                        guard !fixes.isEmpty else {
+                        if let errorRangeValue = errorRangeValue {
+                            let errorNSRange = errorRangeValue.rangeValue
                             DispatchQueue.main.sync {
-                                self.showSuggestionList(with: [ErrorSuggestionListItem(error: nsError)])
+                                guard source == self.textView.string else {
+                                    // Text has changed since this information was generated
+                                    return
+                                }
+                                self.removeErrorDisplay()
+                                self.display(error: nsError, at: errorNSRange)
                             }
-                            return
-                        }
-                        
-                        let suggestions =
-                            [ErrorSuggestionListItem(error: nsError)] +
-                            fixes.map { AutoFixSuggestionListItem(service: service, fix: $0 as SourceFixToken, source: Substring(source)) } as [SuggestionListItem]
-                        DispatchQueue.main.sync {
-                            self.showSuggestionList(with: suggestions)
                         }
                     }
+//                    service.getSourceFixes(fromError: error) { fixes in
+//                        self.status = nil
+//
+//                        guard !fixes.isEmpty else {
+//                            DispatchQueue.main.sync {
+//                                self.showSuggestionList(with: [ErrorSuggestionListItem(error: nsError)])
+//                            }
+//                            return
+//                        }
+//
+//                        let suggestions =
+//                            [ErrorSuggestionListItem(error: nsError)] +
+//                            fixes.map { AutoFixSuggestionListItem(service: service, fix: $0 as SourceFixToken, source: Substring(source)) } as [SuggestionListItem]
+//                        DispatchQueue.main.sync {
+//                            self.showSuggestionList(with: suggestions)
+//                        }
+//                    }
                 }
             }
         }
     }
     
+    private func display(error: Error, at sourceRange: NSRange) {
+        func hightlightError() {
+            textView.textStorage?.addAttribute(.backgroundColor, value: NSColor(named: "ErrorHighlightColor")!, range: sourceRange)
+            textView.typingAttributes[.backgroundColor] = nil
+        }
+        func addInlineErrorView() {
+            let firstLineRect = textView.firstRect(forCharacterRange: sourceRange, actualRange: nil)
+            guard firstLineRect != .zero else {
+                // Not visible in scroll view
+                return
+            }
+            let firstLineMidYOnScreen = firstLineRect.midY
+            let firstLineMidYInClipView = ((textView.superview as! NSClipView).superview as! NSScrollView).documentVisibleRect.maxY - firstLineMidYOnScreen + 170
+            
+            let inlineErrorVC = InlineErrorVC()
+            self.inlineErrorVC = inlineErrorVC
+            inlineErrorVC.representedObject = error
+            
+            let errorView = inlineErrorVC.view
+            textView.addSubview(errorView)
+            
+            errorView.translatesAutoresizingMaskIntoConstraints = false
+            errorView.leadingAnchor.constraint(greaterThanOrEqualTo: textView.leadingAnchor).isActive = true
+            errorView.trailingAnchor.constraint(equalTo: textView.trailingAnchor).isActive = true
+            
+            errorView.centerYAnchor.constraint(equalTo: textView.topAnchor, constant: firstLineMidYInClipView).isActive = true
+        }
+        
+        removeErrorDisplay()
+        
+        hightlightError()
+        addInlineErrorView()
+    }
+    
+    private func removeErrorDisplay() {
+        func clearErrorHighlighting() {
+            textView.textStorage?.setAttributes([.font: documentFont], range: NSRange(location: 0, length: (self.textView.string as NSString).length))
+        }
+        func removeInlineErrorView() {
+            guard let oldInlineErrorVC = self.inlineErrorVC else {
+                return
+            }
+            self.inlineErrorVC = nil
+            oldInlineErrorVC.view.removeFromSuperview()
+        }
+        
+        clearErrorHighlighting()
+        removeInlineErrorView()
+    }
+    
     func textViewDidChangeSelection(_ notification: Notification) {
         textViewDidChangeSelection()
     }
-    
+
     private func textViewDidChangeSelection() {
         let ranges = textView.selectedRanges
         guard !ranges.isEmpty else {
-            return dismissSuggestionList()
+            return
         }
-        
+
         let nsrange = ranges[0].rangeValue
         guard nsrange.length == 0 else {
-            return dismissSuggestionList()
+            return
         }
-        
+
         let text = textView.string
         guard let range = Range<String.Index>(nsrange, in: text) else {
-            return dismissSuggestionList()
+            return
         }
-        
-        repositionSuggestionWindow()
+
         updateExpressionInspector(for: range)
     }
     

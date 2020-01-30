@@ -33,6 +33,8 @@
 		3C20C0C1234010E100CBB613 /* ObjectInspectorPanelWC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C20C0C0234010E100CBB613 /* ObjectInspectorPanelWC.xib */; };
 		3C20C0CD234014EC00CBB613 /* ObjectInspectorPanelWC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C20C0CC234014EC00CBB613 /* ObjectInspectorPanelWC.swift */; };
 		3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C249D472319C1D700F5826E /* PreferencesViewController.swift */; };
+		3C2BC9AB23E258E400CB8C20 /* InlineErrorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */; };
+		3C2BC9AC23E258E400CB8C20 /* InlineErrorVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C2BC9AA23E258E400CB8C20 /* InlineErrorVC.xib */; };
 		3C2E1345231B709000E0EB8E /* NoHashbang.bushel in Resources */ = {isa = PBXBuildFile; fileRef = 3C2E1344231B709000E0EB8E /* NoHashbang.bushel */; };
 		3C2E134C231B75FA00E0EB8E /* BushelLanguageServiceConnectionCreation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0430682316124F00758339 /* BushelLanguageServiceConnectionCreation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2E1350231B763700E0EB8E /* Bushel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -54,6 +56,7 @@
 		3C66AD3823C2E45D001E6C87 /* ExpressionInspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C66AD3723C2E45D001E6C87 /* ExpressionInspector.storyboard */; };
 		3C76927123E0E635008FE565 /* UnarchiveFontVT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C76927023E0E635008FE565 /* UnarchiveFontVT.swift */; };
 		3C76927923E0FC76008FE565 /* GeneralPrefsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C76927823E0FC76008FE565 /* GeneralPrefsVC.swift */; };
+		3C76927B23E1D8DA008FE565 /* InlineErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C76927A23E1D8DA008FE565 /* InlineErrorView.swift */; };
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
 		3C907703239F3DD000A01D8D /* KVODelegate in Frameworks */ = {isa = PBXBuildFile; productRef = 3C907702239F3DD000A01D8D /* KVODelegate */; };
@@ -261,6 +264,8 @@
 		3C20C0C0234010E100CBB613 /* ObjectInspectorPanelWC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ObjectInspectorPanelWC.xib; sourceTree = "<group>"; };
 		3C20C0CC234014EC00CBB613 /* ObjectInspectorPanelWC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectInspectorPanelWC.swift; sourceTree = "<group>"; };
 		3C249D472319C1D700F5826E /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
+		3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineErrorVC.swift; sourceTree = "<group>"; };
+		3C2BC9AA23E258E400CB8C20 /* InlineErrorVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InlineErrorVC.xib; sourceTree = "<group>"; };
 		3C2E1344231B709000E0EB8E /* NoHashbang.bushel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NoHashbang.bushel; sourceTree = "<group>"; };
 		3C3355F023490F2500AEAAE9 /* NSTabViewController+SelectionConvenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSTabViewController+SelectionConvenience.swift"; sourceTree = "<group>"; };
 		3C3C17FF2319CC4100553072 /* SECompileScriptTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = SECompileScriptTemplate.pdf; path = "../../../../System/Applications/Utilities/Script Editor.app/Contents/Resources/SECompileScriptTemplate.pdf"; sourceTree = DEVELOPER_DIR; };
@@ -284,6 +289,7 @@
 		3C66AD3723C2E45D001E6C87 /* ExpressionInspector.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ExpressionInspector.storyboard; sourceTree = "<group>"; };
 		3C76927023E0E635008FE565 /* UnarchiveFontVT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnarchiveFontVT.swift; sourceTree = "<group>"; };
 		3C76927823E0FC76008FE565 /* GeneralPrefsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPrefsVC.swift; sourceTree = "<group>"; };
+		3C76927A23E1D8DA008FE565 /* InlineErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineErrorView.swift; sourceTree = "<group>"; };
 		3C7A6C9E23CBC2D6007F5D84 /* OSADictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OSADictionary.h; sourceTree = "<group>"; };
 		3C7A6CBD23CBCB25007F5D84 /* OSADictionaryWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSADictionaryWindowController.h; sourceTree = "<group>"; };
 		3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSADictionaryWindowCustomization.swift; sourceTree = "<group>"; };
@@ -375,6 +381,9 @@
 			children = (
 				3C3C1810231A20B100553072 /* DocumentWindowController.swift */,
 				3C0566AF23135673004CDB1A /* DocumentViewController.swift */,
+				3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */,
+				3C2BC9AA23E258E400CB8C20 /* InlineErrorVC.xib */,
+				3C76927A23E1D8DA008FE565 /* InlineErrorView.swift */,
 				3C0566B123135673004CDB1A /* Document.swift */,
 				3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */,
 				3C0566B523135675004CDB1A /* Main.storyboard */,
@@ -722,6 +731,7 @@
 				3C0566B423135675004CDB1A /* Assets.xcassets in Resources */,
 				3C04308423199A2800758339 /* Preferences.storyboard in Resources */,
 				3C0566B723135675004CDB1A /* Main.storyboard in Resources */,
+				3C2BC9AC23E258E400CB8C20 /* InlineErrorVC.xib in Resources */,
 				3C3C180F2319CC4100553072 /* SECompileScriptTemplate.pdf in Resources */,
 				3C20C0C1234010E100CBB613 /* ObjectInspectorPanelWC.xib in Resources */,
 			);
@@ -779,6 +789,7 @@
 				3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */,
 				3C056717231359C6004CDB1A /* Errors.swift in Sources */,
 				3C0566B023135673004CDB1A /* DocumentViewController.swift in Sources */,
+				3C2BC9AB23E258E400CB8C20 /* InlineErrorVC.swift in Sources */,
 				3C3C1818231AAB8A00553072 /* AboutBushelScriptViewController.mm in Sources */,
 				3C0430082314BFC200758339 /* AppDelegate+Swizzling.m in Sources */,
 				3C05672223137CEE004CDB1A /* SuggestionListView.swift in Sources */,
@@ -793,6 +804,7 @@
 				3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */,
 				3C04300A2314CF7900758339 /* PropagatingTabViewController.swift in Sources */,
 				3C3C1811231A20B100553072 /* DocumentWindowController.swift in Sources */,
+				3C76927B23E1D8DA008FE565 /* InlineErrorView.swift in Sources */,
 				3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */,
 				3C05672723138030004CDB1A /* Inspectable.swift in Sources */,
 				3C20C0B1233FE00700CBB613 /* ObjectInspectorVC.swift in Sources */,

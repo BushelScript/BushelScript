@@ -33,6 +33,10 @@ typedef id SourceFixToken;
 - (void)copyNSErrorFromError:(ErrorToken)error reply:(void(^)(NSError *))reply;
 - (void)releaseError:(ErrorToken)error reply:(void(^)(BOOL))reply;
 
+- (void)copyLineRangeFromError:(ErrorToken)error forSource:(NSString *)source reply:(void(^)(NSValue *_Nullable))reply;
+- (void)copyColumnRangeFromError:(ErrorToken)error forSource:(NSString *)source reply:(void(^)(NSValue *_Nullable))reply;
+- (void)copySourceCharacterRangeFromError:(ErrorToken)error forSource:(NSString *)source reply:(void(^)(NSValue *_Nullable))reply;
+
 - (void)getSourceFixesFromError:(ErrorToken)error reply:(void(^)(NSArray<SourceFixToken> *))reply;
 - (void)copyContextualDescriptionsInSource:(NSString *)source fromFixes:(NSArray<SourceFixToken> *)fix reply:(void(^)(NSArray<NSString*> *))reply;
 - (void)copySimpleDescriptionsInSource:(NSString *)source fromFixes:(NSArray<SourceFixToken> *)fix reply:(void(^)(NSArray<NSString*> *))reply;

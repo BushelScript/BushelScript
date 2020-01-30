@@ -804,14 +804,14 @@ CQ
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
-                                                        <binding destination="unH-Oi-by7" name="font" keyPath="values.SourceCodeFont" id="R7O-8o-Zz7">
-                                                            <dictionary key="options">
-                                                                <string key="NSValueTransformerName">UnarchiveFontVT</string>
-                                                            </dictionary>
-                                                        </binding>
                                                         <binding destination="5gI-5U-AMq" name="value" keyPath="sourceCode" id="sTv-df-2b1">
                                                             <dictionary key="options">
                                                                 <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                        <binding destination="unH-Oi-by7" name="font" keyPath="values.SourceCodeFont" id="R7O-8o-Zz7">
+                                                            <dictionary key="options">
+                                                                <string key="NSValueTransformerName">UnarchiveFontVT</string>
                                                             </dictionary>
                                                         </binding>
                                                         <outlet property="delegate" destination="5gI-5U-AMq" id="RSJ-qy-XjX"/>

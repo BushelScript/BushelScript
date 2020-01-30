@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="InlineErrorVC" customModule="BushelScript_Editor" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView wantsLayer="YES" appearanceType="darkAqua" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Hz6-mo-xeY" customClass="InlineErrorView" customModule="BushelScript_Editor" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="67" height="22"/>
+            <subviews>
+                <textField horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D3a-4S-gUa">
+                    <rect key="frame" x="2" y="4" width="61" height="16"/>
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" title="Error text" usesSingleLineMode="YES" id="SSO-nX-lUj">
+                        <font key="font" usesAppearanceFont="YES"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <binding destination="-2" name="value" keyPath="representedObject.localizedDescription" id="4LW-Ga-XoE"/>
+                    </connections>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="D3a-4S-gUa" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="2" id="Dgp-OU-WuA"/>
+                <constraint firstItem="D3a-4S-gUa" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="4" id="GDr-vJ-nKx"/>
+                <constraint firstAttribute="trailing" secondItem="D3a-4S-gUa" secondAttribute="trailing" constant="6" id="SZT-zf-YwQ"/>
+                <constraint firstAttribute="bottom" secondItem="D3a-4S-gUa" secondAttribute="bottom" constant="4" id="waU-iZ-QeX"/>
+            </constraints>
+            <shadow key="shadow" blurRadius="6">
+                <size key="offset" width="2" height="-3"/>
+                <color key="color" white="0.0" alpha="0.30073201155462187" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            </shadow>
+            <point key="canvasLocation" x="-30" y="30"/>
+        </customView>
+    </objects>
+</document>

@@ -54,7 +54,7 @@ translation:
                 rvse: reverse
                 rest: tail
             id:
-                top script: BushelScript
+                top script: me
                 current date: current date
                 date:
                     seconds: seconds    # property/id:date:seconds

@@ -80,7 +80,6 @@ public extension SourceParser {
         guard !source.isEmpty else {
             return Program(Expression.empty(at: source.startIndex), source: entireSource, terms: TermPool())
         }
-        let source = source.last!.isNewline ? source : source + "\n"
         
         self.entireSource = source
         self.source = Substring(source)
