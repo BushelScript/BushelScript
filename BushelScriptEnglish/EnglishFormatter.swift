@@ -86,7 +86,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
         case .list(let expressions):
             return "{\(expressions.map { format($0, level: level) }.joined(separator: ", "))}"
         case .record(let expressions):
-            return "\(expressions.map { "\(format($0.key, level: level)): \(format($0.value, level: level))" }.joined(separator: ", "))"
+            return "{\(expressions.map { "\(format($0.key, level: level)): \(format($0.value, level: level))" }.joined(separator: ", "))}"
         case .prefixOperator(let operation, let operand), .postfixOperator(let operation, let operand):
             switch operation {
             case .not:
