@@ -33,16 +33,30 @@ public class RT_Application: RT_Object, RT_SASpecifierConvertible, RT_SpecifierR
         typeInfo_
     }
     
-    public func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        return try specifier.performByAppleEvent(command: CommandInfo(.get), arguments: [ParameterInfo(.direct): specifier], targetBundleID: bundleIdentifier) ?? RT_Null.null
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
+        try performByAppleEvent(command: command, arguments: arguments, targetBundleID: bundleIdentifier)
     }
+    
+}
+
+// MARK: RT_SASpecifierConvertible
+extension RT_Application {
     
     public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
         RootSpecifier(bundleIdentifier: bundleIdentifier)
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
-         return try performByAppleEvent(command: command, arguments: arguments, targetBundleID: bundleIdentifier)
+}
+
+// MARK: RT_SpecifierRemoteRoot
+extension RT_Application {
+    
+    public func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
+        return try specifier.performByAppleEvent(command: CommandInfo(.get), arguments: [ParameterInfo(.direct): specifier], targetBundleID: bundleIdentifier)
+    }
+    
+    public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], for specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
+        try specifier.performByAppleEvent(command: command, arguments: arguments, targetBundleID: bundleIdentifier)
     }
     
 }

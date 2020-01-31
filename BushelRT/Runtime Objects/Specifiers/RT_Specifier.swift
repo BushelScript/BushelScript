@@ -14,6 +14,7 @@ public protocol RT_HierarchicalSpecifier: RT_SASpecifierConvertible {
 public protocol RT_SpecifierRemoteRoot: RT_Object {
     
     func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object
+    func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], for specifier: RT_HierarchicalSpecifier) throws -> RT_Object
     
 }
 
@@ -131,6 +132,15 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
             return try evaluatedParent.elements(type, filtered: predicate)
         case .property:
             fatalError("unreachable")
+        }
+    }
+    
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
+        switch rootAncestor() {
+        case let root as RT_SpecifierRemoteRoot:
+            return try root.perform(command: command, arguments: arguments, for: self)
+        default:
+            return try super.perform(command: command, arguments: arguments)
         }
     }
     
