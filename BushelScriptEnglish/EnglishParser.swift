@@ -309,7 +309,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         } else {
             guard let thenExpression = try parsePrimary() else {
                 let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
-                throw ParseError(description: "expected expression or line break following ‘then’ to begin ‘if’-block", location: thenLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: thenLocation))])
+                throw ParseError(description: "expected expression or line break after ‘then’ to begin ‘if’-block", location: thenLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: thenLocation))])
             }
             thenExpr = thenExpression
         }
@@ -342,6 +342,22 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
             
             return .repeatWhile(condition: condition, repeating: try parseRepeatBlock())
+        } else if tryEating(prefix: "for") {
+            guard let variableTerm = try parseVariableTerm(stoppingAt: ["in"]) else {
+                throw ParseError(description: "expected variable name after ‘repeat for’", location: currentLocation)
+            }
+            
+            guard tryEating(prefix: "in") else {
+                throw ParseError(description: "expected ‘in’ to begin container expression in ‘repeat for’", location: currentLocation)
+            }
+            
+            guard let expression = try parsePrimary() else {
+                throw ParseError(description: "expected container expression in ‘repeat for’", location: currentLocation)
+            }
+            
+            lexicon.add(variableTerm)
+            
+            return .repeatFor(variable: variableTerm, container: expression, repeating: try parseRepeatBlock())
         } else {
             guard let times = try parsePrimary() else {
                 throw ParseError(description: "expected times expression after ‘\(expressionLocation.snippet(in: entireSource))’", location: currentLocation)
@@ -389,13 +405,9 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     private func handleLet() throws -> Expression.Kind? {
-        guard
-            let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: ["be"]),
-            !termName.words.isEmpty
-        else {
-            throw ParseError(description: "expected variable name following ‘let’", location: SourceLocation(source.range, source: entireSource))
+        guard let term = try parseVariableTerm(stoppingAt: ["be"]) else {
+            throw ParseError(description: "expected variable name after ‘let’", location: currentLocation)
         }
-        let term = Located(VariableTerm(.id(termName.normalized), name: termName), at: termLocation)
         
         var initialValue: Expression? = nil
         if tryEating(prefix: "be") {
@@ -553,7 +565,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         } else {
             guard let elseExpr = try parsePrimary() else {
                 let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
-                throw ParseError(description: "expected expression or line break following ‘else’ to begin ‘else’-block", location: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", by: AppendingFix(appending: " <#expression#>", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
+                throw ParseError(description: "expected expression or line break after ‘else’ to begin ‘else’-block", location: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", by: AppendingFix(appending: " <#expression#>", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
             }
             eatCommentsAndWhitespace()
             return elseExpr

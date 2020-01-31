@@ -138,13 +138,13 @@ enum Builtin {
         case .false:
             return newBoolean(false)
         default:
-            return toOpaque(retain(RT_Constant(value: rt.constant(forUID: typedUID) ?? ConstantInfo(typedUID.uid))))
+            return toOpaque(retain(RT_Constant(value: rt.constant(forUID: typedUID))))
         }
     }
     
     static func newClass(_ uidPointer: RTObjectPointer) -> RTObjectPointer {
         let typedUID = typedUIDFromOpaque(uidPointer)
-        return toOpaque(retain(RT_Class(value: rt.type(forUID: typedUID) ?? TypeInfo(typedUID.uid))))
+        return toOpaque(retain(RT_Class(value: rt.type(forUID: typedUID))))
     }
     
     static func newList() -> RTObjectPointer {
@@ -177,6 +177,29 @@ enum Builtin {
         let typedUID = typedUIDFromOpaque(uidPointer)
         let value = fromOpaque(valuePointer)
         record.contents[typedUID] = value
+    }
+    
+    static func getSequenceLength(_ sequencePointer: RTObjectPointer) -> Int64 {
+        let sequence = fromOpaque(sequencePointer)
+        do {
+            let length = try sequence.property(rt.property(forUID: TypedTermUID(PropertyUID.Sequence_length))) as? RT_Numeric
+            // TODO: Throw error for non-numeric length
+            return Int64(length?.numericValue ?? 0)
+        } catch {
+            throwError(message: error.localizedDescription)
+            return 0
+        }
+    }
+    
+    static func getFromSequenceAtIndex(_ sequencePointer: RTObjectPointer, _ index: Int64) -> RTObjectPointer {
+        let sequence = fromOpaque(sequencePointer)
+        do {
+            let item = try sequence.element(rt.type(forUID: TypedTermUID(TypeUID.item)), at: index)
+            return toOpaque(retain(item))
+        } catch {
+            throwError(message: error.localizedDescription)
+            return toOpaque(RT_Null.null)
+        }
     }
     
     static func getFromArgumentRecord(_ recordPointer: RTObjectPointer, _ uidPointer: RTObjectPointer) -> RTObjectPointer {
@@ -286,14 +309,10 @@ enum Builtin {
         let newSpecifier: RT_Specifier
         let kind = RT_Specifier.Kind(rawValue: rawKind)!
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: propertyInfo(for: typedUID), data: [], kind: .property)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [], kind: .property)
         } else {
-            if let type = rt.type(forUID: typedUID) {
-                newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [], kind: kind)
-            } else {
-                throwError(message: "unknown type")
-                return toOpaque(RT_Null.null)
-            }
+            let type = rt.type(forUID: typedUID)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [], kind: kind)
         }
         return toOpaque(retain(newSpecifier))
     }
@@ -306,12 +325,8 @@ enum Builtin {
         if kind == .property {
             newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [data1], kind: .property)
         } else {
-            if let type = rt.type(forUID: typedUID) {
-                newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [data1], kind: kind)
-            } else {
-                throwError(message: "unknown type")
-                return toOpaque(RT_Null.null)
-            }
+            let type = rt.type(forUID: typedUID)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [data1], kind: kind)
         }
         return toOpaque(retain(newSpecifier))
     }
@@ -325,12 +340,8 @@ enum Builtin {
         if kind == .property {
             newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [data1, data2], kind: .property)
         } else {
-            if let type = rt.type(forUID: typedUID) {
-                newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [data1, data2], kind: kind)
-            } else {
-                throwError(message: "unknown type")
-                return toOpaque(RT_Null.null)
-            }
+            let type = rt.type(forUID: typedUID)
+            newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [data1, data2], kind: kind)
         }
         return toOpaque(retain(newSpecifier))
     }
@@ -340,10 +351,6 @@ enum Builtin {
         let lhs = fromOpaque(lhsPointer)
         let rhs = fromOpaque(rhsPointer)
         return toOpaque(retain(RT_TestSpecifier(rt, operation: operation, lhs: lhs, rhs: rhs)))
-    }
-    
-    private static func propertyInfo(for typedUID: TypedTermUID) -> PropertyInfo {
-        rt.property(forUID: typedUID) ?? PropertyInfo(typedUID.uid)
     }
     
     static func qualifySpecifier(_ objectPointer: RTObjectPointer) -> RTObjectPointer {
@@ -443,7 +450,7 @@ enum Builtin {
         process.standardError = error
         
         let inputWriteFileHandle = input.fileHandleForWriting
-        inputWriteFileHandle.write(((inputObject.coerce(to: rt.type(forUID: TypedTermUID(TypeUID.string))!) as? RT_String)?.value ?? String(describing: inputObject)).data(using: .utf8)!)
+        inputWriteFileHandle.write(((inputObject.coerce(to: rt.type(forUID: TypedTermUID(TypeUID.string))) as? RT_String)?.value ?? String(describing: inputObject)).data(using: .utf8)!)
         inputWriteFileHandle.closeFile()
         
         try! process.run()

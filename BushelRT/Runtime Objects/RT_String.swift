@@ -47,8 +47,9 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object {
+        let zeroBasedIndex = index - 1
         if type.isA(RT_Character.typeInfo) {
-            return RT_Character(value: value[value.index(value.startIndex, offsetBy: Int(index))])
+            return RT_Character(value: value[value.index(value.startIndex, offsetBy: Int(zeroBasedIndex))])
         } else {
             return try super.element(type, at: index)
         }

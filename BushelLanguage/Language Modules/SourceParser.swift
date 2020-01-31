@@ -442,6 +442,16 @@ public extension SourceParser {
         }
     }
     
+    func parseVariableTerm(stoppingAt: [String] = []) throws -> Located<VariableTerm>? {
+        guard
+            let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: stoppingAt),
+            !termName.words.isEmpty
+        else {
+            return nil
+        }
+        return Located(VariableTerm(lexicon.makeUID(forName: termName), name: termName), at: termLocation)
+    }
+    
     func parseTermNameEagerly(stoppingAt: [String] = []) throws -> (TermName, SourceLocation)? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex

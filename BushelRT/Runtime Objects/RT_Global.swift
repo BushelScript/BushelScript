@@ -90,7 +90,7 @@ public class RT_Global: RT_Object {
         
         switch CommandUID(command.typedUID) {
         case .delay:
-            let delaySeconds = (arguments[ParameterInfo(.direct)]?.coerce(to: rt.type(forUID: TypedTermUID(TypeUID.real))!) as? RT_Numeric)?.numericValue ?? 1.0
+            let delaySeconds = (arguments[ParameterInfo(.direct)]?.coerce(to: rt.type(forUID: TypedTermUID(TypeUID.real))) as? RT_Numeric)?.numericValue ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)
             return RT_Null.null
         case .CLI_log:

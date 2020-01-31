@@ -50,6 +50,7 @@ public struct Expression {
         case if_(condition: Expression, then: Expression, else: Expression?)
         case repeatWhile(condition: Expression, repeating: Expression)
         case repeatTimes(times: Expression, repeating: Expression)
+        case repeatFor(variable: Located<VariableTerm>, container: Expression, repeating: Expression)
         case tell(target: Expression, to: Expression)
         case let_(Located<VariableTerm>, initialValue: Expression?)
         case return_(Expression?)
@@ -143,6 +144,8 @@ extension Expression.Kind {
             return ("Conditional repeat expression", "Executes the contained block as long as its condition is truthy.")
         case .repeatTimes:
             return ("Constant-bounded repeat expression", "Evaluates its ”times“ expression, then executes the contained block that many times.")
+        case .repeatFor:
+            return ("Iterative repeat expression", "Executes the contained block for each element in the specified collection.")
         case .tell:
             return ("Tell expression", "Changes the current command target and pushes the new target’s dictionary, if any, onto the lexicon.")
         case .let_:

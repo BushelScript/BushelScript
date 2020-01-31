@@ -79,8 +79,8 @@ public class RTInfo {
     private var typesBySupertype: [TypeInfo : [TypeInfo]] = [:]
     private var typesByName: [TermName : TypeInfo] = [:]
     
-    public func type(forUID uid: TypedTermUID) -> TypeInfo? {
-        typesByUID[uid]
+    public func type(forUID uid: TypedTermUID) -> TypeInfo {
+        typesByUID[uid] ?? TypeInfo(uid.uid)
     }
     public func subtypes(of type: TypeInfo) -> [TypeInfo] {
         typesBySupertype[type] ?? []
@@ -94,8 +94,8 @@ public class RTInfo {
     
     private var propertiesByUID: [TypedTermUID : PropertyInfo] = [:]
     
-    public func property(forUID uid: TypedTermUID) -> PropertyInfo? {
-        propertiesByUID[uid]
+    public func property(forUID uid: TypedTermUID) -> PropertyInfo {
+        propertiesByUID[uid] ?? PropertyInfo(uid.uid)
     }
     public func property(for code: OSType) -> PropertyInfo? {
         propertiesByUID[TypedTermUID(.property, .ae4(code: code))]
@@ -103,8 +103,8 @@ public class RTInfo {
     
     private var constantsByUID: [TypedTermUID : ConstantInfo] = [:]
     
-    public func constant(forUID uid: TypedTermUID) -> ConstantInfo? {
-        constantsByUID[uid]
+    public func constant(forUID uid: TypedTermUID) -> ConstantInfo {
+        constantsByUID[uid] ?? ConstantInfo(uid.uid)
     }
     public func constant(for code: OSType) -> ConstantInfo? {
         constantsByUID[TypedTermUID(.constant, .ae4(code: code))]
@@ -112,8 +112,8 @@ public class RTInfo {
     
     private var commandsByUID: [TypedTermUID : CommandInfo] = [:]
     
-    public func command(forUID uid: TypedTermUID) -> CommandInfo? {
-        commandsByUID[uid]
+    public func command(forUID uid: TypedTermUID) -> CommandInfo {
+        commandsByUID[uid] ?? CommandInfo(uid.uid)
     }
     
     public func retain(_ object: RT_Object) {

@@ -75,11 +75,12 @@ public class RT_List: RT_Object, AEEncodable {
     
     public override func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object {
         let filteredContents = self.filteredContents(type)
-        guard filteredContents.indices.contains(Int(index)) else {
+        let zeroBasedIndex = index - 1
+        guard filteredContents.indices.contains(Int(zeroBasedIndex)) else {
             // FIXME: use the error system
             fatalError("index out of bounds")
         }
-        return filteredContents[Int(index)]
+        return filteredContents[Int(zeroBasedIndex)]
     }
     
     public override func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object {

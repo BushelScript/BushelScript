@@ -37,6 +37,8 @@ private extension Expression {
                 return [condition, repeating]
             case let .repeatTimes(times, repeating):
                 return [times, repeating]
+            case let .repeatFor(_, container, repeating):
+                return [container, repeating]
             case let .tell(target, to):
                 return [target, to]
             case let .let_(_, initialValue):
