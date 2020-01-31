@@ -95,7 +95,7 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="MJd-ru-GpH">
                                 <rect key="frame" x="134" y="71" width="298" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" title="Makes saved documents executable by passing them as input to the specified program." id="R8c-hI-jjK">
-                                    <font key="font" metaFont="message" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -162,23 +162,31 @@
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0gx-cp-d1I">
                                 <rect key="frame" x="38" y="234" width="138" height="18"/>
-                                <buttonCell key="cell" type="check" title="Smart Suggestions" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="6h3-Ng-npI">
+                                <buttonCell key="cell" type="check" title="Smart Suggestions" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="6h3-Ng-npI">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableLiveParsing" id="2sl-au-iB2"/>
+                                    <binding destination="5uH-Ee-YZn" name="enabled" keyPath="values.EnableLiveParsing" id="ZRv-2G-STH">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSIsNil</string>
+                                        </dictionary>
+                                    </binding>
                                     <binding destination="5uH-Ee-YZn" name="value" keyPath="values.EnableSmartSuggestions" id="jZK-u8-0Ek"/>
                                 </connections>
                             </button>
                             <button toolTip="Offers to complete words found previously in the document." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wc1-qn-y5t">
                                 <rect key="frame" x="18" y="54" width="203" height="18"/>
-                                <buttonCell key="cell" type="check" title="Word completion suggestions" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Ilb-df-ced">
+                                <buttonCell key="cell" type="check" title="Word completion suggestions" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="Ilb-df-ced">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <binding destination="5uH-Ee-YZn" name="value" keyPath="values.EnableWordCompletionSuggestions" id="RCJ-aI-Kef"/>
+                                    <binding destination="5uH-Ee-YZn" name="value" keyPath="values.EnableWordCompletionSuggestions" id="LJK-RQ-VeQ">
+                                        <dictionary key="options">
+                                            <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3lN-LF-zVq">
@@ -196,7 +204,7 @@
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cDe-at-khL">
                                         <rect key="frame" x="-2" y="100" width="188" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Auto-fixes for syntax errors" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="gqt-gK-ni9">
+                                        <buttonCell key="cell" type="check" title="Auto-fixes for syntax errors" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="gqt-gK-ni9">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -210,7 +218,7 @@
                                         <subviews>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wgR-w4-WcE">
                                                 <rect key="frame" x="-2" y="0.0" width="198" height="18"/>
-                                                <buttonCell key="cell" type="check" title="Objects from scriptable apps" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="i7g-l1-ad9">
+                                                <buttonCell key="cell" type="check" title="Objects from scriptable apps" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="i7g-l1-ad9">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
@@ -230,7 +238,7 @@
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K3d-xb-cxu">
                                                 <rect key="frame" x="200" y="1" width="153" height="14"/>
                                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Disabled by Privacy settings" id="k9L-rV-Sgr">
-                                                    <font key="font" metaFont="message" size="11"/>
+                                                    <font key="font" metaFont="menu" size="11"/>
                                                     <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
@@ -253,7 +261,7 @@
                                     </stackView>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H0F-Zd-SuT">
                                         <rect key="frame" x="-2" y="58" width="115" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Variable names" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="EGd-xT-1Gd">
+                                        <buttonCell key="cell" type="check" title="Variable names" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="EGd-xT-1Gd">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -264,7 +272,7 @@
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Lfh-iW-R9W">
                                         <rect key="frame" x="-2" y="38" width="59" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Types" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="aFh-FN-zBi">
+                                        <buttonCell key="cell" type="check" title="Types" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="aFh-FN-zBi">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -275,7 +283,7 @@
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bsy-KH-hzl">
                                         <rect key="frame" x="-2" y="18" width="84" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Constants" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Oga-gI-YCg">
+                                        <buttonCell key="cell" type="check" title="Constants" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="Oga-gI-YCg">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -286,7 +294,7 @@
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KGF-qP-Yq0">
                                         <rect key="frame" x="-2" y="-2" width="91" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Commands" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="4oh-wR-B9M">
+                                        <buttonCell key="cell" type="check" title="Commands" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="4oh-wR-B9M">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -316,7 +324,7 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="WqC-h4-gBF">
                                 <rect key="frame" x="38" y="20" width="394" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" title="When enabled, press Option-Escape to complete with words that appear previously in the document." id="9nM-aV-Ich">
-                                    <font key="font" metaFont="message" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -336,7 +344,7 @@
                                 <rect key="frame" x="188" y="244" width="258" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" selectable="YES" title="Note: not all of these features are implemented as of yet." id="VSm-da-CfP">
-                                    <font key="font" metaFont="message" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -395,10 +403,9 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="EbU-qF-leD" name="displayPatternValue1" keyPath="values.SourceCodeFont" id="iHb-bN-m8F">
+                                    <binding destination="EbU-qF-leD" name="font" keyPath="values.SourceCodeFont" id="Mjm-kK-y3X">
                                         <dictionary key="options">
-                                            <string key="NSDisplayPattern">%{value1}@ %{value2}@</string>
-                                            <string key="NSValueTransformerName">UnarchiveFontDisplayNameVT</string>
+                                            <string key="NSValueTransformerName">UnarchiveFontVT</string>
                                         </dictionary>
                                     </binding>
                                     <binding destination="EbU-qF-leD" name="displayPatternValue2" keyPath="values.SourceCodeFont" previousBinding="iHb-bN-m8F" id="Qcl-dF-dti">
@@ -407,9 +414,10 @@
                                             <string key="NSValueTransformerName">UnarchiveFontSizeVT</string>
                                         </dictionary>
                                     </binding>
-                                    <binding destination="EbU-qF-leD" name="font" keyPath="values.SourceCodeFont" id="Mjm-kK-y3X">
+                                    <binding destination="EbU-qF-leD" name="displayPatternValue1" keyPath="values.SourceCodeFont" id="iHb-bN-m8F">
                                         <dictionary key="options">
-                                            <string key="NSValueTransformerName">UnarchiveFontVT</string>
+                                            <string key="NSDisplayPattern">%{value1}@ %{value2}@</string>
+                                            <string key="NSValueTransformerName">UnarchiveFontDisplayNameVT</string>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -479,7 +487,7 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dxa-dg-ow9">
                                 <rect key="frame" x="126" y="54" width="306" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" title="These features show you relevant data from applications on your system during editing." id="0Ue-Bm-qUi">
-                                    <font key="font" metaFont="message" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>

@@ -371,6 +371,10 @@ extension DocumentVC: NSTextViewDelegate {
             program = nil
         }
         
+        guard Defaults[.liveParsingEnabled] else {
+            return
+        }
+        
         compile(source) { (service, language, result) in
             switch result {
             case .success(_):
@@ -380,6 +384,10 @@ extension DocumentVC: NSTextViewDelegate {
 //                    self.dismissSuggestionList()
                 }
             case .failure(let error):
+                guard Defaults[.liveErrorsEnabled] else {
+                    return
+                }
+                
                 self.status = .fetchingData
                 service.copyNSError(fromError: error) { nsError in
                     service.copySourceCharacterRange(fromError: error, forSource: source) { errorRangeValue in
