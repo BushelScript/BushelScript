@@ -12,7 +12,7 @@
                 <controllerPlaceholder storyboardName="About" id="4Rv-g0-VIC" sceneMemberID="viewController"/>
                 <customObject id="GMD-GX-AIu" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="519" y="-52"/>
+            <point key="canvasLocation" x="519" y="-88"/>
         </scene>
         <!--Application-->
         <scene sceneID="JPo-4y-FX3">
@@ -40,6 +40,13 @@
                                         <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW">
                                             <connections>
                                                 <segue destination="Y4s-9q-HdP" kind="show" id="CuO-cY-hv6"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="C1n-1i-Dfy"/>
+                                        <menuItem title="Command-Line Tool…" id="poH-hF-SgL">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <segue destination="mt9-Ul-Ob4" kind="show" id="oOe-cf-hBt"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>
@@ -538,7 +545,7 @@ DQ
                 <controllerPlaceholder storyboardName="Preferences" id="Y4s-9q-HdP" sceneMemberID="viewController"/>
                 <customObject id="cIi-Iq-pZ4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="537" y="-17"/>
+            <point key="canvasLocation" x="537" y="-45"/>
         </scene>
         <!--Assets Attribution-->
         <scene sceneID="50E-bo-igO">
@@ -932,6 +939,14 @@ CQ
                 <customObject id="OqO-2s-mIK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="487" y="1135"/>
+        </scene>
+        <!--CommandLineToolVC-->
+        <scene sceneID="rDt-hO-Jdk">
+            <objects>
+                <controllerPlaceholder storyboardName="CommandLineToolVC" id="mt9-Ul-Ob4" sceneMemberID="viewController"/>
+                <customObject id="9sA-4s-LiJ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="564" y="-3"/>
         </scene>
     </scenes>
     <resources>

@@ -18,7 +18,6 @@ echo "Building to ${INSTALL_DIR}"
 echo 'Installing.'
 function install {
 	xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT="$INSTALL_DIR" # Includes all language modules.
-	xcodebuild install -workspace Bushel.xcworkspace -scheme bushelscript DSTROOT="$INSTALL_DIR"
 	if [ $? -ne 0 ]
 	then
 		echo 'xcodebuild install failed; not creating a pkg.'
