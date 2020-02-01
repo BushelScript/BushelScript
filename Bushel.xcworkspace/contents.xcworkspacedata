@@ -17,20 +17,41 @@
       location = "container:"
       name = "General">
       <Group
+         location = "container:"
+         name = "Documentation">
+         <FileRef
+            location = "group:README.md">
+         </FileRef>
+         <FileRef
+            location = "group:LICENSING.txt">
+         </FileRef>
+      </Group>
+      <Group
          location = "group:BuildScripts"
          name = "BuildScripts">
          <FileRef
             location = "group:/Users/ian/Documents/Bushel/BuildScripts/copy-spm-licenses-into-product.rb">
          </FileRef>
       </Group>
-      <FileRef
-         location = "group:README.md">
-      </FileRef>
-      <FileRef
-         location = "group:LICENSING.txt">
-      </FileRef>
-      <FileRef
-         location = "group:make-pkg.sh">
-      </FileRef>
+      <Group
+         location = "container:"
+         name = "Command-line build scripts">
+         <FileRef
+            location = "group:make-pkg.sh">
+         </FileRef>
+         <FileRef
+            location = "group:test.sh">
+         </FileRef>
+         <Group
+            location = "container:"
+            name = "Auxiliary">
+            <FileRef
+               location = "group:set-up-llvm.sh">
+            </FileRef>
+            <FileRef
+               location = "group:resolve-packages.sh">
+            </FileRef>
+         </Group>
+      </Group>
    </Group>
 </Workspace>
