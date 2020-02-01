@@ -9,7 +9,7 @@
         <!--Manage Command-Line Tool-->
         <scene sceneID="EVZ-xB-M3K">
             <objects>
-                <viewController title="Manage Command-Line Tool" id="Ym4-m1-dv8" customClass="CommandLineToolVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Manage Command-Line Tool" showSeguePresentationStyle="single" id="Ym4-m1-dv8" customClass="CommandLineToolVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="lau-gK-eqd">
                         <rect key="frame" x="0.0" y="0.0" width="581" height="282"/>
                         <autoresizingMask key="autoresizingMask"/>
