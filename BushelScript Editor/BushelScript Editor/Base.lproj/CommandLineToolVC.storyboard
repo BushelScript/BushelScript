@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="Ym4-m1-dv8">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -10,14 +11,14 @@
             <objects>
                 <viewController title="Manage Command-Line Tool" id="Ym4-m1-dv8" customClass="CommandLineToolVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="lau-gK-eqd">
-                        <rect key="frame" x="0.0" y="0.0" width="581" height="266"/>
+                        <rect key="frame" x="0.0" y="0.0" width="581" height="282"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="15" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qmb-4T-WIM">
-                                <rect key="frame" x="20" y="20" width="541" height="226"/>
+                                <rect key="frame" x="20" y="20" width="541" height="242"/>
                                 <subviews>
                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="4yg-iZ-0J6">
-                                        <rect key="frame" x="-2" y="210" width="519" height="16"/>
+                                        <rect key="frame" x="-2" y="226" width="519" height="16"/>
                                         <textFieldCell key="cell" title="To install the ‘bushelscript’ command-line tool, run the following terminal commands:" id="jac-o0-eRw">
                                             <font key="font" usesAppearanceFont="YES"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -25,7 +26,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="YC8-Lz-dJE">
-                                        <rect key="frame" x="-2" y="180" width="130" height="15"/>
+                                        <rect key="frame" x="-2" y="196" width="130" height="15"/>
                                         <textFieldCell key="cell" selectable="YES" title="Install commands" id="cZ1-b6-eeF">
                                             <font key="font" size="13" name="Menlo-Regular"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -33,7 +34,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j1C-wK-Lg8">
-                                        <rect key="frame" x="-6" y="137" width="111" height="32"/>
+                                        <rect key="frame" x="-6" y="153" width="111" height="32"/>
                                         <buttonCell key="cell" type="push" title="Do it for me" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1kx-iU-2ox">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -42,19 +43,11 @@
                                             <action selector="runInstallCommands:" target="Ym4-m1-dv8" id="cqy-ZL-VRg"/>
                                         </connections>
                                     </button>
-                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Kgi-pT-gWS">
-                                        <rect key="frame" x="-2" y="113" width="372" height="16"/>
-                                        <textFieldCell key="cell" title="You'll have to redo this if you move BushelScript.app on disk." id="dkZ-gp-iUA">
-                                            <font key="font" usesAppearanceFont="YES"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
                                     <box horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="u81-6K-eA2">
-                                        <rect key="frame" x="20" y="95" width="501" height="5"/>
+                                        <rect key="frame" x="20" y="142" width="501" height="5"/>
                                     </box>
                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="kCQ-SD-dNV">
-                                        <rect key="frame" x="-2" y="66" width="127" height="16"/>
+                                        <rect key="frame" x="-2" y="113" width="127" height="16"/>
                                         <textFieldCell key="cell" title="To uninstall the tool:" id="XhK-pJ-OZx">
                                             <font key="font" usesAppearanceFont="YES"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -62,7 +55,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="QSl-mo-sI9">
-                                        <rect key="frame" x="-2" y="36" width="145" height="15"/>
+                                        <rect key="frame" x="-2" y="83" width="145" height="15"/>
                                         <textFieldCell key="cell" selectable="YES" title="Uninstall commands" id="Q2Q-xj-XaL">
                                             <font key="font" size="13" name="Menlo-Regular"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -70,7 +63,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BtF-HT-eg4">
-                                        <rect key="frame" x="-6" y="-7" width="111" height="32"/>
+                                        <rect key="frame" x="-6" y="40" width="111" height="32"/>
                                         <buttonCell key="cell" type="push" title="Do it for me" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dc1-5e-pnC">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -79,8 +72,21 @@
                                             <action selector="runUninstallCommands:" target="Ym4-m1-dv8" id="F6G-g2-nMy"/>
                                         </connections>
                                     </button>
+                                    <box horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="znB-Ih-bUy">
+                                        <rect key="frame" x="20" y="29" width="501" height="5"/>
+                                    </box>
+                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Kgi-pT-gWS">
+                                        <rect key="frame" x="-2" y="0.0" width="513" height="16"/>
+                                        <textFieldCell key="cell" title="If you move BushelScript.app on disk, you will have to uninstall and reinstall the tool." id="dkZ-gp-iUA">
+                                            <font key="font" usesAppearanceFont="YES"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstItem="znB-Ih-bUy" firstAttribute="leading" secondItem="qmb-4T-WIM" secondAttribute="leading" constant="20" symbolic="YES" id="Gx6-zM-txY"/>
+                                    <constraint firstAttribute="trailing" secondItem="znB-Ih-bUy" secondAttribute="trailing" constant="20" symbolic="YES" id="g1p-rh-hsy"/>
                                     <constraint firstAttribute="trailing" secondItem="u81-6K-eA2" secondAttribute="trailing" constant="20" symbolic="YES" id="wFn-E6-GxE"/>
                                     <constraint firstItem="u81-6K-eA2" firstAttribute="leading" secondItem="qmb-4T-WIM" secondAttribute="leading" constant="20" symbolic="YES" id="zF6-Fe-Vrd"/>
                                 </constraints>
@@ -93,8 +99,10 @@
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
