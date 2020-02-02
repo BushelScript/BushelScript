@@ -33,6 +33,12 @@ else
 	install
 fi
 
+echo "Temporary measure: copying LLVM's libc++.1.dylib to install dir."
+LLVM_LIB_DIR="$(brew --prefix llvm)/lib"
+mkdir -p "$INSTALL_DIR/$LLVM_LIB_DIR"
+LLVM_LIBCPP="$LLVM_LIB_DIR/libc++.1.dylib"
+cp "$LLVM_LIBCPP" "$INSTALL_DIR/$LLVM_LIBCPP"
+
 # Make the installer package.
 pkgbuild --root "$INSTALL_DIR" --identifier "$PKG_IDENTIFIER" --version "$PKG_VERSION" "$PKG_FILENAME"
 if [ $? -ne 0 ]
