@@ -6,9 +6,9 @@
 
 See the [BushelScript website](https://bushelscript.github.io/) for more info: [About BushelScript](https://bushelscript.github.io/about/)
 
-## Prebuilt binaries
+## Install BushelScript
 
-There are none yet! But when v0.1 comes (soon!), there will be.
+See [releases on GitHub](https://github.com/BushelScript/BushelScript/releases). The latest version is at the top of the page.
 
 ## Build BushelScript from source
 
@@ -25,11 +25,11 @@ Now you can `open BushelScript.pkg` (or double-click it) to run the installer.
 
 Installed components include: core frameworks (`SwiftAutomation.framework`, `Bushel.framework`, `BushelLanguage.framework`, `BushelRT.framework`); language service (`BushelLanguageService.xpc`, `BushelLanguageServiceConnectionCreation.framework`); English language module (`bushelscript_en.framework`); BushelScript Editor (`BushelScript Editor.app`); and the `bushelscript` command-line tool. Components are installed as follows:
 
-* Core frameworks: `/Library/Frameworks/*.framework`
+* Core frameworks: embedded in `BushelScript Editor.app`
 * Language service: embedded in `BushelScript Editor.app`
 * Language modules: `/Library/BushelScript/Languages/*.framework`
 * BushelScript Editor : `/Applications/BushelScript Editor.app`
-* `bushelscript` command-line tool: `/usr/local/bin/bushelscript`
+* `bushelscript` command-line tool: embedded in `BushelScript Editor.app`, may be symlinked to `/usr/local/bin/bushelscript` (set up from BushelScript Editor → app menu → Command-Line Tool)
 
 If you want to uninstall BushelScript, remove these components.
 
