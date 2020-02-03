@@ -251,21 +251,12 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
 extension ResourceTerm {
     
     public var formattedForUseStatement: String {
-        resource.formattedForUseStatement
-    }
-    
-}
-
-extension Resource {
-    
-    public var formattedForUseStatement: String {
-        switch self {
-        case .applicationByName(let bundle):
-            return "application \(bundle.object(forInfoDictionaryKey: kCFBundleNameKey as String) ?? bundle.bundleURL.lastPathComponent)"
-        case .applicationByID(let bundle):
-            return
-                bundle.bundleIdentifier.map { "application id \($0)" } ??
-                Resource.applicationByName(bundle: bundle).formattedForUseStatement
+        let name = self.name!
+        switch resource {
+        case .applicationByName:
+            return "application \(name)"
+        case .applicationByID:
+            return "application id \(name)"
         }
     }
     

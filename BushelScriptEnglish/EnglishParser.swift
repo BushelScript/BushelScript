@@ -327,7 +327,10 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleRepeat(_ endTag: TermName) throws -> Expression.Kind? {
         func parseRepeatBlock() throws -> Expression {
-            try withScope {
+            guard tryEating(prefix: "\n") else {
+                throw ParseError(description: "expected line break to begin repeat block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
+            }
+            return try withScope {
                 try parseSequence(endTag) ?? Sequence.empty(at: currentIndex)
             }
         }
@@ -335,10 +338,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         if tryEating(prefix: "while") {
             guard let condition = try parsePrimary() else {
                 throw ParseError(description: "expected condition expression after ‘\(endTag) while’", location: currentLocation)
-            }
-            
-            guard tryEating(prefix: "\n") else {
-                throw ParseError(description: "expected line break to begin repeat block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
             }
             
             return .repeatWhile(condition: condition, repeating: try parseRepeatBlock())
@@ -365,9 +364,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             
             guard tryEating(prefix: "times") else {
                 throw ParseError(description: "expected ‘times’ after times expression", location: currentLocation, fixes: [AppendingFix(appending: " times", at: currentLocation)])
-            }
-            guard tryEating(prefix: "\n") else {
-                throw ParseError(description: "expected line break after ‘times’ to begin repeat block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
             }
             
             return .repeatTimes(times: times, repeating: try parseRepeatBlock())

@@ -396,7 +396,7 @@ public func fileURLForLocalApplication(_ name: String) -> URL? {
     if name.hasPrefix("/") { // full path (note: path must include .app suffix)
         return URL(fileURLWithPath: name)
     } else { // if name is not full path, look up by name (.app suffix is optional)
-        guard let path = NSWorkspace.shared.fullPath(forApplication: name.hasSuffix(".app") ? name : "\(name).app") else {
+        guard let path = NSWorkspace.shared.fullPath(forApplication: name) else {
             return nil
         }
         return URL(fileURLWithPath: path)
