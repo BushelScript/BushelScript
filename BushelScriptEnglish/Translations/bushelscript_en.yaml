@@ -57,6 +57,17 @@ translation:
             id:
                 top script: me
                 current date: current date
+                file:
+                    basename:
+                        - basename
+                        - base name
+                    extname:
+                        - extname
+                        - extension name
+                        - extension
+                    dirname:
+                        - dirname
+                        - directory name
                 date:
                     seconds: seconds    # property/id:date:seconds
                     minutes: minutes

@@ -54,6 +54,15 @@ public class RT_Date: RT_Object {
     
 }
 
+// MARK: AEEncodable
+extension RT_Date: AEEncodable {
+    
+    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+        NSAppleEventDescriptor(date: value)
+    }
+    
+}
+
 extension RT_Date {
     
     public override var debugDescription: String {

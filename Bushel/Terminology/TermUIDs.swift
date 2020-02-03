@@ -287,6 +287,10 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
     case Sequence_reverse
     case Sequence_tail
     
+    case file_basename
+    case file_extname
+    case file_dirname
+    
     case date_seconds
     case date_minutes
     case date_hours

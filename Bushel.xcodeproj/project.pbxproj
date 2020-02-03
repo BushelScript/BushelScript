@@ -43,6 +43,7 @@
 		3C3F06DC23C14165005BC0F2 /* ExpressionsAtLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06DB23C14165005BC0F2 /* ExpressionsAtLocation.swift */; };
 		3C3F06E123C14B15005BC0F2 /* Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06E023C14B15005BC0F2 /* Ranges.swift */; };
 		3C57DD4C2352C55A00F9F2A0 /* Weave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C57DD4B2352C55A00F9F2A0 /* Weave.swift */; };
+		3C5B345423E7BCF90040766D /* RT_File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5B345323E7BCF90040766D /* RT_File.swift */; };
 		3C68743C2394164E004144AC /* UnaryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C68743B2394164E004144AC /* UnaryOperation.swift */; };
 		3C6874412394188F004144AC /* PrecedenceGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6874402394188F004144AC /* PrecedenceGroup.swift */; };
 		3C68D2452353BA300059FD3E /* BinaryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C68D2442353BA300059FD3E /* BinaryOperation.swift */; };
@@ -224,6 +225,7 @@
 		3C3F06DB23C14165005BC0F2 /* ExpressionsAtLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionsAtLocation.swift; sourceTree = "<group>"; };
 		3C3F06E023C14B15005BC0F2 /* Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ranges.swift; sourceTree = "<group>"; };
 		3C57DD4B2352C55A00F9F2A0 /* Weave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weave.swift; sourceTree = "<group>"; };
+		3C5B345323E7BCF90040766D /* RT_File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_File.swift; sourceTree = "<group>"; };
 		3C68743B2394164E004144AC /* UnaryOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnaryOperation.swift; sourceTree = "<group>"; };
 		3C6874402394188F004144AC /* PrecedenceGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrecedenceGroup.swift; sourceTree = "<group>"; };
 		3C68D2442353BA300059FD3E /* BinaryOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinaryOperation.swift; sourceTree = "<group>"; };
@@ -385,6 +387,7 @@
 				3C12EF822354E30C0057E0CC /* RT_Record.swift */,
 				3C12EF802354E2F20057E0CC /* RT_List.swift */,
 				3C12EF972354E5720057E0CC /* RT_Date.swift */,
+				3C5B345323E7BCF90040766D /* RT_File.swift */,
 				3C12EF842354E32C0057E0CC /* RT_String.swift */,
 				3C12EF862354E3470057E0CC /* RT_Character.swift */,
 				3C12EF7C2354E2B50057E0CC /* RT_Boolean.swift */,
@@ -1282,6 +1285,7 @@
 				3C12EF7D2354E2B50057E0CC /* RT_Boolean.swift in Sources */,
 				3C70A6A423C5898C00CD5F73 /* RT_TestSpecifier.swift in Sources */,
 				3C12EF8F2354E4130057E0CC /* Errors.swift in Sources */,
+				3C5B345423E7BCF90040766D /* RT_File.swift in Sources */,
 				3CCD8AC722CC45860049C74F /* StackFrame.swift in Sources */,
 				3C12EF962354E53C0057E0CC /* RT_AESpecifierProtocol.swift in Sources */,
 				3C12EF872354E3470057E0CC /* RT_Character.swift in Sources */,

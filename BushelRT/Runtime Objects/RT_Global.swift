@@ -53,6 +53,8 @@ public class RT_Global: RT_Object {
                 return RT_Null.null
             }
             return RT_Application(rt, bundle: appBundle)
+        case .file:
+            return RT_File(value: URL(fileURLWithPath: (name as NSString).expandingTildeInPath))
         default:
             throw UnsupportedIndexForm(indexForm: .name, class: originalObject.dynamicTypeInfo)
         }
