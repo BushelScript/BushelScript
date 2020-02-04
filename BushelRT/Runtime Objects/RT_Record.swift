@@ -37,8 +37,8 @@ public class RT_Record: RT_Object, AEEncodable {
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
         if let key = contents.keys.first(where: { key in
             if
-                let key = key as? RT_Specifier,
-                key.property == property
+                let key = key as? RT_Constant,
+                key.value == ConstantInfo(property: property)
             {
                 return true
             }
