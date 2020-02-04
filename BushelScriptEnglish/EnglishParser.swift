@@ -131,7 +131,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("return"): {
             self.eatCommentsAndWhitespace()
             if self.source.first?.isNewline ?? true {
-                return .return_(Expression.empty(at: self.currentIndex))
+                return .return_(Expression.empty(at: self.currentLocation))
             } else {
                 return .return_(try self.parsePrimary())
             }
@@ -283,7 +283,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
         let body = try withScope {
             lexicon.add(Set(arguments.map { $0.term }))
-            return try parseSequence(functionNameTerm.name!) ?? Sequence.empty(at: currentIndex)
+            return try parseSequence(functionNameTerm.name!)
         }
         
         return .function(name: functionNameTerm, parameters: parameters, arguments: arguments, body: body)
@@ -303,7 +303,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         let thenExpr: Expression
         if foundNewline {
-            thenExpr = Expression(.sequence(try parseSequence(TermName("if"), stoppingAt: ["else"]) ?? Sequence.empty(at: currentIndex)), at: expressionLocation)
+            thenExpr = Expression(.sequence(try parseSequence(TermName("if"), stoppingAt: ["else"])), at: expressionLocation)
         } else {
             guard let thenExpression = try parsePrimary() else {
                 let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
@@ -328,7 +328,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             guard tryEating(prefix: "\n") else {
                 throw ParseError(description: "expected line break to begin repeat block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
             }
-            return Expression(.sequence(try parseSequence(endTag) ?? Sequence.empty(at: currentIndex)), at: expressionLocation)
+            return Expression(.sequence(try parseSequence(endTag)), at: expressionLocation)
         }
         
         if tryEating(prefix: "while") {
@@ -381,7 +381,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return try withTerminology(of: target) {
             let toExpr: Expression
             if foundNewline {
-                toExpr = Expression(.sequence(try parseSequence(TermName("tell")) ?? Sequence.empty(at: currentIndex)), at: expressionLocation)
+                toExpr = Expression(.sequence(try parseSequence(TermName("tell"))), at: expressionLocation)
             } else {
                 guard let toExpression = try parsePrimary() else {
                     let toLocation = SourceLocation(toStartIndex..<currentIndex, source: entireSource)
@@ -549,7 +549,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             return nil
         }
         if tryEating(prefix: "\n") {
-            return Expression(.sequence(try parseSequence(TermName("if")) ?? Sequence.empty(at: currentIndex)), at: expressionLocation)
+            return Expression(.sequence(try parseSequence(TermName("if"))), at: expressionLocation)
         } else {
             guard let elseExpr = try parsePrimary() else {
                 let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)

@@ -77,14 +77,14 @@ public extension SourceParser {
         signpostBegin()
         defer { signpostEnd() }
         
-        guard !source.isEmpty else {
-            return Program(Expression.empty(at: source.startIndex), source: entireSource, terms: TermPool())
-        }
-        
         self.entireSource = source
         self.source = Substring(source)
         self.expressionStartIndex = source.startIndex
         self.currentElements = []
+        
+        guard !source.isEmpty else {
+            return Program(Expression.empty(at: currentLocation), source: entireSource, terms: TermPool())
+        }
         
         lexicon.add(ParameterTerm(TermUID(ParameterUID.direct), name: nil))
         
@@ -95,12 +95,7 @@ public extension SourceParser {
         lexicon.pushDictionaryTerm(forUID: .id("script"))
         defer { lexicon.pop() }
         do {
-            let ast: Expression
-            if let sequence = try parseSequence(TermName("")) {
-                ast = Expression(.sequence(sequence), at: SourceLocation(entireSource.range, source: entireSource))
-            } else {
-                ast = Expression(.empty, at: SourceLocation(entireSource.range, source: entireSource))
-            }
+            let ast = Expression(.sequence(try parseSequence(TermName(""))), at: SourceLocation(entireSource.range, source: entireSource))
             return Program(ast, source: entireSource, terms: lexicon.pool)
         } catch var error as ParseError {
             if !entireSource.range.contains(error.location.range.lowerBound) {
@@ -144,7 +139,7 @@ public extension SourceParser {
         } while eatBlockComment() || eatLineComment()
     }
     
-    func parseSequence(_ endTag: TermName, stoppingAt stopKeywords: [String] = []) throws -> Sequence? {
+    func parseSequence(_ endTag: TermName, stoppingAt stopKeywords: [String] = []) throws -> [Expression] {
         sequenceEndTags.append(endTag)
         defer {
             sequenceEndTags.removeLast()
@@ -185,7 +180,7 @@ public extension SourceParser {
             eatNewlines()
         }
         
-        return expressions.isEmpty ? nil : Sequence(expressions: expressions, location: SourceLocation(expressions.first!.location.range.lowerBound..<expressions.last!.location.range.upperBound, source: entireSource))
+        return expressions
     }
     
     func parsePrimary(lastOperation: BinaryOperation? = nil) throws -> Expression? {
@@ -355,7 +350,7 @@ public extension SourceParser {
                 }
             }
             
-            return Expression(.sequence(Sequence(expressions: weaves, location: expressionLocation)), at: expressionLocation)
+            return Expression(.sequence(weaves), at: expressionLocation)
         } else if let (_, endMarker) = eatStringBeginMarker() {
             let regex = try! NSRegularExpression(pattern: "(.*?)(?<!\\\\)\(endMarker)", options: [])
             
@@ -675,7 +670,7 @@ public extension SourceParser {
         return false
     }
     
-    func withScope(parse: () throws -> Sequence) rethrows -> Expression {
+    func withScope(parse: () throws -> [Expression]) rethrows -> Expression {
         lexicon.pushUnnamedDictionary()
         defer { lexicon.pop() }
         return Expression(.scoped(Expression(.sequence(try parse()), at: expressionLocation)), at: expressionLocation)

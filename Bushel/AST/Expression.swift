@@ -44,7 +44,7 @@ public struct Expression {
         case that
         case it
         case null
-        case sequence(Sequence)
+        case sequence([Expression])
         case scoped(Expression)
         case parentheses(Expression)
         case function(name: Located<VariableTerm>, parameters: [Located<ParameterTerm>], arguments: [Located<VariableTerm>], body: Expression)
@@ -82,8 +82,11 @@ public struct Expression {
     public let location: SourceLocation
     public private(set) var elements: [PrettyPrintable]
     
-    public static func empty(at index: String.Index) -> Expression {
-        return Expression(.empty, [], at: SourceLocation(at: index, source: ""))
+    public static func empty(at location: SourceLocation) -> Expression {
+        Expression(.empty, at: location)
+    }
+    public static func emptySequence(at location: SourceLocation) -> Expression {
+        Expression(.sequence([]), at: location)
     }
     
     public init(_ kind: Kind, _ elements: [PrettyPrintable] = [], at location: SourceLocation) {

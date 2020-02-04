@@ -17,26 +17,26 @@ public extension SourceFormatter {
     }
     
     func format(_ expression: Expression, level: Int) -> String {
-        return reformat(expression: expression, level: level)
-    }
-    
-    func format(_ sequence: Sequence, level: Int) -> String {
-        guard
-            !sequence.expressions.isEmpty,
-            !sequence.expressions.allSatisfy({ $0.kind.omit })
-        else {
-            return "\(indentation(for: level))"
-        }
-        return sequence.expressions
-            .compactMap {
-                guard !$0.kind.omit else {
-                    return nil
-                }
-                let formatted = format($0, level: level + 1)
-                return indentation(for: $0.kind.deindent ? level : level + 1) + formatted
+        if case .sequence(let expressions) = expression.kind {
+            guard
+                !expressions.isEmpty,
+                !expressions.allSatisfy({ $0.kind.omit })
+            else {
+                return "\(indentation(for: level))"
             }
-            .joined(separator: "\n")
-            + "\n\(indentation(for: level))"
+            return expressions
+                .compactMap {
+                    guard !$0.kind.omit else {
+                        return nil
+                    }
+                    let formatted = format($0, level: level + 1)
+                    return indentation(for: $0.kind.deindent ? level : level + 1) + formatted
+                }
+                .joined(separator: "\n")
+                + "\n\(indentation(for: level))"
+        }
+        
+        return reformat(expression: expression, level: level)
     }
     
     func indentation(for level: Int) -> String {

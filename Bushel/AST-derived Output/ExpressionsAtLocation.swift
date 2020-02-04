@@ -25,8 +25,8 @@ private extension Expression {
                 return []
             case .null:
                 return []
-            case let .sequence(sequence):
-                return sequence.expressions
+            case let .sequence(expressions):
+                return expressions
             case let .scoped(expression):
                 return [expression]
             case let .parentheses(expression):

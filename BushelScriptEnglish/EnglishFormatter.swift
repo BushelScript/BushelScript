@@ -15,7 +15,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
         case .end:
             return ""
         case .sequence(let sequence):
-            return format(sequence, level: level)
+            fatalError("unreachable")
         case .scoped(let expression):
             return format(expression, level: level)
         case .parentheses(let expression):

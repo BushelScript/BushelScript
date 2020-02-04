@@ -495,8 +495,18 @@ extension Expression {
             return builder.buildCall(toExternalFunction: .getCurrentTarget, args: [])
         case .null: // MARK: .null
             return builder.rtNull
-        case .sequence(let sequence): // MARK: .sequence
-            return try sequence.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+        case .sequence(let expressions): // MARK: .sequence
+            return try expressions
+                .filter { if case .end = $0.kind { return false } else { return true } }
+                .reduce(lastResult, { (lastResult, expression) -> IRValue in
+                    guard !lastResult.isAReturnInst else {
+                        // We've already returned; generating more code can
+                        // confuse phi nodes
+                        return lastResult
+                    }
+                    return try expression
+                        .generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+                })
         case .scoped(let expression): // MARK: .scoped
             stack.push()
             defer {
@@ -860,35 +870,6 @@ extension Expression {
 
 private func llvmify(_ name: TermName) -> String {
     return name.normalized.replacingOccurrences(of: " ", with: "_")
-}
-
-extension Sequence {
-    
-    /// Recursively builds an LLVM IR program out of this expression.
-    ///
-    /// - Parameters:
-    ///   - builder: The `IRBuilder` to use.
-    ///   - options: A set of options that control how the code is generated.
-    ///   - lastResult: The last result produced by the program. This value
-    ///                 is produced by the `that` keyword. Also, if no value
-    ///                 is produced by this expression, `lastResult`
-    ///                 is returned back.
-    /// - Returns: The resultant `IRValue` from building the code for this
-    ///            expression.
-    public func generateLLVMIR(_ builder: IRBuilder, _ rt: RTInfo, _ stack: inout StaticStack, options: CodeGenOptions, lastResult: IRValue) throws -> IRValue {
-        return try expressions
-            .filter { if case .end = $0.kind { return false } else { return true } }
-            .reduce(lastResult, { (lastResult, expression) -> IRValue in
-                guard !lastResult.isAReturnInst else {
-                    // We've already returned; generating more code can
-                    // confuse phi nodes
-                    return lastResult
-                }
-                return try expression
-                    .generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
-            })
-    }
-    
 }
 
 protocol IRPointerConvertible {
