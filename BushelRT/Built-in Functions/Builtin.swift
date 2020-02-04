@@ -542,9 +542,8 @@ extension RT_Object {
             let keysAndValues = zip(dictionary.keys, values).map { ($0.0.asRTObject(rt), $0.1) }
             let convertedDictionary = [RT_Object : RT_Object](uniqueKeysWithValues: keysAndValues)
             return RT_Record(contents: convertedDictionary)
-//        case let url as URL:
-//            return RT_File // TODO: This
-//            return RT_Null.null
+        case let url as URL:
+            return RT_File(value: url)
         case is MissingValueType:
             return RT_Null.null // Intentional
         case let symbol as Symbol:
