@@ -44,7 +44,8 @@ public struct Expression {
         case that
         case it
         case null
-        case scoped(Sequence)
+        case sequence(Sequence)
+        case scoped(Expression)
         case parentheses(Expression)
         case function(name: Located<VariableTerm>, parameters: [Located<ParameterTerm>], arguments: [Located<VariableTerm>], body: Expression)
         case if_(condition: Expression, then: Expression, else: Expression?)
@@ -132,6 +133,8 @@ extension Expression.Kind {
             return ("Current target specifier", "Specifies the current command target, as set by the nearest “tell” block.")
         case .null:
             return ("Null literal", "The absence of a value.")
+        case .sequence:
+            return ("Sequence", "A list of sequentially evaluated expressions.")
         case .scoped:
             return ("Scoped block expression", "Provides a local dictionary that pops off the lexicon when the expression ends.")
         case .parentheses:

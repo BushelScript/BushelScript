@@ -97,7 +97,7 @@ public extension SourceParser {
         do {
             let ast: Expression
             if let sequence = try parseSequence(TermName("")) {
-                ast = Expression(.scoped(sequence), at: SourceLocation(entireSource.range, source: entireSource))
+                ast = Expression(.sequence(sequence), at: SourceLocation(entireSource.range, source: entireSource))
             } else {
                 ast = Expression(.empty, at: SourceLocation(entireSource.range, source: entireSource))
             }
@@ -355,7 +355,7 @@ public extension SourceParser {
                 }
             }
             
-            return Expression(.scoped(Sequence(expressions: weaves, location: expressionLocation)), at: expressionLocation)
+            return Expression(.sequence(Sequence(expressions: weaves, location: expressionLocation)), at: expressionLocation)
         } else if let (_, endMarker) = eatStringBeginMarker() {
             let regex = try! NSRegularExpression(pattern: "(.*?)(?<!\\\\)\(endMarker)", options: [])
             
@@ -678,7 +678,7 @@ public extension SourceParser {
     func withScope(parse: () throws -> Sequence) rethrows -> Expression {
         lexicon.pushUnnamedDictionary()
         defer { lexicon.pop() }
-        return Expression(.scoped(try parse()), at: expressionLocation)
+        return Expression(.scoped(Expression(.sequence(try parse()), at: expressionLocation)), at: expressionLocation)
     }
     
     func withTerminology<Result>(of expression: Expression, parse: () throws -> Result) throws -> Result {

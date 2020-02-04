@@ -495,7 +495,9 @@ extension Expression {
             return builder.buildCall(toExternalFunction: .getCurrentTarget, args: [])
         case .null: // MARK: .null
             return builder.rtNull
-        case .scoped(let sequence): // MARK: .scoped
+        case .sequence(let sequence): // MARK: .sequence
+            return try sequence.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+        case .scoped(let expression): // MARK: .scoped
             stack.push()
             defer {
                 stack.pop()
@@ -510,7 +512,7 @@ extension Expression {
                 }
             }
             
-            return try sequence.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
+            return try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
         case .parentheses(let expression): // MARK: .parentheses
             return try expression.generateLLVMIR(builder, rt, &stack, options: options, lastResult: lastResult)
         case let .if_(condition, then, else_): // MARK: .if_

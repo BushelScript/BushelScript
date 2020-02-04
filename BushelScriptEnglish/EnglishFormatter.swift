@@ -14,14 +14,16 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             return ""
         case .end:
             return ""
-        case .scoped(let sequence):
+        case .sequence(let sequence):
             return format(sequence, level: level)
+        case .scoped(let expression):
+            return format(expression, level: level)
         case .parentheses(let expression):
             return "(\(format(expression, level: level)))"
         case let .if_(condition, then, else_):
             var needsEnd: Bool = true
             var formatted = "if \(format(condition, level: level))"
-            if case .scoped = then.kind {
+            if case .sequence = then.kind {
                 formatted += "\n"
             } else {
                 needsEnd = false
@@ -31,7 +33,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             
             if let `else` = else_ {
                 formatted += "else"
-                if case .scoped = `else`.kind {
+                if case .sequence = `else`.kind {
                     needsEnd = true
                     formatted += "\n"
                 } else {
@@ -52,7 +54,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
         case let .repeatFor(variable, container, repeating):
             return "repeat for \(variable) in \(format(container, level: level))\n\(format(repeating, level: level))end repeat"
         case .tell(let target, let to):
-            if case .scoped = to.kind {
+            if case .sequence = to.kind {
                 return "tell \(format(target, level: level))\n\(format(to, level: level))end tell"
             } else {
                 return "tell \(format(target, level: level)) to \(format(to, level: level))"
