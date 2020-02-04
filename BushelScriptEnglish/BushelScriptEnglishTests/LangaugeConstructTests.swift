@@ -3,11 +3,10 @@ import BushelLanguage
 
 // Protip: ⌥⇧⌘← to fold all methods
 
-private let moduleID = "bushelscript_en"
+internal let moduleID = "bushelscript_en"
+internal let module = LanguageModule(identifier: "bushelscript_en")!
 
 class LanguageConstructTests: XCTestCase {
-    
-    lazy var module = LanguageModule(identifier: "bushelscript_en")!
     
     func test_use_invalidResourceType_emitsError() {
         let parser = module.parser()

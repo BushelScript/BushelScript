@@ -13,7 +13,7 @@ public protocol SourceFormatter {
 public extension SourceFormatter {
     
     func format(_ expression: Expression) -> String {
-        return format(expression, level: -1) + "\n"
+        return format(expression, level: -1)
     }
     
     func format(_ expression: Expression, level: Int) -> String {
@@ -21,6 +21,12 @@ public extension SourceFormatter {
     }
     
     func format(_ sequence: Sequence, level: Int) -> String {
+        guard
+            !sequence.expressions.isEmpty,
+            !sequence.expressions.allSatisfy({ $0.kind.omit })
+        else {
+            return "\(indentation(for: level))"
+        }
         return sequence.expressions
             .compactMap {
                 guard !$0.kind.omit else {
@@ -30,6 +36,7 @@ public extension SourceFormatter {
                 return indentation(for: $0.kind.deindent ? level : level + 1) + formatted
             }
             .joined(separator: "\n")
+            + "\n\(indentation(for: level))"
     }
     
     func indentation(for level: Int) -> String {

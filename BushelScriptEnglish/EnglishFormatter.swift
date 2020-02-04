@@ -30,7 +30,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             formatted += format(then, level: level)
             
             if let `else` = else_ {
-                formatted += "\n\(indentation(for: level))else"
+                formatted += "else"
                 if case .scoped = `else`.kind {
                     needsEnd = true
                     formatted += "\n"
@@ -42,18 +42,18 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             }
             
             if needsEnd {
-                formatted += "\n\(indentation(for: level))end if"
+                formatted += "end if"
             }
             return formatted
         case let .repeatWhile(condition, repeating):
-            return "repeat while \(format(condition, level: level))\n\(format(repeating, level: level))\n\(indentation(for: level))end repeat"
+            return "repeat while \(format(condition, level: level))\n\(format(repeating, level: level))end repeat"
         case let .repeatTimes(times, repeating):
-            return "repeat \(format(times, level: level)) times\n\(format(repeating, level: level))\n\(indentation(for: level))end repeat"
+            return "repeat \(format(times, level: level)) times\n\(format(repeating, level: level))end repeat"
         case let .repeatFor(variable, container, repeating):
-            return "repeat for \(variable) in \(format(container, level: level))\n\(format(repeating, level: level))\n\(indentation(for: level))end repeat"
+            return "repeat for \(variable) in \(format(container, level: level))\n\(format(repeating, level: level))end repeat"
         case .tell(let target, let to):
             if case .scoped = to.kind {
-                return "tell \(format(target, level: level))\n\(format(to, level: level))\n\(indentation(for: level))end tell"
+                return "tell \(format(target, level: level))\n\(format(to, level: level))end tell"
             } else {
                 return "tell \(format(target, level: level)) to \(format(to, level: level))"
             }
@@ -237,7 +237,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             
             formatted += "\n\(format(body, level: level))"
             
-            formatted += "\n\(indentation(for: level))end \(name)"
+            formatted += "end \(name)"
             return formatted
         case .weave(let hashbang, let body):
             return "#!\(hashbang.invocation)\n\(body.removingTrailingWhitespace(removingNewlines: true))"

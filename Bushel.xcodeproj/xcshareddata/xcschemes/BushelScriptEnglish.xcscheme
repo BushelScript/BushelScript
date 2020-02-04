@@ -46,6 +46,11 @@
                BlueprintName = "BushelScriptEnglishTests"
                ReferencedContainer = "container:Bushel.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "LanguageConstructTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO">

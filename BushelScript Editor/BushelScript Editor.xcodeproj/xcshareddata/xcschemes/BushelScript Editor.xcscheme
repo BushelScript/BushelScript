@@ -87,6 +87,21 @@
                ReferencedContainer = "container:../Bushel.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3C6B759F2305B5990006C354"
+               BuildableName = "BushelScriptEnglishTests.xctest"
+               BlueprintName = "BushelScriptEnglishTests"
+               ReferencedContainer = "container:../Bushel.xcodeproj">
+            </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "LanguageConstructTests">
+               </Test>
+            </SkippedTests>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

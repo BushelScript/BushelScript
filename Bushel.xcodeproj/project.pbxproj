@@ -70,6 +70,12 @@
 		3C906F00231CD30A0099B139 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906EFF231CD30A0099B139 /* Ordering.swift */; };
 		3C906F24231DDAC00099B139 /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906F23231DDAC00099B139 /* Sequence.swift */; };
 		3C906F28231DDBB40099B139 /* LocatedTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906F27231DDBB40099B139 /* LocatedTerm.swift */; };
+		3C9456F823E8F7DE00D59C2C /* FormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9456F623E8F7DE00D59C2C /* FormatterTests.swift */; };
+		3C94570623E8FBC200D59C2C /* BushelLanguageTestingTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C94570423E8FBC200D59C2C /* BushelLanguageTestingTools.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C94570A23E8FC2100D59C2C /* FormatterTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9456FB23E8FAC600D59C2C /* FormatterTestCase.swift */; };
+		3C94570D23E8FCD000D59C2C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C94570C23E8FCD000D59C2C /* XCTest.framework */; };
+		3C94571123E9066300D59C2C /* BushelLanguageTestingTools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C94570223E8FBC200D59C2C /* BushelLanguageTestingTools.framework */; };
+		3C94571623E9168300D59C2C /* Formatter Test Cases in Resources */ = {isa = PBXBuildFile; fileRef = 3C94571523E9168300D59C2C /* Formatter Test Cases */; };
 		3C9703D8235520D20099AA05 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3C9703DE235520D50099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C9703E5235520DF0099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
@@ -175,6 +181,13 @@
 			remoteGlobalIDString = 3C35A5BA22C81DE7002D4582;
 			remoteInfo = Bushel;
 		};
+		3C94571223E9066700D59C2C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3C94570123E8FBC200D59C2C;
+			remoteInfo = BushelLanguageTestingTools;
+		};
 		3CCD8AB922CC45040049C74F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
@@ -275,6 +288,14 @@
 		3C906EFF231CD30A0099B139 /* Ordering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ordering.swift; sourceTree = "<group>"; };
 		3C906F23231DDAC00099B139 /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		3C906F27231DDBB40099B139 /* LocatedTerm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocatedTerm.swift; sourceTree = "<group>"; };
+		3C9456F623E8F7DE00D59C2C /* FormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FormatterTests.swift; path = BushelScriptEnglish/BushelScriptEnglishTests/Formatter/FormatterTests.swift; sourceTree = SOURCE_ROOT; };
+		3C9456FB23E8FAC600D59C2C /* FormatterTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormatterTestCase.swift; sourceTree = "<group>"; };
+		3C94570223E8FBC200D59C2C /* BushelLanguageTestingTools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BushelLanguageTestingTools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C94570423E8FBC200D59C2C /* BushelLanguageTestingTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BushelLanguageTestingTools.h; sourceTree = "<group>"; };
+		3C94570523E8FBC200D59C2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3C94570C23E8FCD000D59C2C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		3C94571023E8FF2100D59C2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		3C94571523E9168300D59C2C /* Formatter Test Cases */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Formatter Test Cases"; sourceTree = "<group>"; };
 		3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermDictionary.swift; sourceTree = "<group>"; };
 		3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lexicon.swift; sourceTree = "<group>"; };
 		3CB528EC23809DDD0051460B /* RTInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTInfo.swift; sourceTree = "<group>"; };
@@ -356,7 +377,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C94571123E9066300D59C2C /* BushelLanguageTestingTools.framework in Frameworks */,
 				3C6B75A12305B5990006C354 /* bushelscript_en.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3C9456FF23E8FBC200D59C2C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C94570D23E8FCD000D59C2C /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,6 +454,7 @@
 			children = (
 				3C35A5BD22C81DE7002D4582 /* Bushel */,
 				3C6B75702305AF3F0006C354 /* BushelLanguage */,
+				3C94570323E8FBC200D59C2C /* BushelLanguageTestingTools */,
 				3C6B75992305B5980006C354 /* BushelScriptEnglish */,
 				3CCD8AB022CC45040049C74F /* BushelRT */,
 				3C72CEBC22E1023200A98EC7 /* SwiftAutomation */,
@@ -443,6 +474,7 @@
 				3C6B75772305AF3F0006C354 /* BushelLanguageTests.xctest */,
 				3C6B75982305B5980006C354 /* bushelscript_en.framework */,
 				3C6B75A02305B5990006C354 /* BushelScriptEnglishTests.xctest */,
+				3C94570223E8FBC200D59C2C /* BushelLanguageTestingTools.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -474,6 +506,7 @@
 		3C53842523DF91D5009467B2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3C94570C23E8FCD000D59C2C /* XCTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -518,6 +551,7 @@
 		3C6B75A62305B5990006C354 /* BushelScriptEnglishTests */ = {
 			isa = PBXGroup;
 			children = (
+				3C94571423E90D5C00D59C2C /* Formatter */,
 				3C6B752B2304EFF40006C354 /* LangaugeConstructTests.swift */,
 				3C6B75A92305B5990006C354 /* Info.plist */,
 			);
@@ -596,6 +630,34 @@
 				3C35A5BF22C81DE7002D4582 /* Info.plist */,
 			);
 			name = Config;
+			sourceTree = "<group>";
+		};
+		3C94570323E8FBC200D59C2C /* BushelLanguageTestingTools */ = {
+			isa = PBXGroup;
+			children = (
+				3C9456FB23E8FAC600D59C2C /* FormatterTestCase.swift */,
+				3C94570B23E8FC2C00D59C2C /* Config */,
+				3C94571023E8FF2100D59C2C /* README.md */,
+			);
+			path = BushelLanguageTestingTools;
+			sourceTree = "<group>";
+		};
+		3C94570B23E8FC2C00D59C2C /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				3C94570423E8FBC200D59C2C /* BushelLanguageTestingTools.h */,
+				3C94570523E8FBC200D59C2C /* Info.plist */,
+			);
+			name = Config;
+			sourceTree = "<group>";
+		};
+		3C94571423E90D5C00D59C2C /* Formatter */ = {
+			isa = PBXGroup;
+			children = (
+				3C94571523E9168300D59C2C /* Formatter Test Cases */,
+				3C9456F623E8F7DE00D59C2C /* FormatterTests.swift */,
+			);
+			path = Formatter;
 			sourceTree = "<group>";
 		};
 		3CC2249A2391F50F00448D25 /* Codegen */ = {
@@ -770,6 +832,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3C9456FD23E8FBC200D59C2C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C94570623E8FBC200D59C2C /* BushelLanguageTestingTools.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3CCD8AAA22CC45040049C74F /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -896,12 +966,31 @@
 			buildRules = (
 			);
 			dependencies = (
+				3C94571323E9066700D59C2C /* PBXTargetDependency */,
 				3C6B75A32305B5990006C354 /* PBXTargetDependency */,
 			);
 			name = BushelScriptEnglishTests;
 			productName = BushelScriptEnglishTests;
 			productReference = 3C6B75A02305B5990006C354 /* BushelScriptEnglishTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3C94570123E8FBC200D59C2C /* BushelLanguageTestingTools */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3C94570723E8FBC200D59C2C /* Build configuration list for PBXNativeTarget "BushelLanguageTestingTools" */;
+			buildPhases = (
+				3C9456FD23E8FBC200D59C2C /* Headers */,
+				3C9456FE23E8FBC200D59C2C /* Sources */,
+				3C9456FF23E8FBC200D59C2C /* Frameworks */,
+				3C94570023E8FBC200D59C2C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BushelLanguageTestingTools;
+			productName = BushelLanguageTestingTools;
+			productReference = 3C94570223E8FBC200D59C2C /* BushelLanguageTestingTools.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		3CCD8AAE22CC45040049C74F /* BushelRT */ = {
 			isa = PBXNativeTarget;
@@ -976,6 +1065,9 @@
 					3C6B759F2305B5990006C354 = {
 						CreatedOnToolsVersion = 10.2.1;
 					};
+					3C94570123E8FBC200D59C2C = {
+						CreatedOnToolsVersion = 11.3.1;
+					};
 					3CCD8AAE22CC45040049C74F = {
 						CreatedOnToolsVersion = 10.2.1;
 						LastSwiftMigration = 1020;
@@ -1013,10 +1105,11 @@
 				3C35A5C322C81DE7002D4582 /* BushelTests */,
 				3C6B756E2305AF3F0006C354 /* BushelLanguage */,
 				3C6B75762305AF3F0006C354 /* BushelLanguageTests */,
-				3CCD8AAE22CC45040049C74F /* BushelRT */,
-				3CCD8AB622CC45040049C74F /* BushelRTTests */,
+				3C94570123E8FBC200D59C2C /* BushelLanguageTestingTools */,
 				3C6B75972305B5980006C354 /* BushelScriptEnglish */,
 				3C6B759F2305B5990006C354 /* BushelScriptEnglishTests */,
+				3CCD8AAE22CC45040049C74F /* BushelRT */,
+				3CCD8AB622CC45040049C74F /* BushelRTTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1083,6 +1176,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		3C6B759E2305B5990006C354 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C94571623E9168300D59C2C /* Formatter Test Cases in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3C94570023E8FBC200D59C2C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1247,7 +1348,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C9456F823E8F7DE00D59C2C /* FormatterTests.swift in Sources */,
 				3C6B75C02305BA270006C354 /* LangaugeConstructTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3C9456FE23E8FBC200D59C2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C94570A23E8FC2100D59C2C /* FormatterTestCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1338,6 +1448,11 @@
 			isa = PBXTargetDependency;
 			target = 3C35A5BA22C81DE7002D4582 /* Bushel */;
 			targetProxy = 3C8FEEF422DE2C2200C1F1CF /* PBXContainerItemProxy */;
+		};
+		3C94571323E9066700D59C2C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3C94570123E8FBC200D59C2C /* BushelLanguageTestingTools */;
+			targetProxy = 3C94571223E9066700D59C2C /* PBXContainerItemProxy */;
 		};
 		3CCD8ABA22CC45040049C74F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1492,6 +1607,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.Bushel;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1518,6 +1634,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.Bushel;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1538,6 +1655,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1558,6 +1676,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1582,6 +1701,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguage;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1608,6 +1728,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguage;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1740,6 +1861,56 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScriptEnglishTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		3C94570823E8FBC200D59C2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = "$(PLATFORM_DIR)/Developer/Library/Frameworks";
+				INFOPLIST_FILE = BushelLanguageTestingTools/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguageTestingTools;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3C94570923E8FBC200D59C2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = "$(PLATFORM_DIR)/Developer/Library/Frameworks";
+				INFOPLIST_FILE = BushelLanguageTestingTools/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguageTestingTools;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -1893,6 +2064,15 @@
 			buildConfigurations = (
 				3C6B75B32305B5990006C354 /* Debug */,
 				3C6B75B42305B5990006C354 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3C94570723E8FBC200D59C2C /* Build configuration list for PBXNativeTarget "BushelLanguageTestingTools" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C94570823E8FBC200D59C2C /* Debug */,
+				3C94570923E8FBC200D59C2C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
