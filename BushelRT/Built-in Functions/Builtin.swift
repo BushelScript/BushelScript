@@ -579,7 +579,11 @@ extension SwiftAutomation.Symbol {
         case typeType:
             return RT_Class(value: rt.type(for: code) ?? TypeInfo(.ae4(code: code), name == nil ? [] : [.name(TermName(name!))]))
         case typeEnumerated, typeKeyword, typeProperty:
-            return RT_Constant(value: rt.constant(for: code) ?? ConstantInfo(.ae4(code: code), name == nil ? [] : [.name(TermName(name!))]))
+            return RT_Constant(value:
+                rt.constant(for: code) ??
+                rt.property(for: code).map { ConstantInfo(property: $0) } ??
+                rt.type(for: code).map { ConstantInfo(type: $0) } ??
+                ConstantInfo(.ae4(code: code), name == nil ? [] : [.name(TermName(name!))]))
         default:
             fatalError("invalid descriptor type for Symbol")
         }

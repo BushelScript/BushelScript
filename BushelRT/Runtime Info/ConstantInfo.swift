@@ -40,6 +40,26 @@ public class ConstantInfo: TermInfo, Hashable {
         self.tags = tags
     }
     
+    public convenience init(property: PropertyInfo) {
+        self.init(property.uid, Set(property.tags.map { propertyTag in
+            switch propertyTag {
+            case .name(let name):
+                return .name(name)
+            }
+        }))
+    }
+    
+    public convenience init(type: TypeInfo) {
+        self.init(type.uid, Set(type.tags.compactMap { typeTag in
+            switch typeTag {
+            case .name(let name):
+                return .name(name)
+            case .root, .supertype, .dynamic:
+                return nil
+            }
+        }))
+    }
+    
 }
 
 extension ConstantInfo.Tag: Hashable {
