@@ -29,7 +29,7 @@ public class RT_Constant: RT_Object, AEEncodable {
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         guard let aeCode = value.uid.ae4Code else {
-            throw Unpackable(object: self)
+            throw Unencodable(object: self)
         }
         return NSAppleEventDescriptor(typeCode: aeCode)
     }

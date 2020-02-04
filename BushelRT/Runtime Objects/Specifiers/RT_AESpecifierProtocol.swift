@@ -13,7 +13,7 @@ extension RT_SASpecifierConvertible {
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         guard let saSpecifier = self.saSpecifier(appData: appData) else {
-            throw Unpackable(object: self)
+            throw Unencodable(object: self)
         }
         return try saSpecifier.encodeAEDescriptor(appData)
     }
@@ -28,13 +28,13 @@ extension RT_SASpecifierConvertible where Self: RT_Object {
         // Pack argument values
         let packedArguments: [OSType : NSAppleEventDescriptor]
         guard !arguments.keys.contains(where: { $0.typedUID.ae4Code == nil }) else {
-            throw Unpackable(object: self)
+            throw Unencodable(object: self)
         }
         let keys = arguments.keys.map { $0.typedUID.ae4Code! }
         
         let values: [NSAppleEventDescriptor] = try arguments.values.map { (argument: RT_Object) -> NSAppleEventDescriptor in
             guard let selfPacking = argument as? AEEncodable else {
-                throw Unpackable(object: argument)
+                throw Unencodable(object: argument)
             }
             return try selfPacking.encodeAEDescriptor(appData)
         }
@@ -42,7 +42,7 @@ extension RT_SASpecifierConvertible where Self: RT_Object {
         packedArguments = [OSType : NSAppleEventDescriptor](uniqueKeysWithValues: zip(keys, values))
         
         guard let saSpecifier = self.saSpecifier(appData: appData) else {
-            throw Unpackable(object: self)
+            throw Unencodable(object: self)
         }
         return try saSpecifier.perform(rt, command: command, arguments: packedArguments)
     }

@@ -89,23 +89,20 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         switch kind {
         case .index:
             guard data[0] is RT_Numeric else {
-                Builtin.throwError(message: "wrong type for by-index specifier")
-                return RT_Null.null
+                throw InvalidSpecifierDataType(specifierType: .byIndex, specifierData: data[0])
             }
             fallthrough
         case .simple where data[0] is RT_Numeric:
             return try evaluatedParent.element(type, at: Int64((data[0] as! RT_Numeric).numericValue.rounded()))
         case .name:
             guard data[0] is RT_String else {
-                Builtin.throwError(message: "wrong type for by-name specifier")
-                return RT_Null.null
+                throw InvalidSpecifierDataType(specifierType: .byName, specifierData: data[0])
             }
             fallthrough
         case .simple where data[0] is RT_String:
             return try evaluatedParent.element(type, named: (data[0] as! RT_String).value)
         case .simple:
-            Builtin.throwError(message: "wrong type for simple specifier")
-            return RT_Null.null
+            throw InvalidSpecifierDataType(specifierType: .simple, specifierData: data[0])
         case .id:
             return try evaluatedParent.element(type, id: data[0])
         case .all:
@@ -126,8 +123,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
             return try evaluatedParent.elements(type, from: data[0], thru: data[1])
         case .test:
             guard let predicate = data[0] as? RT_Specifier else {
-                Builtin.throwError(message: "wrong type for test specifier")
-                return RT_Null.null
+                throw InvalidSpecifierDataType(specifierType: .byTest, specifierData: data[0])
             }
             return try evaluatedParent.elements(type, filtered: predicate)
         case .property:

@@ -1,45 +1,56 @@
 import Bushel
 import SwiftAutomation
 
-enum Builtin {
+final class Builtin {
     
-    static var rt = RTInfo()
-    static var stack = ProgramStack(rt)
+    var rt = RTInfo()
+    lazy var stack = ProgramStack(rt)
     
+    public typealias Pointer = UnsafeMutableRawPointer
     public typealias RTObjectPointer = UnsafeMutableRawPointer
     public typealias TermPointer = UnsafeMutableRawPointer
     public typealias InfoPointer = UnsafeMutableRawPointer
     
+    static func fromOpaque(_ pointer: Pointer) -> Builtin {
+        return BushelRT.fromOpaque(pointer) as! Builtin
+    }
+    
     static func fromOpaque(_ pointer: RTObjectPointer) -> RT_Object {
         return BushelRT.fromOpaque(pointer) as! RT_Object
+    }
+    func fromOpaque(_ pointer: RTObjectPointer) -> RT_Object {
+        Builtin.fromOpaque(pointer)
     }
     static func toOpaque(_ object: RT_Object) -> RTObjectPointer {
         return BushelRT.toOpaque(object)
     }
+    func toOpaque(_ object: RT_Object) -> RTObjectPointer {
+        Builtin.toOpaque(object)
+    }
     
-    static func termFromOpaque(_ pointer: TermPointer) -> Bushel.Term {
+    func termFromOpaque(_ pointer: TermPointer) -> Bushel.Term {
         return BushelRT.fromOpaque(pointer) as! Bushel.Term
     }
     
-    static func typedUIDFromOpaque(_ stringPointer: RTObjectPointer) -> TypedTermUID {
+    func typedUIDFromOpaque(_ stringPointer: RTObjectPointer) -> TypedTermUID {
         return TypedTermUID(normalized: (fromOpaque(stringPointer) as! RT_String).value)!
     }
     
-    static func infoFromOpaque<Result>(_ pointer: InfoPointer) -> Result {
+    func infoFromOpaque<Result>(_ pointer: InfoPointer) -> Result {
         return BushelRT.fromOpaque(pointer) as! Result
     }
     
-    static func retain<Object: RT_Object>(_ object: Object) -> Object {
+    func retain<Object: RT_Object>(_ object: Object) -> Object {
         rt.retain(object)
         return object
     }
     
-    static func release(_ object: RT_Object) {
+    func release(_ object: RT_Object) {
         rt.release(object)
     }
     
-    static var throwing: Bool = false
-    static func throwError(message: String) {
+    var throwing: Bool = false
+    func throwError(message: String) {
         if !throwing {
             throwing = true
             defer { throwing = false }
@@ -55,45 +66,49 @@ enum Builtin {
         fatalError(message)
     }
     
-    static func throwError(_ message: RTObjectPointer) {
+    func throwError(_ message: RTObjectPointer) {
         throwError(message: (fromOpaque(message) as? RT_String)?.value ?? "throwError() was not passed a string to print")
     }
     
-    static func pushFrame(newTarget: RTObjectPointer? = nil) {
+    func release(_ objectPointer: RTObjectPointer) {
+        release(fromOpaque(objectPointer))
+    }
+    
+    func pushFrame(newTarget: RTObjectPointer? = nil) {
         stack.push(newTarget: newTarget.map { fromOpaque($0) })
     }
     
-    static func popFrame() {
+    func popFrame() {
         stack.pop()
     }
     
-    static func getCurrentTarget() -> RTObjectPointer {
+    func getCurrentTarget() -> RTObjectPointer {
         toOpaque(retain(stack.frames.last { $0.target != nil }!.target!))
     }
     
-    static func newVariable(_ termPointer: TermPointer, _ initialValuePointer: RTObjectPointer) {
+    func newVariable(_ termPointer: TermPointer, _ initialValuePointer: RTObjectPointer) {
         let term = termFromOpaque(termPointer)
         let initialValue = fromOpaque(initialValuePointer)
         stack.currentFrame.variables[term.name!] = initialValue
     }
     
-    static func getVariableValue(_ termPointer: TermPointer) -> RTObjectPointer {
+    func getVariableValue(_ termPointer: TermPointer) -> RTObjectPointer {
         let term = termFromOpaque(termPointer)
         return toOpaque(stack.variables[term.name!] ?? RT_Null.null)
     }
     
-    static func setVariableValue(_ termPointer: TermPointer, _ newValuePointer: RTObjectPointer) -> RTObjectPointer {
+    func setVariableValue(_ termPointer: TermPointer, _ newValuePointer: RTObjectPointer) -> RTObjectPointer {
         let term = termFromOpaque(termPointer)
         let newValue = fromOpaque(newValuePointer)
         stack.currentFrame.variables[term.name!] = newValue
         return newValuePointer
     }
     
-    static func isTruthy(_ object: RTObjectPointer) -> Bool {
+    func isTruthy(_ object: RTObjectPointer) -> Bool {
         return fromOpaque(object).truthy
     }
     
-    static func numericEqual(_ lhs: RTObjectPointer, _ rhs: RTObjectPointer) -> Bool {
+    func numericEqual(_ lhs: RTObjectPointer, _ rhs: RTObjectPointer) -> Bool {
         let lhs = fromOpaque(lhs)
         let rhs = fromOpaque(rhs)
         guard let lhsNumeric = lhs as? RT_Numeric else {
@@ -114,23 +129,23 @@ enum Builtin {
         return lhsNumeric.numericValue == rhsNumeric.numericValue
     }
     
-    static func newReal(_ value: Double) -> RTObjectPointer {
+    func newReal(_ value: Double) -> RTObjectPointer {
         return toOpaque(retain(RT_Real(value: value)))
     }
     
-    static func newInteger(_ value: Int64) -> RTObjectPointer {
+    func newInteger(_ value: Int64) -> RTObjectPointer {
         return toOpaque(retain(RT_Integer(value: value)))
     }
     
-    static func newBoolean(_ value: Bool) -> RTObjectPointer {
+    func newBoolean(_ value: Bool) -> RTObjectPointer {
         return toOpaque(RT_Boolean.withValue(value))
     }
     
-    static func newString(_ cString: UnsafePointer<CChar>) -> RTObjectPointer {
+    func newString(_ cString: UnsafePointer<CChar>) -> RTObjectPointer {
         return toOpaque(retain(RT_String(value: String(cString: cString))))
     }
     
-    static func newConstant(_ uidPointer: RTObjectPointer) -> RTObjectPointer {
+    func newConstant(_ uidPointer: RTObjectPointer) -> RTObjectPointer {
         let typedUID = typedUIDFromOpaque(uidPointer)
         switch ConstantUID(typedUID) {
         case .true:
@@ -142,44 +157,44 @@ enum Builtin {
         }
     }
     
-    static func newClass(_ uidPointer: RTObjectPointer) -> RTObjectPointer {
+    func newClass(_ uidPointer: RTObjectPointer) -> RTObjectPointer {
         let typedUID = typedUIDFromOpaque(uidPointer)
         return toOpaque(retain(RT_Class(value: rt.type(forUID: typedUID))))
     }
     
-    static func newList() -> RTObjectPointer {
+    func newList() -> RTObjectPointer {
         return toOpaque(retain(RT_List(contents: [])))
     }
     
-    static func newRecord() -> RTObjectPointer {
+    func newRecord() -> RTObjectPointer {
         return toOpaque(retain(RT_Record(contents: [:])))
     }
     
-    static func newArgumentRecord() -> RTObjectPointer {
+    func newArgumentRecord() -> RTObjectPointer {
         return toOpaque(retain(RT_Private_ArgumentRecord()))
     }
     
-    static func addToList(_ listPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
+    func addToList(_ listPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
         let list = fromOpaque(listPointer) as! RT_List
         let value = fromOpaque(valuePointer)
         list.add(value)
     }
     
-    static func addToRecord(_ recordPointer: RTObjectPointer, _ keyPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
+    func addToRecord(_ recordPointer: RTObjectPointer, _ keyPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
         let record = fromOpaque(recordPointer) as! RT_Record
         let key = fromOpaque(keyPointer)
         let value = fromOpaque(valuePointer)
         record.add(key: key, value: value)
     }
     
-    static func addToArgumentRecord(_ recordPointer: RTObjectPointer, _ uidPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
+    func addToArgumentRecord(_ recordPointer: RTObjectPointer, _ uidPointer: RTObjectPointer, _ valuePointer: RTObjectPointer) {
         let record = fromOpaque(recordPointer) as! RT_Private_ArgumentRecord
         let typedUID = typedUIDFromOpaque(uidPointer)
         let value = fromOpaque(valuePointer)
         record.contents[typedUID] = value
     }
     
-    static func getSequenceLength(_ sequencePointer: RTObjectPointer) -> Int64 {
+    func getSequenceLength(_ sequencePointer: RTObjectPointer) -> Int64 {
         let sequence = fromOpaque(sequencePointer)
         do {
             let length = try sequence.property(rt.property(forUID: TypedTermUID(PropertyUID.Sequence_length))) as? RT_Numeric
@@ -191,7 +206,7 @@ enum Builtin {
         }
     }
     
-    static func getFromSequenceAtIndex(_ sequencePointer: RTObjectPointer, _ index: Int64) -> RTObjectPointer {
+    func getFromSequenceAtIndex(_ sequencePointer: RTObjectPointer, _ index: Int64) -> RTObjectPointer {
         let sequence = fromOpaque(sequencePointer)
         do {
             let item = try sequence.element(rt.type(forUID: TypedTermUID(TypeUID.item)), at: index)
@@ -202,13 +217,13 @@ enum Builtin {
         }
     }
     
-    static func getFromArgumentRecord(_ recordPointer: RTObjectPointer, _ uidPointer: RTObjectPointer) -> RTObjectPointer {
+    func getFromArgumentRecord(_ recordPointer: RTObjectPointer, _ uidPointer: RTObjectPointer) -> RTObjectPointer {
         let record = fromOpaque(recordPointer) as! RT_Private_ArgumentRecord
         let typedUID = typedUIDFromOpaque(uidPointer)
         return toOpaque(record.contents[typedUID] ?? RT_Null.null)
     }
     
-    static func getFromArgumentRecordWithDirectParamFallback(_ recordPointer: RTObjectPointer, _ uidPointer: RTObjectPointer) -> RTObjectPointer {
+    func getFromArgumentRecordWithDirectParamFallback(_ recordPointer: RTObjectPointer, _ uidPointer: RTObjectPointer) -> RTObjectPointer {
         let record = fromOpaque(recordPointer) as! RT_Private_ArgumentRecord
         let typedUID = typedUIDFromOpaque(uidPointer)
         return toOpaque(
@@ -218,7 +233,7 @@ enum Builtin {
         )
     }
     
-    static func unaryOp(_ operation: Int64, _ operandPointer: RTObjectPointer) -> RTObjectPointer {
+    func unaryOp(_ operation: Int64, _ operandPointer: RTObjectPointer) -> RTObjectPointer {
         let operand = fromOpaque(operandPointer)
         
         return toOpaque(retain({ () -> RT_Object? in
@@ -229,7 +244,7 @@ enum Builtin {
         }() ?? RT_Null.null))
     }
     
-    static func binaryOp(_ operation: Int64, _ lhsPointer: RTObjectPointer, _ rhsPointer: RTObjectPointer) -> RTObjectPointer {
+    func binaryOp(_ operation: Int64, _ lhsPointer: RTObjectPointer, _ rhsPointer: RTObjectPointer) -> RTObjectPointer {
         let lhs = fromOpaque(lhsPointer)
         let rhs = fromOpaque(rhsPointer)
         
@@ -283,14 +298,14 @@ enum Builtin {
         }() ?? RT_Null.null))
     }
     
-    static func coerce(_ objectPointer: RTObjectPointer, to typePointer: InfoPointer) -> RTObjectPointer {
+    func coerce(_ objectPointer: RTObjectPointer, to typePointer: InfoPointer) -> RTObjectPointer {
         let object = fromOpaque(objectPointer)
         let type = infoFromOpaque(typePointer) as TypeInfo
         // TODO: Should throw error when not coercible
         return toOpaque(retain(object.coerce(to: type) ?? RT_Null.null))
     }
     
-    static func getResource(_ termPointer: TermPointer) -> RTObjectPointer {
+    func getResource(_ termPointer: TermPointer) -> RTObjectPointer {
         return toOpaque(retain({
             guard let term = termFromOpaque(termPointer) as? ResourceTerm else {
                 return RT_Null.null
@@ -303,7 +318,7 @@ enum Builtin {
         }() as RT_Object))
     }
     
-    static func newSpecifier0(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32) -> RTObjectPointer {
+    func newSpecifier0(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
         let typedUID = typedUIDFromOpaque(uidPointer)
         let newSpecifier: RT_Specifier
@@ -316,7 +331,7 @@ enum Builtin {
         }
         return toOpaque(retain(newSpecifier))
     }
-    static func newSpecifier1(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer) -> RTObjectPointer {
+    func newSpecifier1(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
         let typedUID = typedUIDFromOpaque(uidPointer)
         let data1 = fromOpaque(data1Pointer)
@@ -330,7 +345,7 @@ enum Builtin {
         }
         return toOpaque(retain(newSpecifier))
     }
-    static func newSpecifier2(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer, _ data2Pointer: RTObjectPointer) -> RTObjectPointer {
+    func newSpecifier2(_ parentPointer: RTObjectPointer?, _ uidPointer: RTObjectPointer, _ rawKind: UInt32, _ data1Pointer: RTObjectPointer, _ data2Pointer: RTObjectPointer) -> RTObjectPointer {
         let parent: RT_Object? = (parentPointer == nil) ? nil : fromOpaque(parentPointer!)
         let typedUID = typedUIDFromOpaque(uidPointer)
         let data1 = fromOpaque(data1Pointer)
@@ -346,21 +361,21 @@ enum Builtin {
         return toOpaque(retain(newSpecifier))
     }
     
-    static func newTestSpecifier(_ operation: UInt32, _ lhsPointer: RTObjectPointer, _ rhsPointer: RTObjectPointer) -> RTObjectPointer {
+    func newTestSpecifier(_ operation: UInt32, _ lhsPointer: RTObjectPointer, _ rhsPointer: RTObjectPointer) -> RTObjectPointer {
         let operation = BinaryOperation(rawValue: Int(operation))!
         let lhs = fromOpaque(lhsPointer)
         let rhs = fromOpaque(rhsPointer)
         return toOpaque(retain(RT_TestSpecifier(rt, operation: operation, lhs: lhs, rhs: rhs)))
     }
     
-    static func qualifySpecifier(_ objectPointer: RTObjectPointer) -> RTObjectPointer {
+    func qualifySpecifier(_ objectPointer: RTObjectPointer) -> RTObjectPointer {
         guard let specifier = fromOpaque(objectPointer) as? RT_Specifier else {
             return objectPointer
         }
         return toOpaque(retain(stack.qualify(specifier: specifier)))
     }
     
-    static func evaluateSpecifier(_ objectPointer: RTObjectPointer) -> RTObjectPointer {
+    func evaluateSpecifier(_ objectPointer: RTObjectPointer) -> RTObjectPointer {
         guard let specifier = fromOpaque(objectPointer) as? RT_Specifier else {
             return objectPointer
         }
@@ -372,19 +387,19 @@ enum Builtin {
         }
     }
     
-    static func call(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer) -> RTObjectPointer {
+    func call(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer) -> RTObjectPointer {
         let command = infoFromOpaque(commandPointer) as CommandInfo
         let argumentsRecord = fromOpaque(argumentsPointer) as! RT_Private_ArgumentRecord
         return call(command: command, arguments: arguments(from: argumentsRecord))
     }
     
-    private static func arguments(from record: RT_Private_ArgumentRecord) -> [ParameterInfo : RT_Object] {
+    private func arguments(from record: RT_Private_ArgumentRecord) -> [ParameterInfo : RT_Object] {
         [ParameterInfo : RT_Object](uniqueKeysWithValues:
             record.contents.map { (key: ParameterInfo($0.key.uid), value: $0.value) }
         )
     }
     
-    private static func call(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RTObjectPointer {
+    private func call(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RTObjectPointer {
         var arguments = arguments
         let target = stack.target
         
@@ -399,11 +414,11 @@ enum Builtin {
         func catchingErrors(do action: () throws -> RT_Object?) -> RT_Object? {
             do {
                 return try action()
-            } catch let error as Unpackable where error.object is CommandInfo {
+            } catch let error as Unencodable where error.object is CommandInfo {
                 // Tried to send a non-AE command to a remote object
                 // Ignore it and fall through to the next target
             } catch {
-                Builtin.throwError(message: "\(error.localizedDescription)")
+                throwError(message: "\(error.localizedDescription)")
             }
             return nil
         }
@@ -423,7 +438,7 @@ enum Builtin {
         ))
     }
     
-    static func runWeave(_ hashbangPointer: RTObjectPointer, _ bodyPointer: RTObjectPointer, _ inputPointer: RTObjectPointer) -> RTObjectPointer {
+    func runWeave(_ hashbangPointer: RTObjectPointer, _ bodyPointer: RTObjectPointer, _ inputPointer: RTObjectPointer) -> RTObjectPointer {
         var invocation = (fromOpaque(hashbangPointer) as! RT_String).value
         let body = (fromOpaque(bodyPointer) as! RT_String).value
         let inputObject = fromOpaque(inputPointer)
@@ -482,22 +497,21 @@ extension SwiftAutomation.Specifier {
                 return RT_AEObject(rt, descriptor: resultDescriptor)
             }
         } catch let error as CommandError {
-            Builtin.throwError(message: "\(appData.target) got an error: \(error)")
-        } catch let error as UnpackError {
-            Builtin.throwError(message: "descriptor unpacking error: \(error)")
+            throw RemoteCommandError(remoteObject: appData.target, command: command, error: error)
         } catch let error as AutomationError {
             if error._code == errAEEventNotPermitted {
-                Builtin.throwError(message: "not allowed to send AppleEvents to \(appData.target.description)")
+                throw RemoteCommandsDisallowed(remoteObject: appData.target)
             } else {
-                Builtin.throwError(message: "\(appData.target.description) got an error: \(error)")
+                throw RemoteCommandError(remoteObject: appData.target, command: command, error: error)
             }
+        } catch let error as UnpackError {
+            throw Undecodable(error: error)
         }
-        return RT_Null.null
     }
     
     func sendEvent(for command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> ReplyEventDescriptor {
         guard let codes = command.typedUID.ae8Code else {
-            throw Unpackable(object: command)
+            throw Unencodable(object: command)
         }
         return try self.sendAppleEvent(codes.class, codes.id, arguments)
     }

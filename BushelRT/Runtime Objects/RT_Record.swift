@@ -86,7 +86,7 @@ public class RT_Record: RT_Object, AEEncodable {
                 })(),
                 let encodedValue = try (value as? AEEncodable)?.encodeAEDescriptor(appData)
             else {
-                throw Unpackable(object: self)
+                throw Unencodable(object: self)
             }
             descriptor.setDescriptor(encodedValue, forKeyword: aeCode)
         }

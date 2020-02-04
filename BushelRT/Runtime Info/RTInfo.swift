@@ -145,7 +145,9 @@ public extension RTInfo {
     }
     
     func run(_ expression: Expression) -> RT_Object {
-        let module = generateLLVMModule(from: expression, rt: self)
+        let builtin = Builtin()
+        builtin.rt = self
+        let module = generateLLVMModule(from: expression, builtin: builtin)
         
         // Let LLVM verify that the module's IR code is well-formed
         do {
@@ -176,7 +178,6 @@ public extension RTInfo {
         typealias MainPtr = @convention(c) () -> UnsafeMutableRawPointer
         let address = try! jit.address(of: "main")
         let main = unsafeBitCast(address, to: MainPtr.self)
-        Builtin.rt = self
         let resultObject = Unmanaged<RT_Object>.fromOpaque(main()).takeUnretainedValue()
         os_log("Execution result: %@", log: log, type: .debug, String(describing: resultObject))
         return resultObject
