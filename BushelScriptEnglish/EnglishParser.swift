@@ -294,27 +294,46 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             throw ParseError(description: "expected condition expression after ‘if’", location: currentLocation)
         }
         
-        let thenStartIndex = currentIndex
-        let foundThen = tryEating(prefix: "then")
-        let foundNewline = tryEating(prefix: "\n")
-        guard foundThen || foundNewline else {
-            throw ParseError(description: "expected ‘then’ or line break after condition expression to begin ‘if’-block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
-        }
-        
-        let thenExpr: Expression
-        if foundNewline {
-            thenExpr = Expression(.sequence(try parseSequence(TermName("if"), stoppingAt: ["else"])), at: expressionLocation)
-        } else {
-            guard let thenExpression = try parsePrimary() else {
-                let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
-                throw ParseError(description: "expected expression or line break after ‘then’ to begin ‘if’-block", location: thenLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: thenLocation))])
+        func parseThen() throws -> Expression {
+            let thenStartIndex = currentIndex
+            let foundThen = tryEating(prefix: "then")
+            let foundNewline = tryEating(prefix: "\n")
+            guard foundThen || foundNewline else {
+                throw ParseError(description: "expected ‘then’ or line break after condition expression to begin ‘if’-block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
             }
-            thenExpr = thenExpression
+            
+            if foundNewline {
+                return Expression(.sequence(try parseSequence(TermName("if"), stoppingAt: ["else"])), at: expressionLocation)
+            } else {
+                guard let thenExpression = try parsePrimary() else {
+                    let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
+                    throw ParseError(description: "expected expression or line break after ‘then’ to begin ‘if’-block", location: thenLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: thenLocation))])
+                }
+                return thenExpression
+            }
+        }
+
+        func parseElse() throws -> Expression? {
+            eatCommentsAndWhitespace(eatingNewlines: true)
+            
+            let elseStartIndex = currentIndex
+            guard tryEating(prefix: "else") else {
+                return nil
+            }
+            
+            if tryEating(prefix: "\n") {
+                return Expression(.sequence(try parseSequence(TermName("if"))), at: expressionLocation)
+            } else {
+                guard let elseExpr = try parsePrimary() else {
+                    let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
+                    throw ParseError(description: "expected expression or line break after ‘else’ to begin ‘else’-block", location: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", by: AppendingFix(appending: " <#expression#>", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
+                }
+                eatCommentsAndWhitespace()
+                return elseExpr
+            }
         }
         
-        let elseExpr = try self.parseElse()
-        
-        return .if_(condition: condition, then: thenExpr, else: elseExpr)
+        return .if_(condition: condition, then: try parseThen(), else: try parseElse())
     }
     
     private func handleRepeat(_ endTag: TermName) -> () throws -> Expression.Kind? {
@@ -541,23 +560,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     public func postprocess(primary: Expression) throws -> Expression.Kind? {
         return try tryParseSpecifierPhrase(chainingTo: primary) ?? tryParseCoercion(of: primary)
-    }
-    
-    public func parseElse() throws -> Expression? {
-        let elseStartIndex = currentIndex
-        guard tryEating(prefix: "else") else {
-            return nil
-        }
-        if tryEating(prefix: "\n") {
-            return Expression(.sequence(try parseSequence(TermName("if"))), at: expressionLocation)
-        } else {
-            guard let elseExpr = try parsePrimary() else {
-                let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
-                throw ParseError(description: "expected expression or line break after ‘else’ to begin ‘else’-block", location: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", by: AppendingFix(appending: " <#expression#>", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
-            }
-            eatCommentsAndWhitespace()
-            return elseExpr
-        }
     }
     
     public func parseSpecifierAfterClassName() throws -> Specifier.Kind? {
