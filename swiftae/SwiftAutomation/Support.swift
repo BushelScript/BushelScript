@@ -160,7 +160,7 @@ private let LaunchEvent = NSAppleEventDescriptor(eventClass: _kASAppleScriptSuit
 
 // Application initializers pass application-identifying information to AppData initializer as enum according to which initializer was called
 
-public enum TargetApplication: CustomReflectable {
+public enum TargetApplication {
     case current
     case name(String) // application's name (.app suffix is optional) or full path
     case url(URL) // "file" or "eppc" URL
@@ -188,11 +188,6 @@ public enum TargetApplication: CustomReflectable {
         case .none:
             return "(empty target)"
         }
-    }
-    
-    public var customMirror: Mirror {
-        let children: [Mirror.Child] = [(label: nil, value: self)]
-        return Mirror(self, children: children, displayStyle: Mirror.DisplayStyle.`enum`, ancestorRepresentation: .suppressed)
     }
     
     // support functions

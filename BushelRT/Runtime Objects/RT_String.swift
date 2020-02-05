@@ -114,7 +114,7 @@ public class RT_String: RT_Object, AEEncodable {
             .map { RT_Boolean.withValue(value.contains($0.value)) }
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         switch CommandUID(command.typedUID) {
         case .String_split:
             guard let separator = arguments[ParameterInfo(.String_split_by)]?.coerce() as? RT_String else {
@@ -123,7 +123,7 @@ public class RT_String: RT_Object, AEEncodable {
             }
             return RT_List(contents: value.components(separatedBy: separator.value).map { RT_String(value: $0) })
         default:
-            return try super.perform(command: command, arguments: arguments)
+            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
     }
     

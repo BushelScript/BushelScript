@@ -14,7 +14,7 @@ public protocol RT_HierarchicalSpecifier: RT_SASpecifierConvertible {
 public protocol RT_SpecifierRemoteRoot: RT_Object {
     
     func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object
-    func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], for specifier: RT_HierarchicalSpecifier) throws -> RT_Object
+    func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, for specifier: RT_HierarchicalSpecifier) throws -> RT_Object
     
 }
 
@@ -80,63 +80,75 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
     }
     
     public func evaluateLocally(on evaluatedParent: RT_Object) throws -> RT_Object {
-        if case .property = kind {
-            return try evaluatedParent.property(property!)
+        func evaluate(on parent: RT_Object) throws -> RT_Object {
+            if case .property = kind {
+                return try parent.property(property!)
+            }
+            
+            let type = self.type!
+            
+            switch kind {
+            case .index:
+                guard data[0] is RT_Numeric else {
+                    throw InvalidSpecifierDataType(specifierType: .byIndex, specifierData: data[0])
+                }
+                fallthrough
+            case .simple where data[0] is RT_Numeric:
+                return try parent.element(type, at: Int64((data[0] as! RT_Numeric).numericValue.rounded()))
+            case .name:
+                guard data[0] is RT_String else {
+                    throw InvalidSpecifierDataType(specifierType: .byName, specifierData: data[0])
+                }
+                fallthrough
+            case .simple where data[0] is RT_String:
+                return try parent.element(type, named: (data[0] as! RT_String).value)
+            case .simple:
+                throw InvalidSpecifierDataType(specifierType: .simple, specifierData: data[0])
+            case .id:
+                return try parent.element(type, id: data[0])
+            case .all:
+                return try parent.elements(type)
+            case .first:
+                return try parent.element(type, at: .first)
+            case .middle:
+                return try parent.element(type, at: .middle)
+            case .last:
+                return try parent.element(type, at: .last)
+            case .random:
+                return try parent.element(type, at: .random)
+            case .previous:
+                return try parent.element(type, positioned: .before)
+            case .next:
+                return try parent.element(type, positioned: .after)
+            case .range:
+                return try parent.elements(type, from: data[0], thru: data[1])
+            case .test:
+                guard let predicate = data[0] as? RT_Specifier else {
+                    throw InvalidSpecifierDataType(specifierType: .byTest, specifierData: data[0])
+                }
+                return try parent.elements(type, filtered: predicate)
+            case .property:
+                fatalError("unreachable")
+            }
         }
         
-        let type = self.type!
-        
-        switch kind {
-        case .index:
-            guard data[0] is RT_Numeric else {
-                throw InvalidSpecifierDataType(specifierType: .byIndex, specifierData: data[0])
+        do {
+            return try evaluate(on: evaluatedParent)
+        } catch let origError where origError is NoPropertyExists || origError is NoElementExists {
+            do {
+                return try evaluate(on: RT_Global(rt))
+            } catch {
+                throw origError
             }
-            fallthrough
-        case .simple where data[0] is RT_Numeric:
-            return try evaluatedParent.element(type, at: Int64((data[0] as! RT_Numeric).numericValue.rounded()))
-        case .name:
-            guard data[0] is RT_String else {
-                throw InvalidSpecifierDataType(specifierType: .byName, specifierData: data[0])
-            }
-            fallthrough
-        case .simple where data[0] is RT_String:
-            return try evaluatedParent.element(type, named: (data[0] as! RT_String).value)
-        case .simple:
-            throw InvalidSpecifierDataType(specifierType: .simple, specifierData: data[0])
-        case .id:
-            return try evaluatedParent.element(type, id: data[0])
-        case .all:
-            return try evaluatedParent.elements(type)
-        case .first:
-            return try evaluatedParent.element(type, at: .first)
-        case .middle:
-            return try evaluatedParent.element(type, at: .middle)
-        case .last:
-            return try evaluatedParent.element(type, at: .last)
-        case .random:
-            return try evaluatedParent.element(type, at: .random)
-        case .previous:
-            return try evaluatedParent.element(type, positioned: .before)
-        case .next:
-            return try evaluatedParent.element(type, positioned: .after)
-        case .range:
-            return try evaluatedParent.elements(type, from: data[0], thru: data[1])
-        case .test:
-            guard let predicate = data[0] as? RT_Specifier else {
-                throw InvalidSpecifierDataType(specifierType: .byTest, specifierData: data[0])
-            }
-            return try evaluatedParent.elements(type, filtered: predicate)
-        case .property:
-            fatalError("unreachable")
         }
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         switch rootAncestor() {
         case let root as RT_SpecifierRemoteRoot:
-            return try root.perform(command: command, arguments: arguments, for: self)
+            return try root.perform(command: command, arguments: arguments, implicitDirect: implicitDirect, for: self)
         default:
-            return try super.perform(command: command, arguments: arguments)
+            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
     }
     

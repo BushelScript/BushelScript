@@ -61,7 +61,7 @@ final class Builtin {
                 ParameterInfo(.GUI_alert_buttons): RT_List(contents: [
                     RT_String(value: "OK")
                 ])
-            ])
+            ], implicitDirect: nil)
         }
         fatalError(message)
     }
@@ -403,13 +403,14 @@ final class Builtin {
         var arguments = arguments
         let target = stack.target
         
+        var implicitDirect: RT_Object?
         if
             let target = target,
             arguments[ParameterInfo(.direct)] == nil
         {
-            arguments[ParameterInfo(.direct)] = target
+            implicitDirect = target
         }
-        let directParameter = arguments[ParameterInfo(.direct)]
+        let directParameter = arguments[ParameterInfo(.direct)] ?? implicitDirect
         
         func catchingErrors(do action: () throws -> RT_Object?) -> RT_Object? {
             do {
@@ -425,15 +426,15 @@ final class Builtin {
         
         return toOpaque(retain(
             catchingErrors {
-                try directParameter?.perform(command: command, arguments: arguments)
+                try directParameter?.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             } ??
             catchingErrors {
                 directParameter == target ?
                     nil :
-                    try target?.perform(command: command, arguments: arguments)
+                    try target?.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             } ??
             catchingErrors {
-                try RT_Global(rt).perform(command: command, arguments: arguments) ?? RT_Null.null
+                try RT_Global(rt).perform(command: command, arguments: arguments, implicitDirect: implicitDirect) ?? RT_Null.null
             }!
         ))
     }
@@ -604,9 +605,9 @@ extension SwiftAutomation.Symbol {
     
 }
 
-private class RT_Private_ArgumentRecord: RT_Object {
+internal class RT_Private_ArgumentRecord: RT_Object {
     
-    public var contents: [TypedTermUID : RT_Object] = [:]
+    var contents: [TypedTermUID : RT_Object] = [:]
     
 }
 

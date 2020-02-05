@@ -163,9 +163,12 @@ import Bushel
     /// - Parameters:
     ///   - command: The command to perform.
     ///   - arguments: The arguments to the command.
+    ///   - implicitDirect: The implicit direct object argument, if any.
+    ///                     This will, for example, not cause errors if it is
+    ///                     unencodable but specified with a remote event.
     /// - Returns: The result of this object executing the command, or
     ///            `nil` if the command was not handled.
-    public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
+    public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         return nil
     }
     

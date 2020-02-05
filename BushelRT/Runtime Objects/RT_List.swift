@@ -127,7 +127,7 @@ public class RT_List: RT_Object, AEEncodable {
         )
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         switch CommandUID(command.typedUID) {
         case .Sequence_join:
             guard let separator = arguments[ParameterInfo(.Sequence_join_with)]?.coerce() as? RT_String else {
@@ -140,7 +140,7 @@ public class RT_List: RT_Object, AEEncodable {
             }
             return RT_String(value: strings.joined(separator: separator.value))
         default:
-            return try super.perform(command: command, arguments: arguments)
+            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
     }
     

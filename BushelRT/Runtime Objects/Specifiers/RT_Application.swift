@@ -33,8 +33,8 @@ public class RT_Application: RT_Object, RT_SASpecifierConvertible, RT_SpecifierR
         typeInfo_
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
-        try performByAppleEvent(command: command, arguments: arguments, targetBundleID: bundleIdentifier)
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
+        try performByAppleEvent(command: command, arguments: arguments, implicitDirect: implicitDirect, targetBundleID: bundleIdentifier)
     }
     
 }
@@ -52,11 +52,11 @@ extension RT_Application {
 extension RT_Application {
     
     public func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        return try specifier.performByAppleEvent(command: CommandInfo(.get), arguments: [ParameterInfo(.direct): specifier], targetBundleID: bundleIdentifier)
+        return try specifier.performByAppleEvent(command: CommandInfo(.get), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, targetBundleID: bundleIdentifier)
     }
     
-    public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], for specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        try specifier.performByAppleEvent(command: command, arguments: arguments, targetBundleID: bundleIdentifier)
+    public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, for specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
+        try specifier.performByAppleEvent(command: command, arguments: arguments, implicitDirect: implicitDirect, targetBundleID: bundleIdentifier)
     }
     
 }

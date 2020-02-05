@@ -75,7 +75,7 @@ public class RT_Integer: RT_Object, AEEncodable {
         }
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         switch CommandUID(command.typedUID) {
         case .Math_abs:
             return RT_Integer(value: abs(self.value))
@@ -94,7 +94,7 @@ public class RT_Integer: RT_Object, AEEncodable {
             }
             return RT_Integer(value: Int64(pow(self.numericValue, exponent.numericValue)))
         default:
-            return try super.perform(command: command, arguments: arguments)
+            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
     }
     

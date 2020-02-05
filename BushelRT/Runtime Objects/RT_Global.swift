@@ -83,11 +83,14 @@ public class RT_Global: RT_Object {
         try element(type, id: id, originalObject: self)
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
-        let commandClass = command.typedUID.ae8Code?.class
-        if commandClass == (try! FourCharCode(fourByteString: "syso")) || commandClass == (try! FourCharCode(fourByteString: "gtqp")) {
-            // Run command from StandardAdditions.osax
-            return try RT_Application(rt, currentApplication: ()).perform(command: command, arguments: arguments)
+    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
+        if let commandClass = command.typedUID.ae8Code?.class {
+            let standardAdditionsCommandClasses =
+                ["syso", "gtqp", "misc"].map({ try! FourCharCode(fourByteString: $0) })
+            if standardAdditionsCommandClasses.contains(commandClass) {
+                // Run command from StandardAdditions.osax
+                return try RT_Application(rt, currentApplication: ()).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+            }
         }
         
         switch CommandUID(command.typedUID) {
@@ -103,7 +106,7 @@ public class RT_Global: RT_Object {
             print((message.coerce() as? RT_String)?.value ?? String(describing: message))
             return RT_Null.null
         default:
-            return try super.perform(command: command, arguments: arguments)
+            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
     }
     
