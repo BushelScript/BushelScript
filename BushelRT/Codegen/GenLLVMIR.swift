@@ -156,7 +156,7 @@ extension Expression {
             let currentTarget = builder.buildCall(toExternalFunction: .getCurrentTarget, args: [bp])
             return
                 evaluateSpecifiers ?
-                builder.buildCall(toExternalFunction: .evaluateSpecifier, args: [bp, currentTarget]) :
+                currentTarget.evaluatingSpecifier(builder: builder, bp: bp) :
                 currentTarget
         case .null: // MARK: .null
             return builder.rtNull
