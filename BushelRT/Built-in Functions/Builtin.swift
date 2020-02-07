@@ -497,7 +497,7 @@ extension SwiftAutomation.Specifier {
                 return RT_Null.null
             }
             
-            return try RT_Object.fromAEDescriptor(rt, resultDescriptor)
+            return try RT_Object.fromAEDescriptor(rt, appData, resultDescriptor)
         } catch let error as CommandError {
             throw RemoteCommandError(remoteObject: appData.target, command: command, error: error)
         } catch let error as AutomationError {
@@ -522,8 +522,7 @@ extension SwiftAutomation.Specifier {
 
 extension RT_Object {
     
-    static func fromAEDescriptor(_ rt: RTInfo, _ descriptor: NSAppleEventDescriptor) throws -> RT_Object {
-        let appData = AppData(formatter: SpecifierFormatter())
+    static func fromAEDescriptor(_ rt: RTInfo, _ appData: AppData, _ descriptor: NSAppleEventDescriptor) throws -> RT_Object {
         return fromSADecoded(rt, try appData.unpackAsAny(descriptor)) ??
             RT_AEObject(rt, descriptor: descriptor)
     }

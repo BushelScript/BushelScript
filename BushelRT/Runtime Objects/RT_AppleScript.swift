@@ -63,7 +63,7 @@ public class RT_AppleScript: RT_Object {
             throw AppleScriptError(number: errorInfo[NSAppleScript.errorNumber as NSString] as? OSStatus, message: errorInfo[NSAppleScript.errorMessage as NSString] as? String)
         }
         
-        return try RT_Object.fromAEDescriptor(rt, resultDescriptor)
+        return try RT_Object.fromAEDescriptor(rt, AppData(formatter: SpecifierFormatter()), resultDescriptor)
     }
     
 }

@@ -249,7 +249,13 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
             parent = RT_Specifier(rt, saSpecifier: objectSpecifier)
         } else if let rootSpecifier = saSpecifier.parentQuery as? SwiftAutomation.RootSpecifier {
             if rootSpecifier === AEApp {
-                parent = RT_Application(rt, bundle: Bundle(identifier: saSpecifier.appData.target.bundleIdentifier!)!)
+                guard
+                    let bundleID = saSpecifier.appData.target.bundleIdentifier,
+                    let bundle = Bundle(identifier: bundleID)
+                else {
+                    return nil
+                }
+                parent = RT_Application(rt, bundle: bundle)
             } else {
                 parent = RT_RootSpecifier(rt, saSpecifier: rootSpecifier)
             }
