@@ -24,17 +24,12 @@ public class AETEParser {
     public var commands: [CommandTerm] { return Array(self.commandsDict.values) }
     
     private var commandsDict = [String:CommandTerm]()
-    private let keywordConverter: KeywordConverter
     
     // following are used in parse() to supply 'missing' singular/plural class names
     private var classDefinitionsByCode = [OSType : ClassTerm]()
     
     var aeteData = NSData() // was char*
     var cursor: Int = 0 // was unsigned long
-    
-    public init(keywordConverter: KeywordConverter) {
-        self.keywordConverter = keywordConverter
-    }
     
     public func parse(_ descriptor: NSAppleEventDescriptor) throws { // accepts AETE/AEUT or AEList of AETE/AEUTs
         switch descriptor.descriptorType {
@@ -135,7 +130,7 @@ public class AETEParser {
     // Parse methods
     
     func parseCommand() throws {
-        let name = self.keywordConverter.convertSpecifierName(self.string())
+        let name = self.string()
         self.skipString()   // description
         self.alignCursor()
         let classCode = self.code()
@@ -164,7 +159,7 @@ public class AETEParser {
         }
         let n = self.short()
         for _ in 0..<n {
-            let paramName = self.keywordConverter.convertParameterName(self.string())
+            let paramName = self.string()
             self.alignCursor()
             let paramCode = self.code()
             self.skipCode()     // datatype
@@ -179,7 +174,7 @@ public class AETEParser {
     
     func parseClass() throws {
         var isPlural = false
-        let className = self.keywordConverter.convertSpecifierName(self.string())
+        let className = self.string()
         self.alignCursor()
         let classCode = self.code()
         self.skipString()   // description
@@ -187,7 +182,7 @@ public class AETEParser {
         // properties
         let n = self.short()
         for _ in 0..<n {
-            let propertyName = self.keywordConverter.convertSpecifierName(self.string())
+            let propertyName = self.string()
             self.alignCursor()
             let propertyCode = self.code()
             self.skipCode()     // datatype
@@ -236,7 +231,7 @@ public class AETEParser {
         let n = self.short()
         // enumerators
         for _ in 0..<n {
-            let name = self.keywordConverter.convertSpecifierName(self.string())
+            let name = self.string()
             self.alignCursor()
             let enumeratorDef = KeywordTerm(name: name, code: self.code(), kind: .enumerator)
             self.skipString()    // description

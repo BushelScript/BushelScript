@@ -21,7 +21,6 @@
 		4FB7D87C1D5EA60F00F0DB36 /* AEConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9AFB431D5B6C2600A71890 /* AEConstants.swift */; };
 		4FB7D87D1D5EA60F00F0DB36 /* TermTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39451BA86B5F00FF2A96 /* TermTypes.swift */; };
 		4FB7D87E1D5EA60F00F0DB36 /* DefaultTerminology.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39521BA9C6C700FF2A96 /* DefaultTerminology.swift */; };
-		4FB7D87F1D5EA60F00F0DB36 /* KeywordConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E394C1BA8C16300FF2A96 /* KeywordConverter.swift */; };
 		4FB7D8801D5EA60F00F0DB36 /* AETEParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E394E1BA8D2F600FF2A96 /* AETEParser.swift */; };
 		4FB7D8811D5EA60F00F0DB36 /* SDEFParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39481BA8717D00FF2A96 /* SDEFParser.swift */; };
 		4FB7D8821D5EA60F00F0DB36 /* GlueTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39501BA9A7EA00FF2A96 /* GlueTable.swift */; };
@@ -40,7 +39,6 @@
 		4FCDD01020DBCF8600F7CC6F /* AEConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9AFB431D5B6C2600A71890 /* AEConstants.swift */; };
 		4FCDD01120DBCF8600F7CC6F /* TermTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39451BA86B5F00FF2A96 /* TermTypes.swift */; };
 		4FCDD01220DBCF8600F7CC6F /* DefaultTerminology.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39521BA9C6C700FF2A96 /* DefaultTerminology.swift */; };
-		4FCDD01320DBCF8600F7CC6F /* KeywordConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E394C1BA8C16300FF2A96 /* KeywordConverter.swift */; };
 		4FCDD01420DBCF8600F7CC6F /* AETEParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E394E1BA8D2F600FF2A96 /* AETEParser.swift */; };
 		4FCDD01520DBCF8600F7CC6F /* SDEFParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39481BA8717D00FF2A96 /* SDEFParser.swift */; };
 		4FCDD01620DBCF8600F7CC6F /* GlueTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39501BA9A7EA00FF2A96 /* GlueTable.swift */; };
@@ -56,8 +54,6 @@
 		4FFF5D371D899F29008ED4F5 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F63C4441B8A4DFC000D74EE /* Errors.swift */; };
 		4FFF5D381D899F29008ED4F5 /* Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F63C4461B8A669C000D74EE /* Support.swift */; };
 		4FFF5D391D899F29008ED4F5 /* AEConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9AFB431D5B6C2600A71890 /* AEConstants.swift */; };
-		4FFF5D3A1D899F29008ED4F5 /* TermTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39451BA86B5F00FF2A96 /* TermTypes.swift */; };
-		4FFF5D3C1D899F29008ED4F5 /* KeywordConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E394C1BA8C16300FF2A96 /* KeywordConverter.swift */; };
 		4FFF5D3D1D899F29008ED4F5 /* AETEParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E394E1BA8D2F600FF2A96 /* AETEParser.swift */; };
 		4FFF5D401D899F29008ED4F5 /* AppleEventFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39951BADD58500FF2A96 /* AppleEventFormatter.swift */; };
 		4FFF5D421D899F29008ED4F5 /* AEApplicationGlue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2645AB1BA4F27700256402 /* AEApplicationGlue.swift */; };
@@ -110,7 +106,6 @@
 		4F0E39451BA86B5F00FF2A96 /* TermTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermTypes.swift; sourceTree = "<group>"; };
 		4F0E39481BA8717D00FF2A96 /* SDEFParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SDEFParser.swift; sourceTree = "<group>"; };
 		4F0E394A1BA8719400FF2A96 /* OSAKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OSAKit.framework; path = System/Library/Frameworks/OSAKit.framework; sourceTree = SDKROOT; };
-		4F0E394C1BA8C16300FF2A96 /* KeywordConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeywordConverter.swift; sourceTree = "<group>"; };
 		4F0E394E1BA8D2F600FF2A96 /* AETEParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AETEParser.swift; sourceTree = "<group>"; };
 		4F0E39501BA9A7EA00FF2A96 /* GlueTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlueTable.swift; sourceTree = "<group>"; };
 		4F0E39521BA9C6C700FF2A96 /* DefaultTerminology.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultTerminology.swift; sourceTree = "<group>"; };
@@ -172,7 +167,6 @@
 			children = (
 				4F0E39451BA86B5F00FF2A96 /* TermTypes.swift */,
 				4F0E39521BA9C6C700FF2A96 /* DefaultTerminology.swift */,
-				4F0E394C1BA8C16300FF2A96 /* KeywordConverter.swift */,
 				4F0E394E1BA8D2F600FF2A96 /* AETEParser.swift */,
 				4F0E39481BA8717D00FF2A96 /* SDEFParser.swift */,
 				4F0E39501BA9A7EA00FF2A96 /* GlueTable.swift */,
@@ -388,7 +382,6 @@
 				4FB7D87C1D5EA60F00F0DB36 /* AEConstants.swift in Sources */,
 				4FB7D87D1D5EA60F00F0DB36 /* TermTypes.swift in Sources */,
 				4FB7D87E1D5EA60F00F0DB36 /* DefaultTerminology.swift in Sources */,
-				4FB7D87F1D5EA60F00F0DB36 /* KeywordConverter.swift in Sources */,
 				4FB7D8801D5EA60F00F0DB36 /* AETEParser.swift in Sources */,
 				4FB7D8811D5EA60F00F0DB36 /* SDEFParser.swift in Sources */,
 				4FB7D8821D5EA60F00F0DB36 /* GlueTable.swift in Sources */,
@@ -415,7 +408,6 @@
 				4FCDD01020DBCF8600F7CC6F /* AEConstants.swift in Sources */,
 				4FCDD01120DBCF8600F7CC6F /* TermTypes.swift in Sources */,
 				4FCDD01220DBCF8600F7CC6F /* DefaultTerminology.swift in Sources */,
-				4FCDD01320DBCF8600F7CC6F /* KeywordConverter.swift in Sources */,
 				4FCDD01420DBCF8600F7CC6F /* AETEParser.swift in Sources */,
 				4FCDD01520DBCF8600F7CC6F /* SDEFParser.swift in Sources */,
 				4FCDD01620DBCF8600F7CC6F /* GlueTable.swift in Sources */,
@@ -438,8 +430,6 @@
 				4FFF5D381D899F29008ED4F5 /* Support.swift in Sources */,
 				4FFF5D371D899F29008ED4F5 /* Errors.swift in Sources */,
 				4FFF5D391D899F29008ED4F5 /* AEConstants.swift in Sources */,
-				4FFF5D3A1D899F29008ED4F5 /* TermTypes.swift in Sources */,
-				4FFF5D3C1D899F29008ED4F5 /* KeywordConverter.swift in Sources */,
 				4FFF5D3D1D899F29008ED4F5 /* AETEParser.swift in Sources */,
 				4FFF5D401D899F29008ED4F5 /* AppleEventFormatter.swift in Sources */,
 				4FFF5D421D899F29008ED4F5 /* AEApplicationGlue.swift in Sources */,
