@@ -15,8 +15,6 @@ import AppKit
 
 // TO DO: how to display nested App root as shorthand? (really need separate description(nested:Bool) func, or else use visitor API - note that a simplified api only need replicate constructor calls, not individual specifier+selector method calls; it also gives cleaner approach to glue-specific hooks and dynamic use, and encapsulating general Swift type formatting)
 
-// note: using an external formatter class allows different formatters to be swapped in for other languages
-
 // TO DO: when displaying by-range specifier's start and stop, simplify by-index/by-name representations where appropriate, e.g. `TextEdit().documents[TEDCon.documents[1], TEDCon.documents[-2]]` should display as `TextEdit().documents[1, -2]`
 
 /******************************************************************************/
@@ -24,10 +22,6 @@ import AppKit
 
 // used by a Specifier's description property to render Swift literal representation of itself;
 // static glues instantiate this with their own application-specific code->name translation tables
-
-// TO DO: either make this class fully open so it can be overridden (e.g. to generate representations for other languages), or make its format() method part of a Formatter protocol
-    
-// TO DO: improve naming conventions, e.g. `format(object: Any)`, `format(symbol:Symbol)`
 
 public func formatSAObject(_ object: Any) -> String {
     switch object {
