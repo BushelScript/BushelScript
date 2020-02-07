@@ -450,26 +450,22 @@ public extension SourceParser {
     func parseTermNameEagerly(stoppingAt: [String] = []) throws -> (TermName, SourceLocation)? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
-        let words = TermName.words(in: restOfLine)
+        let allWords = TermName.words(in: restOfLine)
         
-        guard !words.isEmpty else {
+        guard !allWords.isEmpty else {
             return nil
         }
         
-        var shrunkWords = words
-        for word in words.reversed() {
-            shrunkWords.removeLast()
-            if stoppingAt.contains(word) {
-                eatFromSource(shrunkWords)
-                let endIndex = source.startIndex
-                return (TermName(shrunkWords), SourceLocation(startIndex..<endIndex, source: entireSource))
+        var words: [String] = []
+        for word in allWords {
+            guard !stoppingAt.contains(word) else {
+                break
             }
+            words.append(word)
         }
         
-        // Name did not include any word in stoppingAt
         eatFromSource(words)
-        let endIndex = source.startIndex
-        return (TermName(words), SourceLocation(startIndex..<endIndex, source: entireSource))
+        return (TermName(words), SourceLocation(startIndex..<currentIndex, source: entireSource))
     }
     
     func parseTypeTerm() throws -> Located<Bushel.ClassTerm>? {

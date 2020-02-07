@@ -505,7 +505,7 @@ extension Expression {
                 let getFunction: BuiltinFunction = (index == 0) ? .getFromArgumentRecordWithDirectParamFallback : .getFromArgumentRecord
                 
                 let parameterUIDIRValue = parameter.term.typedUID.normalizedAsRTString(builder: builder, name: "parameter-uid", bp: bp)
-                let argumentValueIRValue = builder.buildCall(toExternalFunction: getFunction, args: [actualArguments, parameterUIDIRValue])
+                let argumentValueIRValue = builder.buildCall(toExternalFunction: getFunction, args: [bp, actualArguments, parameterUIDIRValue])
                 let argumentTermIRValue = argument.term.irPointerValue(builder: builder)
                 builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [bp, argumentTermIRValue, argumentValueIRValue])
             }
