@@ -160,7 +160,7 @@ private let LaunchEvent = NSAppleEventDescriptor(eventClass: _kASAppleScriptSuit
 
 // Application initializers pass application-identifying information to AppData initializer as enum according to which initializer was called
 
-public enum TargetApplication {
+public enum TargetApplication: CustomStringConvertible {
     case current
     case name(String) // application's name (.app suffix is optional) or full path
     case url(URL) // "file" or "eppc" URL
