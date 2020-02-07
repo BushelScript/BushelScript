@@ -150,10 +150,14 @@ extension Expression {
         switch kind {
         case .topLevel: // MARK: .topLevel
             fatalError()
-        case .empty, .end, .that: // MARK: .empty, .end., .that
+        case .empty, .end, .that: // MARK: .empty, .end, .that
             return lastResult
         case .it: // MARK: .it
-            return builder.buildCall(toExternalFunction: .getCurrentTarget, args: [bp])
+            let currentTarget = builder.buildCall(toExternalFunction: .getCurrentTarget, args: [bp])
+            return
+                evaluateSpecifiers ?
+                builder.buildCall(toExternalFunction: .evaluateSpecifier, args: [bp, currentTarget]) :
+                currentTarget
         case .null: // MARK: .null
             return builder.rtNull
         case .sequence(let expressions): // MARK: .sequence
