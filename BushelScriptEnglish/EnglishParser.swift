@@ -138,6 +138,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         },
         TermName("use application"): handleUseApplication,
         TermName("use app"): handleUseApplication,
+        TermName("use AppleScript"): handleUseAppleScript,
         TermName("that"): { .that },
         TermName("it"): { .it },
         TermName("every"): handleQuantifier(.all),
@@ -443,16 +444,48 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         let nameStartIndex = currentIndex
         guard let (name, nameLocation) = try parseTermNameEagerly() else {
-            throw ParseError(description: "expected application \(byBundleID ? "identifier" : "name")", location: SourceLocation(source.range, source: entireSource))
+            throw ParseError(description: "expected application \(byBundleID ? "identifier" : "name")", location: currentLocation)
         }
         guard let bundle = byBundleID ? Bundle(applicationBundleIdentifier: name.normalized) : Bundle(applicationName: name.normalized) else {
             throw ParseError(description: "this script requires \(byBundleID ? "an application with identifier" : "the application") “\(name)”, which was not found on your system", location: SourceLocation(nameStartIndex..<currentIndex, source: entireSource))
         }
         
         let resource: Resource = byBundleID ? .applicationByID(bundle: bundle) : .applicationByName(bundle: bundle)
-        let term = Located(ResourceTerm(.id(name.normalized), name: name, resource: resource), at: nameLocation)
+        let term = Located(ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: resource), at: nameLocation)
         
         try loadTerminology(at: bundle.bundleURL, into: term.term)
+        lexicon.add(term)
+        return .use(resource: term)
+    }
+    
+    private func handleUseAppleScript() throws -> Expression.Kind? {
+        eatCommentsAndWhitespace()
+        
+//        let isLibrary = tryEating(prefix: "library")
+        
+//        let nameStartIndex = currentIndex
+        guard let (name, nameLocation) = try parseTermNameEagerly(stoppingAt: ["at"]) else {
+            throw ParseError(description: "expected AppleScript script name", location: currentLocation)
+        }
+        
+        guard tryEating(prefix: "at") else {
+            throw ParseError(description: "expected ‘at’ (more addressing modes coming soon)", location: currentLocation)
+        }
+        
+        let pathStartIndex = currentIndex
+        guard let (_, path) = try parseString() else {
+            throw ParseError(description: "expected path string", location: currentLocation)
+        }
+        
+        let fileURL = URL(fileURLWithPath: (path as NSString).expandingTildeInPath)
+        guard let script = NSAppleScript(contentsOf: fileURL, error: nil) else {
+            throw ParseError(description: "this script requires an AppleScript script at path “\(path)”, which was not found on your system", location: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
+        }
+        
+        let resource = Resource.applescriptAtPath(path: path, script: script)
+        let term = Located(ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: resource), at: nameLocation)
+        
+        // load terminology here
         lexicon.add(term)
         return .use(resource: term)
     }

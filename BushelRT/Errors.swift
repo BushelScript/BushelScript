@@ -43,6 +43,17 @@ public struct RemoteCommandsDisallowed : LocalizedError {
     
 }
 
+public struct UnsupportedCommand : LocalizedError {
+    
+    public let object: RT_Object
+    public let command: CommandInfo
+    
+    public var errorDescription: String? {
+        "\(object) does not support perfoming \(command)"
+    }
+    
+}
+
 public struct NoPropertyExists: LocalizedError {
     
     public let type: TypeInfo
@@ -102,6 +113,17 @@ public struct InvalidSpecifierDataType: LocalizedError {
     
     public var errorDescription: String? {
         "\(specifierData) is of incorrect type for a \(specifierType) specifier"
+    }
+    
+}
+
+public struct AppleScriptError: LocalizedError {
+    
+    public let number: OSStatus?
+    public let message: String?
+    
+    public var errorDescription: String? {
+        "AppleScript error\(number.map { " number \($0)" } ?? "")\(message.map { ": \($0)" } ?? "")"
     }
     
 }

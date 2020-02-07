@@ -314,6 +314,8 @@ final class Builtin {
             case .applicationByName(let bundle),
                  .applicationByID(let bundle):
                 return RT_Application(rt, bundle: bundle)
+            case .applescriptAtPath(_, let script):
+                return RT_AppleScript(rt, name: term.name!.normalized, value: script)
             }
         }() as RT_Object))
     }
@@ -403,6 +405,9 @@ final class Builtin {
         var arguments = arguments
         let target = stack.target
         
+        var argumentsWithoutDirect = arguments
+        argumentsWithoutDirect.removeValue(forKey: ParameterInfo(.direct))
+        
         var implicitDirect: RT_Object?
         if
             let target = target,
@@ -426,7 +431,7 @@ final class Builtin {
         
         return toOpaque(retain(
             catchingErrors {
-                try directParameter?.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+                try directParameter?.perform(command: command, arguments: argumentsWithoutDirect, implicitDirect: implicitDirect)
             } ??
             catchingErrors {
                 directParameter == target ?
@@ -492,11 +497,7 @@ extension SwiftAutomation.Specifier {
                 return RT_Null.null
             }
             
-            if let resultObject = RT_Object.fromEventResult(rt, try self.appData.unpackAsAny(resultDescriptor)) {
-                return resultObject
-            } else {
-                return RT_AEObject(rt, descriptor: resultDescriptor)
-            }
+            return try RT_Object.fromAEDescriptor(rt, resultDescriptor)
         } catch let error as CommandError {
             throw RemoteCommandError(remoteObject: appData.target, command: command, error: error)
         } catch let error as AutomationError {
@@ -521,9 +522,14 @@ extension SwiftAutomation.Specifier {
 
 extension RT_Object {
     
-    static func fromEventResult(_ rt: RTInfo, _ result: Any) -> RT_Object? {
-        // See AppData.unpackAsAny(_:)
-        switch result {
+    static func fromAEDescriptor(_ rt: RTInfo, _ descriptor: NSAppleEventDescriptor) throws -> RT_Object {
+        let appData = AppData(formatter: SpecifierFormatter())
+        return fromSADecoded(rt, try appData.unpackAsAny(descriptor)) ??
+            RT_AEObject(rt, descriptor: descriptor)
+    }
+    
+    static func fromSADecoded(_ rt: RTInfo, _ object: Any) -> RT_Object? {
+        switch object {
         case let bool as Bool:
             return RT_Boolean.withValue(bool)
         case let int32 as Int32:
@@ -545,13 +551,12 @@ extension RT_Object {
         case let date as Date:
             return RT_Date(value: date)
         case let array as [Any]:
-            let contents = array.map({ RT_Object.fromEventResult(rt, $0) })
-            if contents.contains(where: { $0 == nil }) {
+            guard let contents = array.map({ fromSADecoded(rt, $0) }) as? [RT_Object] else {
                 return nil
             }
-            return RT_List(contents: contents.map { $0! })
+            return RT_List(contents: contents.map { $0 })
         case let dictionary as [SwiftAutomation.Symbol : Any]:
-            guard let values = dictionary.values.map({ RT_Object.fromEventResult(rt, $0) }) as? [RT_Object] else {
+            guard let values = dictionary.values.map({ fromSADecoded(rt, $0) }) as? [RT_Object] else {
                 return nil
             }
             let keysAndValues = zip(dictionary.keys, values).map { ($0.0.asRTObject(rt), $0.1) }

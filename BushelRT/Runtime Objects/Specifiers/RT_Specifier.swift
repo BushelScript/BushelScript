@@ -335,10 +335,10 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         case .all, .first, .middle, .last, .random, .previous, .next:
             data = []
         case .index, .name, .id:
-            data = [RT_Object.fromEventResult(rt, saSpecifier.selectorData)]
+            data = [RT_Object.fromSADecoded(rt, saSpecifier.selectorData)]
         case .range:
             let rangeSelector = saSpecifier.selectorData as! SwiftAutomation.RangeSelector
-            data = [RT_Object.fromEventResult(rt, rangeSelector.start), RT_Object.fromEventResult(rt, rangeSelector.stop)]
+            data = [RT_Object.fromSADecoded(rt, rangeSelector.start), RT_Object.fromSADecoded(rt, rangeSelector.stop)]
         case .test:
             fatalError("unimplemented")
         case .property:

@@ -259,6 +259,9 @@ extension ResourceTerm {
             return "application \(name)"
         case .applicationByID:
             return "application id \(name)"
+        case .applescriptAtPath(let path, _):
+            // TODO: Escape path when spitting back out
+            return "AppleScript \(name) at \"\(path)\""
         }
     }
     

@@ -307,6 +307,7 @@ public enum Resource {
     
     case applicationByName(bundle: Bundle)
     case applicationByID(bundle: Bundle)
+    case applescriptAtPath(path: String, script: NSAppleScript)
     
 }
 

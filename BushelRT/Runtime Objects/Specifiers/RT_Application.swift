@@ -1,7 +1,7 @@
 import Bushel
 import SwiftAutomation
 
-public class RT_Application: RT_Object, RT_SASpecifierConvertible, RT_SpecifierRemoteRoot {
+public class RT_Application: RT_Object {
     
     public let rt: RTInfo
     public let bundle: Bundle
@@ -40,7 +40,7 @@ public class RT_Application: RT_Object, RT_SASpecifierConvertible, RT_SpecifierR
 }
 
 // MARK: RT_SASpecifierConvertible
-extension RT_Application {
+extension RT_Application: RT_SASpecifierConvertible {
     
     public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
         RootSpecifier(bundleIdentifier: bundleIdentifier)
@@ -49,7 +49,7 @@ extension RT_Application {
 }
 
 // MARK: RT_SpecifierRemoteRoot
-extension RT_Application {
+extension RT_Application: RT_SpecifierRemoteRoot {
     
     public func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
         return try specifier.performByAppleEvent(command: rt.command(forUID: TypedTermUID(CommandUID.get)), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, targetBundleID: bundleIdentifier)

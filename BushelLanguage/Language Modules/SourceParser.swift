@@ -480,6 +480,18 @@ public extension SourceParser {
         
     }
     
+    func parseString() throws -> (expression: Expression, value: String)? {
+        guard let expression = try parsePrimary() else {
+            return nil
+        }
+        switch expression.kind {
+        case .string(let value):
+            return (expression, value)
+        default:
+            return nil
+        }
+    }
+    
     func parseTermNameLazily() throws -> (TermName, SourceLocation)? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
@@ -852,6 +864,7 @@ public extension SourceParser {
                 guard maybeTerm != nil else {
                     throw ParseError(description: "this term is undefined and cannot be ad-hoc constructed", location: currentLocation)
                 }
+                lexicon.pool.add(maybeTerm!)
             }
             
             guard let term = maybeTerm as? Terminology.Term else {

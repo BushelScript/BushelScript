@@ -8,6 +8,7 @@ public indirect enum TermUID {
     case ae8(class: AEEventClass, id: AEEventID)
     case ae12(class: AEEventClass, id: AEEventID, code: AEKeyword)
     case id(_ name: String)
+    case asid(_ name: String)
     case variant(Variant, TermUID)
     
     public enum Variant {
@@ -155,6 +156,17 @@ extension TermUID {
         idName.split(separator: ":").map { String($0) }
     }
     
+    public var asidName: String? {
+        switch self {
+        case .asid(let name):
+            return name
+        case .variant(_, let uid):
+            return uid.asidName
+        default:
+            return nil
+        }
+    }
+    
 }
 
 extension TermUID {
@@ -220,6 +232,8 @@ extension TermUID: CustomStringConvertible {
             return "ae12"
         case .id:
             return "id"
+        case .asid:
+            return "asid"
         case .variant(let variant, _):
             return "var(\(variant))"
         }
@@ -235,6 +249,8 @@ extension TermUID: CustomStringConvertible {
         case .ae12(let `class`, let id, let code):
             return String(fourCharCode: `class`) + String(fourCharCode: id) + String(fourCharCode: code)
         case .id(let name):
+            return name
+        case .asid(let name):
             return name
         case .variant(_, let uid):
             return uid.normalized
@@ -304,6 +320,8 @@ extension TermUID {
             self = .ae12(class: `class`, id: id, code: code)
         case "id":
             self = .id(data)
+        case "asid":
+            self = .asid(data)
         case Regex("var\\((\\w+)\\)"):
             let variantKind = Regex.lastMatch!.captures[0]!
             guard
