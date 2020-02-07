@@ -87,6 +87,7 @@ translation:
                 aevtodoc: open
                 aevtpdoc: print documents   # Let's not have random sheets of paper coming out of people's printers.
                 aevtquit: quit
+                miscactv: activate
                 # StandardAdditions commands.
                 sysonotf: notification
                 sysodisA: alert
