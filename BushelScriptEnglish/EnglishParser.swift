@@ -314,10 +314,12 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
 
         func parseElse() throws -> Expression? {
+            let rollbackSource = source
             eatCommentsAndWhitespace(eatingNewlines: true)
             
             let elseStartIndex = currentIndex
             guard tryEating(prefix: "else") else {
+                source = rollbackSource
                 return nil
             }
             
