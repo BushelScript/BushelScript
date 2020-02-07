@@ -257,7 +257,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
                 }
                 parent = RT_Application(rt, bundle: bundle)
             } else {
-                parent = RT_RootSpecifier(rt, saSpecifier: rootSpecifier)
+                parent = RT_RootSpecifier(rt, kind: rootSpecifier.kind)
             }
         } else {
             fatalError("unknown Query type for SwiftAutomation.Specifier.parentQuery")

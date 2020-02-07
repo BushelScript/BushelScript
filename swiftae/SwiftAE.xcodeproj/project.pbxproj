@@ -57,10 +57,8 @@
 		4FFF5D381D899F29008ED4F5 /* Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F63C4461B8A669C000D74EE /* Support.swift */; };
 		4FFF5D391D899F29008ED4F5 /* AEConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9AFB431D5B6C2600A71890 /* AEConstants.swift */; };
 		4FFF5D3A1D899F29008ED4F5 /* TermTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39451BA86B5F00FF2A96 /* TermTypes.swift */; };
-		4FFF5D3B1D899F29008ED4F5 /* DefaultTerminology.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39521BA9C6C700FF2A96 /* DefaultTerminology.swift */; };
 		4FFF5D3C1D899F29008ED4F5 /* KeywordConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E394C1BA8C16300FF2A96 /* KeywordConverter.swift */; };
 		4FFF5D3D1D899F29008ED4F5 /* AETEParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E394E1BA8D2F600FF2A96 /* AETEParser.swift */; };
-		4FFF5D3F1D899F29008ED4F5 /* GlueTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39501BA9A7EA00FF2A96 /* GlueTable.swift */; };
 		4FFF5D401D899F29008ED4F5 /* AppleEventFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E39951BADD58500FF2A96 /* AppleEventFormatter.swift */; };
 		4FFF5D421D899F29008ED4F5 /* AEApplicationGlue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2645AB1BA4F27700256402 /* AEApplicationGlue.swift */; };
 		4FFF5D4F1D89B552008ED4F5 /* SwiftGlueTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFF5D491D89A26C008ED4F5 /* SwiftGlueTemplate.swift */; };
@@ -441,10 +439,8 @@
 				4FFF5D371D899F29008ED4F5 /* Errors.swift in Sources */,
 				4FFF5D391D899F29008ED4F5 /* AEConstants.swift in Sources */,
 				4FFF5D3A1D899F29008ED4F5 /* TermTypes.swift in Sources */,
-				4FFF5D3B1D899F29008ED4F5 /* DefaultTerminology.swift in Sources */,
 				4FFF5D3C1D899F29008ED4F5 /* KeywordConverter.swift in Sources */,
 				4FFF5D3D1D899F29008ED4F5 /* AETEParser.swift in Sources */,
-				4FFF5D3F1D899F29008ED4F5 /* GlueTable.swift in Sources */,
 				4FFF5D401D899F29008ED4F5 /* AppleEventFormatter.swift in Sources */,
 				4FFF5D421D899F29008ED4F5 /* AEApplicationGlue.swift in Sources */,
 			);

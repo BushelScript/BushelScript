@@ -4,15 +4,17 @@
 //
 //
 
+// Ian's notes: Not currently used but could be useful in the future,
+// especially if AppKit itself occasionally bungles AETE parsing as
+// the original author so claims.
+
 // TO DO: check endianness in read data methods
 
 import Foundation
 
-
 /**********************************************************************/
 
-
-public class AETEParser: ApplicationTerminology {
+public class AETEParser {
     
     public private(set) var types: [KeywordTerm] = []
     public private(set) var enumerators: [KeywordTerm] = []

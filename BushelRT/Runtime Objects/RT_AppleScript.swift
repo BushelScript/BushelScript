@@ -24,8 +24,7 @@ public class RT_AppleScript: RT_Object {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        let appData = AppData(formatter: SpecifierFormatter())
-        let encodedArguments = try encode(arguments: arguments, implicitDirect: implicitDirect, for: self, appData: appData)
+        let encodedArguments = try encode(arguments: arguments, implicitDirect: implicitDirect, for: self, appData: AppData())
         
         let eventClass: AEEventClass
         let eventID: AEEventID
@@ -63,7 +62,7 @@ public class RT_AppleScript: RT_Object {
             throw AppleScriptError(number: errorInfo[NSAppleScript.errorNumber as NSString] as? OSStatus, message: errorInfo[NSAppleScript.errorMessage as NSString] as? String)
         }
         
-        return try RT_Object.fromAEDescriptor(rt, AppData(formatter: SpecifierFormatter()), resultDescriptor)
+        return try RT_Object.fromAEDescriptor(rt, AppData(), resultDescriptor)
     }
     
 }

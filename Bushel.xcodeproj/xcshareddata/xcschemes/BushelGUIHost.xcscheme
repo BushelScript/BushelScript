@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4FFF5D231D899F0D008ED4F5"
-               BuildableName = "SwiftAutomation.framework"
-               BlueprintName = "SwiftAutomation"
-               ReferencedContainer = "container:SwiftAE.xcodeproj">
+               BlueprintIdentifier = "3CB328E423EDAD4C003BF646"
+               BuildableName = "BushelGUIHost.app"
+               BlueprintName = "BushelGUIHost"
+               ReferencedContainer = "container:Bushel.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -40,15 +40,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4FFF5D231D899F0D008ED4F5"
-            BuildableName = "SwiftAutomation.framework"
-            BlueprintName = "SwiftAutomation"
-            ReferencedContainer = "container:SwiftAE.xcodeproj">
+            BlueprintIdentifier = "3CB328E423EDAD4C003BF646"
+            BuildableName = "BushelGUIHost.app"
+            BlueprintName = "BushelGUIHost"
+            ReferencedContainer = "container:Bushel.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -56,15 +57,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4FFF5D231D899F0D008ED4F5"
-            BuildableName = "SwiftAutomation.framework"
-            BlueprintName = "SwiftAutomation"
-            ReferencedContainer = "container:SwiftAE.xcodeproj">
+            BlueprintIdentifier = "3CB328E423EDAD4C003BF646"
+            BuildableName = "BushelGUIHost.app"
+            BlueprintName = "BushelGUIHost"
+            ReferencedContainer = "container:Bushel.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

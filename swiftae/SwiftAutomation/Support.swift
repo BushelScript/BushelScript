@@ -79,7 +79,6 @@ extension String {
 }
 
 public func eightCharCode(_ eventClass: OSType, _ eventID: OSType) -> UInt64 {
-    // used to construct keys for GlueTable.commandsByCode dictionary
     return UInt64(eventClass) << 32 | UInt64(eventID)
 }
 
@@ -401,12 +400,8 @@ public func fileURLForLocalApplication(_ name: String) -> URL? {
 /******************************************************************************/
 // Apple event descriptors used to terminate nested AERecord (of typeObjectSpecifier, etc) chains
 
-// root descriptor for all absolute object specifiers that do not have a custom root
-// e.g. `document 1 of «typeNull»`
 public let AppRootDesc = NSAppleEventDescriptor.null()
 
-// root descriptor for an object specifier describing start or end of a range of elements in a by-range specifier
-// e.g. `folder (folder 2 of «typeCurrentContainer») thru (folder -1 of «typeCurrentContainer»)`
 public let ConRootDesc = NSAppleEventDescriptor(descriptorType: typeCurrentContainer, data: nil)!
 
 // root descriptor for an object specifier describing an element whose state is being compared in a by-test specifier

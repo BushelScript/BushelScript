@@ -81,6 +81,11 @@
 		3C9703E5235520DF0099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */; };
 		3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */; };
+		3CB328E823EDAD4C003BF646 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB328E723EDAD4C003BF646 /* AppDelegate.swift */; };
+		3CB328EA23EDAD50003BF646 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CB328E923EDAD50003BF646 /* Assets.xcassets */; };
+		3CB328ED23EDAD50003BF646 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CB328EB23EDAD50003BF646 /* MainMenu.xib */; };
+		3CB328F923EDB6CF003BF646 /* CheckboxVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB328F823EDB6CF003BF646 /* CheckboxVC.swift */; };
+		3CB328FA23EDBA8A003BF646 /* Ask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDECB23EDA388007684D1 /* Ask.swift */; };
 		3CB528EB237FAF8A0051460B /* TypeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C327261232DBAE2001A527C /* TypeInfo.swift */; };
 		3CB528ED23809DDD0051460B /* RTInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB528EC23809DDD0051460B /* RTInfo.swift */; };
 		3CB7FEC623B7CA22003191AC /* TermUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB7FEC523B7CA22003191AC /* TermUID.swift */; };
@@ -97,6 +102,7 @@
 		3CCDDEBB23ED024D007684D1 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
 		3CCDDEC323ED0257007684D1 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3CCDDECA23ED06E8007684D1 /* RT_AppleScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */; };
+		3CCDDED223EDA589007684D1 /* RadioChoicesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDED123EDA589007684D1 /* RadioChoicesVC.swift */; };
 		3CCE9EA82325907D00198564 /* CodableErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9E9B23258ECF00198564 /* CodableErrors.swift */; };
 		3CCE9EAC2325A9E200198564 /* SourceFix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9EAB2325A9E200198564 /* SourceFix.swift */; };
 		3CD113D422FB700000329583 /* Applications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113D322FB700000329583 /* Applications.swift */; };
@@ -286,12 +292,10 @@
 		3C72CEBE22E1023200A98EC7 /* TermTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermTypes.swift; sourceTree = "<group>"; };
 		3C72CEBF22E1023200A98EC7 /* AEApplicationGlue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AEApplicationGlue.swift; sourceTree = "<group>"; };
 		3C72CEC022E1023200A98EC7 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
-		3C72CEC122E1023200A98EC7 /* GlueTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlueTable.swift; sourceTree = "<group>"; };
 		3C72CEC222E1023200A98EC7 /* KeywordConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeywordConverter.swift; sourceTree = "<group>"; };
 		3C72CEC322E1023200A98EC7 /* SpecifierFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpecifierFormatter.swift; sourceTree = "<group>"; };
 		3C72CEC422E1023200A98EC7 /* AEConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AEConstants.swift; sourceTree = "<group>"; };
 		3C72CEC522E1023200A98EC7 /* Specifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Specifier.swift; sourceTree = "<group>"; };
-		3C72CEC722E1023200A98EC7 /* DefaultTerminology.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultTerminology.swift; sourceTree = "<group>"; };
 		3C72CEC922E1023200A98EC7 /* AETEParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AETEParser.swift; sourceTree = "<group>"; };
 		3C72CECA22E1023200A98EC7 /* Support.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
 		3C72CECB22E1023200A98EC7 /* AppleEventFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleEventFormatter.swift; sourceTree = "<group>"; };
@@ -315,6 +319,14 @@
 		3C94571523E9168300D59C2C /* Formatter Test Cases */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Formatter Test Cases"; sourceTree = "<group>"; };
 		3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermDictionary.swift; sourceTree = "<group>"; };
 		3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lexicon.swift; sourceTree = "<group>"; };
+		3CB328E523EDAD4C003BF646 /* BushelGUIHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BushelGUIHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3CB328E723EDAD4C003BF646 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3CB328E923EDAD50003BF646 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3CB328EC23EDAD50003BF646 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		3CB328EE23EDAD50003BF646 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3CB328EF23EDAD50003BF646 /* BushelGUIHost.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BushelGUIHost.entitlements; sourceTree = "<group>"; };
+		3CB328F623EDB675003BF646 /* CheckboxVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CheckboxVC.xib; sourceTree = "<group>"; };
+		3CB328F823EDB6CF003BF646 /* CheckboxVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckboxVC.swift; sourceTree = "<group>"; };
 		3CB528EC23809DDD0051460B /* RTInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTInfo.swift; sourceTree = "<group>"; };
 		3CB7FEC523B7CA22003191AC /* TermUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermUID.swift; sourceTree = "<group>"; };
 		3CC224882391CFF300448D25 /* PropertyInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyInfo.swift; sourceTree = "<group>"; };
@@ -334,6 +346,9 @@
 		3CCD8BA222CFA5BF0049C74F /* GenLLVMIR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenLLVMIR.swift; sourceTree = "<group>"; };
 		3CCD8BA422CFA6020049C74F /* PrettyPrinting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrettyPrinting.swift; sourceTree = "<group>"; };
 		3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_AppleScript.swift; sourceTree = "<group>"; };
+		3CCDDECB23EDA388007684D1 /* Ask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ask.swift; sourceTree = "<group>"; };
+		3CCDDECE23EDA4E8007684D1 /* RadioChoicesVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RadioChoicesVC.xib; sourceTree = "<group>"; };
+		3CCDDED123EDA589007684D1 /* RadioChoicesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioChoicesVC.swift; sourceTree = "<group>"; };
 		3CCE9E9B23258ECF00198564 /* CodableErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodableErrors.swift; sourceTree = "<group>"; };
 		3CCE9EAB2325A9E200198564 /* SourceFix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceFix.swift; sourceTree = "<group>"; };
 		3CD113D322FB700000329583 /* Applications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Applications.swift; sourceTree = "<group>"; };
@@ -410,6 +425,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3CB328E223EDAD4C003BF646 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3CCD8AAC22CC45040049C74F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -477,6 +499,7 @@
 				3C94570323E8FBC200D59C2C /* BushelLanguageTestingTools */,
 				3C6B75992305B5980006C354 /* BushelScriptEnglish */,
 				3CCD8AB022CC45040049C74F /* BushelRT */,
+				3CB328E623EDAD4C003BF646 /* BushelGUIHost */,
 				3C72CEBC22E1023200A98EC7 /* SwiftAutomation */,
 				3C35A5BC22C81DE7002D4582 /* Products */,
 				3C53842523DF91D5009467B2 /* Frameworks */,
@@ -495,6 +518,7 @@
 				3C6B75982305B5980006C354 /* bushelscript_en.framework */,
 				3C6B75A02305B5990006C354 /* BushelScriptEnglishTests.xctest */,
 				3C94570223E8FBC200D59C2C /* BushelLanguageTestingTools.framework */,
+				3CB328E523EDAD4C003BF646 /* BushelGUIHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -586,12 +610,10 @@
 				3C72CEBE22E1023200A98EC7 /* TermTypes.swift */,
 				3C72CEBF22E1023200A98EC7 /* AEApplicationGlue.swift */,
 				3C72CEC022E1023200A98EC7 /* AppData.swift */,
-				3C72CEC122E1023200A98EC7 /* GlueTable.swift */,
 				3C72CEC222E1023200A98EC7 /* KeywordConverter.swift */,
 				3C72CEC322E1023200A98EC7 /* SpecifierFormatter.swift */,
 				3C72CEC422E1023200A98EC7 /* AEConstants.swift */,
 				3C72CEC522E1023200A98EC7 /* Specifier.swift */,
-				3C72CEC722E1023200A98EC7 /* DefaultTerminology.swift */,
 				3C72CEC922E1023200A98EC7 /* AETEParser.swift */,
 				3C72CECA22E1023200A98EC7 /* Support.swift */,
 				3C72CECB22E1023200A98EC7 /* AppleEventFormatter.swift */,
@@ -678,6 +700,20 @@
 				3C9456F623E8F7DE00D59C2C /* FormatterTests.swift */,
 			);
 			path = Formatter;
+			sourceTree = "<group>";
+		};
+		3CB328E623EDAD4C003BF646 /* BushelGUIHost */ = {
+			isa = PBXGroup;
+			children = (
+				3CB328E723EDAD4C003BF646 /* AppDelegate.swift */,
+				3CCDDECB23EDA388007684D1 /* Ask.swift */,
+				3CCDDED023EDA4EF007684D1 /* Ask Views */,
+				3CB328E923EDAD50003BF646 /* Assets.xcassets */,
+				3CB328EB23EDAD50003BF646 /* MainMenu.xib */,
+				3CB328EE23EDAD50003BF646 /* Info.plist */,
+				3CB328EF23EDAD50003BF646 /* BushelGUIHost.entitlements */,
+			);
+			path = BushelGUIHost;
 			sourceTree = "<group>";
 		};
 		3CC2249A2391F50F00448D25 /* Codegen */ = {
@@ -768,6 +804,7 @@
 				3CC2249B2391F51F00448D25 /* Built-in Functions */,
 				3C12EF702354E1E50057E0CC /* Runtime Objects */,
 				3C12EF8E2354E4130057E0CC /* Errors.swift */,
+				3CCDDECD23EDA38D007684D1 /* GUI */,
 				3CC2249C2391F61100448D25 /* Runtime Info */,
 				3CC2249F2391F9CE00448D25 /* Utility */,
 				3CC2249E2391F9AC00448D25 /* Config */,
@@ -808,6 +845,24 @@
 				3C3F06DB23C14165005BC0F2 /* ExpressionsAtLocation.swift */,
 			);
 			path = "AST-derived Output";
+			sourceTree = "<group>";
+		};
+		3CCDDECD23EDA38D007684D1 /* GUI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = GUI;
+			sourceTree = "<group>";
+		};
+		3CCDDED023EDA4EF007684D1 /* Ask Views */ = {
+			isa = PBXGroup;
+			children = (
+				3CCDDED123EDA589007684D1 /* RadioChoicesVC.swift */,
+				3CCDDECE23EDA4E8007684D1 /* RadioChoicesVC.xib */,
+				3CB328F823EDB6CF003BF646 /* CheckboxVC.swift */,
+				3CB328F623EDB675003BF646 /* CheckboxVC.xib */,
+			);
+			path = "Ask Views";
 			sourceTree = "<group>";
 		};
 		3CCE9EAD2325A9EA00198564 /* Auto-fixes */ = {
@@ -1015,6 +1070,23 @@
 			productReference = 3C94570223E8FBC200D59C2C /* BushelLanguageTestingTools.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		3CB328E423EDAD4C003BF646 /* BushelGUIHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3CB328F023EDAD50003BF646 /* Build configuration list for PBXNativeTarget "BushelGUIHost" */;
+			buildPhases = (
+				3CB328E123EDAD4C003BF646 /* Sources */,
+				3CB328E223EDAD4C003BF646 /* Frameworks */,
+				3CB328E323EDAD4C003BF646 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BushelGUIHost;
+			productName = BushelGUIHost;
+			productReference = 3CB328E523EDAD4C003BF646 /* BushelGUIHost.app */;
+			productType = "com.apple.product-type.application";
+		};
 		3CCD8AAE22CC45040049C74F /* BushelRT */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3CCD8AC022CC45040049C74F /* Build configuration list for PBXNativeTarget "BushelRT" */;
@@ -1062,8 +1134,8 @@
 		3C35A5B222C81DE7002D4582 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1020;
-				LastUpgradeCheck = 1100;
+				LastSwiftUpdateCheck = 1130;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Ian Gregory";
 				TargetAttributes = {
 					3C35A5BA22C81DE7002D4582 = {
@@ -1089,6 +1161,9 @@
 						CreatedOnToolsVersion = 10.2.1;
 					};
 					3C94570123E8FBC200D59C2C = {
+						CreatedOnToolsVersion = 11.3.1;
+					};
+					3CB328E423EDAD4C003BF646 = {
 						CreatedOnToolsVersion = 11.3.1;
 					};
 					3CCD8AAE22CC45040049C74F = {
@@ -1133,6 +1208,7 @@
 				3C6B759F2305B5990006C354 /* BushelScriptEnglishTests */,
 				3CCD8AAE22CC45040049C74F /* BushelRT */,
 				3CCD8AB622CC45040049C74F /* BushelRTTests */,
+				3CB328E423EDAD4C003BF646 /* BushelGUIHost */,
 			);
 		};
 /* End PBXProject section */
@@ -1210,6 +1286,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3CB328E323EDAD4C003BF646 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CB328EA23EDAD50003BF646 /* Assets.xcassets in Resources */,
+				3CB328ED23EDAD50003BF646 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1383,6 +1468,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3CB328E123EDAD4C003BF646 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CB328E823EDAD4C003BF646 /* AppDelegate.swift in Sources */,
+				3CB328FA23EDBA8A003BF646 /* Ask.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3CCD8AAB22CC45040049C74F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1397,6 +1491,7 @@
 				3CCD8BA322CFA5BF0049C74F /* GenLLVMIR.swift in Sources */,
 				3CC224892391CFF300448D25 /* PropertyInfo.swift in Sources */,
 				3C12EF8D2354E3870057E0CC /* RT_Class.swift in Sources */,
+				3CB328F923EDB6CF003BF646 /* CheckboxVC.swift in Sources */,
 				3C12EF932354E50B0057E0CC /* RT_RootSpecifier.swift in Sources */,
 				3CCA1C7E235D0C010037058C /* Logging.swift in Sources */,
 				3C12EF892354E3590057E0CC /* RT_Constant.swift in Sources */,
@@ -1410,6 +1505,7 @@
 				3C12EF792354E2860057E0CC /* RT_Real.swift in Sources */,
 				3C37B90123EA42B600BEB5C4 /* BuiltinFunctions.swift in Sources */,
 				3CB528ED23809DDD0051460B /* RTInfo.swift in Sources */,
+				3CCDDED223EDA589007684D1 /* RadioChoicesVC.swift in Sources */,
 				3C12EF772354E2660057E0CC /* RT_Numeric.swift in Sources */,
 				3C12EF9C2354E5D10057E0CC /* RT_AEObject.swift in Sources */,
 				3C12EF752354E23C0057E0CC /* RT_Object.swift in Sources */,
@@ -1494,6 +1590,17 @@
 			targetProxy = 3CCDDEC523ED0257007684D1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		3CB328EB23EDAD50003BF646 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3CB328EC23EDAD50003BF646 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		3C35A5CD22C81DE7002D4582 /* Debug */ = {
@@ -1949,6 +2056,44 @@
 			};
 			name = Release;
 		};
+		3CB328F123EDAD50003BF646 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BushelGUIHost/BushelGUIHost.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BushelGUIHost/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelGUIHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3CB328F223EDAD50003BF646 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BushelGUIHost/BushelGUIHost.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BushelGUIHost/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelGUIHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		3CCD8AC122CC45040049C74F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2107,6 +2252,15 @@
 			buildConfigurations = (
 				3C94570823E8FBC200D59C2C /* Debug */,
 				3C94570923E8FBC200D59C2C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3CB328F023EDAD50003BF646 /* Build configuration list for PBXNativeTarget "BushelGUIHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3CB328F123EDAD50003BF646 /* Debug */,
+				3CB328F223EDAD50003BF646 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

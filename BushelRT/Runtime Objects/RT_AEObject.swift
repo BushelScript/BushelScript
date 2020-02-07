@@ -33,7 +33,7 @@ public class RT_AEObject: RT_Object, AEEncodable {
         else {
             return nil
         }
-        return try? RT_Object.fromAEDescriptor(rt, AppData(formatter: SpecifierFormatter()), coercedDescriptor)
+        return try? RT_Object.fromAEDescriptor(rt, AppData(), coercedDescriptor)
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {

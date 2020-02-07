@@ -249,24 +249,15 @@ extension Dictionary: AECodable {
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         var desc = NSAppleEventDescriptor.record()
         var isCustomRecordType: Bool = false
-        if let key = Symbol(code: _pClass) as? Key, let recordClass = self[key] as? Symbol { // TO DO: confirm this works
-            if !recordClass.nameOnly {
-                desc = desc.coerce(toDescriptorType: recordClass.code)!
-                isCustomRecordType = true
-            }
+        if let key = Symbol(code: _pClass, type: typeType) as? Key, let recordClass = self[key] as? Symbol { // TO DO: confirm this works
+            desc = desc.coerce(toDescriptorType: recordClass.code)!
+            isCustomRecordType = true
         }
-        var userProperties: NSAppleEventDescriptor?
         for (key, value) in self {
             guard let keySymbol = key as? Symbol else {
                 throw PackError(object: key, message: "Can't pack non-Symbol dictionary key of type: \(type(of: key))")
             }
-            if keySymbol.nameOnly {
-                if userProperties == nil {
-                    userProperties = NSAppleEventDescriptor.list()
-                }
-                userProperties?.insert(try appData.pack(keySymbol), at: 0)
-                userProperties?.insert(try appData.pack(value), at: 0)
-            } else if !(keySymbol.code == _pClass && isCustomRecordType) {
+            if !(keySymbol.code == _pClass && isCustomRecordType) {
                 desc.setDescriptor(try appData.pack(value), forKeyword: keySymbol.code)
             }
         }
@@ -279,49 +270,23 @@ extension Dictionary: AECodable {
         }
         var result = [Key:Value]()
         if descriptor.descriptorType != _typeAERecord {
-            if let key = Symbol.symbol(code: _pClass) as? Key,
-                let value = Symbol.symbol(code: descriptor.descriptorType) as? Value {
+            if let key = Symbol(code: _pClass, type: typeType) as? Key,
+                let value = Symbol(code: descriptor.descriptorType, type: typeType) as? Value {
                 result[key] = value
             }
         }
-        for i in 1..<(descriptor.numberOfItems+1) {
+        for i in 1..<(descriptor.numberOfItems + 1) {
             let property = descriptor.keywordForDescriptor(at: i)
-            if property == _keyASUserRecordFields {
-                // unpack record properties whose keys are identifiers (represented as AEList of form: [key1,value1,key2,value2,...])
-                let userProperties = descriptor.atIndex(i)!
-                if userProperties.descriptorType == _typeAEList && userProperties.numberOfItems % 2 == 0 {
-                    for j in stride(from:1, to: userProperties.numberOfItems, by: 2) {
-                        let keyDesc = userProperties.atIndex(j)!
-                        guard let keyString = keyDesc.stringValue else {
-                            throw UnpackError(appData: appData, descriptor: descriptor, type: Key.self, message: "Malformed record key.")
-                        }
-                        guard let key = Symbol.symbol(string: keyString) as? Key else {
-                            throw UnpackError(appData: appData, descriptor: descriptor, type: Key.self,
-                                              message: "Can't unpack record keys as non-Symbol type: \(Key.self)")
-                        }
-                        do {
-                            result[key] = try appData.unpack(descriptor.atIndex(j+1)!) as Value
-                        } catch {
-                            throw UnpackError(appData: appData, descriptor: descriptor, type: Value.self,
-                                              message: "Can't unpack value of record's \(key) property as Swift type: \(Value.self)")
-                        }
-                    }
-                } else { // TO DO: not sure what AS's behavior is; does it unpack as single property or report as error? check and amend if needed (main rationale for throwing is that returned record would vary wildly in structure depending the property's value; which is not to say AS wouldn't do it, but it'd be poor design if it did; plus we already throw if odd items aren't strings)
-                    throw UnpackError(appData: appData, descriptor: descriptor, type: Value.self,
-                                      message: "Can't unpack record: malformed keyASUserRecordFields value.")
-                }
-            } else {
-                // unpack record property whose key is a four-char code (typically corresponding to a dictionary-defined property name)
-                guard let key = appData.recordKey(forCode: property) as? Key else {
-                    throw UnpackError(appData: appData, descriptor: descriptor, type: Key.self,
-                                      message: "Can't unpack record keys as non-Symbol type: \(Key.self)")
-                }
-                do {
-                    result[key] = try appData.unpack(descriptor.atIndex(i)!) as Value
-                } catch {
-                    throw UnpackError(appData: appData, descriptor: descriptor, type: Value.self,
-                                      message: "Can't unpack value of record's \(key) property as Swift type: \(Value.self)")
-                }
+            // unpack record property whose key is a four-char code (typically corresponding to a dictionary-defined property name)
+            guard let key = Symbol(code: property, type: _typeProperty) as? Key else {
+                throw UnpackError(appData: appData, descriptor: descriptor, type: Key.self,
+                                  message: "Can't unpack record keys as non-Symbol type: \(Key.self)")
+            }
+            do {
+                result[key] = try appData.unpack(descriptor.atIndex(i)!) as Value
+            } catch {
+                throw UnpackError(appData: appData, descriptor: descriptor, type: Value.self,
+                                  message: "Can't unpack value of record's \(key) property as Swift type: \(Value.self)")
             }
         }
         self = result

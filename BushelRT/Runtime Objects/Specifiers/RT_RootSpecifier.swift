@@ -3,9 +3,7 @@ import SwiftAutomation
 
 public final class RT_RootSpecifier: RT_Object, RT_SASpecifierConvertible {
     
-    public enum Kind {
-        case application, container, specimen
-    }
+    public typealias Kind = SwiftAutomation.RootSpecifier.Kind
     
     public let rt: RTInfo
     public var kind: Kind
@@ -18,23 +16,11 @@ public final class RT_RootSpecifier: RT_Object, RT_SASpecifierConvertible {
     public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
         switch kind {
         case .application:
-            return RootSpecifier(rootObject: AppRootDesc, appData: appData)
+            return RootSpecifier(.application, appData: appData)
         case .container:
-            return RootSpecifier(rootObject: ConRootDesc, appData: appData)
+            return RootSpecifier(.container, appData: appData)
         case .specimen:
-            return RootSpecifier(rootObject: ItsRootDesc, appData: appData)
-        }
-    }
-    
-    public convenience init?(_ rt: RTInfo, saSpecifier: SwiftAutomation.RootSpecifier) {
-        if saSpecifier === AEApp {
-            self.init(rt, kind: .application)
-        } else if saSpecifier === AECon {
-            self.init(rt, kind: .container)
-        } else if saSpecifier === AEIts {
-            self.init(rt, kind: .specimen)
-        } else {
-            return nil
+            return RootSpecifier(.specimen, appData: appData)
         }
     }
     

@@ -25,12 +25,6 @@ public func formatAppleEvent(descriptor event: NSAppleEventDescriptor, useTermin
     if event.descriptorType != _typeAppleEvent { // sanity check
         return "Can't format Apple event: wrong type: \(formatFourCharCodeString(event.descriptorType))."
     }
-    let appData: DynamicAppData
-    do {
-        appData = try dynamicAppData(forAppleEvent: event, useTerminology: useTerminology)
-    } catch {
-        return "Can't format Apple event: can't get terminology: \(error)"
-    }
     if event.attributeDescriptor(forKeyword: _keyEventClassAttr)!.typeCodeValue == _kCoreEventClass
             && event.attributeDescriptor(forKeyword: _keyEventIDAttr)!.typeCodeValue == _kAEAnswer { // it's a reply event, so format error/return value only
         let errn = event.paramDescriptor(forKeyword: _keyErrorNumber)?.int32Value ?? 0
@@ -38,33 +32,13 @@ public func formatAppleEvent(descriptor event: NSAppleEventDescriptor, useTermin
             let errs = event.paramDescriptor(forKeyword: _keyErrorString)?.stringValue
             return AutomationError(code: Int(errn), message: errs).description // TO DO: use CommandError? (need to check it's happy with only replyEvent arg)
         } else if let reply = event.paramDescriptor(forKeyword: _keyDirectObject) { // format return value
-            return appData.formatter.format((try? appData.unpackAsAny(reply)) ?? reply)
+            return formatSAObject((try? AppData().unpackAsAny(reply)) ?? reply)
         } else {
             return MissingValue.description
         }
     } else { // fully format outgoing event
-        return appData.formatter.formatCommand(CommandDescription(event: event, appData: appData), applicationObject: appData.application)
+        return formatCommand(CommandDescription(event: event, appData: AppData()), applicationObject: AppData().application)
     }
-}
-
-/******************************************************************************/
-// get a DynamicAppData instance for formatting the given AppleEvent
-
-// cache previously parsed terminology for efficiency
-private let _cacheMaxLength = 10
-private var _cachedTerms = [(NSAppleEventDescriptor, TerminologyType, DynamicAppData)]()
-
-private func dynamicAppData(forAppleEvent event: NSAppleEventDescriptor, useTerminology: TerminologyType) throws -> DynamicAppData {
-    let addressDesc = event.attributeDescriptor(forKeyword: _keyAddressAttr)!
-    for (desc, terminologyType, appData) in _cachedTerms {
-        if desc.descriptorType == addressDesc.descriptorType && desc.data == addressDesc.data && terminologyType == useTerminology {
-            return appData
-        }
-    }
-    let appData = try DynamicAppData(applicationURL: applicationURL(forAddressDescriptor: addressDesc), useTerminology: useTerminology) // TO DO: are there any cases where keyAddressArrr won't return correct desc? (also, double-check what reply event uses)
-    if _cachedTerms.count > _cacheMaxLength { _cachedTerms.removeFirst() } // TO DO: ideally this should trim least used, not longest cached
-    _cachedTerms.append((addressDesc, useTerminology, appData))
-    return appData
 }
 
 // given the AEAddressDesc for a local process, return the fileURL to its .app bundle
@@ -82,56 +56,6 @@ func applicationURL(forAddressDescriptor addressDesc: NSAppleEventDescriptor) th
         throw TerminologyError("Can't get path to application bundle (PID: \(pid)).")
     }
     return applicationURL
-}
-
-/******************************************************************************/
-// extend standard AppData to include terminology translation
-
-public class DynamicAppData: AppData { // TO DO: rename this and make `public` as it's only useful for rendering AEs to SwiftAutomation syntax, not for implementing dynamic language bridges (also see notes on CommandDescription initializer, as it's possible this subclass could be eliminated entirely)
-    
-    public internal(set) var glueTable: GlueTable! // provides keyword<->FCC translations
-    
-    public required init(target: TargetApplication, launchOptions: LaunchOptions, relaunchMode: RelaunchMode, formatter: SpecifierFormatter) { // subclass has to re-implement this AppData initializer due to it being 'required'; however, the resulting AppData instance won't contain glueSpec/glueTable values so will crash if those are subsequently used // TO DO: should this initializer always throw fatalError() here? or is it possible to rework AppData implementation to avoid this redeclaration in first place?
-        super.init(target: target, launchOptions: launchOptions, relaunchMode: relaunchMode, formatter: formatter)
-    }
-    
-    public required init(target: TargetApplication, launchOptions: LaunchOptions, relaunchMode: RelaunchMode, formatter: SpecifierFormatter, glueTable: GlueTable) {
-        self.glueTable = glueTable
-        super.init(target: target, launchOptions: launchOptions, relaunchMode: relaunchMode, formatter: formatter)
-    }
-    
-    // given local application's fileURL, create AppData instance with formatting info // TO DO: this uses app path (to ensure it targets the right process if multiple app versions with same bundle ID are installed) instead of bundle ID, so won't work in sandboxed apps (that said, without AE permissions there probably isn't much it can do inside a sandbox anyway)
-    public convenience init(applicationURL: URL, useTerminology: TerminologyType) throws {
-        var specifierFormatter: SpecifierFormatter
-        var glueTable: GlueTable
-        if useTerminology == .none {
-            glueTable = GlueTable(keywordConverter: NoOpKeywordConverter()) // default terms only
-            specifierFormatter = SpecifierFormatter(applicationClassName: "AEApplication", classNamePrefix: "AE")
-        } else {
-            glueTable = GlueTable(keywordConverter: NoOpKeywordConverter())
-//            glueTable = try glueSpec.buildGlueTable()
-            specifierFormatter = SpecifierFormatter(applicationClassName: "AEApplication",
-                                                    classNamePrefix: "AE",
-                                                    typeNames: glueTable.typesByCode,
-                                                    propertyNames: glueTable.propertiesByCode,
-                                                    elementsNames: glueTable.elementsByCode)
-        }
-        self.init(target: TargetApplication.url(applicationURL), launchOptions: DefaultLaunchOptions,
-                  relaunchMode: DefaultRelaunchMode, formatter: specifierFormatter, glueTable: glueTable)
-    }
-    
-    public override func targetedCopy(_ target: TargetApplication, launchOptions: LaunchOptions, relaunchMode: RelaunchMode) -> Self {
-        return type(of: self).init(target: target, launchOptions: launchOptions, relaunchMode: relaunchMode,
-                                   formatter: formatter, glueTable: glueTable)
-    }
-    
-    override func unpackAsSymbol(_ desc: NSAppleEventDescriptor) -> Symbol {
-        return Symbol(name: self.glueTable.typesByCode[desc.typeCodeValue], code: desc.typeCodeValue, type: desc.descriptorType)
-    }
-    
-    override func recordKey(forCode code: OSType) -> Symbol {
-        return Symbol(name: self.glueTable.typesByCode[code], code: code, type: _typeProperty)
-    }
 }
 
 /******************************************************************************/
@@ -155,7 +79,6 @@ public struct CommandDescription {
     public private(set) var withTimeout: TimeInterval = defaultTimeout
     public private(set) var considering: ConsideringOptions = [.case]
     
-    
     // called by sendAppleEvent with a failed command's details
     public init(name: String?, eventClass: OSType, eventID: OSType, parentSpecifier: Any?,
                 directParameter: Any, keywordParameters: [KeywordParameter],
@@ -177,7 +100,7 @@ public struct CommandDescription {
     }
     
     // called by [e.g.] SwiftAutoEdit.app with an intercepted AppleEvent descriptor
-    public init(event: NSAppleEventDescriptor, appData: DynamicAppData) { // TO DO: would be more flexible to take AppData + GlueTable as separate params
+    public init(event: NSAppleEventDescriptor, appData: AppData) {
         // unpack the event's parameters
         var rawParameters = [OSType:Any]()
         for i in 1...event.numberOfItems {
@@ -187,26 +110,7 @@ public struct CommandDescription {
         //
         let eventClass = event.attributeDescriptor(forKeyword: _keyEventClassAttr)!.typeCodeValue
         let eventID = event.attributeDescriptor(forKeyword: _keyEventIDAttr)!.typeCodeValue
-        if let commandInfo = appData.glueTable.commandsByCode[eightCharCode(eventClass, eventID)] {
-            var keywordParameters = [(String, Any)]()
-            for paramInfo in commandInfo.parameters { // this ignores parameters that don't have a keyword name; it should also ignore ("as",keyAERequestedType) parameter (this is probably best done by ensuring that command parsers always omit it)
-                if let value = rawParameters[paramInfo.code] {
-                    keywordParameters.append((paramInfo.name, value))
-                }
-            }
-            let directParameter = rawParameters[_keyDirectObject] ?? NoParameter
-            let requestedType = rawParameters[_keyAERequestedType] as? Symbol
-            // make sure all keyword parameters have been matched to parameter names
-            if rawParameters.count == keywordParameters.count + (parameterExists(directParameter) ? 1 : 0)
-                + ((requestedType != nil && !commandInfo.parameters.contains(where: { $0.code == _keyAERequestedType })) ? 1 : 0) { // TO DO: check this logic re. _keyAERequestedType
-                self.signature = .named(name: commandInfo.name, directParameter: directParameter,
-                                      keywordParameters: keywordParameters, requestedType: requestedType)
-            } else {
-                self.signature = .codes(eventClass: eventClass, eventID: eventID, parameters: rawParameters)
-            }
-        } else {
-            self.signature = .codes(eventClass: eventClass, eventID: eventID, parameters: rawParameters)
-        }
+        self.signature = .codes(eventClass: eventClass, eventID: eventID, parameters: rawParameters)
         // unpack subject attribute, if given
         if let desc = event.attributeDescriptor(forKeyword: _keySubjectAttr) {
             if desc.descriptorType != _typeNull { // typeNull = root application object

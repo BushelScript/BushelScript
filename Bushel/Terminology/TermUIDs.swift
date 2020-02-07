@@ -422,6 +422,7 @@ public enum CommandUID: String, TermUIDPredefinedValue {
     case GUI_notification
     case GUI_alert
     case GUI_chooseFrom
+    case GUI_ask
     
     case CLI_log
     
@@ -520,6 +521,7 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
     case GUI_chooseFrom_cancel
     case GUI_chooseFrom_multipleSelection
     case GUI_chooseFrom_noSelection
+    case GUI_ask_dataType
     
     public var kind: TypedTermUID.Kind {
         .parameter

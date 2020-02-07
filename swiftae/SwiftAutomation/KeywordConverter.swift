@@ -9,8 +9,6 @@ import Foundation
 
 public protocol KeywordConverter {
     
-    var defaultTerminology: ApplicationTerminology { get }
-    
     func convertSpecifierName(_ s: String) -> String
     func convertParameterName(_ s: String) -> String
     func identifierForAppName(_ appName: String) -> String
@@ -20,10 +18,6 @@ public protocol KeywordConverter {
 }
 
 public class NoOpKeywordConverter: KeywordConverter {
-    
-    public var defaultTerminology: ApplicationTerminology {
-        return DefaultTerminology(keywordConverter: self)
-    }
     
     public func convertSpecifierName(_ s: String) -> String {
         return s

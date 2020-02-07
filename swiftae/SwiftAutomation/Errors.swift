@@ -279,7 +279,7 @@ public class CommandError: AutomationError { // raised whenever an application c
     }
     
     public var commandDescription: String {
-        return self.appData.formatter.formatCommand(self.commandInfo, applicationObject: self.appData.application)
+        formatCommand(self.commandInfo, applicationObject: self.appData.application)
     }
     
     public override var description: String {

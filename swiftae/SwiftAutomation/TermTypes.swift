@@ -12,14 +12,6 @@ public class TerminologyError: AutomationError {
     }
 }
 
-public protocol ApplicationTerminology { // GlueTable.add() accepts any object that adopts this protocol (normally AETEParser/SDEFParser, but a dynamic bridge could also use this to reimport previously exported tables to which manual corrections have been made)
-    var types: [KeywordTerm] {get}
-    var enumerators: [KeywordTerm] {get}
-    var properties: [KeywordTerm] {get}
-    var elements: [ClassTerm] {get}
-    var commands: [CommandTerm] {get}
-}
-
 // TO DO: get rid of Term classes; rename TermType enum to Term and attach names and codes to that
 
 public enum TermType {
@@ -32,7 +24,7 @@ public enum TermType {
 
 public class Term { // base class for keyword and command definitions
 
-    public var name: String // editable as GlueTable may need to escape names to disambiguate conflicting terms
+    public let name: String
     public let kind: TermType
 
     init(name: String, kind: TermType) {

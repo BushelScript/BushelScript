@@ -57,17 +57,10 @@
 import Foundation
 import AppKit
 
-// TO DO: underscore/prefix non-public properties and methods to reduce risk of terminology clashes
-
-// TO DO: make sure KeywordConverter lists _all_ Specifier members
-
-// TO DO: debugDescription that displays raw FCC representation?
-
 /******************************************************************************/
-// abstract base class for _all_ specifier and test clause subclasses
+// Common protocol for all specifier and test clause types.
 
-public protocol Query: CustomStringConvertible, CustomDebugStringConvertible, CustomReflectable, AEEncodable {
-    // note: Equatable isn't implemented here as 1. it's rarely necessary to compare two specifiers, and 2. only the target app can know if two queries identify the same object or not, e.g. `Finder().folders["foo"]`, `Finder().desktop.folders["FOO"]`, and `Finder().home.folders["Desktop:Foo"]` all refer to same object (a folder named "foo" on user's desktop) while `Finder.disks["Bar"]` and `Finder.disks["bar"]` do not (since disk names are case-sensitive)
+public protocol Query: CustomStringConvertible, AEEncodable {
     
     var rootSpecifier: RootSpecifier { get }
 
@@ -77,47 +70,25 @@ public protocol Query: CustomStringConvertible, CustomDebugStringConvertible, Cu
 
 extension Query {
     
-    public var rootSpecifier: RootSpecifier {
-        fatalError("must be implemented")
-    }
-    
-}
-
-extension Query {
-    
     public var description: String {
-        return appData.formatter.format(self)
-    }
-    
-    public var debugDescription: String {
-        return description
-    }
-    
-    public var customMirror: Mirror {
-        let children: [Mirror.Child] = [
-            (label: "description", value: self.description),
-            (label: "target", value: self.appData.target),
-        ]
-        return Mirror(self, children: children, displayStyle: Mirror.DisplayStyle.class, ancestorRepresentation: .suppressed)
+        formatSAObject(self)
     }
     
 }
 
 /******************************************************************************/
-// abstract base class for all object and insertion specifiers
-// app-specific glues should subclass this and add command methods via protocol extension (mixin) to it and all of its subclasses too
-// note: while application commands will be mixed-in on both targeted and untargeted specifiers, they will always throw if called on the latter; while it would be possible to differentiate the two it would complicate the implementation while failing to provide any real benefit to users, who are unlikely to make such a mistake in the first place
+// Abstract base class for all object and insertion specifiers
+
+// An object specifier is constructed as a linked list of AERecords of typeObjectSpecifier, terminated by a root descriptor (e.g. a null descriptor represents the root node of the app's Apple event object graph). The topmost node may also be an insertion location specifier, represented by an AERecord of typeInsertionLoc. The abstract Specifier class implements functionality common to both object and insertion specifiers.
 
 public class Specifier: Query {
     
     public var appData: AppData
-
-    // An object specifier is constructed as a linked list of AERecords of typeObjectSpecifier, terminated by a root descriptor (e.g. a null descriptor represents the root node of the app's Apple event object graph). The topmost node may also be an insertion location specifier, represented by an AERecord of typeInsertionLoc. The abstract Specifier class implements functionality common to both object and insertion specifiers.
-
-    public init(appData: AppData) { // descriptor is supplied on unpacking
+    
+    public init(appData: AppData) {
         self.appData = appData
     }
-
+    
     public var rootSpecifier: RootSpecifier {
         return parentQuery.rootSpecifier
     }
@@ -125,7 +96,7 @@ public class Specifier: Query {
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         fatalError()
     }
-
+    
 }
 
 public protocol ChildQuery: Query {
@@ -162,19 +133,7 @@ extension Specifier: ChildQuery {
                                           sendOptions: sendOptions, withTimeout: withTimeout, considering: considering)
     }
 
-    public func sendAppleEvent<T>(_ eventClass: String, _ eventID: String, _ parameters: [String: Any] = [:],
-                                  requestedType: Symbol? = nil, waitReply: Bool = true, sendOptions: SendOptions? = nil,
-                                  withTimeout: TimeInterval? = nil, considering: ConsideringOptions? = nil) throws -> T {
-        var params = [OSType: Any]()
-        for (k, v) in parameters { params[try FourCharCode(fourByteString: k)] = v }
-        return try appData.sendAppleEvent(eventClass: try FourCharCode(fourByteString: eventClass),
-                                          eventID: try FourCharCode(fourByteString: eventID),
-                                          parentSpecifier: self, parameters: params,
-                                          requestedType: requestedType, waitReply: waitReply,
-                                          sendOptions: sendOptions, withTimeout: withTimeout, considering: considering)
-    }
-
-    // non-generic versions of the above methods; these are bound when T can't be inferred (either because caller doesn't use the return value or didn't declare a specific type for it, e.g. `let result = cmd.call()`), in which case Any is used
+    // non-generic version of the above method; bound when T can't be inferred (either because caller doesn't use the return value or didn't declare a specific type for it, e.g. `let result = cmd.call()`), in which case Any is used
 
     @discardableResult public func sendAppleEvent(_ eventClass: OSType, _ eventID: OSType, _ parameters: [OSType: Any] = [:],
                                                   requestedType: Symbol? = nil, waitReply: Bool = true, sendOptions: SendOptions? = nil,
@@ -184,23 +143,11 @@ extension Specifier: ChildQuery {
                                           requestedType: requestedType, waitReply: waitReply,
                                           sendOptions: sendOptions, withTimeout: withTimeout, considering: considering)
     }
-
-    @discardableResult public func sendAppleEvent(_ eventClass: String, _ eventID: String, _ parameters: [String: Any] = [:],
-                                                  requestedType: Symbol? = nil, waitReply: Bool = true, sendOptions: SendOptions? = nil,
-                                                  withTimeout: TimeInterval? = nil, considering: ConsideringOptions? = nil) throws -> Any {
-        var params = [OSType: Any]()
-        for (k, v) in parameters { params[try FourCharCode(fourByteString: k)] = v }
-        return try appData.sendAppleEvent(eventClass: try FourCharCode(fourByteString: eventClass),
-                                          eventID: try FourCharCode(fourByteString: eventID),
-                                          parentSpecifier: self, parameters: params,
-                                          requestedType: requestedType, waitReply: waitReply,
-                                          sendOptions: sendOptions, withTimeout: withTimeout, considering: considering)
-    }
     
 }
 
 /******************************************************************************/
-// insertion location specifier
+// Insertion location specifier
 
 public class InsertionSpecifier: Specifier {
 
@@ -225,7 +172,7 @@ public class InsertionSpecifier: Specifier {
 }
 
 /******************************************************************************/
-// property/single-element specifiers; identifies an attribute/describes a one-to-one relationship between nodes in the app's AEOM graph
+// Property/single-element specifiers; identifies an attribute/describes a one-to-one relationship between nodes in the app's AEOM graph
 
 public protocol ObjectSpecifierProtocol: ChildQuery {
     
@@ -236,7 +183,8 @@ public protocol ObjectSpecifierProtocol: ChildQuery {
     
 }
 
-public class ObjectSpecifier: Specifier, ObjectSpecifierProtocol { // represents property or single element specifier; adds property+elements vars, relative selectors, insertion specifiers
+// Represents property or single element specifier; adds property+elements vars, relative selectors, insertion specifiers
+public class ObjectSpecifier: Specifier, ObjectSpecifierProtocol {
 
     // 'want', 'form', 'seld'
     public let wantType: NSAppleEventDescriptor
@@ -461,9 +409,28 @@ public class LogicalTest: TestClause, ChildQuery {
 /******************************************************************************/
 // Specifier roots (all Specifier chains must originate from a RootSpecifier instance)
 
-// note: app glues will also define their own untargeted App, Con, and Its roots
-
-public class RootSpecifier: Specifier, ObjectSpecifierProtocol { // app, con, its, custom root (note: this is a bit sloppy; `con` based specifiers are only for use in by-range selectors, and only `its` based specifiers should support comparison and logic tests; only targeted absolute (app-based/customroot-based) specifiers should implement commands, although single `app` root doesn't distinguish untargeted from targeted since that's determined by absence/presence of AppData object)
+public class RootSpecifier: Specifier, ObjectSpecifierProtocol {
+    
+    public enum Kind {
+        /// Root of all absolute object specifiers.
+        /// e.g., `document 1 of «application»`.
+        case application
+        /// Root of an object specifier specifying the start or end of a range of
+        /// elements in a by-range specifier.
+        /// e.g., `folders (folder 2 of «container») thru (folder -1 of «container»)`.
+        case container
+        /// Root of an object specifier specifying an element whose state is being
+        /// compared in a by-test specifier.
+        /// e.g., `every track where (rating of «specimen» > 50)`.
+        case specimen
+    }
+    
+    public var kind: Kind
+    
+    public init(_ kind: Kind, appData: AppData) {
+        self.kind = kind
+        super.init(appData: appData)
+    }
     
     public var wantType: NSAppleEventDescriptor {
         return .null()
@@ -472,12 +439,15 @@ public class RootSpecifier: Specifier, ObjectSpecifierProtocol { // app, con, it
         return .null()
     }
     
-    public var selectorData: Any
-    
-    public init(rootObject: Any, appData: AppData) {
-        // rootObject is either one of the three standard AEDescs indicating app/con/its root, or an arbitrary object supplied by caller (e.g. an AEAddressDesc if constructing a fully qualified specifier)
-        self.selectorData = rootObject
-        super.init(appData: appData)
+    public var selectorData: Any {
+        switch kind {
+        case .application:
+            return NSAppleEventDescriptor.null()
+        case .container:
+            return NSAppleEventDescriptor(descriptorType: typeCurrentContainer, data: nil)!
+        case .specimen:
+            return NSAppleEventDescriptor(descriptorType: typeObjectBeingExamined, data: nil)!
+        }
     }
     
     // Query/Specifier-inherited properties and methods that recursively call their parent specifiers are overridden here to ensure they terminate:
@@ -488,10 +458,6 @@ public class RootSpecifier: Specifier, ObjectSpecifierProtocol { // app, con, it
     
     public override var rootSpecifier: RootSpecifier {
         return self
-    }
-    
-    public var rootObject: Any { // the objspec chain's terminal 'from' object; this is usually AppRootDesc/ConRootDesc/ItsRootDesc, but not always (e.g. 'fully qualified' specifiers are terminated by an AEAddressDesc)
-        return self.selectorData
     }
     
     public override func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {

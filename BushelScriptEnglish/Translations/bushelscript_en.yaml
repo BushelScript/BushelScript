@@ -88,6 +88,7 @@ translation:
                 aevtpdoc: print documents   # Let's not have random sheets of paper coming out of people's printers.
                 aevtquit: quit
                 miscactv: activate
+                GURLGURL: open location
                 # StandardAdditions commands.
                 sysonotf: notification
                 sysodisA: alert
@@ -121,12 +122,15 @@ translation:
                     join: join
                 String:
                     split: split
+                GUI:
+                    ask: ask
                 CLI:
                     log: log
         parameter:
             ae12:
                 coresetddata: to
                 aevtodocstxt: search text
+                GURLGURLWIND: window
                 sysonotfappr: title
                 sysonotfsubt: subtitle
                 sysonotfnsou: sound
@@ -166,6 +170,10 @@ translation:
                 String:
                     split:
                         by: by
+                GUI:
+                    ask:
+                        /direct: prompt
+                        dataType: for
                 CLI:
                     log:
                         /direct: message
