@@ -23,6 +23,12 @@ public class ConstantInfo: TermInfo, Hashable {
         return nil
     }
     
+    public func addName(_ name: TermName) {
+        if self.name == nil {
+            tags.insert(.name(name))
+        }
+    }
+    
     public static func == (lhs: ConstantInfo, rhs: ConstantInfo) -> Bool {
         return lhs.uid == rhs.uid
     }

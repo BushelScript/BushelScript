@@ -23,6 +23,12 @@ public class ParameterInfo: TermInfo, Hashable {
         return nil
     }
     
+    public func addName(_ name: TermName) {
+        if self.name == nil {
+            tags.insert(.name(name))
+        }
+    }
+    
     public static func == (lhs: ParameterInfo, rhs: ParameterInfo) -> Bool {
         return lhs.uid == rhs.uid
     }

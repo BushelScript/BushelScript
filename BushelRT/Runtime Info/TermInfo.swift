@@ -6,6 +6,8 @@ public protocol TermInfo: CustomStringConvertible, CustomDebugStringConvertible 
     var uid: TermUID { get }
     var name: TermName? { get }
     
+    func addName(_ name: TermName)
+    
 }
 
 extension TermInfo {

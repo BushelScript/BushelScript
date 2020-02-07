@@ -44,6 +44,12 @@ public class TypeInfo: TermInfo, Hashable {
         return nil
     }
     
+    public func addName(_ name: TermName) {
+        if self.name == nil {
+            tags.insert(.name(name))
+        }
+    }
+    
     public static func == (lhs: TypeInfo, rhs: TypeInfo) -> Bool {
         return lhs.uid == rhs.uid
     }

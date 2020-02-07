@@ -593,15 +593,18 @@ extension RT_Object {
 extension SwiftAutomation.Symbol {
     
     func asRTObject(_ rt: RTInfo) -> RT_Object {
+        func addingName<Info: TermInfo>(to info: Info) -> Info {
+            if let name = self.name {
+                info.addName(TermName(name))
+            }
+            return info
+        }
+        
         switch type {
         case typeType:
-            return RT_Class(value: rt.type(for: code) ?? TypeInfo(.ae4(code: code), name == nil ? [] : [.name(TermName(name!))]))
+            return RT_Class(value: addingName(to: rt.type(for: code)))
         case typeEnumerated, typeKeyword, typeProperty:
-            return RT_Constant(value:
-                rt.constant(for: code) ??
-                rt.property(for: code).map { ConstantInfo(property: $0) } ??
-                rt.type(for: code).map { ConstantInfo(type: $0) } ??
-                ConstantInfo(.ae4(code: code), name == nil ? [] : [.name(TermName(name!))]))
+            return RT_Constant(value: addingName(to: rt.constant(for: code)))
         default:
             fatalError("invalid descriptor type for Symbol")
         }

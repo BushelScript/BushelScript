@@ -79,6 +79,12 @@ public class RTInfo {
     private var typesBySupertype: [TypeInfo : [TypeInfo]] = [:]
     private var typesByName: [TermName : TypeInfo] = [:]
     
+    private func add(forTypeUID uid: TermUID) -> TypeInfo {
+        let info = TypeInfo(uid)
+        typesByUID[TypedTermUID(.type, uid)] = info
+        return info
+    }
+    
     public func type(forUID uid: TypedTermUID) -> TypeInfo {
         typesByUID[uid] ?? TypeInfo(uid.uid)
     }
@@ -88,32 +94,50 @@ public class RTInfo {
     public func type(for name: TermName) -> TypeInfo? {
         typesByName[name]
     }
-    public func type(for code: OSType) -> TypeInfo? {
-        typesByUID[TypedTermUID(.type, .ae4(code: code))]
+    public func type(for code: OSType) -> TypeInfo {
+        type(forUID: TypedTermUID(.type, .ae4(code: code)))
     }
     
     private var propertiesByUID: [TypedTermUID : PropertyInfo] = [:]
     
-    public func property(forUID uid: TypedTermUID) -> PropertyInfo {
-        propertiesByUID[uid] ?? PropertyInfo(uid.uid)
+    private func add(forPropertyUID uid: TermUID) -> PropertyInfo {
+        let info = PropertyInfo(uid)
+        propertiesByUID[TypedTermUID(.property, uid)] = info
+        return info
     }
-    public func property(for code: OSType) -> PropertyInfo? {
-        propertiesByUID[TypedTermUID(.property, .ae4(code: code))]
+    
+    public func property(forUID uid: TypedTermUID) -> PropertyInfo {
+        propertiesByUID[uid] ?? add(forPropertyUID: uid.uid)
+    }
+    public func property(for code: OSType) -> PropertyInfo {
+        property(forUID: TypedTermUID(.property, .ae4(code: code)))
     }
     
     private var constantsByUID: [TypedTermUID : ConstantInfo] = [:]
     
-    public func constant(forUID uid: TypedTermUID) -> ConstantInfo {
-        constantsByUID[uid] ?? ConstantInfo(uid.uid)
+    private func add(forConstantUID uid: TermUID) -> ConstantInfo {
+        let info = ConstantInfo(uid)
+        constantsByUID[TypedTermUID(.constant, uid)] = info
+        return info
     }
-    public func constant(for code: OSType) -> ConstantInfo? {
-        constantsByUID[TypedTermUID(.constant, .ae4(code: code))]
+    
+    public func constant(forUID uid: TypedTermUID) -> ConstantInfo {
+        constantsByUID[uid] ?? add(forConstantUID: uid.uid)
+    }
+    public func constant(for code: OSType) -> ConstantInfo {
+        constant(forUID: TypedTermUID(.constant, .ae4(code: code)))
     }
     
     private var commandsByUID: [TypedTermUID : CommandInfo] = [:]
     
+    private func add(forCommandUID uid: TermUID) -> CommandInfo {
+        let info = CommandInfo(uid)
+        commandsByUID[TypedTermUID(.command, uid)] = info
+        return info
+    }
+    
     public func command(forUID uid: TypedTermUID) -> CommandInfo {
-        commandsByUID[uid] ?? CommandInfo(uid.uid)
+        commandsByUID[uid] ?? add(forCommandUID: uid.uid)
     }
     
     public func retain(_ object: RT_Object) {

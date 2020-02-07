@@ -267,7 +267,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         }
         
         let typeCode = saSpecifier.wantType.typeCodeValue
-        let type = rt.type(for: typeCode) ?? TypeInfo(.ae4(code: typeCode))
+        let type = rt.type(for: typeCode)
         
         let kind: Kind
         // See AppData.unpackAsObjectSpecifier(_:)
@@ -279,7 +279,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
             else {
                 return nil
             }
-            let property = rt.property(for: code) ?? PropertyInfo(.ae4(code: code))
+            let property = rt.property(for: code)
             self.init(rt, parent: parent!, type: nil, property: property, data: [], kind: .property)
             return
         case 0x75737270: // _formUserPropertyID:
