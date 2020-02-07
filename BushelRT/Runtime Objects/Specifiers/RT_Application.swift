@@ -52,7 +52,7 @@ extension RT_Application {
 extension RT_Application {
     
     public func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        return try specifier.performByAppleEvent(command: CommandInfo(.get), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, targetBundleID: bundleIdentifier)
+        return try specifier.performByAppleEvent(command: rt.command(forUID: TypedTermUID(CommandUID.get)), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, targetBundleID: bundleIdentifier)
     }
     
     public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, for specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
