@@ -289,7 +289,6 @@
 		3C6FB1E323E2A2530009315B /* TermDictionaryContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermDictionaryContainer.swift; sourceTree = "<group>"; };
 		3C70A6A323C5898C00CD5F73 /* RT_TestSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_TestSpecifier.swift; sourceTree = "<group>"; };
 		3C72CEBD22E1023200A98EC7 /* TypeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeExtensions.swift; sourceTree = "<group>"; };
-		3C72CEBE22E1023200A98EC7 /* TermTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermTypes.swift; sourceTree = "<group>"; };
 		3C72CEBF22E1023200A98EC7 /* AEApplicationGlue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AEApplicationGlue.swift; sourceTree = "<group>"; };
 		3C72CEC022E1023200A98EC7 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
 		3C72CEC222E1023200A98EC7 /* KeywordConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeywordConverter.swift; sourceTree = "<group>"; };
@@ -607,7 +606,6 @@
 			children = (
 				3C72CEF822E102AF00A98EC7 /* SwiftAE.xcodeproj */,
 				3C72CEBD22E1023200A98EC7 /* TypeExtensions.swift */,
-				3C72CEBE22E1023200A98EC7 /* TermTypes.swift */,
 				3C72CEBF22E1023200A98EC7 /* AEApplicationGlue.swift */,
 				3C72CEC022E1023200A98EC7 /* AppData.swift */,
 				3C72CEC222E1023200A98EC7 /* KeywordConverter.swift */,

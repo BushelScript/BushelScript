@@ -11,12 +11,13 @@
 // TO DO: check endianness in read data methods
 
 import Foundation
+import SDEFinitely
 
 /**********************************************************************/
 
 public class AETEParser {
     
-    public private(set) var types: [KeywordTerm] = []
+    public private(set) var types: [ClassTerm] = []
     public private(set) var enumerators: [KeywordTerm] = []
     public private(set) var properties: [KeywordTerm] = []
     public private(set) var elements: [ClassTerm] = []
@@ -26,11 +27,10 @@ public class AETEParser {
     private let keywordConverter: KeywordConverter
     
     // following are used in parse() to supply 'missing' singular/plural class names
-    private var classDefinitionsByCode = [OSType:ClassTerm]()
+    private var classDefinitionsByCode = [OSType : ClassTerm]()
     
     var aeteData = NSData() // was char*
     var cursor: Int = 0 // was unsigned long
-    
     
     public init(keywordConverter: KeywordConverter) {
         self.keywordConverter = keywordConverter
@@ -49,24 +49,24 @@ public class AETEParser {
                 /* singular names are normally used in the classes table and plural names in the elements table. However, if an aete defines a singular name but not a plural name then the missing plural name is substituted with the singular name; and vice-versa if there's no singular equivalent for a plural name.
                 */
                 for var elementTerm in self.classDefinitionsByCode.values {
-                    if elementTerm.singular == "" {
-                        elementTerm = ClassTerm(singular: elementTerm.plural, plural: elementTerm.plural, code: elementTerm.code)
-                    } else if elementTerm.plural == "" {
-                        elementTerm = ClassTerm(singular: elementTerm.singular, plural: elementTerm.singular, code: elementTerm.code)
+                    if elementTerm.name == "" {
+                        elementTerm = ClassTerm(name: elementTerm.pluralName, pluralName: elementTerm.pluralName, code: elementTerm.code)
+                    } else if elementTerm.pluralName == "" {
+                        elementTerm = ClassTerm(name: elementTerm.name, pluralName: elementTerm.name, code: elementTerm.code)
                     }
                     self.elements.append(elementTerm)
                     self.types.append(elementTerm)
                 }
                 self.classDefinitionsByCode.removeAll()
             } catch {
-                throw TerminologyError("An error occurred while parsing AETE. \(error)")
+                throw SDEFError(message: "An error occurred while parsing AETE.", cause: error)
             }
         case _typeAEList:
             for i in 1..<(descriptor.numberOfItems+1) {
                 try self.parse(descriptor.atIndex(i)!)
             }
         default:
-            throw TerminologyError("An error occurred while parsing AETE. Unsupported descriptor type: \(formatFourCharCodeString(descriptor.descriptorType))")
+            throw SDEFError(message: "An error occurred while parsing AETE. Unsupported descriptor type: \(formatFourCharCodeString(descriptor.descriptorType))")
         }
     }
     
@@ -127,7 +127,7 @@ public class AETEParser {
     
     @inline(__always) private func checkCursor() throws {
         if cursor > self.aeteData.length {
-            throw TerminologyError("The AETE ended prematurely: (self.aeteData.length) bytes expected, (self.cursor) bytes read.")
+            throw SDEFError(message: "The AETE ended prematurely: \(self.aeteData.length) bytes expected, \(self.cursor) bytes read.")
         }
     }
     
@@ -140,7 +140,7 @@ public class AETEParser {
         self.alignCursor()
         let classCode = self.code()
         let code = self.code()
-        let commandDef = CommandTerm(name: name, eventClass: classCode, eventID: code)
+        var commandDef = CommandTerm(name: name, eventClass: classCode, eventID: code)
         // skip result
         self.skipCode()     // datatype
         self.skipString()   // description
@@ -195,7 +195,7 @@ public class AETEParser {
             self.alignCursor()
             let flags = self.short()
             if propertyCode != _kAEInheritedProperties { // it's a normal property definition, not a superclass  definition
-                let propertyDef = KeywordTerm(name: propertyName, kind: .property, code: propertyCode)
+                let propertyDef = KeywordTerm(name: propertyName, code: propertyCode, kind: .property)
                 if (flags % 2 != 0) { // class name is plural
                     isPlural = true
                 } else if !properties.contains(propertyDef) { // add to list of property definitions
@@ -216,9 +216,9 @@ public class AETEParser {
         let elementDef: ClassTerm
         let oldDef = self.classDefinitionsByCode[classCode]
         if isPlural {
-            elementDef = ClassTerm(singular: oldDef?.singular ?? "", plural: className, code: classCode)
+            elementDef = ClassTerm(name: oldDef?.name ?? "", pluralName: className, code: classCode)
         } else {
-            elementDef = ClassTerm(singular: className, plural: oldDef?.plural ?? "", code: classCode)
+            elementDef = ClassTerm(name: className, pluralName: oldDef?.pluralName ?? "", code: classCode)
         }
         self.classDefinitionsByCode[classCode] = elementDef
     }
@@ -238,7 +238,7 @@ public class AETEParser {
         for _ in 0..<n {
             let name = self.keywordConverter.convertSpecifierName(self.string())
             self.alignCursor()
-            let enumeratorDef = KeywordTerm(name: name, kind: .enumerator, code: self.code())
+            let enumeratorDef = KeywordTerm(name: name, code: self.code(), kind: .enumerator)
             self.skipString()    // description
             self.alignCursor()
             if !self.enumerators.contains(enumeratorDef) {

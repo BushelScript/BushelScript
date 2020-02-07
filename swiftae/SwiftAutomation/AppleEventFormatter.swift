@@ -41,23 +41,6 @@ public func formatAppleEvent(descriptor event: NSAppleEventDescriptor, useTermin
     }
 }
 
-// given the AEAddressDesc for a local process, return the fileURL to its .app bundle
-func applicationURL(forAddressDescriptor addressDesc: NSAppleEventDescriptor) throws -> URL {
-    var addressDesc = addressDesc
-    if addressDesc.descriptorType == _typeProcessSerialNumber { // AppleScript is old school
-        addressDesc = addressDesc.coerce(toDescriptorType: _typeKernelProcessID)!
-    }
-    guard addressDesc.descriptorType == _typeKernelProcessID else { // local processes are generally targeted by PID
-        throw TerminologyError("Unsupported address type: \(formatFourCharCodeString(addressDesc.descriptorType))")
-    }
-    var pid: pid_t = 0
-    (addressDesc.data as NSData).getBytes(&pid, length: MemoryLayout<pid_t>.size)
-    guard let applicationURL = NSRunningApplication(processIdentifier: pid)?.bundleURL else {
-        throw TerminologyError("Can't get path to application bundle (PID: \(pid)).")
-    }
-    return applicationURL
-}
-
 /******************************************************************************/
 // unpack AppleEvent descriptor's contents into struct, to be consumed by SpecifierFormatter.formatCommand()
 

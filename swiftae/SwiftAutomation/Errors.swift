@@ -294,4 +294,3 @@ public class CommandError: AutomationError { // raised whenever an application c
         return string
     }
 }
-
