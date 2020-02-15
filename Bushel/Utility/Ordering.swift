@@ -13,7 +13,7 @@ private func lexicographicalCompare<Seq: Swift.Sequence>(_ lhs: Seq, to rhs: Seq
         let rhsValue = rhsIt.next()
     {
         if lhsValue < rhsValue { return .orderedAscending }
-        if rhsValue < lhsValue { return .orderedAscending }
+        if rhsValue < lhsValue { return .orderedDescending }
         lhsCount += 1
         rhsCount += 1
     }
