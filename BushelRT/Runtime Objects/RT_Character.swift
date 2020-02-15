@@ -24,10 +24,19 @@ public class RT_Character: RT_Object, AEEncodable {
             .map { value <=> $0.value }
     }
     
+    public override func coerce(to type: TypeInfo) -> RT_Object? {
+        switch TypeUID(type.uid) {
+        case .string:
+            return RT_String(value: String(value))
+        default:
+            return super.coerce(to: type)
+        }
+    }
+    
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
-        return withUnsafeBytes(of: value, { valuePointer in
-            return NSAppleEventDescriptor(descriptorType: cChar, bytes: valuePointer.baseAddress!, length: valuePointer.count)!
-        })
+        String(value).withCString(encodedAs: UTF32.self) { cString in
+            NSAppleEventDescriptor(descriptorType: cChar, bytes: cString, length: 1)! as NSAppleEventDescriptor
+        }
     }
     
 }

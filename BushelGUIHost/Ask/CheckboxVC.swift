@@ -1,13 +1,8 @@
 import Cocoa
 
-class CheckboxVC: NSViewController {
+final class CheckboxVC: NSViewController {
     
     @IBOutlet var checkbox: NSButton!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do view setup here.
-    }
     
     override var title: String? {
         didSet {

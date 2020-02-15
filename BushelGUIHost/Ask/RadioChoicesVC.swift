@@ -1,16 +1,16 @@
 import Cocoa
 
-class RadioChoicesVC: NSViewController {
+final class RadioChoicesVC: NSViewController {
     
     @IBOutlet var choicesStackView: NSStackView!
     @IBOutlet var radioButtonTemplate: NSButton!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do view setup here.
-    }
+    var currentChoiceName: String?
     
     func addChoice(named choiceName: String) {
+        // Load the view
+        _ = self.view
+        
         // NSCell supports NSCopying
         let radioButton = NSButton(frame: .zero)
         radioButton.cell = radioButtonTemplate.cell!.copy() as? NSCell
@@ -18,9 +18,12 @@ class RadioChoicesVC: NSViewController {
         radioButton.title = choiceName
         
         choicesStackView.addArrangedSubview(radioButton)
+        
+        if currentChoiceName == nil {
+            currentChoiceName = choiceName
+            radioButton.state = .on
+        }
     }
-    
-    var currentChoiceName: String?
     
     @IBAction func setChoice(_ sender: AnyObject) {
         currentChoiceName = sender.title

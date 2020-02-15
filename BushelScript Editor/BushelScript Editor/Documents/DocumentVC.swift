@@ -180,7 +180,7 @@ class DocumentVC: NSViewController {
             switch result {
             case .success(let program):
                 status = .running
-                service.runProgram(program, currentApplicationID: Bundle(for: DocumentVC.self).bundleIdentifier!) { result in
+                service.runProgram(program, scriptName: document.displayName, currentApplicationID: Bundle(for: DocumentVC.self).bundleIdentifier!) { result in
                     self.status = nil
                     
                     DispatchQueue.main.async {

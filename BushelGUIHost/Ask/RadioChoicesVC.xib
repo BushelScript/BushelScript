@@ -6,27 +6,28 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="RadioChoicesVC" customModule="BushelRT" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="RadioChoicesVC" customModule="BushelGUIHost" customModuleProvider="target">
             <connections>
                 <outlet property="choicesStackView" destination="J1Y-JK-7Sy" id="una-J7-QPD"/>
                 <outlet property="radioButtonTemplate" destination="WnH-SU-XWi" id="Ze3-UT-0GP"/>
+                <outlet property="view" destination="c22-O7-iKe" id="MJG-Gv-U4S"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="c22-O7-iKe">
             <rect key="frame" x="0.0" y="0.0" width="480" height="56"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="J1Y-JK-7Sy">
-                    <rect key="frame" x="20" y="20" width="440" height="16"/>
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="56"/>
                 </stackView>
             </subviews>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="J1Y-JK-7Sy" secondAttribute="trailing" constant="20" symbolic="YES" id="Ycp-6s-Szz"/>
-                <constraint firstAttribute="bottom" secondItem="J1Y-JK-7Sy" secondAttribute="bottom" constant="20" symbolic="YES" id="c34-hB-6RT"/>
-                <constraint firstItem="J1Y-JK-7Sy" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="20" symbolic="YES" id="cab-eW-8Hk"/>
-                <constraint firstItem="J1Y-JK-7Sy" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="20" symbolic="YES" id="g0o-R7-H7g"/>
+                <constraint firstAttribute="trailing" secondItem="J1Y-JK-7Sy" secondAttribute="trailing" id="Ycp-6s-Szz"/>
+                <constraint firstAttribute="bottom" secondItem="J1Y-JK-7Sy" secondAttribute="bottom" id="c34-hB-6RT"/>
+                <constraint firstItem="J1Y-JK-7Sy" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" id="cab-eW-8Hk"/>
+                <constraint firstItem="J1Y-JK-7Sy" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="g0o-R7-H7g"/>
             </constraints>
             <point key="canvasLocation" x="139" y="154"/>
         </customView>

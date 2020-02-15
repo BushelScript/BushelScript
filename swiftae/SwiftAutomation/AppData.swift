@@ -31,7 +31,7 @@ public typealias KeywordParameter = (name: String?, code: OSType, value: Any)
 // AppData converts values between Swift and AE types, holds target process information, and provides methods for sending Apple events
 
 private let launchOptions: LaunchOptions = DefaultLaunchOptions
-private let relaunchMode: RelaunchMode = .never
+private let relaunchMode: RelaunchMode = DefaultRelaunchMode
 
 public final class AppData {
     
@@ -359,9 +359,31 @@ extension AppData {
             return doubleDesc.doubleValue
         case _typeChar, _typeIntlText, _typeUTF8Text, _typeUTF16ExternalRepresentation, _typeStyledText, _typeUnicodeText, _typeVersion:
             guard let result = desc.stringValue else { // this should never fail unless the AEDesc contains mis-encoded text data (e.g. claims to be typeUTF8Text but contains non-UTF8 byte sequences)
-                throw UnpackError(appData: self, descriptor: desc, type: Any.self, message: "Corrupt descriptor.")
+                throw UnpackError(appData: self, descriptor: desc, type: Any.self, message: "Corrupt string descriptor.")
             }
             return result
+        case _cChar:
+            let data = desc.data
+            return try data.withUnsafeBytes { bytes in
+                switch data.count {
+                case 1:
+                    return Character(Unicode.Scalar(bytes.first!))
+                case 2:
+                    let char16s = bytes.bindMemory(to: UInt16.self)
+                    guard let scalar = char16s.first.flatMap({ Unicode.Scalar($0) }) else {
+                        throw UnpackError(appData: self, descriptor: desc, type: Any.self, message: "Corrupt UTF-16 character descriptor.")
+                    }
+                    return Character(scalar)
+                case 4:
+                    let char32s = bytes.bindMemory(to: UInt32.self)
+                    guard let scalar = char32s.first.flatMap({ Unicode.Scalar($0) }) else {
+                        throw UnpackError(appData: self, descriptor: desc, type: Any.self, message: "Corrupt UTF-32 character descriptor.")
+                    }
+                    return Character(scalar)
+                default:
+                    throw UnpackError(appData: self, descriptor: desc, type: Any.self, message: "Character descriptor has irregular byte count.")
+                }
+            }
         case _typeLongDateTime:
             guard let result = desc.dateValue else { // this should never fail unless the AEDesc contains bad data
                 throw UnpackError(appData: self, descriptor: desc, type: Any.self, message: "Corrupt descriptor.")
@@ -660,8 +682,11 @@ extension AppData {
                     self._targetDescriptor = nil
                     let event2 = NSAppleEventDescriptor(eventClass: eventClass, eventID: eventID, targetDescriptor: try self.targetDescriptor(),
                                                         returnID: _kAutoGenerateReturnID, transactionID: _kAnyTransactionID)
-                    for i in 1...event.numberOfItems {
-                        event2.setParam(event.atIndex(i)!, forKeyword: event.keywordForDescriptor(at: i))
+                    let count = event.numberOfItems
+                    if count > 0 {
+                        for i in 1...count {
+                            event2.setParam(event.atIndex(i)!, forKeyword: event.keywordForDescriptor(at: i))
+                        }
                     }
                     for key in [_keySubjectAttr, _enumConsiderations, _enumConsidsAndIgnores] {
                         event2.setAttribute(event.attributeDescriptor(forKeyword: key)!, forKeyword: key)

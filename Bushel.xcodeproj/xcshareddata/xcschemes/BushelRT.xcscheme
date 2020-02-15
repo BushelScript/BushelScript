@@ -20,6 +20,20 @@
                ReferencedContainer = "container:Bushel.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3CB328E423EDAD4C003BF646"
+               BuildableName = "BushelGUIHost.app"
+               BlueprintName = "BushelGUIHost"
+               ReferencedContainer = "container:Bushel.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

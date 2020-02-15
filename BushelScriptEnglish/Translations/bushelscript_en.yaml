@@ -54,6 +54,7 @@ translation:
                 leng: length
                 rvse: reverse
                 rest: tail
+                bhit: button returned
             id:
                 top script: me
                 current date: current date
@@ -93,6 +94,8 @@ translation:
                 sysonotf: notification
                 sysodisA: alert
                 gtqpchlt: choose from
+                # GUIHost commands.
+                'bShGask ': ask
             id:
                 delay:
                     - delay
@@ -122,8 +125,6 @@ translation:
                     join: join
                 String:
                     split: split
-                GUI:
-                    ask: ask
                 CLI:
                     log: log
         parameter:
@@ -147,6 +148,11 @@ translation:
                 gtqpchltcnbt: cancel
                 gtqpchltmlsl: multiple selection
                 gtqpchltempL: empty selection
+                bShGask ----: prompt
+                bShGask forT:
+                    - for
+                    - as
+                bShGask titl: title
             id:
                 Math:
                     abs:
@@ -170,10 +176,6 @@ translation:
                 String:
                     split:
                         by: by
-                GUI:
-                    ask:
-                        /direct: prompt
-                        dataType: for
                 CLI:
                     log:
                         /direct: message

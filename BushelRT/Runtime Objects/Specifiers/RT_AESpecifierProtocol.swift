@@ -22,8 +22,8 @@ extension RT_SASpecifierConvertible {
 
 extension RT_SASpecifierConvertible where Self: RT_Object {
     
-    public func performByAppleEvent(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, targetBundleID: String) throws -> RT_Object {
-        let appData = SwiftAutomation.RootSpecifier(bundleIdentifier: targetBundleID).appData
+    public func performByAppleEvent(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, target: RootSpecifier) throws -> RT_Object {
+        let appData = target.appData
         
         let encodedArguments = try encode(arguments: arguments, implicitDirect: implicitDirect, for: self, appData: appData)
         

@@ -71,7 +71,7 @@ tell Terminal to do script that
                 guard let program = program else {
                     return failed()
                 }
-                service.runProgram(program, currentApplicationID: Bundle.main.bundleIdentifier!, reply: { result in
+                service.runProgram(program, scriptName: "Install bushelscript Command-Line Tool", currentApplicationID: Bundle.main.bundleIdentifier!, reply: { result in
                     guard result != nil else {
                         return failed()
                     }

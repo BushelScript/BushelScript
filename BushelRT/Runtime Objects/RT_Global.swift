@@ -90,6 +90,19 @@ public class RT_Global: RT_Object {
             if standardAdditionsCommandClasses.contains(commandClass) {
                 // Run command from StandardAdditions.osax
                 return try RT_Application(rt, currentApplication: ()).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+            } else if commandClass == (try! FourCharCode(fourByteString: "bShG")) {
+                // Run GUIHost command
+                guard let guiHostBundle = Bundle(applicationBundleIdentifier: "com.justcheesy.BushelGUIHost") else {
+                    throw MissingResource(resourceDescription: "BushelGUIHost application")
+                }
+                var arguments = arguments
+                if
+                    arguments[ParameterInfo(.GUI_ask_title)] == nil,
+                    let scriptName = rt.topScript.name
+                {
+                    arguments[ParameterInfo(.GUI_ask_title)] = RT_String(value: scriptName)
+                }
+                return try RT_Application(rt, bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             }
         }
         
@@ -98,18 +111,6 @@ public class RT_Global: RT_Object {
             let delaySeconds = (arguments[ParameterInfo(.direct)]?.coerce(to: rt.type(forUID: TypedTermUID(TypeUID.real))) as? RT_Numeric)?.numericValue ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)
             return RT_Null.null
-        case .GUI_ask:
-            let promptArg = arguments[ParameterInfo(.direct)]
-            let prompt = (promptArg?.coerce() as? RT_String)?.value ??
-                promptArg.map { String(describing: $0) } ??
-                ""
-            
-            let typeArg = arguments[ParameterInfo(.GUI_ask_dataType)]
-            let type = (typeArg?.coerce() as? RT_Class)?.value ??
-                rt.type(forUID: TypedTermUID(TypeUID.string))
-            
-            return RT_Null.null
-//            return ask(rt, for: type, prompt: prompt)
         case .CLI_log:
             guard let message = arguments[ParameterInfo(.direct)] else {
                 // TODO: Throw error

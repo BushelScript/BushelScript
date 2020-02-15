@@ -520,7 +520,7 @@ extension SwiftAutomation.Specifier {
     
 }
 
-extension RT_Object {
+public extension RT_Object {
     
     static func fromAEDescriptor(_ rt: RTInfo, _ appData: AppData, _ descriptor: NSAppleEventDescriptor) throws -> RT_Object {
         return fromSADecoded(rt, try appData.unpackAsAny(descriptor)) ??
@@ -547,6 +547,8 @@ extension RT_Object {
             return RT_Real(value: double)
         case let string as String:
             return RT_String(value: string)
+        case let character as Character:
+            return RT_Character(value: character)
         case let date as Date:
             return RT_Date(value: date)
         case let array as [Any]:

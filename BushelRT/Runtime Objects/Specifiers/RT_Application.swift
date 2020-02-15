@@ -5,15 +5,12 @@ public class RT_Application: RT_Object {
     
     public let rt: RTInfo
     public let bundle: Bundle
-    public let bundleIdentifier: String
+    public let bundleIdentifier: String?
     
     public init(_ rt: RTInfo, bundle: Bundle) {
-        guard let bundleIdentifier = bundle.bundleIdentifier else {
-            preconditionFailure()
-        }
         self.rt = rt
         self.bundle = bundle
-        self.bundleIdentifier = bundleIdentifier
+        self.bundleIdentifier = bundle.bundleIdentifier
     }
     
     public convenience init(_ rt: RTInfo, currentApplication: ()) {
@@ -25,7 +22,11 @@ public class RT_Application: RT_Object {
     }
     
     public override var description: String {
-        "app id \"\(bundleIdentifier)\""
+        if let bundleIdentifier = bundleIdentifier {
+            return "application id \"\(bundleIdentifier)\""
+        } else {
+            return "application \"\(bundle.bundleURL.deletingPathExtension().lastPathComponent)\""
+        }
     }
     
     private static let typeInfo_ = TypeInfo(TypeUID.application)
@@ -34,7 +35,7 @@ public class RT_Application: RT_Object {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        try performByAppleEvent(command: command, arguments: arguments, implicitDirect: implicitDirect, targetBundleID: bundleIdentifier)
+        try performByAppleEvent(command: command, arguments: arguments, implicitDirect: implicitDirect, target: saSpecifier())
     }
     
 }
@@ -43,7 +44,12 @@ public class RT_Application: RT_Object {
 extension RT_Application: RT_SASpecifierConvertible {
     
     public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
-        RootSpecifier(bundleIdentifier: bundleIdentifier)
+        saSpecifier()
+    }
+
+    public func saSpecifier() -> RootSpecifier {
+        bundleIdentifier.map { RootSpecifier(bundleIdentifier: $0) } ??
+            RootSpecifier(url: bundle.bundleURL)
     }
     
 }
@@ -52,11 +58,11 @@ extension RT_Application: RT_SASpecifierConvertible {
 extension RT_Application: RT_SpecifierRemoteRoot {
     
     public func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        return try specifier.performByAppleEvent(command: rt.command(forUID: TypedTermUID(CommandUID.get)), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, targetBundleID: bundleIdentifier)
+        return try specifier.performByAppleEvent(command: rt.command(forUID: TypedTermUID(CommandUID.get)), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, target: saSpecifier())
     }
     
     public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, for specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        try specifier.performByAppleEvent(command: command, arguments: arguments, implicitDirect: implicitDirect, targetBundleID: bundleIdentifier)
+        try specifier.performByAppleEvent(command: command, arguments: arguments, implicitDirect: implicitDirect, target: saSpecifier())
     }
     
 }
@@ -64,7 +70,7 @@ extension RT_Application: RT_SpecifierRemoteRoot {
 extension RT_Application {
     
     public override var debugDescription: String {
-        super.debugDescription + "[id: \(bundleIdentifier)]"
+        super.debugDescription + "[bundle: \(bundle)]"
     }
     
 }

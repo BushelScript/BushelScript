@@ -127,3 +127,13 @@ public struct AppleScriptError: LocalizedError {
     }
     
 }
+
+public struct MissingResource: LocalizedError {
+    
+    public let resourceDescription: String
+    
+    public var errorDescription: String? {
+        "Missing required resource: \(resourceDescription)"
+    }
+    
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="FileChooserVC" customModule="BushelGUIHost" customModuleProvider="target">
+            <connections>
+                <outlet property="pathTextField" destination="pzk-uH-Y2h" id="67s-Wu-yTf"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="426" height="27"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Wsq-fK-eJ3">
+                    <rect key="frame" x="-2" y="3" width="29" height="16"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="File:" id="QlA-Qm-ouh">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pzk-uH-Y2h">
+                    <rect key="frame" x="33" y="0.0" width="300" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="951-pr-bTJ"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="6Wn-kh-j6r">
+                        <font key="font" usesAppearanceFont="YES"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <binding destination="-2" name="value" keyPath="path" id="uko-dK-Pvc"/>
+                    </connections>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DuR-A0-p0j">
+                    <rect key="frame" x="335" y="-7" width="97" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="bWN-gT-CpJ"/>
+                    </constraints>
+                    <buttonCell key="cell" type="push" title="Choose…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1T6-Ie-0x8">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="chooseFile:" target="-1" id="x0T-kb-590"/>
+                    </connections>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="pzk-uH-Y2h" firstAttribute="leading" secondItem="Wsq-fK-eJ3" secondAttribute="trailing" constant="8" symbolic="YES" id="0by-6V-iAt"/>
+                <constraint firstItem="DuR-A0-p0j" firstAttribute="leading" secondItem="pzk-uH-Y2h" secondAttribute="trailing" constant="8" symbolic="YES" id="4Vx-sc-vZt"/>
+                <constraint firstItem="Wsq-fK-eJ3" firstAttribute="centerY" secondItem="pzk-uH-Y2h" secondAttribute="centerY" id="8lM-JO-LwD"/>
+                <constraint firstItem="DuR-A0-p0j" firstAttribute="centerY" secondItem="pzk-uH-Y2h" secondAttribute="centerY" id="8zY-ud-3cy"/>
+                <constraint firstAttribute="trailing" secondItem="DuR-A0-p0j" secondAttribute="trailing" id="THV-5n-tVc"/>
+                <constraint firstItem="pzk-uH-Y2h" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="6" id="WKv-B0-9cO"/>
+                <constraint firstItem="Wsq-fK-eJ3" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="qMl-EB-W8O"/>
+                <constraint firstAttribute="bottom" secondItem="pzk-uH-Y2h" secondAttribute="bottom" id="xxC-sz-bGP"/>
+            </constraints>
+            <point key="canvasLocation" x="80" y="77.5"/>
+        </customView>
+    </objects>
+</document>

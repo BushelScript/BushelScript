@@ -47,6 +47,12 @@
 		3C5B345423E7BCF90040766D /* RT_File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5B345323E7BCF90040766D /* RT_File.swift */; };
 		3C68743C2394164E004144AC /* UnaryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C68743B2394164E004144AC /* UnaryOperation.swift */; };
 		3C6874412394188F004144AC /* PrecedenceGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6874402394188F004144AC /* PrecedenceGroup.swift */; };
+		3C68D17A23EF43800002A7A4 /* TextFieldVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C68D17823EF43800002A7A4 /* TextFieldVC.swift */; };
+		3C68D17B23EF43800002A7A4 /* TextFieldVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C68D17923EF43800002A7A4 /* TextFieldVC.xib */; };
+		3C68D17E23EF608A0002A7A4 /* FileChooserVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C68D17C23EF608A0002A7A4 /* FileChooserVC.swift */; };
+		3C68D17F23EF608A0002A7A4 /* FileChooserVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C68D17D23EF608A0002A7A4 /* FileChooserVC.xib */; };
+		3C68D18223EF6F240002A7A4 /* UneditableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C68D18023EF6F240002A7A4 /* UneditableVC.swift */; };
+		3C68D18323EF6F240002A7A4 /* UneditableVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C68D18123EF6F240002A7A4 /* UneditableVC.xib */; };
 		3C68D2452353BA300059FD3E /* BinaryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C68D2442353BA300059FD3E /* BinaryOperation.swift */; };
 		3C6B75282304B1360006C354 /* TermPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75272304B1360006C354 /* TermPool.swift */; };
 		3C6B75782305AF3F0006C354 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
@@ -84,11 +90,14 @@
 		3CB328E823EDAD4C003BF646 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB328E723EDAD4C003BF646 /* AppDelegate.swift */; };
 		3CB328EA23EDAD50003BF646 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CB328E923EDAD50003BF646 /* Assets.xcassets */; };
 		3CB328ED23EDAD50003BF646 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CB328EB23EDAD50003BF646 /* MainMenu.xib */; };
-		3CB328F923EDB6CF003BF646 /* CheckboxVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB328F823EDB6CF003BF646 /* CheckboxVC.swift */; };
 		3CB328FA23EDBA8A003BF646 /* Ask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDECB23EDA388007684D1 /* Ask.swift */; };
 		3CB528EB237FAF8A0051460B /* TypeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C327261232DBAE2001A527C /* TypeInfo.swift */; };
 		3CB528ED23809DDD0051460B /* RTInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB528EC23809DDD0051460B /* RTInfo.swift */; };
 		3CB7FEC623B7CA22003191AC /* TermUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB7FEC523B7CA22003191AC /* TermUID.swift */; };
+		3CBD4BE123F5DCD200C09DC5 /* NumberFieldVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CBD4BE023F5DCD200C09DC5 /* NumberFieldVC.swift */; };
+		3CBD4BE323F5DCDC00C09DC5 /* NumberFieldVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CBD4BE223F5DCDC00C09DC5 /* NumberFieldVC.xib */; };
+		3CBD4BE623F5E63300C09DC5 /* InvalidDataMarker.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CBD4BE423F5E63200C09DC5 /* InvalidDataMarker.xib */; };
+		3CBD4BE723F5E63300C09DC5 /* InvalidDataMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CBD4BE523F5E63200C09DC5 /* InvalidDataMarker.swift */; };
 		3CC224892391CFF300448D25 /* PropertyInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224882391CFF300448D25 /* PropertyInfo.swift */; };
 		3CC224942391D9D500448D25 /* CommandInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224932391D9D500448D25 /* CommandInfo.swift */; };
 		3CC224982391E08800448D25 /* TermUIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224972391E08800448D25 /* TermUIDs.swift */; };
@@ -102,7 +111,6 @@
 		3CCDDEBB23ED024D007684D1 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
 		3CCDDEC323ED0257007684D1 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3CCDDECA23ED06E8007684D1 /* RT_AppleScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */; };
-		3CCDDED223EDA589007684D1 /* RadioChoicesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDED123EDA589007684D1 /* RadioChoicesVC.swift */; };
 		3CCE9EA82325907D00198564 /* CodableErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9E9B23258ECF00198564 /* CodableErrors.swift */; };
 		3CCE9EAC2325A9E200198564 /* SourceFix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9EAB2325A9E200198564 /* SourceFix.swift */; };
 		3CD113D422FB700000329583 /* Applications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113D322FB700000329583 /* Applications.swift */; };
@@ -116,6 +124,18 @@
 		3CEF505723529A1B008603E3 /* LLVM in Frameworks */ = {isa = PBXBuildFile; productRef = 3CEF505623529A1B008603E3 /* LLVM */; };
 		3CF7486F23B825AC00A2F981 /* InAnyCase in Frameworks */ = {isa = PBXBuildFile; productRef = 3CF7486E23B825AC00A2F981 /* InAnyCase */; };
 		3CF7487423B88C5500A2F981 /* TermInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF7487323B88C5500A2F981 /* TermInfo.swift */; };
+		3CFA68B223EE2F6B00A3E87E /* RadioChoicesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDED123EDA589007684D1 /* RadioChoicesVC.swift */; };
+		3CFA68B623EE2F7000A3E87E /* RadioChoicesVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CCDDECE23EDA4E8007684D1 /* RadioChoicesVC.xib */; };
+		3CFA68B723EE2F7000A3E87E /* CheckboxVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB328F823EDB6CF003BF646 /* CheckboxVC.swift */; };
+		3CFA68B823EE2F7000A3E87E /* CheckboxVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CB328F623EDB675003BF646 /* CheckboxVC.xib */; };
+		3CFA68CB23EE321C00A3E87E /* Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFA68CA23EE321C00A3E87E /* Events.swift */; };
+		3CFA68CD23EE433700A3E87E /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFA68CC23EE433700A3E87E /* Logging.swift */; };
+		3CFA68D023EE491200A3E87E /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
+		3CFA68D323EE491300A3E87E /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
+		3CFA68D523EE491800A3E87E /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
+		3CFA68D923EE492C00A3E87E /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
+		3CFA68EB23EE59DE00A3E87E /* AskWC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFA68E923EE59DE00A3E87E /* AskWC.swift */; };
+		3CFA68EC23EE59DE00A3E87E /* AskWC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CFA68EA23EE59DE00A3E87E /* AskWC.xib */; };
 		3CFC16E22326F4C0007A1055 /* TermNameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFC16E12326F4C0007A1055 /* TermNameTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -218,6 +238,13 @@
 			remoteGlobalIDString = 3C35A5BA22C81DE7002D4582;
 			remoteInfo = Bushel;
 		};
+		3CFA68D723EE491800A3E87E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3C6B756E2305AF3F0006C354;
+			remoteInfo = BushelLanguage;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -265,6 +292,12 @@
 		3C5B345323E7BCF90040766D /* RT_File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_File.swift; sourceTree = "<group>"; };
 		3C68743B2394164E004144AC /* UnaryOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnaryOperation.swift; sourceTree = "<group>"; };
 		3C6874402394188F004144AC /* PrecedenceGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrecedenceGroup.swift; sourceTree = "<group>"; };
+		3C68D17823EF43800002A7A4 /* TextFieldVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldVC.swift; sourceTree = "<group>"; };
+		3C68D17923EF43800002A7A4 /* TextFieldVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextFieldVC.xib; sourceTree = "<group>"; };
+		3C68D17C23EF608A0002A7A4 /* FileChooserVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileChooserVC.swift; sourceTree = "<group>"; };
+		3C68D17D23EF608A0002A7A4 /* FileChooserVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FileChooserVC.xib; sourceTree = "<group>"; };
+		3C68D18023EF6F240002A7A4 /* UneditableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UneditableVC.swift; sourceTree = "<group>"; };
+		3C68D18123EF6F240002A7A4 /* UneditableVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UneditableVC.xib; sourceTree = "<group>"; };
 		3C68D2442353BA300059FD3E /* BinaryOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinaryOperation.swift; sourceTree = "<group>"; };
 		3C6B75272304B1360006C354 /* TermPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermPool.swift; sourceTree = "<group>"; };
 		3C6B752B2304EFF40006C354 /* LangaugeConstructTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LangaugeConstructTests.swift; sourceTree = "<group>"; };
@@ -328,6 +361,10 @@
 		3CB328F823EDB6CF003BF646 /* CheckboxVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckboxVC.swift; sourceTree = "<group>"; };
 		3CB528EC23809DDD0051460B /* RTInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTInfo.swift; sourceTree = "<group>"; };
 		3CB7FEC523B7CA22003191AC /* TermUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermUID.swift; sourceTree = "<group>"; };
+		3CBD4BE023F5DCD200C09DC5 /* NumberFieldVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumberFieldVC.swift; sourceTree = "<group>"; };
+		3CBD4BE223F5DCDC00C09DC5 /* NumberFieldVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NumberFieldVC.xib; sourceTree = "<group>"; };
+		3CBD4BE423F5E63200C09DC5 /* InvalidDataMarker.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InvalidDataMarker.xib; sourceTree = "<group>"; };
+		3CBD4BE523F5E63200C09DC5 /* InvalidDataMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InvalidDataMarker.swift; sourceTree = "<group>"; };
 		3CC224882391CFF300448D25 /* PropertyInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyInfo.swift; sourceTree = "<group>"; };
 		3CC224932391D9D500448D25 /* CommandInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandInfo.swift; sourceTree = "<group>"; };
 		3CC224972391E08800448D25 /* TermUIDs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermUIDs.swift; sourceTree = "<group>"; };
@@ -358,6 +395,10 @@
 		3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_Script.swift; sourceTree = "<group>"; };
 		3CE775082336C3DC00E0E7C6 /* StaticStackFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticStackFrame.swift; sourceTree = "<group>"; };
 		3CF7487323B88C5500A2F981 /* TermInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermInfo.swift; sourceTree = "<group>"; };
+		3CFA68CA23EE321C00A3E87E /* Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Events.swift; sourceTree = "<group>"; };
+		3CFA68CC23EE433700A3E87E /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		3CFA68E923EE59DE00A3E87E /* AskWC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskWC.swift; sourceTree = "<group>"; };
+		3CFA68EA23EE59DE00A3E87E /* AskWC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AskWC.xib; sourceTree = "<group>"; };
 		3CFC16E12326F4C0007A1055 /* TermNameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermNameTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -428,6 +469,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CFA68D923EE492C00A3E87E /* SwiftAutomation.framework in Frameworks */,
+				3CFA68D023EE491200A3E87E /* BushelRT.framework in Frameworks */,
+				3CFA68D323EE491300A3E87E /* Bushel.framework in Frameworks */,
+				3CFA68D523EE491800A3E87E /* BushelLanguage.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -704,8 +749,9 @@
 			isa = PBXGroup;
 			children = (
 				3CB328E723EDAD4C003BF646 /* AppDelegate.swift */,
-				3CCDDECB23EDA388007684D1 /* Ask.swift */,
-				3CCDDED023EDA4EF007684D1 /* Ask Views */,
+				3CFA68CA23EE321C00A3E87E /* Events.swift */,
+				3CCDDED023EDA4EF007684D1 /* Ask */,
+				3CFA68CC23EE433700A3E87E /* Logging.swift */,
 				3CB328E923EDAD50003BF646 /* Assets.xcassets */,
 				3CB328EB23EDAD50003BF646 /* MainMenu.xib */,
 				3CB328EE23EDAD50003BF646 /* Info.plist */,
@@ -802,7 +848,6 @@
 				3CC2249B2391F51F00448D25 /* Built-in Functions */,
 				3C12EF702354E1E50057E0CC /* Runtime Objects */,
 				3C12EF8E2354E4130057E0CC /* Errors.swift */,
-				3CCDDECD23EDA38D007684D1 /* GUI */,
 				3CC2249C2391F61100448D25 /* Runtime Info */,
 				3CC2249F2391F9CE00448D25 /* Utility */,
 				3CC2249E2391F9AC00448D25 /* Config */,
@@ -845,22 +890,28 @@
 			path = "AST-derived Output";
 			sourceTree = "<group>";
 		};
-		3CCDDECD23EDA38D007684D1 /* GUI */ = {
+		3CCDDED023EDA4EF007684D1 /* Ask */ = {
 			isa = PBXGroup;
 			children = (
-			);
-			path = GUI;
-			sourceTree = "<group>";
-		};
-		3CCDDED023EDA4EF007684D1 /* Ask Views */ = {
-			isa = PBXGroup;
-			children = (
+				3CCDDECB23EDA388007684D1 /* Ask.swift */,
+				3CFA68E923EE59DE00A3E87E /* AskWC.swift */,
+				3CFA68EA23EE59DE00A3E87E /* AskWC.xib */,
+				3C68D18023EF6F240002A7A4 /* UneditableVC.swift */,
+				3C68D18123EF6F240002A7A4 /* UneditableVC.xib */,
+				3C68D17C23EF608A0002A7A4 /* FileChooserVC.swift */,
+				3C68D17D23EF608A0002A7A4 /* FileChooserVC.xib */,
 				3CCDDED123EDA589007684D1 /* RadioChoicesVC.swift */,
 				3CCDDECE23EDA4E8007684D1 /* RadioChoicesVC.xib */,
 				3CB328F823EDB6CF003BF646 /* CheckboxVC.swift */,
 				3CB328F623EDB675003BF646 /* CheckboxVC.xib */,
+				3C68D17823EF43800002A7A4 /* TextFieldVC.swift */,
+				3C68D17923EF43800002A7A4 /* TextFieldVC.xib */,
+				3CBD4BE023F5DCD200C09DC5 /* NumberFieldVC.swift */,
+				3CBD4BE223F5DCDC00C09DC5 /* NumberFieldVC.xib */,
+				3CBD4BE523F5E63200C09DC5 /* InvalidDataMarker.swift */,
+				3CBD4BE423F5E63200C09DC5 /* InvalidDataMarker.xib */,
 			);
-			path = "Ask Views";
+			path = Ask;
 			sourceTree = "<group>";
 		};
 		3CCE9EAD2325A9EA00198564 /* Auto-fixes */ = {
@@ -1079,8 +1130,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				3CFA68D823EE491800A3E87E /* PBXTargetDependency */,
 			);
 			name = BushelGUIHost;
+			packageProductDependencies = (
+			);
 			productName = BushelGUIHost;
 			productReference = 3CB328E523EDAD4C003BF646 /* BushelGUIHost.app */;
 			productType = "com.apple.product-type.application";
@@ -1291,8 +1345,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C68D17B23EF43800002A7A4 /* TextFieldVC.xib in Resources */,
+				3CBD4BE323F5DCDC00C09DC5 /* NumberFieldVC.xib in Resources */,
 				3CB328EA23EDAD50003BF646 /* Assets.xcassets in Resources */,
 				3CB328ED23EDAD50003BF646 /* MainMenu.xib in Resources */,
+				3CFA68B623EE2F7000A3E87E /* RadioChoicesVC.xib in Resources */,
+				3C68D17F23EF608A0002A7A4 /* FileChooserVC.xib in Resources */,
+				3CFA68B823EE2F7000A3E87E /* CheckboxVC.xib in Resources */,
+				3CBD4BE623F5E63300C09DC5 /* InvalidDataMarker.xib in Resources */,
+				3CFA68EC23EE59DE00A3E87E /* AskWC.xib in Resources */,
+				3C68D18323EF6F240002A7A4 /* UneditableVC.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1470,8 +1532,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CFA68B223EE2F6B00A3E87E /* RadioChoicesVC.swift in Sources */,
+				3CFA68CD23EE433700A3E87E /* Logging.swift in Sources */,
 				3CB328E823EDAD4C003BF646 /* AppDelegate.swift in Sources */,
+				3C68D18223EF6F240002A7A4 /* UneditableVC.swift in Sources */,
 				3CB328FA23EDBA8A003BF646 /* Ask.swift in Sources */,
+				3CBD4BE723F5E63300C09DC5 /* InvalidDataMarker.swift in Sources */,
+				3CFA68B723EE2F7000A3E87E /* CheckboxVC.swift in Sources */,
+				3CBD4BE123F5DCD200C09DC5 /* NumberFieldVC.swift in Sources */,
+				3CFA68CB23EE321C00A3E87E /* Events.swift in Sources */,
+				3C68D17E23EF608A0002A7A4 /* FileChooserVC.swift in Sources */,
+				3C68D17A23EF43800002A7A4 /* TextFieldVC.swift in Sources */,
+				3CFA68EB23EE59DE00A3E87E /* AskWC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1489,7 +1561,6 @@
 				3CCD8BA322CFA5BF0049C74F /* GenLLVMIR.swift in Sources */,
 				3CC224892391CFF300448D25 /* PropertyInfo.swift in Sources */,
 				3C12EF8D2354E3870057E0CC /* RT_Class.swift in Sources */,
-				3CB328F923EDB6CF003BF646 /* CheckboxVC.swift in Sources */,
 				3C12EF932354E50B0057E0CC /* RT_RootSpecifier.swift in Sources */,
 				3CCA1C7E235D0C010037058C /* Logging.swift in Sources */,
 				3C12EF892354E3590057E0CC /* RT_Constant.swift in Sources */,
@@ -1503,7 +1574,6 @@
 				3C12EF792354E2860057E0CC /* RT_Real.swift in Sources */,
 				3C37B90123EA42B600BEB5C4 /* BuiltinFunctions.swift in Sources */,
 				3CB528ED23809DDD0051460B /* RTInfo.swift in Sources */,
-				3CCDDED223EDA589007684D1 /* RadioChoicesVC.swift in Sources */,
 				3C12EF772354E2660057E0CC /* RT_Numeric.swift in Sources */,
 				3C12EF9C2354E5D10057E0CC /* RT_AEObject.swift in Sources */,
 				3C12EF752354E23C0057E0CC /* RT_Object.swift in Sources */,
@@ -1586,6 +1656,11 @@
 			isa = PBXTargetDependency;
 			target = 3C35A5BA22C81DE7002D4582 /* Bushel */;
 			targetProxy = 3CCDDEC523ED0257007684D1 /* PBXContainerItemProxy */;
+		};
+		3CFA68D823EE491800A3E87E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3C6B756E2305AF3F0006C354 /* BushelLanguage */;
+			targetProxy = 3CFA68D723EE491800A3E87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2062,9 +2137,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = BushelGUIHost/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/BushelScript/Applications";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+					"@executable_path/../../../../SharedFrameworks",
 				);
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelGUIHost;
@@ -2081,9 +2158,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = BushelGUIHost/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/BushelScript/Applications";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+					"@executable_path/../../../../SharedFrameworks",
 				);
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelGUIHost;

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="NumberFieldVC" customModule="BushelGUIHost" customModuleProvider="target">
+            <connections>
+                <outlet property="numberField" destination="TPd-Yx-iT7" id="gaM-jg-eQE"/>
+                <outlet property="textFieldFormatter" destination="cjl-GY-6W2" id="hgC-rL-nHM"/>
+                <outlet property="view" destination="89x-6R-cda" id="Us8-Gj-A8Y"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="89x-6R-cda">
+            <rect key="frame" x="0.0" y="0.0" width="240" height="21"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+            <subviews>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TPd-Yx-iT7">
+                    <rect key="frame" x="0.0" y="0.0" width="240" height="21"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="0" drawsBackground="YES" id="Loz-Ve-lM4">
+                        <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="cjl-GY-6W2"/>
+                        <font key="font" usesAppearanceFont="YES"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="numberFieldValueChanged:" target="-2" id="Etm-lZ-KN7"/>
+                        <outlet property="delegate" destination="-2" id="HuF-CS-r26"/>
+                        <outlet property="invalidDataMarker" destination="HqM-s5-xXQ" id="0PR-ce-Iuh"/>
+                    </connections>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="TPd-Yx-iT7" secondAttribute="bottom" id="3da-JV-Mpq"/>
+                <constraint firstItem="TPd-Yx-iT7" firstAttribute="top" secondItem="89x-6R-cda" secondAttribute="top" id="I6Z-Bs-UGg"/>
+                <constraint firstItem="TPd-Yx-iT7" firstAttribute="leading" secondItem="89x-6R-cda" secondAttribute="leading" id="UIY-I6-GPz"/>
+                <constraint firstAttribute="trailing" secondItem="TPd-Yx-iT7" secondAttribute="trailing" id="k1U-OS-blS"/>
+            </constraints>
+            <point key="canvasLocation" x="172" y="150.5"/>
+        </customView>
+        <customObject id="HqM-s5-xXQ" customClass="InvalidDataMarker" customModule="BushelGUIHost" customModuleProvider="target">
+            <connections>
+                <outlet property="control" destination="TPd-Yx-iT7" id="Hxw-lc-nTj"/>
+            </connections>
+        </customObject>
+    </objects>
+</document>

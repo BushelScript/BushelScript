@@ -7,13 +7,14 @@ private let log = OSLog(subsystem: logSubsystem, category: "RT info")
 public class RTInfo {
     
     public let termPool = TermPool()
-    public let topScript = RT_Script()
+    public let topScript: RT_Script
     
     private let objectPool = NSMapTable<RT_Object, NSNumber>(keyOptions: [.strongMemory, .objectPointerPersonality], valueOptions: .copyIn)
     
     public var currentApplicationBundleID: String?
     
-    public init(currentApplicationBundleID: String? = nil) {
+    public init(scriptName: String? = nil, currentApplicationBundleID: String? = nil) {
+        self.topScript = RT_Script(name: scriptName)
         self.currentApplicationBundleID = currentApplicationBundleID
     }
     
@@ -122,7 +123,10 @@ public class RTInfo {
     }
     
     public func constant(forUID uid: TypedTermUID) -> ConstantInfo {
-        constantsByUID[uid] ?? add(forConstantUID: uid.uid)
+        constantsByUID[uid] ??
+            propertiesByUID[TypedTermUID(.property, uid.uid)].map { ConstantInfo(property: $0) } ??
+            typesByUID[TypedTermUID(.type, uid.uid)].map { ConstantInfo(type: $0) } ??
+            add(forConstantUID: uid.uid)
     }
     public func constant(for code: OSType) -> ConstantInfo {
         constant(forUID: TypedTermUID(.constant, .ae4(code: code)))
@@ -187,7 +191,7 @@ public extension RTInfo {
         
         // Load StandardAdditions.osax
         do {
-            try NSAppleEventDescriptor(eventClass: FourCharCode(fourByteString: "ascr"), eventID: FourCharCode(fourByteString: "gdut"), targetDescriptor: NSAppleEventDescriptor(bundleIdentifier: RT_Application(self, currentApplication: ()).bundleIdentifier), returnID: AEReturnID(kAutoGenerateReturnID), transactionID: AETransactionID(kAnyTransactionID)).sendEvent(options: .defaultOptions, timeout: TimeInterval(kNoTimeOut))
+            try NSAppleEventDescriptor(eventClass: FourCharCode(fourByteString: "ascr"), eventID: FourCharCode(fourByteString: "gdut"), targetDescriptor: NSAppleEventDescriptor(bundleIdentifier: RT_Application(self, currentApplication: ()).bundleIdentifier!), returnID: AEReturnID(kAutoGenerateReturnID), transactionID: AETransactionID(kAnyTransactionID)).sendEvent(options: .defaultOptions, timeout: TimeInterval(kNoTimeOut))
         } catch {
             os_log("Failed to load StandardAdditions.osax: %@", log: log, type: .error, String(describing: error))
         }

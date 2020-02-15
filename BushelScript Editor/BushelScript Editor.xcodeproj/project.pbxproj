@@ -168,6 +168,13 @@
 			remoteGlobalIDString = 3C0430592315C12200758339;
 			remoteInfo = BushelLanguageServiceConnectionCreation;
 		};
+		3C554CB223F7AFE50029E71A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CB328E423EDAD4C003BF646;
+			remoteInfo = BushelGUIHost;
+		};
 		3C906EF0231C7D380099B139 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
@@ -195,6 +202,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3CCD8AAE22CC45040049C74F;
 			remoteInfo = BushelRT;
+		};
+		3CFA68C323EE300E00A3E87E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3C94570223E8FBC200D59C2C;
+			remoteInfo = BushelLanguageTestingTools;
+		};
+		3CFA68C523EE300E00A3E87E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CB328E523EDAD4C003BF646;
+			remoteInfo = BushelGUIHost;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -437,10 +458,12 @@
 				3C0566EC23135690004CDB1A /* BushelTests.xctest */,
 				3C0566F823135690004CDB1A /* BushelLanguage.framework */,
 				3C0566FA23135690004CDB1A /* BushelLanguageTests.xctest */,
-				3C0566EE23135690004CDB1A /* BushelRT.framework */,
-				3C0566F023135690004CDB1A /* BushelRTTests.xctest */,
+				3CFA68C423EE300E00A3E87E /* BushelLanguageTestingTools.framework */,
 				3C0566FC23135690004CDB1A /* bushelscript_en.framework */,
 				3C0566FE23135690004CDB1A /* BushelScriptEnglishTests.xctest */,
+				3C0566EE23135690004CDB1A /* BushelRT.framework */,
+				3C0566F023135690004CDB1A /* BushelRTTests.xctest */,
+				3CFA68C623EE300E00A3E87E /* BushelGUIHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -634,6 +657,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3C554CB323F7AFE50029E71A /* PBXTargetDependency */,
 				3C906EF1231C7D380099B139 /* PBXTargetDependency */,
 				3C9FD7C023E5455700279945 /* PBXTargetDependency */,
 				3C04306C2316138500758339 /* PBXTargetDependency */,
@@ -826,6 +850,20 @@
 			remoteRef = 3C9FD7B823E53E5500279945 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		3CFA68C423EE300E00A3E87E /* BushelLanguageTestingTools.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BushelLanguageTestingTools.framework;
+			remoteRef = 3CFA68C323EE300E00A3E87E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3CFA68C623EE300E00A3E87E /* BushelGUIHost.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = BushelGUIHost.app;
+			remoteRef = 3CFA68C523EE300E00A3E87E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -965,6 +1003,11 @@
 			isa = PBXTargetDependency;
 			name = BushelLanguageServiceConnectionCreation;
 			targetProxy = 3C2E134D231B75FA00E0EB8E /* PBXContainerItemProxy */;
+		};
+		3C554CB323F7AFE50029E71A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BushelGUIHost;
+			targetProxy = 3C554CB223F7AFE50029E71A /* PBXContainerItemProxy */;
 		};
 		3C906EF1231C7D380099B139 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

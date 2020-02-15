@@ -23,6 +23,12 @@ class RT_Function: RT_Object {
 
 public class RT_Script: RT_Object {
     
+    public var name: String?
+    
+    public init(name: String? = nil) {
+        self.name = name
+    }
+    
     private static let typeInfo_ = TypeInfo(.script)
     public override class var typeInfo: TypeInfo {
         typeInfo_

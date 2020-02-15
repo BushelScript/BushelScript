@@ -217,7 +217,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
         switch uid {
         case .ae4(let aeCode):
             switch aeCode {
-            case cItem:
+            case cObject:
                 self = .item
             case typeAEList:
                 self = .list
@@ -452,6 +452,8 @@ public enum CommandUID: String, TermUIDPredefinedValue {
             return (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "disA"))
         case .GUI_chooseFrom:
             return (class: try! FourCharCode(fourByteString: "gtqp"), id: try! FourCharCode(fourByteString: "chlt"))
+        case .GUI_ask:
+            return (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "ask "))
         default:
             return nil
         }
@@ -481,6 +483,8 @@ public enum CommandUID: String, TermUIDPredefinedValue {
                 self = .GUI_alert
             case (class: try! FourCharCode(fourByteString: "gtqp"), id: try! FourCharCode(fourByteString: "chlt")):
                 self = .GUI_chooseFrom
+            case (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "ask ")):
+                self = .GUI_ask
             default:
                 return nil
             }
@@ -522,6 +526,7 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
     case GUI_chooseFrom_multipleSelection
     case GUI_chooseFrom_noSelection
     case GUI_ask_dataType
+    case GUI_ask_title
     
     public var kind: TypedTermUID.Kind {
         .parameter
@@ -567,6 +572,10 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
                     return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "mlsl"))
                 case .GUI_chooseFrom_noSelection:
                     return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "empL"))
+                case .GUI_ask_dataType:
+                    return (.GUI_ask, try! FourCharCode(fourByteString: "forT"))
+                case .GUI_ask_title:
+                    return (.GUI_ask, try! FourCharCode(fourByteString: "titl"))
                 default:
                     return nil
                 }
@@ -629,6 +638,10 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
                 self = .GUI_chooseFrom_multipleSelection
             case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "empL")):
                 self = .GUI_chooseFrom_noSelection
+            case (.GUI_ask, try! FourCharCode(fourByteString: "forT")):
+                self = .GUI_ask_dataType
+            case (.GUI_ask, try! FourCharCode(fourByteString: "titl")):
+                self = .GUI_ask_title
             default:
                 return nil
             }

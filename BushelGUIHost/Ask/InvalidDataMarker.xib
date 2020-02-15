@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.55" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.55"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="InvalidDataMarker" customModule="defaults_edit" customModuleProvider="target">
+            <connections>
+                <outlet property="imageView" destination="9m1-oH-0Hx" id="IU0-xR-2Ga"/>
+                <outlet property="messageView" destination="Y5B-UQ-4Ce" id="BIX-L9-zqc"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <imageView hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9m1-oH-0Hx">
+            <rect key="frame" x="0.0" y="0.0" width="22" height="22"/>
+            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSInvalidDataFreestandingTemplate" id="ddx-qJ-1Rc"/>
+            <color key="contentTintColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+            <connections>
+                <binding destination="-2" name="toolTip" keyPath="errorString" id="eHU-de-cYd"/>
+            </connections>
+        </imageView>
+        <customView id="Y5B-UQ-4Ce">
+            <rect key="frame" x="0.0" y="0.0" width="160" height="47"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sYO-v4-7Ew">
+                    <rect key="frame" x="18" y="15" width="124" height="17"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="Vad-dA-VKw">
+                        <font key="font" usesAppearanceFont="YES"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <binding destination="-2" name="value" keyPath="errorString" id="pbL-RR-5hF"/>
+                    </connections>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="sYO-v4-7Ew" firstAttribute="top" secondItem="Y5B-UQ-4Ce" secondAttribute="top" constant="15" id="1vJ-gZ-Siq"/>
+                <constraint firstAttribute="trailing" secondItem="sYO-v4-7Ew" secondAttribute="trailing" constant="20" symbolic="YES" id="2JK-Z4-9J2"/>
+                <constraint firstItem="sYO-v4-7Ew" firstAttribute="leading" secondItem="Y5B-UQ-4Ce" secondAttribute="leading" constant="20" symbolic="YES" id="OmT-hb-MwL"/>
+                <constraint firstAttribute="bottom" secondItem="sYO-v4-7Ew" secondAttribute="bottom" constant="15" id="uYt-T9-K5U"/>
+            </constraints>
+            <point key="canvasLocation" x="139" y="153.5"/>
+        </customView>
+    </objects>
+    <resources>
+        <image name="NSInvalidDataFreestandingTemplate" width="14" height="14"/>
+    </resources>
+</document>

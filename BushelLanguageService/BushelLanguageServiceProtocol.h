@@ -26,7 +26,7 @@ typedef id SourceFixToken;
 - (void)copyKindDescriptionForExpression:(ExpressionToken)expression reply:(void(^)(NSString *_Nullable))reply;
 - (void)releaseExpression:(ExpressionToken)expression reply:(void(^)(BOOL))reply;
 
-- (void)runProgram:(ProgramToken)program currentApplicationID:(NSString *)currentApplicationID reply:(void(^)(_Nullable RTObjectToken))reply;
+- (void)runProgram:(ProgramToken)program scriptName:(NSString *_Nullable)scriptName currentApplicationID:(NSString *_Nullable)currentApplicationID reply:(void(^)(_Nullable RTObjectToken))reply;
 
 - (void)copyDescriptionForObject:(RTObjectToken)object reply:(void(^)(NSString *_Nullable))reply;
 

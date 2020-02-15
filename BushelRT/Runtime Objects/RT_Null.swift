@@ -23,9 +23,11 @@ public class RT_Null: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch type.typedUID.ae4Code {
-        case typeUnicodeText:
+        switch TypeUID(type.uid) {
+        case .string:
             return RT_String(value: "null")
+        case .class:
+            return RT_Class(value: RT_Null.typeInfo)
         default:
             return super.coerce(to: type)
         }

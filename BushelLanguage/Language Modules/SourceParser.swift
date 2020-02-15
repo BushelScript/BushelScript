@@ -88,9 +88,12 @@ public extension SourceParser {
         
         lexicon.add(ParameterTerm(TermUID(ParameterUID.direct), name: nil))
         
-        let standardAdditionsDictionary = lexicon.pushDictionaryTerm(forUID: TermUID(DictionaryUID.StandardAdditions))
-        let standardAdditionsURL = URL(fileURLWithPath: "/System/Library/ScriptingAdditions/StandardAdditions.osax")
-        try loadTerminology(at: standardAdditionsURL, into: standardAdditionsDictionary)
+        // Disabled loading StandardAdditons terminology since it
+        // conflicts annoyingly with native terminology
+        
+//        let standardAdditionsDictionary = lexicon.pushDictionaryTerm(forUID: TermUID(DictionaryUID.StandardAdditions))
+//        let standardAdditionsURL = URL(fileURLWithPath: "/System/Library/ScriptingAdditions/StandardAdditions.osax")
+//        try loadTerminology(at: standardAdditionsURL, into: standardAdditionsDictionary)
         
         lexicon.pushDictionaryTerm(forUID: .id("script"))
         defer { lexicon.pop() }
