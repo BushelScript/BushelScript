@@ -43,6 +43,14 @@
 		3C37B90123EA42B600BEB5C4 /* BuiltinFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C37B90023EA42B600BEB5C4 /* BuiltinFunctions.swift */; };
 		3C3F06DC23C14165005BC0F2 /* ExpressionsAtLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06DB23C14165005BC0F2 /* ExpressionsAtLocation.swift */; };
 		3C3F06E123C14B15005BC0F2 /* Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06E023C14B15005BC0F2 /* Ranges.swift */; };
+		3C554CB423F7B1A10029E71A /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
+		3C554CB523F7B1A10029E71A /* Bushel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3C554CB723F7B1A20029E71A /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
+		3C554CB823F7B1A20029E71A /* BushelLanguage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3C554CB923F7B1A30029E71A /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
+		3C554CBA23F7B1A30029E71A /* BushelRT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3C554CBB23F7B1A40029E71A /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
+		3C554CBC23F7B1A40029E71A /* SwiftAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C57DD4C2352C55A00F9F2A0 /* Weave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C57DD4B2352C55A00F9F2A0 /* Weave.swift */; };
 		3C5B345423E7BCF90040766D /* RT_File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5B345323E7BCF90040766D /* RT_File.swift */; };
 		3C68743C2394164E004144AC /* UnaryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C68743B2394164E004144AC /* UnaryOperation.swift */; };
@@ -130,10 +138,6 @@
 		3CFA68B823EE2F7000A3E87E /* CheckboxVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CB328F623EDB675003BF646 /* CheckboxVC.xib */; };
 		3CFA68CB23EE321C00A3E87E /* Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFA68CA23EE321C00A3E87E /* Events.swift */; };
 		3CFA68CD23EE433700A3E87E /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFA68CC23EE433700A3E87E /* Logging.swift */; };
-		3CFA68D023EE491200A3E87E /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
-		3CFA68D323EE491300A3E87E /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
-		3CFA68D523EE491800A3E87E /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
-		3CFA68D923EE492C00A3E87E /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3CFA68EB23EE59DE00A3E87E /* AskWC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFA68E923EE59DE00A3E87E /* AskWC.swift */; };
 		3CFA68EC23EE59DE00A3E87E /* AskWC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CFA68EA23EE59DE00A3E87E /* AskWC.xib */; };
 		3CFC16E22326F4C0007A1055 /* TermNameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFC16E12326F4C0007A1055 /* TermNameTests.swift */; };
@@ -246,6 +250,23 @@
 			remoteInfo = BushelLanguage;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3C554CB623F7B1A10029E71A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3C554CB523F7B1A10029E71A /* Bushel.framework in Embed Frameworks */,
+				3C554CBA23F7B1A30029E71A /* BushelRT.framework in Embed Frameworks */,
+				3C554CB823F7B1A20029E71A /* BushelLanguage.framework in Embed Frameworks */,
+				3C554CBC23F7B1A40029E71A /* SwiftAutomation.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3C0430702316210D00758339 /* Opaquify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Opaquify.h; sourceTree = "<group>"; };
@@ -469,10 +490,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CFA68D923EE492C00A3E87E /* SwiftAutomation.framework in Frameworks */,
-				3CFA68D023EE491200A3E87E /* BushelRT.framework in Frameworks */,
-				3CFA68D323EE491300A3E87E /* Bushel.framework in Frameworks */,
-				3CFA68D523EE491800A3E87E /* BushelLanguage.framework in Frameworks */,
+				3C554CB423F7B1A10029E71A /* Bushel.framework in Frameworks */,
+				3C554CB723F7B1A20029E71A /* BushelLanguage.framework in Frameworks */,
+				3C554CB923F7B1A30029E71A /* BushelRT.framework in Frameworks */,
+				3C554CBB23F7B1A40029E71A /* SwiftAutomation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1126,6 +1147,7 @@
 				3CB328E123EDAD4C003BF646 /* Sources */,
 				3CB328E223EDAD4C003BF646 /* Frameworks */,
 				3CB328E323EDAD4C003BF646 /* Resources */,
+				3C554CB623F7B1A10029E71A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
