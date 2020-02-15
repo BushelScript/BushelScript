@@ -53,20 +53,15 @@ public class RT_List: RT_Object, AEEncodable {
         return RT_List(contents: [RT_Object](contents[1...]))
     }
     
-    public override var properties: [RT_Object] {
-        return super.properties + [length, reverse, tail]
+    public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+        [
+            PropertyInfo(PropertyUID.Sequence_length): \RT_List.length,
+            PropertyInfo(PropertyUID.Sequence_reverse): \RT_List.reverse,
+            PropertyInfo(PropertyUID.Sequence_tail): \RT_List.tail
+        ]
     }
-    public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(property.typedUID) {
-        case .Sequence_length:
-            return length
-        case .Sequence_reverse:
-            return reverse
-        case .Sequence_tail:
-            return tail
-        default:
-            return try super.property(property)
-        }
+    public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
+        keyPath.evaluate(on: self)
     }
     
     private func filteredContents(_ type: TypeInfo) -> [RT_Object] {

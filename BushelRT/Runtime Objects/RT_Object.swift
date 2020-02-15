@@ -8,24 +8,96 @@ import Bushel
         typeInfo_
     }
     public var dynamicTypeInfo: TypeInfo {
-        type(of: self).typeInfo
+        Swift.type(of: self).typeInfo
     }
-    var truthy: Bool {
+    public var truthy: Bool {
         true
     }
-    var properties: [RT_Object] {
-        []
+    
+    /// A map of property terms to the static keypaths through which
+    /// their values may be accessed on instances of this runtime type.
+    ///
+    /// - Important: If this is overridden, then `evaluateStaticProperty(_:)`
+    /// must also be overridden so that the static keypath mapping machinery
+    /// knows what type it is applying the keypath to.
+    public class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+        [:]
     }
+    /// A peer to `propertyKeyPaths`. This must be also overridden whenever
+    /// `propertyKeyPaths` is overridden.
+    ///
+    /// A subclass implementation should look like this:
+    ///
+    ///     public func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
+    ///         keyPath.evaluate(on: self)
+    ///     }
+    ///
+    public func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
+        keyPath.evaluate(on: self)
+    }
+    
+    /// A map of statically-declared property terms to their current values.
+    /// Does not include any properties that are not known to exist until
+    /// until runtime, e.g., record keys.
+    public var staticProperties: [PropertyInfo : RT_Object] {
+        [PropertyInfo(PropertyUID.type): RT_Object.type(dynamicTypeInfo)].merging(
+            RT_Object.propertyKeyPaths.compactMapValues { evaluateStaticProperty($0) },
+            uniquingKeysWith: { old, new in new }
+        )
+    }
+    
+    /// A map of all property terms to their current values.
+    ///
+    /// Overridable to allow for dynamic property listings; for properties that
+    /// are statically known to exist, an overridden `propertyKeyPaths` and
+    /// `evaluateStaticProperty(_:)` pair is preferable.
+    public var properties: [PropertyInfo : RT_Object] {
+        staticProperties
+    }
+    
+    /// This object's value for the requested property, if available.
+    /// Throws if unavailable.
+    ///
+    /// - Parameter property: The requested property.
+    ///
+    /// - Throws:
+    ///     - `NoPropertyExists` if the property does not exist on this
+    ///        object.
+    ///     - Any errors produced during evaluation the property.
+    ///
+    /// Overridable to allow for more efficient dynamic property lookup.
+    /// Dynamic properties from the `properties` member are automatically
+    /// searched by the base implementation, but this will be slower since it
+    /// requires computing all property values when only one is needed.
+    ///
+    /// For properties that are statically known to exist, an overridden
+    /// `propertyKeyPaths` and `evaluateStaticProperty(_:)` pair is preferable.
     public func property(_ property: PropertyInfo) throws -> RT_Object {
         switch PropertyUID(property.typedUID) {
         case .properties:
-            return RT_List(contents: self.properties)
+            return RT_Record(contents:
+                [RT_Object : RT_Object](uniqueKeysWithValues:
+                    self.properties.map { (key: .property($0.key), value: $0.value) }
+                )
+            )
         case .type:
             return RT_Class(value: self.dynamicTypeInfo)
         default:
-            // FIXME: fix
-            fatalError("FIXME fix")
-//            return try RT_Global(Builtin.rt).property(property, originalObject: self)
+            // Prefer to avoid evaluating all properties if we can.
+            if
+                let keyPath = Swift.type(of: self).propertyKeyPaths[property],
+                let value = evaluateStaticProperty(keyPath)
+            {
+                return value
+            }
+            
+            // Bite the bullet and evaluate all properties to check if there's
+            // a satisfactory dynamic property.
+            if let value = properties[property] {
+                return value
+            }
+            
+            throw NoPropertyExists(type: dynamicTypeInfo, property: property)
         }
     }
     
@@ -286,6 +358,31 @@ extension RT_Object {
     
     public func coerce<T: RT_Object>() -> T? {
         coerce(to: T.typeInfo) as? T
+    }
+    
+}
+
+extension RT_Object {
+    
+    public static func property(_ property: PropertyInfo) -> RT_Object {
+        RT_Constant(value: ConstantInfo(property: property))
+    }
+    
+    public static func constant(_ constant: ConstantInfo) -> RT_Object {
+        RT_Constant(value: constant)
+    }
+    
+    public static func type(_ type: TypeInfo) -> RT_Object {
+        RT_Class(value: type)
+    }
+    
+}
+
+extension AnyKeyPath {
+    
+    public func evaluate<Object: RT_Object>(on object: Object) -> RT_Object? {
+        (self as? PartialKeyPath<Object>)
+            .flatMap { object[keyPath: $0] as? RT_Object }
     }
     
 }

@@ -40,8 +40,8 @@ public class RT_Script: RT_Object {
     
     public var dynamicProperties: [PropertyInfo : RT_Object] = [:]
     
-    public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        try dynamicProperties[property] ?? super.property(property)
+    public override var properties: [PropertyInfo : RT_Object] {
+        super.properties.merging(dynamicProperties, uniquingKeysWith: { old, new in new })
     }
     
     var dynamicFunctions: [CommandInfo : RT_Function] = [:]

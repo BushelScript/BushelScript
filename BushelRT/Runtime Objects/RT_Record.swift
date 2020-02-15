@@ -31,26 +31,22 @@ public class RT_Record: RT_Object, AEEncodable {
         RT_Integer(value: Int64(contents.count))
     }
     
-    public override var properties: [RT_Object] {
-        return super.properties + [length]
+    public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+        [PropertyInfo(PropertyUID.Sequence_length): \RT_Record.length]
     }
+    public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
+        keyPath.evaluate(on: self)
+    }
+    
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        if let key = contents.keys.first(where: { key in
-            if
-                let key = key as? RT_Constant,
-                key.value == ConstantInfo(property: property)
-            {
-                return true
-            }
-            return false
-        }) {
-            return contents[key]!
+        let propertyConstantKey = ConstantInfo(property: property)
+        func keyMatchesProperty(key: RT_Object) -> Bool {
+            (key as? RT_Constant)?.value == propertyConstantKey
         }
         
-        switch PropertyUID(property.typedUID) {
-        case .Sequence_length:
-            return length
-        default:
+        if let key = contents.keys.first(where: keyMatchesProperty) {
+            return contents[key]!
+        } else {
             return try super.property(property)
         }
     }

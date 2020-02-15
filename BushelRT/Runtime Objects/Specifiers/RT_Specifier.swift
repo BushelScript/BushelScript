@@ -81,8 +81,21 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
     
     public func evaluateLocally(on evaluatedParent: RT_Object) throws -> RT_Object {
         func evaluate(on parent: RT_Object) throws -> RT_Object {
+            func evaluate(property: PropertyInfo) throws -> RT_Object {
+                let property = self.property!
+                
+                do {
+                    return try parent.property(property)
+                } catch let noProperty as NoPropertyExists {
+                    guard let value = RT_Global(rt).property(property) else {
+                        throw noProperty
+                    }
+                    return value
+                }
+            }
+            
             if case .property = kind {
-                return try parent.property(property!)
+                return try evaluate(property: property!)
             }
             
             let type = self.type!

@@ -18,7 +18,7 @@ public class RT_Global: RT_Object {
         "BushelScript"
     }
     
-    public func property(_ property: PropertyInfo, originalObject: RT_Object) throws -> RT_Object {
+    public func property(_ property: PropertyInfo) -> RT_Object? {
         switch PropertyUID(property.uid) {
         case .topScript:
             return rt.topScript
@@ -29,18 +29,15 @@ public class RT_Global: RT_Object {
         case .Math_e:
             return RT_Real(value: exp(1))
         default:
-            throw NoPropertyExists(type: originalObject.dynamicTypeInfo, property: property)
+            return nil
         }
     }
     
     public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        do {
-            return try self.property(property, originalObject: self)
-        } catch {
-            // RT_Object handles some properties.
-            // If it fails, it will call us again, which will eventually rethrow the error.
-            return try super.property(property)
+        guard let value = self.property(property) else {
+            throw NoPropertyExists(type: dynamicTypeInfo, property: property)
         }
+        return value
     }
     
     public func element(_ type: TypeInfo, named name: String, originalObject: RT_Object) throws -> RT_Object {

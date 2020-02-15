@@ -31,20 +31,15 @@ public class RT_Date: RT_Object {
         RT_Integer(value: calendar.component(.hour, from: value))
     }
     
-    public override var properties: [RT_Object] {
-        super.properties + [seconds, minutes, hours]
+    public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+        [
+            PropertyInfo(PropertyUID.date_seconds): \RT_Date.seconds,
+            PropertyInfo(PropertyUID.date_minutes): \RT_Date.minutes,
+            PropertyInfo(PropertyUID.date_hours): \RT_Date.hours
+        ]
     }
-    public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(property.typedUID) {
-        case .date_seconds:
-            return seconds
-        case .date_minutes:
-            return minutes
-        case .date_hours:
-            return hours
-        default:
-            return try super.property(property)
-        }
+    public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
+        keyPath.evaluate(on: self)
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {

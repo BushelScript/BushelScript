@@ -34,16 +34,13 @@ public class RT_String: RT_Object, AEEncodable {
         RT_Integer(value: Int64(value.count))
     }
     
-    public override var properties: [RT_Object] {
-        super.properties + [length]
+    public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+        [
+            PropertyInfo(PropertyUID.Sequence_length): \RT_String.length
+        ]
     }
-    public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(property.typedUID) {
-        case .Sequence_length:
-            return length
-        default:
-            return try super.property(property)
-        }
+    public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
+        keyPath.evaluate(on: self)
     }
     
     public override func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object {

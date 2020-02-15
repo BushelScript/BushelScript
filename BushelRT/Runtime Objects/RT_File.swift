@@ -29,20 +29,15 @@ public class RT_File: RT_Object {
         RT_String(value: value.deletingLastPathComponent().path)
     }
     
-    public override var properties: [RT_Object] {
-        super.properties + [basename, extname, dirname]
+    public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+        [
+            PropertyInfo(PropertyUID.file_basename): \RT_File.basename,
+            PropertyInfo(PropertyUID.file_extname): \RT_File.extname,
+            PropertyInfo(PropertyUID.file_dirname): \RT_File.dirname,
+        ]
     }
-    public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(property.typedUID) {
-        case .file_basename:
-            return basename
-        case .file_extname:
-            return extname
-        case .file_dirname:
-            return dirname
-        default:
-            return try super.property(property)
-        }
+    public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
+        keyPath.evaluate(on: self)
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {
