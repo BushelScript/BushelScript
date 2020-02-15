@@ -7,19 +7,21 @@ private func lexicographicalCompare<Seq: Swift.Sequence>(_ lhs: Seq, to rhs: Seq
     where Seq.Element: Comparable
 {
     var lhsIt = lhs.makeIterator(), rhsIt = rhs.makeIterator()
-    var lhsCount = 0, rhsCount = 0
-    while
-        let lhsValue = lhsIt.next(),
-        let rhsValue = rhsIt.next()
-    {
-        if lhsValue < rhsValue { return .orderedAscending }
-        if rhsValue < lhsValue { return .orderedDescending }
-        lhsCount += 1
-        rhsCount += 1
+    while true {
+        guard let lhsValue = lhsIt.next() else {
+            return (rhsIt.next() == nil) ? .orderedSame : .orderedAscending
+        }
+        guard let rhsValue = rhsIt.next() else {
+            return .orderedDescending
+        }
+        
+        if lhsValue < rhsValue {
+            return .orderedAscending
+        }
+        if rhsValue < lhsValue {
+            return .orderedDescending
+        }
     }
-    if lhsCount < rhsCount { return .orderedAscending }
-    if rhsCount < lhsCount { return .orderedDescending }
-    return .orderedSame
 }
 
 infix operator <=> : ComparisonPrecedence
