@@ -136,10 +136,10 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
             case .range:
                 return try parent.elements(type, from: data[0], thru: data[1])
             case .test:
-                guard let predicate = data[0] as? RT_Specifier else {
-                    throw InvalidSpecifierDataType(specifierType: .byTest, specifierData: data[0])
-                }
-                return try parent.elements(type, filtered: predicate)
+                // Technically reachable if someone sends us a test specifier
+                // in an AppleEvent, but I'm not aware of any such cases
+                // in the wild.
+                fatalError("unreachable")
             case .property:
                 fatalError("unreachable")
             }

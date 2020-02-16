@@ -4,12 +4,28 @@ import Bushel
 @objc public class RT_Object: NSObject {
     
     private static let typeInfo_ = TypeInfo(.item, [.root])
+    
+    /// The runtime type that this `RT_Object` subclass implements.
+    /// Should probably be overridden in every subclass.
     public class var typeInfo: TypeInfo {
         typeInfo_
     }
+    
+    /// The runtime type of this instance.
+    /// The base implementation returns `Swift.type(of: self).typeInfo`.
+    ///
+    /// Overridable for cases when an `RT_Object` subclass can represent values
+    /// of different runtime types.
     public var dynamicTypeInfo: TypeInfo {
         Swift.type(of: self).typeInfo
     }
+    
+    /// Whether this object should be considered equivalent to the boolean
+    /// `true` when the predicate of a conditional or coerced to boolean type.
+    ///
+    /// The base implementation returns `true`. Should only be `false` for
+    /// cases where being untruthy would be intuitive, i.e., for `null`,
+    /// empty strings, a `false` boolean itself, etc.
     public var truthy: Bool {
         true
     }
@@ -63,7 +79,7 @@ import Bushel
     /// - Throws:
     ///     - `NoPropertyExists` if the property does not exist on this
     ///        object.
-    ///     - Any errors produced during evaluation the property.
+    ///     - Any errors produced during evaluation of the property.
     ///
     /// Overridable to allow for more efficient dynamic property lookup.
     /// Dynamic properties from the `properties` member are automatically
@@ -116,116 +132,211 @@ import Bushel
         }
     }
     
-    public func not() -> RT_Object? {
-        return RT_Boolean.withValue(!truthy)
+    /// Applies a unary logical NOT operation.
+    public final func not() -> RT_Object? {
+        RT_Boolean.withValue(!truthy)
     }
     
-    /// Compares this object with another object.
+    /// The ordering of this object relative to another object, or `nil` if
+    /// no such ordering relationship exists.
     ///
     /// - Parameter other: The object to compare against.
-    /// - Returns: The ordering of this object relative to the other object,
-    ///            or nil if there is no ordering relationship between them.
+    ///
+    /// The base implementation always returns `nil`. This should be overridden
+    /// to define any ordering relationships between objects of the same or
+    /// different runtime types.
+    ///
+    /// - Important: If this is overridden, then `hash` must also be overridden.
     public func compare(with other: RT_Object) -> ComparisonResult? {
-        return nil
+        nil
     }
     
-    /// Checks this object for equality with another object.
+    /// Whether this object is equivalent to another object.
     ///
     /// - Parameter other: The object to compare against.
-    /// - Returns: Whether this object is equal to the other object.
     ///
-    /// - Note: **If you override** `compareEqual(with:)`, **you must also override** `NSObject.hash`.
+    /// The base implementation first checks whether `self === other`
+    /// (pointer equality). If this is `false`, it defers to whether
+    /// `compare(with:)` returns `.orderedSame`.
+    ///
+    /// This is overridable so that equivalence relationships may be defined
+    /// without defining full ordering relationships.
+    ///
+    /// - Important: If this is overridden, then `hash` must also be overridden.
     public func compareEqual(with other: RT_Object) -> Bool {
-        return self === other || (compare(with: other) == .orderedSame)
+        self === other ||
+            self.compare(with: other) == .orderedSame ||
+            other.compare(with: self) == .orderedSame
     }
     
+    // Overrides -[NSObject isEqual:] to use compareEqual(with:).
     public final override func isEqual(_ object: Any?) -> Bool {
         guard let object = object as? RT_Object else { return false }
         return self.compareEqual(with: object)
     }
     
-    public func or(_ other: RT_Object) -> RT_Object? {
-        return RT_Boolean.withValue(truthy || other.truthy)
+    /// Applies a binary logical OR operation.
+    public final func or(_ other: RT_Object) -> RT_Object? {
+        RT_Boolean.withValue(truthy || other.truthy)
     }
     
-    public func xor(_ other: RT_Object) -> RT_Object? {
+    /// Applies a binary logical XOR operation.
+    public final func xor(_ other: RT_Object) -> RT_Object? {
         let lhsTruthy = truthy
         let rhsTruthy = other.truthy
         return RT_Boolean.withValue(lhsTruthy && !rhsTruthy || !lhsTruthy && rhsTruthy)
     }
     
-    public func and(_ other: RT_Object) -> RT_Object? {
-        return RT_Boolean.withValue(truthy && other.truthy)
+    /// Applies a binary logical AND operation.
+    public final func and(_ other: RT_Object) -> RT_Object? {
+        RT_Boolean.withValue(truthy && other.truthy)
     }
     
-    public func equal(to other: RT_Object) -> RT_Object? {
+    /// Applies a binary equivalence comparison.
+    ///
+    /// Cannot be overridden.
+    /// `compare(with:)` and/or `compareEqual(with:)` should be overridden to
+    /// define ordering and equivalence relationships between objects.
+    public final func equal(to other: RT_Object) -> RT_Object? {
         return RT_Boolean.withValue(compareEqual(with: other))
     }
     
-    public func notEqual(to other: RT_Object) -> RT_Object? {
+    /// Applies an inverted binary equivalence comparison.
+    public final func notEqual(to other: RT_Object) -> RT_Object? {
         return RT_Boolean.withValue(!compareEqual(with: other))
     }
     
-    public func less(than other: RT_Object) -> RT_Object? {
+    /// Applies a binary less-than (<) comparison.
+    ///
+    /// Cannot be overridden.
+    /// `compareEqual(with:)` should be overridden to define ordering
+    /// relationships between objects.
+    public final func less(than other: RT_Object) -> RT_Object? {
         return compare(with: other).map { RT_Boolean.withValue($0 == .orderedAscending) }
     }
     
-    public func lessEqual(to other: RT_Object) -> RT_Object? {
+    /// Applies a binary less-than-equal (≤) comparison.
+    ///
+    /// Cannot be overridden.
+    /// `compareEqual(with:)` should be overridden to define ordering
+    /// relationships between objects.
+    public final func lessEqual(to other: RT_Object) -> RT_Object? {
         return compare(with: other).map { RT_Boolean.withValue($0 != .orderedDescending) }
     }
     
-    public func greater(than other: RT_Object) -> RT_Object? {
+    /// Applies a binary greater-than (>) comparison.
+    ///
+    /// Cannot be overridden.
+    /// `compareEqual(with:)` should be overridden to define ordering
+    /// relationships between objects.
+    public final func greater(than other: RT_Object) -> RT_Object? {
         return compare(with: other).map { RT_Boolean.withValue($0 == .orderedDescending) }
     }
     
-    public func greaterEqual(to other: RT_Object) -> RT_Object? {
+    /// Applies a binary greater-than-equal (≥) comparison.
+    ///
+    /// Cannot be overridden.
+    /// `compareEqual(with:)` should be overridden to define ordering
+    /// relationships between objects.
+    public final func greaterEqual(to other: RT_Object) -> RT_Object? {
         return compare(with: other).map { RT_Boolean.withValue($0 != .orderedAscending) }
     }
     
+    /// Applies a binary starts-with comparison.
+    ///
+    /// - Returns: Whether this object starts-with `other`.
+    ///
+    /// The base implementation returns `nil`. This should be overridden to
+    /// define any starts-with relationships between objects.
     public func startsWith(_ other: RT_Object) -> RT_Object? {
         return nil
     }
     
+    /// Applies a binary ends-with comparison.
+    ///
+    /// - Returns: Whether this object ends-with `other`.
+    ///
+    /// The base implementation returns `nil`. This should be overridden to
+    /// define any ends-with relationships between objects.
     public func endsWith(_ other: RT_Object) -> RT_Object? {
         return nil
     }
     
+    /// Applies a binary contains comparison.
+    ///
+    /// - Returns: Whether this object contains `other`.
+    ///
+    /// The base implementation returns `nil`. This should be overridden to
+    /// define any containment relationships between objects.
     public func contains(_ other: RT_Object) -> RT_Object? {
         return nil
     }
     
-    public func notContains(_ other: RT_Object) -> RT_Object? {
+    /// Applies an inverted binary contains comparison.
+    public final func notContains(_ other: RT_Object) -> RT_Object? {
         return contains(other).map { RT_Boolean.withValue(!$0.truthy) }
     }
     
-    public func contained(by other: RT_Object) -> RT_Object? {
-        return other.contains(self)
+    /// Applies a binary contained-by comparison.
+    ///
+    /// Cannot be overridden.
+    /// `contains(_:)` should be overridden to define containment
+    /// relationships between objects.
+    public final func contained(by other: RT_Object) -> RT_Object? {
+        other.contains(self)
     }
     
+    /// Applies an inverted binary contained-by comparison.
     public func notContained(by other: RT_Object) -> RT_Object? {
-        return contained(by: other).map { RT_Boolean.withValue(!$0.truthy) }
+        contained(by: other).map { RT_Boolean.withValue(!$0.truthy) }
     }
     
+    /// Applies a binary addition operation.
+    ///
+    /// The base implementation returns `nil`. This should be overridden to
+    /// define any addition operations between objects.
     public func adding(_ other: RT_Object) -> RT_Object? {
-        return nil
+        nil
     }
     
+    /// Applies a binary subtraction operation.
+    ///
+    /// The base implementation returns `nil`. This should be overridden to
+    /// define any subtraction operations between objects.
     public func subtracting(_ other: RT_Object) -> RT_Object? {
-        return nil
+        nil
     }
     
+    /// Applies a binary multiplication operation.
+    ///
+    /// The base implementation returns `nil`. This should be overridden to
+    /// define any multiplication operations between objects.
     public func multiplying(by other: RT_Object) -> RT_Object? {
-        return nil
+        nil
     }
     
+    /// Applies a binary division operation.
+    ///
+    /// The base implementation returns `nil`. This should be overridden to
+    /// define any division operations between objects.
     public func dividing(by other: RT_Object) -> RT_Object? {
-        return nil
+        nil
     }
     
+    /// Applies a binary concatenation operation.
+    ///
+    /// The base implementation returns `nil`. This should be overridden
+    /// alongside `concatenated(to:)` to define any concatenation operations
+    /// between objects.
     public func concatenating(_ other: RT_Object) -> RT_Object? {
-        return nil
+        nil
     }
     
+    /// Applies a reverse binary concatenation operation.
+    ///
+    /// The base implementation returns `nil`. This should be overridden
+    /// alongside `concatenating(_:)` to define any addition operations
+    /// between objects.
     public func concatenated(to other: RT_Object) -> RT_Object? {
         return nil
     }
@@ -238,32 +349,39 @@ import Bushel
     ///   - implicitDirect: The implicit direct object argument, if any.
     ///                     This will, for example, not cause errors if it is
     ///                     unencodable but specified with a remote event.
+    ///
     /// - Returns: The result of this object executing the command, or
-    ///            `nil` if the command was not handled.
+    ///            `nil` if the command could not be handled.
     public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         return nil
     }
     
     // Most of the following default implementations just throw UnsupportedIndexForm.
     
-    /// Accesses the element at the given index.
+    /// The element of the given type at the given index, if one exists.
     ///
-    /// - Parameter index: The index of the element to access.
-    /// - Returns: The element at index `index`.
+    /// - Parameters:
+    ///     - type: The type of element to access.
+    ///     - index: The index of the element to access.
+    ///
     /// - Throws:
-    ///     - `NoElementExists` if there is no element at the given index.
+    ///     - `NoElementExists` if there is no element of the specified type
+    ///       at the given index.
     ///     - `UnsupportedIndexForm` if indexed access is unsupported by
     ///       the receiver.
     public func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object {
         throw UnsupportedIndexForm(indexForm: .index, class: dynamicTypeInfo)
     }
     
-    /// Accesses the element with the given name.
+    /// The element of the given type with the given name, if one exists.
     ///
-    /// - Parameter name: The name of the element to access.
-    /// - Returns: The element named `name`.
+    /// - Parameters:
+    ///     - type: The type of element to access.
+    ///     - name: The name of the element to access.
+    ///
     /// - Throws:
-    ///     - `NoElementExists` if there is no element with the given name.
+    ///     - `NoElementExists` if there is no element of the specified type
+    ///       with the given name.
     ///     - `UnsupportedIndexForm` if named access is unsupported by
     ///       the receiver.
     public func element(_ type: TypeInfo, named name: String) throws -> RT_Object {
@@ -272,14 +390,17 @@ import Bushel
 //        return try RT_Global(Builtin.rt).element(type, named: name, originalObject: self)
     }
     
-    /// Accesses the element with the given unique ID.
+    /// The element of the given type with the given unique ID, if one exists.
     ///
-    /// - Parameter id: The unique ID of the element to access. Can be of
-    ///                 any runtime type.
-    /// - Returns: The element with ID `id`.
+    /// - Parameters:
+    ///     - type: The type of element to access.
+    ///     - id: The unique ID of the element to access. Can be of any
+    ///           runtime type.
+    ///
     /// - Throws:
-    ///     - `NoElementExists` if there is no element with the given ID.
-    ///     - `UnsupportedIndexForm` if ID access is unsupported by
+    ///     - `NoElementExists` if there is no element of the specified type
+    ///       with the given ID.
+    ///     - `UnsupportedIndexForm` if by-ID access is unsupported by
     ///       the receiver.
     public func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object {
         // FIXME: fix
@@ -287,27 +408,40 @@ import Bushel
 //        return try RT_Global(Builtin.rt).element(type, id: id, originalObject: self)
     }
     
-    /// Accesses the element positioned relative to the receiver
-    /// within its primary container.
+    /// The element, if one exists, of the given type positioned relative to
+    /// this object within its primary container.
     ///
-    /// The returned element should be a member of the receiver’s `parent`
-    /// container, and that container alone should be used to determine
-    /// element ordering.
+    /// The returned object should also be an element of this object's primary
+    /// container, and that container alone should consulted to determine
+    /// element ordering. The meaning of "primary container" depends entirely
+    /// on the context of the specific object in question.
     ///
-    /// - Parameter positioning: The position, relative to the receiver,
-    ///                          of the element to access.
-    /// - Returns: The element positioned relative to the receiver.
+    /// - Parameters:
+    ///     - type: The type of element to access.
+    ///     - positioning: The position relative to this object of the element
+    ///                    to access.
+    ///
     /// - Throws:
-    ///     - `NoElementExists` if there is no element at the position
-    ///       specified.
+    ///     - `NoElementExists` if there is no element of the specified type
+    ///       at the given position.
     ///     - `UnsupportedIndexForm` if relative access is unsupported by
     ///       the receiver.
     public func element(_ type: TypeInfo, positioned positioning: RelativePositioning) throws -> RT_Object {
         throw UnsupportedIndexForm(indexForm: .relative, class: dynamicTypeInfo)
     }
     
-    // TODO: doc comments
-    
+    /// The element of the given type at the specified absolute positioning,
+    /// if one exists.
+    ///
+    /// - Parameters:
+    ///     - type: The type of element to access.
+    ///     - positioning: The absolute positioning of the element to access.
+    ///
+    /// - Throws:
+    ///     - `NoElementExists` if there is no element of the specified type
+    ///       at the given position.
+    ///     - `UnsupportedIndexForm` if absolute access is unsupported by
+    ///       the receiver.
     public func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object {
         switch positioning {
         case .first:
@@ -317,35 +451,74 @@ import Bushel
         }
     }
     
+    /// All elements of the given type, if any exist.
+    ///
+    /// - Parameters:
+    ///     - type: The type of element to access.
+    ///
+    /// - Throws:
+    ///     - `NoElementExists` if there are no elements of the specified type.
+    ///     - `UnsupportedIndexForm` if all-element access is unsupported by
+    ///       the receiver.
     public func elements(_ type: TypeInfo) throws -> RT_Object {
         throw UnsupportedIndexForm(indexForm: .all, class: dynamicTypeInfo)
     }
     
+    /// The elements, if any exist, of the given type within the specified
+    /// bounds.
+    ///
+    /// - Parameters:
+    ///     - type: The type of element to access.
+    ///     - from: The lower bound.
+    ///     - thru: The upper bound.
+    ///
+    /// - Throws:
+    ///     - `NoElementExists` if there are no elements of the specified type
+    ///       within the given bounds.
+    ///     - `UnsupportedIndexForm` if absolute access is unsupported by
+    ///       the receiver.
     public func elements(_ type: TypeInfo, from: RT_Object, thru: RT_Object) throws -> RT_Object {
         throw UnsupportedIndexForm(indexForm: .range, class: dynamicTypeInfo)
     }
     
+    // TODO: Must be migrated to RT_TestSpecifier before documentation & use.
+    @available(*, unavailable)
     public func elements(_ type: TypeInfo, filtered: RT_Specifier) throws -> RT_Object {
         throw UnsupportedIndexForm(indexForm: .filter, class: dynamicTypeInfo)
     }
     
 }
 
+
+/// Symbolic constants passed to `element(_:positioned:)`.
 public enum RelativePositioning {
+    /// The element before some object.
     case before
+    /// The element after some object.
     case after
 }
+
+/// Symbolic constants passed to `element(_:at:)`.
 public enum AbsolutePositioning {
+    /// The first element.
     case first
+    /// The element in the middle of the container, rounding down.
+    /// e.g., `middle of {1,2,3,4}` is `2`.
     case middle
+    /// The last element.
     case last
+    /// A randomly selected element out of the container.
+    /// No, really.
+    /// Listen, this was Apple's idea, not mine.
     case random
 }
 
+/// Compares two runtime objects via `lhs.compare(with: rhs)`.
 func <=> (lhs: RT_Object, rhs: RT_Object) -> ComparisonResult? {
     return lhs.compare(with: rhs)
 }
 
+// MARK: Comparable
 extension RT_Object: Comparable {
     
     public static func < (lhs: RT_Object, rhs: RT_Object) -> Bool {
@@ -354,24 +527,37 @@ extension RT_Object: Comparable {
     
 }
 
+// MARK: Coercion utility functions
 extension RT_Object {
     
-    public func coerce<T: RT_Object>() -> T? {
-        coerce(to: T.typeInfo) as? T
+    /// Attempts to coerce this object to another runtime type,
+    /// according to the specified static result type.
+    ///
+    /// e.g., `RT_Integer(value: 42).coerce() as? RT_Real`
+    ///
+    /// The runtime type to which coercion is attempted is `To.typeInfo`, where
+    /// `To?` is `coerce()`'s result type. If this coercion fails or results
+    /// in something that is not a `To`, `nil` is returned.
+    public func coerce<To: RT_Object>() -> To? {
+        coerce(to: To.typeInfo) as? To
     }
     
 }
 
+// MARK: Reflective object factory functions
 extension RT_Object {
     
+    /// The reflective runtime object representation of the given property.
     public static func property(_ property: PropertyInfo) -> RT_Object {
         RT_Constant(value: ConstantInfo(property: property))
     }
     
+    /// The reflective runtime object representation of the given symbolic constant.
     public static func constant(_ constant: ConstantInfo) -> RT_Object {
         RT_Constant(value: constant)
     }
     
+    /// The reflective runtime object representation of the given type.
     public static func type(_ type: TypeInfo) -> RT_Object {
         RT_Class(value: type)
     }
