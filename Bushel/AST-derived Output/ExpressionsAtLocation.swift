@@ -13,8 +13,6 @@ private extension Expression {
     func expressions(at location: SourceLocation) -> [Expression] {
         func collectSubexpressions() -> [Expression] {
             switch kind {
-            case .topLevel:
-                return []
             case .empty:
                 return []
             case .end:

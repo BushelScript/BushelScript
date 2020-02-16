@@ -8,8 +8,6 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
     
     public func reformat(expression: Expression, level: Int) -> String {
         switch expression.kind {
-        case .topLevel:
-            fatalError("Expression.Kind.topLevel should not be formatting itself!")
         case .empty:
             return ""
         case .end:

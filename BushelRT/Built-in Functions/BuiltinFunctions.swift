@@ -23,7 +23,9 @@ enum BuiltinFunction: String {
     case newSpecifier0, newSpecifier1, newSpecifier2
     case newTestSpecifier
     case qualifySpecifier, evaluateSpecifier
-    case call
+    case newScript
+    case newFunction
+    case runCommand
     case runWeave
     
     var runtimeName: String {
@@ -88,7 +90,9 @@ enum BuiltinFunction: String {
         case .newTestSpecifier: return ([int32, object, object], object)
         case .qualifySpecifier: return ([object], object)
         case .evaluateSpecifier: return ([object], object)
-        case .call: return ([object, object], object)
+        case .newScript: return ([object], object)
+        case .newFunction: return ([object, PointerType.toVoid, object], object)
+        case .runCommand: return ([object, object], object)
         case .runWeave: return ([object, object, object], object)
         }
         
@@ -214,8 +218,14 @@ extension BuiltinFunction {
         let evaluateSpecifier: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b in ø(a).evaluateSpecifier(b) }
         builder.addExternalFunctionAsGlobal(evaluateSpecifier, .evaluateSpecifier)
         
-        let call: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b, c in ø(a).call(b, c) }
-        builder.addExternalFunctionAsGlobal(call, .call)
+        let newScript: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b in ø(a).newScript(b) }
+        builder.addExternalFunctionAsGlobal(newScript, .newScript)
+        
+        let newFunction: @convention(c) (Builtin.Pointer, Builtin.InfoPointer, UnsafeRawPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b, c, d in ø(a).newFunction(b, c, d) }
+        builder.addExternalFunctionAsGlobal(newFunction, .newFunction)
+        
+        let runCommand: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b, c in ø(a).runCommand(b, c) }
+        builder.addExternalFunctionAsGlobal(runCommand, .runCommand)
         
         let runWeave: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b, c, d in ø(a).runWeave(b, c, d) }
         builder.addExternalFunctionAsGlobal(runWeave, .runWeave)

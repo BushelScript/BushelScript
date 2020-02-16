@@ -1,8 +1,8 @@
 import Bushel
 
-typealias Callable = @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer
+public class RT_Function: RT_Object {
 
-class RT_Function: RT_Object {
+    typealias Callable = @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer
     
     var callable: Callable
     
@@ -10,7 +10,16 @@ class RT_Function: RT_Object {
         self.callable = callable
     }
     
-    func call(arguments: [ParameterInfo : RT_Object]) -> RT_Object {
+    private static let typeInfo_ = TypeInfo(.function)
+    public override class var typeInfo: TypeInfo {
+        typeInfo_
+    }
+    
+    public override var description: String {
+        "function"
+    }
+    
+    public func call(arguments: [ParameterInfo : RT_Object]) -> RT_Object {
         let argumentRecord = RT_Private_ArgumentRecord()
         argumentRecord.contents = [TypedTermUID : RT_Object](uniqueKeysWithValues:
             arguments.map { (key: $0.key.typedUID, value: $0.value) }

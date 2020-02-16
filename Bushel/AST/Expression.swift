@@ -38,7 +38,6 @@ public struct Newline: PrettyPrintable {
 public struct Expression {
     
     public indirect enum Kind {
-        case topLevel
         case empty
         case end
         case that
@@ -123,8 +122,6 @@ extension Expression.Kind {
     
     private var kindDescriptionStrings: (kindName: String, kindDescription: String) {
         switch self {
-        case .topLevel:
-            return ("Top-level", "")
         case .empty:
             return ("Empty expression", "No effect.")
         case .end:
@@ -207,8 +204,6 @@ extension Expression.Kind {
 //
 //    public func prettified(source: String) -> String {
 //        switch kind {
-//        case .topLevel:
-//            fatalError("Expression.Kind.topLevel should not be formatting itself!")
 //        case .empty:
 //            return ""
 //        case .end:

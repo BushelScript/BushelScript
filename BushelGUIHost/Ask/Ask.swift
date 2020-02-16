@@ -82,6 +82,8 @@ public func ask(_ rt: RTInfo, for type: TypeInfo, prompt: String, title: String,
             return uneditableVC()
         case .script:
             return uneditableVC()
+        case .function:
+            return uneditableVC()
         case nil:
             // TODO: Implement for custom types
             fatalError("unimplemented")

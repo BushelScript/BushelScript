@@ -5,7 +5,7 @@ public struct ProgramStack {
     var frames: [StackFrame]
     
     public init(_ rt: RTInfo) {
-        self.init(frames: [StackFrame(rt, variables: [:], target: RT_Global(rt))])
+        self.init(frames: [StackFrame(rt, variables: [:], target: RT_Global(rt), script: rt.topScript)])
     }
     
     public init(frames: [StackFrame]) {
@@ -26,6 +26,9 @@ public struct ProgramStack {
     }
     public var target: RT_Object? {
         currentFrame.target
+    }
+    public var script: RT_Script {
+        currentFrame.script
     }
     
     mutating func push(newTarget: RT_Object? = nil) {
@@ -48,16 +51,19 @@ public struct StackFrame {
     public let rt: RTInfo
     public var variables: [Bushel.TermName : RT_Object] = [:]
     public var target: RT_Object?
+    public var script: RT_Script
     
     init(inheritingFrom other: StackFrame, target: RT_Object? = nil) {
         self.rt = other.rt
         self.variables = other.variables
         self.target = target ?? other.target
+        self.script = other.script
     }
-    init(_ rt: RTInfo, variables: [Bushel.TermName : RT_Object], target: RT_Object?) {
+    init(_ rt: RTInfo, variables: [Bushel.TermName : RT_Object], target: RT_Object?, script: RT_Script) {
         self.rt = rt
         self.variables = variables
         self.target = target
+        self.script = script
     }
     
     /// Adds this stack frame's target object, if any, as the topmost parent

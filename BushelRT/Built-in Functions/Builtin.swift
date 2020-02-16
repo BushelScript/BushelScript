@@ -391,10 +391,27 @@ final class Builtin {
         }
     }
     
-    func call(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer) -> RTObjectPointer {
+    func newScript(_ namePointer: RTObjectPointer) -> RTObjectPointer {
+        let name = (fromOpaque(namePointer) as? RT_String)?.value
+        
+        return toOpaque(retain(RT_Script(name: name)))
+    }
+    
+    func newFunction(_ commandInfoPointer: InfoPointer, _ valuePointer: UnsafeRawPointer, _ scriptPointer: RTObjectPointer) -> RTObjectPointer {
+        let commandInfo = infoFromOpaque(commandInfoPointer) as CommandInfo
+        let callable = unsafeBitCast(valuePointer, to: RT_Function.Callable.self)
+        let script = fromOpaque(scriptPointer) as? RT_Script ?? stack.script
+        
+        let function = RT_Function(callable: callable)
+        script.dynamicFunctions[commandInfo] = function
+        
+        return toOpaque(retain(function))
+    }
+    
+    func runCommand(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer) -> RTObjectPointer {
         let command = infoFromOpaque(commandPointer) as CommandInfo
         let argumentsRecord = fromOpaque(argumentsPointer) as! RT_Private_ArgumentRecord
-        return call(command: command, arguments: arguments(from: argumentsRecord))
+        return run(command: command, arguments: arguments(from: argumentsRecord))
     }
     
     private func arguments(from record: RT_Private_ArgumentRecord) -> [ParameterInfo : RT_Object] {
@@ -403,7 +420,7 @@ final class Builtin {
         )
     }
     
-    private func call(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RTObjectPointer {
+    private func run(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RTObjectPointer {
         var arguments = arguments
         let target = stack.target
         
@@ -441,8 +458,11 @@ final class Builtin {
                     try target?.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             } ??
             catchingErrors {
-                try RT_Global(rt).perform(command: command, arguments: arguments, implicitDirect: implicitDirect) ?? RT_Null.null
-            }!
+                try stack.script.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+            } ??
+            catchingErrors {
+                try RT_Global(rt).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+            } ?? RT_Null.null
         ))
     }
     
