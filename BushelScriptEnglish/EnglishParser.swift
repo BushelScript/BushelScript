@@ -108,6 +108,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("×"): .multiply,
         TermName("/"): .divide,
         TermName("÷"): .divide,
+        TermName("as"): .coerce,
     ]
     
     public let stringMarkers: [(begin: TermName, end: TermName)] = [
@@ -600,7 +601,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     public func postprocess(primary: Expression) throws -> Expression.Kind? {
-        return try tryParseSpecifierPhrase(chainingTo: primary) ?? tryParseCoercion(of: primary)
+        return try tryParseSpecifierPhrase(chainingTo: primary)
     }
     
     public func parseSpecifierAfterClassName() throws -> Specifier.Kind? {
@@ -725,17 +726,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         newChildSpecifier.parent = chainTo
         return .specifier(newChildSpecifier)
-    }
-    
-    public func tryParseCoercion(of expression: Expression) throws -> Expression.Kind? {
-        guard tryEating(prefix: "as") else {
-            return nil
-        }
-        
-        guard let toType = try parseTypeTerm() else {
-            throw ParseError(description: "expected type name", location: currentLocation)
-        }
-        return .coercion(of: expression, to: toType)
     }
     
 }

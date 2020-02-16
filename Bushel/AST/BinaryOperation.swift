@@ -10,6 +10,7 @@ public enum BinaryOperation: Int {
     case concatenate
     case add, subtract
     case multiply, divide
+    case coerce
     
     public var precedence: PrecedenceGroup {
         switch self {
@@ -27,6 +28,8 @@ public enum BinaryOperation: Int {
             return .addition
         case .multiply, .divide:
             return .multiplication
+        case .coerce:
+            return .coercion
         }
     }
     

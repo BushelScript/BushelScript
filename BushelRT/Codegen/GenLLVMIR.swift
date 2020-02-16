@@ -416,8 +416,6 @@ extension Expression {
             return builder.buildCall(toExternalFunction: .unaryOp, args: [bp, IntType.int64.constant(operation.rawValue), try operand.generateLLVMIR(builder, builtin, &stack, options: options, lastResult: lastResult)])
         case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
             return builder.buildCall(toExternalFunction: .binaryOp, args: [bp, IntType.int64.constant(operation.rawValue), try lhs.generateLLVMIR(builder, builtin, &stack, options: options, lastResult: lastResult), try rhs.generateLLVMIR(builder, builtin, &stack, options: options, lastResult: lastResult)])
-        case .coercion(of: let expression, to: let type): // MARK: .coercion
-            return builder.buildCall(toExternalFunction: .coerce, args: [bp, try expression.generateLLVMIR(builder, builtin, &stack, options: options, lastResult: lastResult), rt.type(forUID: type.term.typedUID).irPointerValue(builder: builder)])
         case .variable(let term): // MARK: .variable
             let termIRValue = term.irPointerValue(builder: builder)
             

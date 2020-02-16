@@ -353,6 +353,18 @@ import Bushel
         return nil
     }
     
+    /// Applies a binary coercion operation.
+    ///
+    /// Cannot be overridden.
+    /// `coerce(to:)` should be overridden to define coercions.
+    public final func coercing(to other: RT_Object) -> RT_Object? {
+        guard let type = (other as? RT_Class)?.value else {
+            // TODO: Throw here
+            return nil
+        }
+        return coerce(to: type)
+    }
+    
     /// Asks this object to perform the specified command.
     ///
     /// - Parameters:

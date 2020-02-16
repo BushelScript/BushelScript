@@ -65,7 +65,6 @@ public struct Expression {
         case prefixOperator(operation: UnaryOperation, operand: Expression)
         case postfixOperator(operation: UnaryOperation, operand: Expression)
         case infixOperator(operation: BinaryOperation, lhs: Expression, rhs: Expression)
-        case coercion(of: Expression, to: Located<ClassTerm>)
         case variable(VariableTerm)
         case enumerator(EnumeratorTerm)
         case class_(ClassTerm)
@@ -178,8 +177,6 @@ extension Expression.Kind {
             return ("Postfix operator", "")
         case .infixOperator:
             return ("Infix operator", "")
-        case .coercion:
-            return ("Coercion", "Attempts to convert the result of an expression to the specified type.")
         case .variable:
             return ("Variable reference", "A previously defined variable.")
         case .enumerator:

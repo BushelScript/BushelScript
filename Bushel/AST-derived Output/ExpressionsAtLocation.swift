@@ -67,8 +67,6 @@ private extension Expression {
                 return [operand]
             case let .infixOperator(operation: _, lhs, rhs):
                 return [lhs, rhs]
-            case let .coercion(of: expression, to: _):
-                return [expression]
             case .variable(_):
                 return []
             case .enumerator(_):

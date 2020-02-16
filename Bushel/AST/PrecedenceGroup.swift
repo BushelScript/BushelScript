@@ -10,6 +10,7 @@ public enum PrecedenceGroup: Int, Comparable {
     case concatenation
     case addition
     case multiplication
+    case coercion
     
     public static func < (lhs: PrecedenceGroup, rhs: PrecedenceGroup) -> Bool {
         return lhs.rawValue < rhs.rawValue
@@ -32,6 +33,8 @@ public enum PrecedenceGroup: Int, Comparable {
         case .addition:
             return .left
         case .multiplication:
+            return .left
+        case .coercion:
             return .left
         }
     }

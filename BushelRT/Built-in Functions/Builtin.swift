@@ -294,6 +294,8 @@ final class Builtin {
                 return lhs.dividing(by: rhs)
             case .concatenate:
                 return lhs.concatenating(rhs) ?? rhs.concatenated(to: lhs)
+            case .coerce:
+                return lhs.coercing(to: rhs)
             }
         }() ?? RT_Null.null))
     }
