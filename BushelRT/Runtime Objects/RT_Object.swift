@@ -212,7 +212,10 @@ import Bushel
     /// `compareEqual(with:)` should be overridden to define ordering
     /// relationships between objects.
     public final func less(than other: RT_Object) -> RT_Object? {
-        return compare(with: other).map { RT_Boolean.withValue($0 == .orderedAscending) }
+        guard let order = compare(with: other) else {
+            return nil
+        }
+        return RT_Boolean.withValue(order == .orderedAscending)
     }
     
     /// Applies a binary less-than-equal (≤) comparison.
@@ -221,7 +224,10 @@ import Bushel
     /// `compareEqual(with:)` should be overridden to define ordering
     /// relationships between objects.
     public final func lessEqual(to other: RT_Object) -> RT_Object? {
-        return compare(with: other).map { RT_Boolean.withValue($0 != .orderedDescending) }
+        guard let order = compare(with: other) else {
+            return nil
+        }
+        return RT_Boolean.withValue(order != .orderedDescending)
     }
     
     /// Applies a binary greater-than (>) comparison.
@@ -230,7 +236,10 @@ import Bushel
     /// `compareEqual(with:)` should be overridden to define ordering
     /// relationships between objects.
     public final func greater(than other: RT_Object) -> RT_Object? {
-        return compare(with: other).map { RT_Boolean.withValue($0 == .orderedDescending) }
+        guard let order = compare(with: other) else {
+            return nil
+        }
+        return RT_Boolean.withValue(order == .orderedDescending)
     }
     
     /// Applies a binary greater-than-equal (≥) comparison.
@@ -239,7 +248,10 @@ import Bushel
     /// `compareEqual(with:)` should be overridden to define ordering
     /// relationships between objects.
     public final func greaterEqual(to other: RT_Object) -> RT_Object? {
-        return compare(with: other).map { RT_Boolean.withValue($0 != .orderedAscending) }
+        guard let order = compare(with: other) else {
+            return nil
+        }
+        return RT_Boolean.withValue(order != .orderedAscending)
     }
     
     /// Applies a binary starts-with comparison.
@@ -249,7 +261,7 @@ import Bushel
     /// The base implementation returns `nil`. This should be overridden to
     /// define any starts-with relationships between objects.
     public func startsWith(_ other: RT_Object) -> RT_Object? {
-        return nil
+        nil
     }
     
     /// Applies a binary ends-with comparison.
@@ -259,7 +271,7 @@ import Bushel
     /// The base implementation returns `nil`. This should be overridden to
     /// define any ends-with relationships between objects.
     public func endsWith(_ other: RT_Object) -> RT_Object? {
-        return nil
+        nil
     }
     
     /// Applies a binary contains comparison.
@@ -269,12 +281,12 @@ import Bushel
     /// The base implementation returns `nil`. This should be overridden to
     /// define any containment relationships between objects.
     public func contains(_ other: RT_Object) -> RT_Object? {
-        return nil
+        nil
     }
     
     /// Applies an inverted binary contains comparison.
     public final func notContains(_ other: RT_Object) -> RT_Object? {
-        return contains(other).map { RT_Boolean.withValue(!$0.truthy) }
+        contains(other).map { RT_Boolean.withValue(!$0.truthy) }
     }
     
     /// Applies a binary contained-by comparison.

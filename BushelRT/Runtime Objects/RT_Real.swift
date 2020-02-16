@@ -66,9 +66,15 @@ public class RT_Real: RT_Object, AEEncodable {
         case .Math_cbrt:
             return RT_Real(value: cbrt(self.value))
         case .Math_square:
-            return RT_Real(value: self.value * self.value)
+            let squared = self.value * self.value
+            return RT_Real(value: squared)
         case .Math_cube:
-            return RT_Real(value: self.value * self.value * self.value)
+            // Swift likes taking an egregiously long time to typecheck a
+            // three-way multiplication…
+            // So we split it up to hopefully help matters a little.
+            let squared = self.value * self.value
+            let cubed = squared * self.value
+            return RT_Real(value: cubed)
         case .Math_pow:
             guard let exponent = arguments[ParameterInfo(.Math_pow_exponent)] as? RT_Numeric else {
                 // FIXME: Throw error

@@ -56,7 +56,8 @@ func generateLLVMModule(from expression: Expression, builtin: Builtin) -> Module
     let module = Module(name: "main")
     let builder = IRBuilder(module: module)
     
-    module.addGlobal("rt_null", type: PointerType.toVoid).initializer = builder.buildIntToPtr(IntType.int64.constant(Int(bitPattern: Builtin.toOpaque(RT_Null.null))), type: .toVoid)
+    let rtNullPointer = Builtin.toOpaque(RT_Null.null)
+    module.addGlobal("rt_null", type: PointerType.toVoid).initializer = builder.buildIntToPtr(IntType.int64.constant(Int(bitPattern: rtNullPointer)), type: .toVoid)
     
     BuiltinFunction.addFunctions(to: builder)
     

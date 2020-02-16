@@ -44,13 +44,14 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public var length: RT_Integer {
-        return RT_Integer(value: Int64(contents.count))
+        let count = Int64(contents.count)
+        return RT_Integer(value: count)
     }
     public var reverse: RT_List {
-        return RT_List(contents: contents.reversed())
+        RT_List(contents: contents.reversed())
     }
     public var tail: RT_List {
-        return RT_List(contents: [RT_Object](contents[1...]))
+        RT_List(contents: [RT_Object](contents[1...]))
     }
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
@@ -65,7 +66,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     private func filteredContents(_ type: TypeInfo) -> [RT_Object] {
-        return contents.filter { $0.dynamicTypeInfo.isA(type) }
+        contents.filter { $0.dynamicTypeInfo.isA(type) }
     }
     
     public override func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object {

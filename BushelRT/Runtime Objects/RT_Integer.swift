@@ -11,7 +11,8 @@ public class RT_Integer: RT_Object, AEEncodable {
     }
     
     public convenience init(value: Int) {
-        self.init(value: Int64(value))
+        let value = Int64(value)
+        self.init(value: value)
     }
     
     public override var description: String {
@@ -84,9 +85,15 @@ public class RT_Integer: RT_Object, AEEncodable {
         case .Math_cbrt:
             return RT_Real(value: cbrt(self.numericValue))
         case .Math_square:
-            return RT_Integer(value: self.value * self.value)
+            let squared = self.value * self.value
+            return RT_Integer(value: squared)
         case .Math_cube:
-            return RT_Integer(value: self.value * self.value * self.value)
+            // Swift likes taking an egregiously long time to typecheck a
+            // three-way multiplication…
+            // So we split it up to hopefully help matters a little.
+            let squared = self.value * self.value
+            let cubed = squared * self.value
+            return RT_Integer(value: cubed)
         case .Math_pow:
             guard let exponent = arguments[ParameterInfo(.Math_pow_exponent)] as? RT_Numeric else {
                 // FIXME: Throw error

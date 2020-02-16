@@ -12,7 +12,7 @@ final class RadioChoicesVC: NSViewController {
         _ = self.view
         
         // NSCell supports NSCopying
-        let radioButton = NSButton(frame: .zero)
+        let radioButton = NSButton(frame: CGRect.zero)
         radioButton.cell = radioButtonTemplate.cell!.copy() as? NSCell
         
         radioButton.title = choiceName
@@ -25,7 +25,7 @@ final class RadioChoicesVC: NSViewController {
         }
     }
     
-    @IBAction func setChoice(_ sender: AnyObject) {
+    @IBAction func setChoice(_ sender: NSButton!) {
         currentChoiceName = sender.title
     }
     
