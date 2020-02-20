@@ -99,7 +99,6 @@ public extension TypedTermUID {
 public enum DictionaryUID: String, TermUIDPredefinedValue {
     
     case BushelScript
-    case StandardAdditions
     case Math
     case Sequence
     case String
@@ -111,13 +110,11 @@ public enum DictionaryUID: String, TermUIDPredefinedValue {
     }
     
     public var idName: String? {
-        // We need to bypass the default implementation for a couple names
+        // We need to bypass the default implementation for names
         // that have capital letters that do not denote word breaks.
         switch self {
         case .BushelScript:
             return "BushelScript"
-        case .StandardAdditions:
-            return "StandardAdditions"
         default:
             return makeIDName(from: rawValue)
         }
@@ -160,6 +157,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
     case global
     case script
     case function
+    case system
     
     public var kind: TypedTermUID.Kind {
         .type
@@ -209,7 +207,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
             return typeType
         case .null:
             return try! FourCharCode(fourByteString: "msng")
-        case .global, .script, .function:
+        case .global, .script, .function, .system:
             return nil
         }
     }
@@ -646,6 +644,25 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
             default:
                 return nil
             }
+        case .id(let name):
+            self.init(idName: name)
+        default:
+            return nil
+        }
+    }
+    
+}
+
+public enum ResourceUID: String, TermUIDPredefinedValue {
+    
+    case system
+    
+    public var kind: TypedTermUID.Kind {
+        .resource
+    }
+    
+    public init?(_ uid: TermUID) {
+        switch uid {
         case .id(let name):
             self.init(idName: name)
         default:

@@ -1,5 +1,6 @@
 import BushelLanguage
 import Bushel
+import Regex
 
 public final class EnglishParser: BushelLanguage.SourceParser {
     
@@ -8,6 +9,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     public var entireSource: String = ""
     public lazy var source: Substring = Substring(entireSource)
     public var expressionStartIndices: [String.Index] = []
+    public lazy var termNameStartIndex: String.Index = entireSource.startIndex
     
     public var lexicon: Lexicon = Lexicon()
     public var currentElements: [[PrettyPrintable]] = []
@@ -143,9 +145,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 return .return_(try self.parsePrimary())
             }
         },
-        TermName("use application"): handleUseApplication,
-        TermName("use app"): handleUseApplication,
-        TermName("use AppleScript"): handleUseAppleScript,
+        TermName("use"): handleUse,
         TermName("that"): { .that },
         TermName("it"): { .it },
         TermName("every"): handleQuantifier(.all),
@@ -170,6 +170,24 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         },
         TermName("set"): handleSet,
         TermName("null"): { .null }
+    ]
+    
+    public lazy var resourceTypes: [TermName : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] = [
+        TermName("system"): (false, [], handleUseSystem),
+        TermName("operating system"): (false, [], handleUseSystem),
+        TermName("OS"): (false, [], handleUseSystem),
+        TermName("macOS"): (false, [], handleUseSystem),
+        TermName("OS X"): (false, [], handleUseSystem),
+        TermName("MacOS"): (false, [], handleUseSystem),
+        TermName("Mac OS"): (false, [], handleUseSystem),
+        TermName("Mac OS X"): (false, [], handleUseSystem),
+        
+        TermName("application"): (true, [], handleUseApplicationName),
+        TermName("app"): (true, [], handleUseApplicationName),
+        TermName("application id"): (true, [], handleUseApplicationID),
+        TermName("app id"): (true, [], handleUseApplicationID),
+        
+        TermName("AppleScript"): (true, ["at"], handleUseAppleScript),
     ]
     
     private func handleOpenParenthesis() throws -> Expression.Kind? {
@@ -258,22 +276,22 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     private func handleFunctionStart() throws -> Expression.Kind? {
-        guard let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: [":"]) else {
+        guard let termName = try parseTermNameEagerly(stoppingAt: [":"]) else {
             throw ParseError(description: "expected function name", location: SourceLocation(source.range, source: entireSource))
         }
-        let functionNameTerm = Located(VariableTerm(.id(termName.normalized), name: termName), at: termLocation)
+        let functionNameTerm = Located(VariableTerm(.id(termName.normalized), name: termName), at: termNameLocation)
         
         var parameters: [Located<ParameterTerm>] = []
         var arguments: [Located<VariableTerm>] = []
         if tryEating(prefix: ":") {
-            while let (parameterTermName, parameterTermLocation) = try parseTermNameLazily() {
-                parameters.append(Located(ParameterTerm(.id(parameterTermName.normalized), name: parameterTermName), at: parameterTermLocation))
+            while let parameterTermName = try parseTermNameLazily() {
+                parameters.append(Located(ParameterTerm(.id(parameterTermName.normalized), name: parameterTermName), at: termNameLocation))
                 
-                var (argumentName, argumentLocation) = try parseTermNameEagerly(stoppingAt: [","]) ?? (parameterTermName, parameterTermLocation)
+                var argumentName = try parseTermNameEagerly(stoppingAt: [","]) ?? parameterTermName
                 if argumentName.words.isEmpty {
-                    (argumentName, argumentLocation) = (parameterTermName, parameterTermLocation)
+                    argumentName = parameterTermName
                 }
-                arguments.append(Located(VariableTerm(.id(argumentName.normalized), name: argumentName), at: argumentLocation))
+                arguments.append(Located(VariableTerm(.id(argumentName.normalized), name: argumentName), at: termNameLocation))
                 
                 if !tryEating(prefix: ",") {
                     break
@@ -441,60 +459,80 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return .let_(term, initialValue: initialValue)
     }
     
-    private func handleUseApplication() throws -> Expression.Kind? {
-        eatCommentsAndWhitespace()
-        guard !source.hasPrefix("\"") else {
-            throw ParseError(description: "‘use application’ takes a raw application name, not a string, since it binds a constant; remove the quotation marks", location: currentLocation)
+    private func handleUseSystem(name: TermName) throws -> ResourceTerm {
+        var system = Resource.System()
+        if tryEating(prefix: "version") {
+            guard let match = tryEating(Regex("[vV]?(\\d+)\\.(\\d+)(?:\\.(\\d+))?")) else {
+                throw ParseError(description: "expected OS version number", location: currentLocation)
+            }
+            
+            let versionComponents = match.captures.compactMap { $0.map { Int($0)! } }
+            let majorVersion = versionComponents[0]
+            let minorVersion = versionComponents[1]
+            let patchVersion = versionComponents.indices.contains(2) ? versionComponents[2] : 0
+            
+            let version = OperatingSystemVersion(majorVersion: majorVersion, minorVersion: minorVersion, patchVersion: patchVersion)
+            guard let resolved = Resource.System(version: version) else {
+                let realVersion = ProcessInfo.processInfo.operatingSystemVersionString
+                throw ParseError(description: "this script requires an operating system version of at least \(match.matchedString); your system is running \(realVersion)", location: expressionLocation)
+            }
+            
+            system = resolved
         }
         
-        let byBundleID = tryEating(prefix: "id")
+        let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: system.enumerated())
         
-        let nameStartIndex = currentIndex
-        guard let (name, nameLocation) = try parseTermNameEagerly() else {
-            throw ParseError(description: "expected application \(byBundleID ? "identifier" : "name")", location: currentLocation)
-        }
-        guard let bundle = byBundleID ? Bundle(applicationBundleIdentifier: name.normalized) : Bundle(applicationName: name.normalized) else {
-            throw ParseError(description: "this script requires \(byBundleID ? "an application with identifier" : "the application") “\(name)”, which was not found on your system", location: SourceLocation(nameStartIndex..<currentIndex, source: entireSource))
-        }
+        // Terminology should be defined in translation files
         
-        let resource: Resource = byBundleID ? .applicationByID(bundle: bundle) : .applicationByName(bundle: bundle)
-        let term = Located(ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: resource), at: nameLocation)
-        
-        try loadTerminology(at: bundle.bundleURL, into: term.term)
-        lexicon.add(term)
-        return .use(resource: term)
+        return term
     }
     
-    private func handleUseAppleScript() throws -> Expression.Kind? {
-        eatCommentsAndWhitespace()
-        
-//        let isLibrary = tryEating(prefix: "library")
-        
-//        let nameStartIndex = currentIndex
-        guard let (name, nameLocation) = try parseTermNameEagerly(stoppingAt: ["at"]) else {
-            throw ParseError(description: "expected AppleScript script name", location: currentLocation)
+    private func handleUseApplicationName(name: TermName) throws -> ResourceTerm {
+        guard let application = Resource.ApplicationByName(name: name.normalized) else {
+            throw ParseError(description: "this script requires the application “\(name)”, which was not found on your system", location: termNameLocation)
         }
         
+        let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: application.enumerated())
+        
+        try term.loadResourceTerminology(under: lexicon.pool)
+        lexicon.add(term)
+        
+        return term
+    }
+    
+    private func handleUseApplicationID(name: TermName) throws -> ResourceTerm {
+        guard let application = Resource.ApplicationByID(id: name.normalized) else {
+            throw ParseError(description: "this script requires an application with identifier “\(name)”, which was not found on your system", location: termNameLocation)
+        }
+        let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: application.enumerated())
+        
+        try term.loadResourceTerminology(under: lexicon.pool)
+        lexicon.add(term)
+        
+        return term
+    }
+    
+    private func handleUseAppleScript(name: TermName) throws -> ResourceTerm {
         guard tryEating(prefix: "at") else {
             throw ParseError(description: "expected ‘at’ (more addressing modes coming soon)", location: currentLocation)
         }
         
         let pathStartIndex = currentIndex
-        guard let (_, path) = try parseString() else {
+        guard var (_, path) = try parseString() else {
             throw ParseError(description: "expected path string", location: currentLocation)
         }
         
-        let fileURL = URL(fileURLWithPath: (path as NSString).expandingTildeInPath)
-        guard let script = NSAppleScript(contentsOf: fileURL, error: nil) else {
+        path = (path as NSString).expandingTildeInPath
+        
+        guard let applescript = Resource.AppleScriptAtPath(path: path) else {
             throw ParseError(description: "this script requires an AppleScript script at path “\(path)”, which was not found on your system", location: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
         }
+        let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: applescript.enumerated())
         
-        let resource = Resource.applescriptAtPath(path: path, script: script)
-        let term = Located(ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: resource), at: nameLocation)
-        
-        // load terminology here
+        try? term.loadResourceTerminology(under: lexicon.pool)
         lexicon.add(term)
-        return .use(resource: term)
+        
+        return term
     }
     
     private func handleSet() throws -> Expression.Kind? {

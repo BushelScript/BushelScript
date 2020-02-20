@@ -8,6 +8,7 @@ public indirect enum TermUID {
     case ae8(class: AEEventClass, id: AEEventID)
     case ae12(class: AEEventClass, id: AEEventID, code: AEKeyword)
     case id(_ name: String)
+    case res(_ name: String)
     case asid(_ name: String)
     case variant(Variant, TermUID)
     
@@ -156,6 +157,17 @@ extension TermUID {
         idName.split(separator: ":").map { String($0) }
     }
     
+    public var resName: String? {
+        switch self {
+        case .res(let name):
+            return name
+        case .variant(_, let uid):
+            return uid.resName
+        default:
+            return nil
+        }
+    }
+    
     public var asidName: String? {
         switch self {
         case .asid(let name):
@@ -215,7 +227,7 @@ extension TermUID: CustomStringConvertible {
     /// An semantically identical `Name` structure can be reconstructed
     /// from the returned String, using `init?(normalized:)`.
     public var normalized: String {
-        kind + ":" + data
+        "\(kind):\(data)"
     }
     
     /// The kind of UID name; the domain or "namespace".
@@ -232,6 +244,8 @@ extension TermUID: CustomStringConvertible {
             return "ae12"
         case .id:
             return "id"
+        case .res:
+            return "res"
         case .asid:
             return "asid"
         case .variant(let variant, _):
@@ -249,6 +263,8 @@ extension TermUID: CustomStringConvertible {
         case .ae12(let `class`, let id, let code):
             return String(fourCharCode: `class`) + String(fourCharCode: id) + String(fourCharCode: code)
         case .id(let name):
+            return name
+        case .res(let name):
             return name
         case .asid(let name):
             return name
@@ -320,6 +336,8 @@ extension TermUID {
             self = .ae12(class: `class`, id: id, code: code)
         case "id":
             self = .id(data)
+        case "res":
+            self = .res(data)
         case "asid":
             self = .asid(data)
         case Regex("var\\((\\w+)\\)"):

@@ -80,7 +80,11 @@ public struct Translation {
                         throw ParseError.invalidUIDData
                     }
                     let uidsAndValueNodes: [(TermUID, Yams.Node)] = try {
+                        var isRes: Bool = false
                         switch uidDomain {
+                        case .res:
+                            isRes = true
+                            fallthrough
                         case .id:
                             // Requires special handling to support nesting
                             enum ScopeNode {
@@ -137,7 +141,7 @@ public struct Translation {
                                 }
                             }
                             traverse(scopeNode: scopeNode, under: [])
-                            return namesAndNodes.map { (TermUID.id($0.name), $0.node) }
+                            return namesAndNodes.map { (isRes ? TermUID.res($0.name) : TermUID.id($0.name), $0.node) }
                         default:
                             guard let uid = TermUID(kind: uidDomain.rawValue, data: uidDataScalar.string) else {
                                 throw ParseError.invalidUIDData
@@ -225,6 +229,8 @@ public struct Translation {
     }
     
     public func makeTerms(under pool: TermPool) -> Set<Term> {
+        var resourceTerms: [ResourceTerm] = []
+        
         let termPairs: [(TypedTermUID, [Term])] = mappings.map { kv in
             let (typedTermUID, termNames) = kv
             return (typedTermUID, termNames.compactMap { termName in
@@ -236,6 +242,8 @@ public struct Translation {
             (left: [Term], right: [Term]) -> [Term] in
             TypedTermUID.Kind.allCases.firstIndex(of: left.first!.typedUID.kind)! < TypedTermUID.Kind.allCases.firstIndex(of: right.first!.typedUID.kind)! ? right : left
         })
+        
+        // Convert flat allTerms to dictionary-nested resultTerms
         var resultTerms = allTerms
         for (typedTermUID, terms) in allTerms {
             if typedTermUID.kind == .parameter {
@@ -250,7 +258,12 @@ public struct Translation {
                     }
                 }
                 resultTerms.removeValue(forKey: typedTermUID)
-            } else /* For any non-parameter id term */ {
+            } else if typedTermUID.kind == .resource {
+                for case .resource(let resourceTerm) in terms.map({ $0.enumerated }) {
+                    resourceTerms.append(resourceTerm)
+                }
+            } else {
+                // For any non-parameter id term
                 if
                     let scopes = typedTermUID.uid.idNameScopes?.dropLast(),
                     !scopes.isEmpty // That has two or more scope components (e.g., Math:pi)
@@ -274,6 +287,16 @@ public struct Translation {
                 }
             }
         }
+        
+        // Make defined terms available to imported resource terminology.
+        for (_, terms) in allTerms {
+            pool.add(terms)
+        }
+        
+        for resourceTerm in resourceTerms {
+            try? resourceTerm.loadResourceTerminology(under: pool)
+        }
+        
         return resultTerms.values.reduce(into: Set()) { set, terms in set.formUnion(terms) }
     }
     
@@ -285,7 +308,7 @@ private enum TermUIDDomain: String, CaseIterable {
     /// Uses simple key-value mappings.
     case ae4, ae8, ae12
     /// Allows nesting for easy and DRY scoping.
-    case id
+    case id, res
     
 }
 
@@ -312,7 +335,7 @@ extension Translation.ParseError: LocalizedError {
         case .invalidUIDDataMapping:
             return "Expected a mapping as the value for a UID domain, but found a scalar or sequence instead."
         case .invalidUIDData:
-            return "Encountered invalid data for a UID domain. For example, the 'ae4' domain expects a four-character ASCII string."
+            return "Encountered invalid data for a UID domain. For example, the 'ae4' domain expects a four-character MacRoman string."
         }
     }
     

@@ -581,7 +581,7 @@ extension AppData {
     
 }
 
-private let defaultSendMode = SendOptions.canSwitchLayer
+private let defaultSendMode = SendOptions.defaultOptions.union(SendOptions.canSwitchLayer)
 private let defaultConsiderations = packConsideringAndIgnoringFlags([.case])
 
 // if target process is no longer running, Apple Event Manager will return an error when an event is sent to it

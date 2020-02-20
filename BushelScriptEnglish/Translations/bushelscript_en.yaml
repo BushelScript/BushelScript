@@ -4,12 +4,16 @@ translation:
     mappings:
         dictionary:
             id:
-                StandardAdditions: StandardAdditions
                 Math: Math
                 Sequence: Sequence
                 String: String
                 GUI: GUI
                 CLI: CLI
+        resource:
+            res:
+                system: system
+                appid:
+                    com.apple.finder: Finder
         type:
             ae4:
                 cobj: item
@@ -44,6 +48,7 @@ translation:
             id:
                 global: BushelScript
                 script: script
+                function: function
         property:
             ae4:
                 pALL: properties
@@ -82,7 +87,7 @@ translation:
                  fals: 'false'
         command:
             ae8:
-                # Standard AE-based system commands.
+                # Standard AE-based application commands.
                 aevtoapp: run
                 aevtrapp: reopen
                 aevtodoc: open

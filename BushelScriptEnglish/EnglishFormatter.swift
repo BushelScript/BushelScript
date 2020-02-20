@@ -253,10 +253,14 @@ extension ResourceTerm {
     public var formattedForUseStatement: String {
         let name = self.name!
         switch resource {
+        case .system(let version):
+            return "system\(version.map { " version \($0)" } ?? "")"
         case .applicationByName:
             return "application \(name)"
         case .applicationByID:
             return "application id \(name)"
+        case .scriptingAdditionByName:
+            return "scripting addition \(name)"
         case .applescriptAtPath(let path, _):
             // TODO: Escape path when spitting back out
             return "AppleScript \(name) at \"\(path)\""

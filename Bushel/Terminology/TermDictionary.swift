@@ -147,27 +147,72 @@ extension TermDictionary: Hashable {
     
 }
 
-public func parse(sdef: Data, under lexicon: Lexicon) throws -> [Term] {
-    let delegate = SetOfTermSDEFParserDelegate(lexicon)
+extension TermDictionaryContainer {
+    
+    public func loadTerminology(at url: URL, under pool: TermPool) throws {
+        try makeDictionary(under: pool).loadTerminology(at: url)
+    }
+    
+}
+
+extension TermDictionary {
+    
+    public func loadTerminology(at url: URL) throws {
+        let sdef: Data
+        do {
+            sdef = try readSDEF(from: url)
+        } catch is SDEFError {
+            return
+        }
+        add(try parse(sdef: sdef, under: pool))
+    }
+    
+}
+
+public func readSDEF(from url: URL) throws -> Data {
+    try withSDEFCache { sdefCache in
+        if let sdef = sdefCache[url] {
+            return sdef
+        }
+        
+        let sdef = try SDEFinitely.readSDEF(from: url)
+        
+        sdefCache[url] = sdef
+        return sdef
+    }
+    
+}
+
+private let _sdefCacheAccessQueue = DispatchQueue(label: "SDEF cache access")
+private var _sdefCache: [URL : Data] = [:]
+
+private func withSDEFCache<Result>(do action: (inout [URL : Data]) throws -> Result) rethrows -> Result {
+    try _sdefCacheAccessQueue.sync {
+        try action(&_sdefCache)
+    }
+}
+
+public func parse(sdef: Data, under pool: TermPool) throws -> [Term] {
+    let delegate = SetOfTermSDEFParserDelegate(pool)
     try SDEFParser(delegate: delegate).parse(sdef)
     return delegate.terms
 }
 
 private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
     
-    var lexicon: Lexicon
+    var pool: TermPool
     
-    init(_ lexicon: Lexicon) {
-        self.lexicon = lexicon
+    init(_ pool: TermPool) {
+        self.pool = pool
     }
     
     var terms: [Term] = []
     
     func addType(_ term: SDEFinitely.KeywordTerm) {
-        add(ClassTerm(.ae4(code: term.code), name: term.termName, parentClass: (lexicon.pool.term(forUID: TypedTermUID(TypeUID.item)) as! ClassTerm)))
+        add(ClassTerm(.ae4(code: term.code), name: term.termName, parentClass: (pool.term(forUID: TypedTermUID(TypeUID.item)) as! ClassTerm)))
     }
     func addClass(_ term: SDEFinitely.ClassTerm) {
-        let classTerm = ClassTerm(.ae4(code: term.code), name: term.termName, parentClass: (lexicon.pool.term(forUID: TypedTermUID(TypeUID.item)) as! ClassTerm))
+        let classTerm = ClassTerm(.ae4(code: term.code), name: term.termName, parentClass: (pool.term(forUID: TypedTermUID(TypeUID.item)) as! ClassTerm))
         add(classTerm)
         add(PluralClassTerm(singularClass: classTerm, name: term.pluralTermName))
     }

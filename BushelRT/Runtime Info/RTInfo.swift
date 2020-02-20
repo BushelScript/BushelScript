@@ -189,11 +189,28 @@ public extension RTInfo {
         pipeliner.addStandardFunctionPipeline("std_fn")
         pipeliner.execute()
         
-        // Load StandardAdditions.osax
+        func loadScriptingAdditions(for targetDescriptor: NSAppleEventDescriptor) throws {
+            let event = NSAppleEventDescriptor(
+                eventClass: try! FourCharCode(fourByteString: "ascr"),
+                eventID: try! FourCharCode(fourByteString: "gdut"),
+                targetDescriptor: targetDescriptor,
+                returnID: AEReturnID(kAutoGenerateReturnID),
+                transactionID: AETransactionID(kAnyTransactionID)
+            )
+            try event.sendEvent(options: .defaultOptions, timeout: TimeInterval(kNoTimeOut))
+        }
+        
         do {
-            try NSAppleEventDescriptor(eventClass: FourCharCode(fourByteString: "ascr"), eventID: FourCharCode(fourByteString: "gdut"), targetDescriptor: NSAppleEventDescriptor(bundleIdentifier: RT_Application(self, currentApplication: ()).bundleIdentifier!), returnID: AEReturnID(kAutoGenerateReturnID), transactionID: AETransactionID(kAnyTransactionID)).sendEvent(options: .defaultOptions, timeout: TimeInterval(kNoTimeOut))
+            try loadScriptingAdditions(for: NSAppleEventDescriptor.currentProcess())
         } catch {
-            os_log("Failed to load StandardAdditions.osax: %@", log: log, type: .error, String(describing: error))
+            os_log("Failed to load scripting additions for currentProcess: %@", log: log, type: .debug, String(describing: error))
+        }
+        if let currentApplicationBundleID = currentApplicationBundleID {
+            do {
+                try loadScriptingAdditions(for: NSAppleEventDescriptor(bundleIdentifier: currentApplicationBundleID))
+            } catch {
+                os_log("Failed to load scripting additions for current application %{public}@: %@", log: log, type: .debug, currentApplicationBundleID, String(describing: error))
+            }
         }
         
         // JIT-compile the module's IR for the current machine

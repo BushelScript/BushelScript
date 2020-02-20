@@ -1,6 +1,7 @@
 import Bushel
 import SDEFinitely
 import os
+import Regex
 
 private let log = OSLog(subsystem: logSubsystem, category: "Source parser")
 
@@ -27,15 +28,15 @@ extension ParseError: CodableLocalizedError {
 }
 
 public typealias KeywordHandler = () throws -> Expression.Kind?
+public typealias ResourceTypeHandler = (_ name: TermName) throws -> ResourceTerm
 
 /// Parses source code into an AST.
 public protocol SourceParser: AnyObject {
     
-    static var sdefCache: [URL : Data] { get set }
-    
     var entireSource: String { get set }
     var source: Substring { get set }
     var expressionStartIndices: [String.Index] { get set }
+    var termNameStartIndex: String.Index { get set }
     
     var lexicon: Lexicon { get set }
     var currentElements: [[PrettyPrintable]] { get set }
@@ -43,6 +44,7 @@ public protocol SourceParser: AnyObject {
     var sequenceEndTags: [TermName] { get set }
     
     var keywords: [TermName : KeywordHandler] { get }
+    var resourceTypes: [TermName : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] { get }
     var prefixOperators: [TermName : UnaryOperation] { get }
     var postfixOperators: [TermName : UnaryOperation] { get }
     var binaryOperators: [TermName : BinaryOperation] { get }
@@ -87,13 +89,6 @@ public extension SourceParser {
         }
         
         lexicon.add(ParameterTerm(TermUID(ParameterUID.direct), name: nil))
-        
-        // Disabled loading StandardAdditons terminology since it
-        // conflicts annoyingly with native terminology
-        
-//        let standardAdditionsDictionary = lexicon.pushDictionaryTerm(forUID: TermUID(DictionaryUID.StandardAdditions))
-//        let standardAdditionsURL = URL(fileURLWithPath: "/System/Library/ScriptingAdditions/StandardAdditions.osax")
-//        try loadTerminology(at: standardAdditionsURL, into: standardAdditionsDictionary)
         
         lexicon.pushDictionaryTerm(forUID: .id("script"))
         defer { lexicon.pop() }
@@ -440,23 +435,68 @@ public extension SourceParser {
         }
     }
     
+    // MARK: Off-the-shelf keyword handlers
+    
+    func handleUse() throws -> Expression.Kind? {
+        eatCommentsAndWhitespace()
+        
+        let typeNamesLongestFirst = resourceTypes.keys
+            .sorted(by: { lhs, rhs in lhs.normalized.caseInsensitiveCompare(rhs.normalized) == .orderedAscending })
+            .reversed()
+        
+        guard let typeName = typeNamesLongestFirst.first(where: { tryEating(termName: $0) }) else {
+            let formattedTypeNames =
+                typeNamesLongestFirst
+                    .reversed()
+                    .map { $0.normalized }
+                    .joined(separator: ", ")
+            
+            throw ParseError(description: "invalid resource type; valid types are: \(formattedTypeNames)", location: SourceLocation(currentIndex..<source.endIndex, source: entireSource))
+        }
+        
+        let (hasName, stoppingAt, handler) = resourceTypes[typeName]!
+        
+        guard !source.hasPrefix("\"") else {
+            throw ParseError(description: "‘use’ binds a resource term; remove the quotation mark(s)", location: currentLocation)
+        }
+        
+        eatCommentsAndWhitespace()
+        
+        var name = TermName("")
+        if hasName {
+            guard let name_ = try parseTermNameEagerly(stoppingAt: stoppingAt) else {
+                throw ParseError(description: "expected resource name", location: currentLocation)
+            }
+            name = name_
+        }
+        
+        eatCommentsAndWhitespace()
+        
+        let resourceTerm = try handler(name)
+        return .use(resource: Located(resourceTerm, at: termNameLocation))
+    }
+    
     func parseVariableTerm(stoppingAt: [String] = []) throws -> Located<VariableTerm>? {
         guard
-            let (termName, termLocation) = try parseTermNameEagerly(stoppingAt: stoppingAt),
+            let termName = try parseTermNameEagerly(stoppingAt: stoppingAt),
             !termName.words.isEmpty
         else {
             return nil
         }
-        return Located(VariableTerm(lexicon.makeUID(forName: termName), name: termName), at: termLocation)
+        return Located(VariableTerm(lexicon.makeUID(forName: termName), name: termName), at: termNameLocation)
     }
     
-    func parseTermNameEagerly(stoppingAt: [String] = []) throws -> (TermName, SourceLocation)? {
+    func parseTermNameEagerly(stoppingAt: [String] = []) throws -> TermName? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
         let allWords = TermName.words(in: restOfLine)
         
         guard !allWords.isEmpty else {
             return nil
+        }
+        guard allWords.first! != "|" else {
+            // Lazy parsing handles pipe escapes
+            return try parseTermNameLazily()
         }
         
         var words: [String] = []
@@ -468,7 +508,8 @@ public extension SourceParser {
         }
         
         eatFromSource(words)
-        return (TermName(words), SourceLocation(startIndex..<currentIndex, source: entireSource))
+        termNameStartIndex = startIndex
+        return TermName(words)
     }
     
     func parseTypeTerm() throws -> Located<Bushel.ClassTerm>? {
@@ -495,7 +536,7 @@ public extension SourceParser {
         }
     }
     
-    func parseTermNameLazily() throws -> (TermName, SourceLocation)? {
+    func parseTermNameLazily() throws -> TermName? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
         let words = TermName.words(in: restOfLine)
@@ -510,12 +551,14 @@ public extension SourceParser {
                 if words[wordIndex] == "|" {
                     let wordsWithoutPipes = Array(words[1..<wordIndex])
                     eatFromSource(wordsWithoutPipes + ["|"])
-                    return (TermName(wordsWithoutPipes), SourceLocation(startIndex..<source.startIndex, source: entireSource))
+                    termNameStartIndex = startIndex
+                    return TermName(wordsWithoutPipes)
                 }
             }
-            throw ParseError(description: "mismatched ‘|’", location: SourceLocation(startIndex..<source.startIndex, source: entireSource))
+            throw ParseError(description: "mismatched ‘|’", location: SourceLocation(termNameStartIndex..<source.startIndex, source: entireSource))
         } else {
-            return (TermName(firstWord), SourceLocation(startIndex..<source.startIndex, source: entireSource))
+            termNameStartIndex = startIndex
+            return TermName(firstWord)
         }
     }
     
@@ -674,6 +717,18 @@ public extension SourceParser {
         return false
     }
     
+    func tryEating(_ regex: Regex) -> MatchResult? {
+        eatCommentsAndWhitespace()
+        
+        let restOfLine = String(source.prefix { !$0.isNewline })
+        guard let match = regex.firstMatch(in: restOfLine) else {
+            return nil
+        }
+        source.removeFirst(match.matchedString.count)
+        
+        return match
+    }
+    
     func findExpressionEndKeyword() -> Bool {
         if case (_, _?)? = awaitingExpressionEndKeywords.last.map({ Array($0) })?.findTermName(in: source) ?? nil {
             return true
@@ -726,7 +781,7 @@ public extension SourceParser {
                 
                 let dictionary = lexicon.pushUnnamedDictionary()
                 terminologyPushed = true
-                try loadTerminology(at: appBundle.bundleURL, into: dictionary)
+                try dictionary.loadTerminology(at: appBundle.bundleURL)
             case .use(let term),
                  .resource(let term):
                 lexicon.push(for: term.term)
@@ -741,29 +796,6 @@ public extension SourceParser {
         }
         
         return try parse()
-    }
-    
-    func loadTerminology(at url: URL, into dictionaryContainer: TermDictionaryContainer) throws {
-        try loadTerminology(at: url, into: dictionaryContainer.makeDictionary(under: lexicon.pool))
-    }
-    
-    func loadTerminology(at url: URL, into dictionary: TermDictionary) throws {
-        let sdef: Data
-        do {
-            sdef = try Self.getSDEF(from: url)
-        } catch is SDEFError {
-            return
-        }
-        dictionary.add(try Bushel.parse(sdef: sdef, under: lexicon))
-    }
-    
-    static func getSDEF(from url: URL) throws -> Data {
-        if let sdef = sdefCache[url] {
-            return sdef
-        }
-        let sdef = try SDEFinitely.readSDEF(from: url)
-        sdefCache[url] = sdef
-        return sdef
     }
     
     var currentLocation: SourceLocation {
@@ -785,6 +817,10 @@ public extension SourceParser {
         set {
             expressionStartIndices.append(newValue)
         }
+    }
+    
+    var termNameLocation: SourceLocation {
+        SourceLocation(termNameStartIndex..<currentIndex, source: entireSource)
     }
     
     func eatTerm<Terminology: TerminologySource>(terminology: Terminology) throws -> Term? {

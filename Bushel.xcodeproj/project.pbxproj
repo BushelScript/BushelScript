@@ -93,6 +93,7 @@
 		3C9703D8235520D20099AA05 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3C9703DE235520D50099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C9703E5235520DF0099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
+		3CA2699023F9F09F009E1944 /* RT_System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA2698F23F9F09F009E1944 /* RT_System.swift */; };
 		3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */; };
 		3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */; };
 		3CB328E823EDAD4C003BF646 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB328E723EDAD4C003BF646 /* AppDelegate.swift */; };
@@ -369,6 +370,7 @@
 		3C94570C23E8FCD000D59C2C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		3C94571023E8FF2100D59C2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3C94571523E9168300D59C2C /* Formatter Test Cases */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Formatter Test Cases"; sourceTree = "<group>"; };
+		3CA2698F23F9F09F009E1944 /* RT_System.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_System.swift; sourceTree = "<group>"; };
 		3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermDictionary.swift; sourceTree = "<group>"; };
 		3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lexicon.swift; sourceTree = "<group>"; };
 		3CB328E523EDAD4C003BF646 /* BushelGUIHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BushelGUIHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -519,6 +521,7 @@
 		3C12EF702354E1E50057E0CC /* Runtime Objects */ = {
 			isa = PBXGroup;
 			children = (
+				3CA2698F23F9F09F009E1944 /* RT_System.swift */,
 				3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */,
 				3C12EF822354E30C0057E0CC /* RT_Record.swift */,
 				3C12EF802354E2F20057E0CC /* RT_List.swift */,
@@ -1576,6 +1579,7 @@
 				3C12EF7B2354E29B0057E0CC /* RT_Integer.swift in Sources */,
 				3C12EF852354E32C0057E0CC /* RT_String.swift in Sources */,
 				3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */,
+				3CA2699023F9F09F009E1944 /* RT_System.swift in Sources */,
 				3CCD8BA322CFA5BF0049C74F /* GenLLVMIR.swift in Sources */,
 				3CC224892391CFF300448D25 /* PropertyInfo.swift in Sources */,
 				3C12EF8D2354E3870057E0CC /* RT_Class.swift in Sources */,
@@ -2048,7 +2052,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = BushelScriptEnglish/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/BushelScript/Languages";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/BushelScript/Languages";
 				LANGUAGE_MODULE_NAME = "BushelScript (English)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

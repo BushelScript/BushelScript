@@ -313,9 +313,13 @@ final class Builtin {
                 return RT_Null.null
             }
             switch term.resource {
+            case .system(_):
+                return RT_System(rt)
             case .applicationByName(let bundle),
                  .applicationByID(let bundle):
                 return RT_Application(rt, bundle: bundle)
+            case .scriptingAdditionByName(_):
+                return RT_Global(rt)
             case .applescriptAtPath(_, let script):
                 return RT_AppleScript(rt, name: term.name!.normalized, value: script)
             }

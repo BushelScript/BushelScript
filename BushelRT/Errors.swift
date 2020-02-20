@@ -137,3 +137,13 @@ public struct MissingResource: LocalizedError {
     }
     
 }
+
+public struct UnavailableScriptingAdditionCommand: LocalizedError {
+    
+    public let command: CommandInfo
+    
+    public var errorDescription: String? {
+        "The scripting addition command ‘\(command)’ is unavailable: it must be run locally in the context of a scriptable application process, but the script is not running in such a process; native, AppleScript or shell-based alternatives are recommended"
+    }
+    
+}
