@@ -44,13 +44,9 @@
 		3C3F06DC23C14165005BC0F2 /* ExpressionsAtLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06DB23C14165005BC0F2 /* ExpressionsAtLocation.swift */; };
 		3C3F06E123C14B15005BC0F2 /* Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06E023C14B15005BC0F2 /* Ranges.swift */; };
 		3C554CB423F7B1A10029E71A /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
-		3C554CB523F7B1A10029E71A /* Bushel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C554CB723F7B1A20029E71A /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
-		3C554CB823F7B1A20029E71A /* BushelLanguage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C554CB923F7B1A30029E71A /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
-		3C554CBA23F7B1A30029E71A /* BushelRT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C554CBB23F7B1A40029E71A /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
-		3C554CBC23F7B1A40029E71A /* SwiftAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C57DD4C2352C55A00F9F2A0 /* Weave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C57DD4B2352C55A00F9F2A0 /* Weave.swift */; };
 		3C5B345423E7BCF90040766D /* RT_File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5B345323E7BCF90040766D /* RT_File.swift */; };
 		3C68743C2394164E004144AC /* UnaryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C68743B2394164E004144AC /* UnaryOperation.swift */; };
@@ -257,10 +253,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3C554CB523F7B1A10029E71A /* Bushel.framework in Embed Frameworks */,
-				3C554CBA23F7B1A30029E71A /* BushelRT.framework in Embed Frameworks */,
-				3C554CB823F7B1A20029E71A /* BushelLanguage.framework in Embed Frameworks */,
-				3C554CBC23F7B1A40029E71A /* SwiftAutomation.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
