@@ -96,7 +96,7 @@ translation:
                 miscactv: activate
                 GURLGURL: open location
                 # StandardAdditions commands.
-                sysonotf: notification
+                bShGnotf: notification
                 sysodisA: alert
                 gtqpchlt: choose from
                 # GUIHost commands.
@@ -137,9 +137,9 @@ translation:
                 coresetddata: to
                 aevtodocstxt: search text
                 GURLGURLWIND: window
-                sysonotfappr: title
-                sysonotfsubt: subtitle
-                sysonotfnsou: sound
+                bShGnotfappr: title
+                bShGnotfsubt: subtitle
+                bShGnotfnsou: sound
                 sysodisAmesS: message
                 sysodisAEAlT: kind
                 sysodisAbtns: buttons

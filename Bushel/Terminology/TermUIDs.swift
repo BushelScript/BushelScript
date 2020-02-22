@@ -446,7 +446,7 @@ public enum CommandUID: String, TermUIDPredefinedValue {
         case .quit:
             return (class: kCoreEventClass, id: kAEQuitApplication)
         case .GUI_notification:
-            return (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "notf"))
+            return (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "notf"))
         case .GUI_alert:
             return (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "disA"))
         case .GUI_chooseFrom:
@@ -476,7 +476,7 @@ public enum CommandUID: String, TermUIDPredefinedValue {
                 self = .print
             case (class: kCoreEventClass, id: kAEQuitApplication):
                 self = .quit
-            case (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "notf")):
+            case (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "notf")):
                 self = .GUI_notification
             case (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "disA")):
                 self = .GUI_alert

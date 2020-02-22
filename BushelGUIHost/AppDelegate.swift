@@ -3,6 +3,7 @@ import SwiftAutomation
 import Bushel
 import BushelRT
 import os
+import UserNotifications
 
 private let log = OSLog(subsystem: logSubsystem, category: "AppleEvents")
 
@@ -27,6 +28,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 switch eventID {
                 case .ask:
                     return #selector(handleAsk)
+                case .notification:
+                    return #selector(handleNotification)
                 }
             }()
             
@@ -77,6 +80,51 @@ extension AppDelegate {
         
         ask(rt, for: type, prompt: prompt, title: title, suspension: suspendAppleEvent())
     }
+    
+    @objc func handleNotification(event: NSAppleEventDescriptor, reply: NSAppleEventDescriptor) {
+        let arguments = getArguments(from: event)
+        
+        let message = string(from: arguments[ParameterInfo(.direct)]) ?? ""
+        let title = string(from: arguments[ParameterInfo(.GUI_notification_title)])
+        let subtitle = string(from: arguments[ParameterInfo(.GUI_notification_subtitle)]) ?? ""
+        let soundName = string(from: arguments[ParameterInfo(.GUI_notification_sound)])
+        
+        let content = UNMutableNotificationContent()
+        if let title = title {
+            content.title = title
+            content.body = message
+        } else {
+            content.title = message
+        }
+        content.subtitle = subtitle
+        if let soundName = soundName {
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: soundName))
+        } else {
+            content.sound = nil
+        }
+        
+        let suspension = suspendAppleEvent()
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        let notificationCenter = UNUserNotificationCenter.current()
+        
+        notificationCenter.requestAuthorization(options: [.sound, .alert]) { (isAuthorized, error) in
+            if let error = error {
+                NSApp.presentError(error)
+            }
+            guard isAuthorized else {
+                return returnErrorStatusToSender(OSStatus(errAEPrivilegeError), for: suspension)
+            }
+            
+            notificationCenter.add(request, withCompletionHandler: { error in
+                if let error = error {
+                    NSApp.presentError(error)
+                }
+            })
+            returnToSender(for: suspension)
+        }
+        
+    }
 }
 
 func getArguments(from event: NSAppleEventDescriptor) -> [ParameterInfo : RT_Object] {
@@ -104,8 +152,20 @@ func getArguments(from event: NSAppleEventDescriptor) -> [ParameterInfo : RT_Obj
     return result
 }
 
+private func string(from argument: RT_Object?) -> String? {
+    guard let argument = argument else {
+        return nil
+    }
+    return (argument.coerce() as? RT_String)?.value ?? String(describing: argument)
+}
+
 func returnResultToSender(_ result: RT_Object, for suspensionID: NSAppleEventManager.SuspensionID) {
     setResult(result, for: suspensionID)
+    returnToSender(for: suspensionID)
+}
+
+func returnErrorStatusToSender(_ status: OSStatus, for suspensionID: NSAppleEventManager.SuspensionID) {
+    setErrorStatus(status, for: suspensionID)
     returnToSender(for: suspensionID)
 }
 
@@ -124,6 +184,15 @@ private func setResult(_ object: RT_Object, in replyEvent: NSAppleEventDescripto
     } catch {
         os_log("Failed to encode reply descriptor for %@: %@", log: log, type: .error, object, String(describing: error))
     }
+}
+
+private func setErrorStatus(_ status: OSStatus, for suspensionID: NSAppleEventManager.SuspensionID) {
+    setErrorStatus(status, in: NSAppleEventManager.shared().replyAppleEvent(forSuspensionID: suspensionID))
+}
+
+private func setErrorStatus(_ status: OSStatus, in replyEvent: NSAppleEventDescriptor) {
+    let statusDescriptor = NSAppleEventDescriptor(int32: status)
+    replyEvent.setDescriptor(statusDescriptor, forKeyword: keyErrorNumber)
 }
 
 func suspendAppleEvent() -> NSAppleEventManager.SuspensionID {
