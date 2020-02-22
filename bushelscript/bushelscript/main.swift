@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Darwin
+import Cocoa
 
 var invocation = ToolInvocation()
 
@@ -36,8 +36,21 @@ for argument in arguments {
     }
 }
 
-do {
-    try invocation.run()
-} catch {
-    print("\(error)")
+let app = NSApplication.shared
+
+let queue = OperationQueue()
+queue.qualityOfService = .userInteractive
+
+NotificationCenter.default.addObserver(forName: NSApplication.didFinishLaunchingNotification, object: app, queue: queue) { (notification) in
+    defer {
+        app.terminate(nil)
+    }
+    
+    do {
+        try invocation.run()
+    } catch {
+        print("\(error)")
+    }
 }
+
+app.run()

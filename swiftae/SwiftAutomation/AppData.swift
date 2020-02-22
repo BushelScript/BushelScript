@@ -669,7 +669,7 @@ extension AppData {
             event.setAttribute(considerations, forKeyword: _enumConsiderations)
             event.setAttribute(consideringIgnoring, forKeyword: _enumConsidsAndIgnores)
             // send the event
-            let sendMode = sendOptions ?? defaultSendMode.union(waitReply ? .waitForReply : .noReply)
+            let sendMode: SendOptions = [.alwaysInteract, .waitForReply] //sendOptions ?? defaultSendMode.union(waitReply ? .waitForReply : .noReply)
             let timeout = withTimeout ?? defaultTimeout
             var replyEvent: NSAppleEventDescriptor
             sentEvent = event

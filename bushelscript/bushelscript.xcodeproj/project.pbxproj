@@ -122,6 +122,7 @@
 		3C47424822FA02E8006EEF85 /* Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
 		3C47424A22FA0C87006EEF85 /* BushelRT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelRT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C47424C22FA26D3006EEF85 /* ToolInvocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolInvocation.swift; sourceTree = "<group>"; };
+		3C4897BB2400F858008EE9D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C6B75C22305D5960006C354 /* BushelScriptEnglish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelScriptEnglish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C6B75C92305E0260006C354 /* Versions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Versions.swift; sourceTree = "<group>"; };
 		3C6B75CB2305F1F90006C354 /* BushelLanguage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelLanguage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -181,6 +182,7 @@
 		3C47423A22F9F85E006EEF85 /* bushelscript */ = {
 			isa = PBXGroup;
 			children = (
+				3C4897BB2400F858008EE9D1 /* Info.plist */,
 				3C10565623E0AC7E00877A5C /* bushelscript.entitlements */,
 				3C47423B22F9F85E006EEF85 /* main.swift */,
 				3C47424622FA00F7006EEF85 /* ArgumentParsing.swift */,
@@ -483,7 +485,10 @@
 				CODE_SIGN_ENTITLEMENTS = bushelscript/bushelscript.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -496,7 +501,10 @@
 				CODE_SIGN_ENTITLEMENTS = bushelscript/bushelscript.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -563,7 +571,10 @@
 				CODE_SIGN_ENTITLEMENTS = bushelscript/bushelscript.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;

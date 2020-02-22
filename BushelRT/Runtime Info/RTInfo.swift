@@ -200,11 +200,6 @@ public extension RTInfo {
             try event.sendEvent(options: .defaultOptions, timeout: TimeInterval(kNoTimeOut))
         }
         
-        do {
-            try loadScriptingAdditions(for: NSAppleEventDescriptor.currentProcess())
-        } catch {
-            os_log("Failed to load scripting additions for currentProcess: %@", log: log, type: .debug, String(describing: error))
-        }
         if let currentApplicationBundleID = currentApplicationBundleID {
             do {
                 try loadScriptingAdditions(for: NSAppleEventDescriptor(bundleIdentifier: currentApplicationBundleID))

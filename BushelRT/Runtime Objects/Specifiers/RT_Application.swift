@@ -4,28 +4,47 @@ import SwiftAutomation
 public class RT_Application: RT_Object {
     
     public let rt: RTInfo
-    public let bundle: Bundle
-    public let bundleIdentifier: String?
+    
+    public let bundle: Bundle?
+    public let target: TargetApplication
     
     public init(_ rt: RTInfo, bundle: Bundle) {
         self.rt = rt
         self.bundle = bundle
-        self.bundleIdentifier = bundle.bundleIdentifier
+        self.target = bundle.bundleIdentifier.map { .bundleIdentifier($0, false) } ??
+            .url(bundle.bundleURL)
+    }
+    
+    public init(_ rt: RTInfo, target: TargetApplication) {
+        self.rt = rt
+        self.bundle = nil
+        self.target = target
     }
     
     public convenience init(_ rt: RTInfo, currentApplication: ()) {
         if let bundleID = rt.currentApplicationBundleID {
-            self.init(rt, bundle: Bundle(applicationBundleIdentifier: bundleID) ?? Bundle(for: RT_Application.self))
+            self.init(rt, target: .bundleIdentifier(bundleID, false))
         } else {
-            self.init(rt, bundle: Bundle(for: RT_Application.self))
+            self.init(rt, target: .current)
         }
     }
     
     public override var description: String {
-        if let bundleIdentifier = bundleIdentifier {
-            return "application id \"\(bundleIdentifier)\""
-        } else {
-            return "application \"\(bundle.bundleURL.deletingPathExtension().lastPathComponent)\""
+        switch target {
+        case .current:
+            return "current application"
+        case .name(let name):
+            return "application \"\(name)\""
+        case .url(let url):
+            return "application at \"\(url)\""
+        case .bundleIdentifier(let bundleID, _):
+            return "application id \"\(bundleID)\""
+        case .processIdentifier(let pid):
+            return "application with pid \(pid)"
+        case .Descriptor(let descriptor):
+            return "application by descriptor \(descriptor)"
+        case .none:
+            return "not-an-application"
         }
     }
     
@@ -48,8 +67,7 @@ extension RT_Application: RT_SASpecifierConvertible {
     }
 
     public func saSpecifier() -> RootSpecifier {
-        bundleIdentifier.map { RootSpecifier(bundleIdentifier: $0) } ??
-            RootSpecifier(url: bundle.bundleURL)
+        RootSpecifier(.application, appData: AppData(target: target))
     }
     
 }
@@ -70,7 +88,7 @@ extension RT_Application: RT_SpecifierRemoteRoot {
 extension RT_Application {
     
     public override var debugDescription: String {
-        super.debugDescription + "[bundle: \(bundle)]"
+        super.debugDescription + "[bundle: \(String(describing: bundle)), target: \(target)]"
     }
     
 }
