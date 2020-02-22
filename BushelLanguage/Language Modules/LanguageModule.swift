@@ -116,7 +116,7 @@ public class LanguageModule {
 
 private func languageBundle(for identifier: String) -> Bundle? {
     for bundleDirURL in languageBundleDirectories {
-        let bundleURL = bundleDirURL.appendingPathComponent("\(identifier).framework", isDirectory: true)
+        let bundleURL = bundleDirURL.appendingPathComponent("\(identifier).bundle", isDirectory: true)
         if let bundle = Bundle(url: bundleURL) {
             return bundle
         }
@@ -128,7 +128,7 @@ private func allLanguageBundles() -> [Bundle] {
     return languageBundleDirectories.flatMap { bundleDirURL in
         return (try?
             FileManager.default.contentsOfDirectory(at: bundleDirURL, includingPropertiesForKeys: nil, options: [])
-            .filter { $0.lastPathComponent.hasSuffix(".framework") }
+            .filter { $0.lastPathComponent.hasSuffix(".bundle") }
             .compactMap { return Bundle(url: $0) }
         ) ?? []
     }
@@ -141,7 +141,7 @@ private var languageBundleDirectories: [URL] = {
             .appendingPathComponent("BushelScript", isDirectory: true)
             .appendingPathComponent("Languages", isDirectory: true)
     }
-    #if DEBUG
+    #if DEVENVIRONMENT
     let devEnvironmentLanguageBundleDirectories: [URL] = mainLanguageBundleDirectories.map { url in
         url.appendingPathComponent("DevEnvironment")
     }

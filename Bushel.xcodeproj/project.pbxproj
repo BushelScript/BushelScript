@@ -69,7 +69,6 @@
 		3C6B758E2305AFC40006C354 /* SourceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B758D2305AFC40006C354 /* SourceParser.swift */; };
 		3C6B75902305B17D0006C354 /* Terminology.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B758F2305B17D0006C354 /* Terminology.swift */; };
 		3C6B75922305B2C90006C354 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75912305B2C90006C354 /* Logging.swift */; };
-		3C6B75A12305B5990006C354 /* bushelscript_en.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B75982305B5980006C354 /* bushelscript_en.framework */; };
 		3C6B75AA2305B5990006C354 /* BushelScriptEnglish.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C6B759A2305B5980006C354 /* BushelScriptEnglish.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C6B75B62305B5B80006C354 /* EnglishParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75B52305B5B80006C354 /* EnglishParser.swift */; };
 		3C6B75C02305BA270006C354 /* LangaugeConstructTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B752B2304EFF40006C354 /* LangaugeConstructTests.swift */; };
@@ -331,7 +330,7 @@
 		3C6B758D2305AFC40006C354 /* SourceParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceParser.swift; sourceTree = "<group>"; };
 		3C6B758F2305B17D0006C354 /* Terminology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminology.swift; sourceTree = "<group>"; };
 		3C6B75912305B2C90006C354 /* Logging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
-		3C6B75982305B5980006C354 /* bushelscript_en.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = bushelscript_en.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C6B75982305B5980006C354 /* bushelscript_en.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bushelscript_en.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C6B759A2305B5980006C354 /* BushelScriptEnglish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BushelScriptEnglish.h; sourceTree = "<group>"; };
 		3C6B759B2305B5990006C354 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C6B75A02305B5990006C354 /* BushelScriptEnglishTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BushelScriptEnglishTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -474,7 +473,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C94571123E9066300D59C2C /* BushelLanguageTestingTools.framework in Frameworks */,
-				3C6B75A12305B5990006C354 /* bushelscript_en.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -584,7 +582,7 @@
 				3CCD8AB722CC45040049C74F /* BushelRTTests.xctest */,
 				3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */,
 				3C6B75772305AF3F0006C354 /* BushelLanguageTests.xctest */,
-				3C6B75982305B5980006C354 /* bushelscript_en.framework */,
+				3C6B75982305B5980006C354 /* bushelscript_en.bundle */,
 				3C6B75A02305B5990006C354 /* BushelScriptEnglishTests.xctest */,
 				3C94570223E8FBC200D59C2C /* BushelLanguageTestingTools.framework */,
 				3CB328E523EDAD4C003BF646 /* BushelGUIHost.app */,
@@ -1110,8 +1108,8 @@
 			packageProductDependencies = (
 			);
 			productName = BushelScriptEnglish;
-			productReference = 3C6B75982305B5980006C354 /* bushelscript_en.framework */;
-			productType = "com.apple.product-type.framework";
+			productReference = 3C6B75982305B5980006C354 /* bushelscript_en.bundle */;
+			productType = "com.apple.product-type.bundle";
 		};
 		3C6B759F2305B5990006C354 /* BushelScriptEnglishTests */ = {
 			isa = PBXNativeTarget;
@@ -1769,7 +1767,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-Xcc -fmodule-map-file=$(PROJECT_TEMP_ROOT)/GeneratedModuleMaps/macosx/CYaml.modulemap";
 				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG DEVENVIRONMENT";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PACKAGE_DEPS_DIR = "${OBJROOT}/../../SourcePackages/checkouts";
@@ -1986,6 +1984,7 @@
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "-Xcc -fmodule-map-file=$(PROJECT_TEMP_ROOT)/GeneratedModuleMaps/macosx/CYaml.modulemap";
 				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEVENVIRONMENT;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -2122,12 +2121,9 @@
 				DEFINES_MODULE = YES;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = /;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = BushelScriptEnglish/Info.plist;
-				INSTALL_PATH = "$(BUSHELSCRIPT_CORE_DIR)";
+				INSTALL_PATH = "$(BUSHELSCRIPT_LANGUAGES_DIR)";
 				LANGUAGE_MODULE_NAME = "BushelScript (English)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2324,12 +2320,9 @@
 				DEFINES_MODULE = YES;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = /;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = BushelScriptEnglish/Info.plist;
-				INSTALL_PATH = "$(BUSHELSCRIPT_CORE_DIR)";
+				INSTALL_PATH = "$(BUSHELSCRIPT_LANGUAGES_DIR)";
 				LANGUAGE_MODULE_NAME = "BushelScript (English) (DevEnvironment)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2353,12 +2346,9 @@
 				DEFINES_MODULE = YES;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = /;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = BushelScriptEnglish/Info.plist;
-				INSTALL_PATH = "$(BUSHELSCRIPT_CORE_DIR)";
+				INSTALL_PATH = "$(BUSHELSCRIPT_LANGUAGES_DIR)";
 				LANGUAGE_MODULE_NAME = "BushelScript (English)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

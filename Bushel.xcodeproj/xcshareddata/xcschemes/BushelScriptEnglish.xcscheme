@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3C6B75972305B5980006C354"
-               BuildableName = "bushelscript_en.framework"
+               BuildableName = "bushelscript_en.bundle"
                BlueprintName = "BushelScriptEnglish"
                ReferencedContainer = "container:Bushel.xcodeproj">
             </BuildableReference>
@@ -31,7 +31,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3C6B75972305B5980006C354"
-            BuildableName = "bushelscript_en.framework"
+            BuildableName = "bushelscript_en.bundle"
             BlueprintName = "BushelScriptEnglish"
             ReferencedContainer = "container:Bushel.xcodeproj">
          </BuildableReference>
@@ -88,7 +88,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3C6B75972305B5980006C354"
-            BuildableName = "bushelscript_en.framework"
+            BuildableName = "bushelscript_en.bundle"
             BlueprintName = "BushelScriptEnglish"
             ReferencedContainer = "container:Bushel.xcodeproj">
          </BuildableReference>
@@ -104,7 +104,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3C6B75972305B5980006C354"
-            BuildableName = "bushelscript_en.framework"
+            BuildableName = "bushelscript_en.bundle"
             BlueprintName = "BushelScriptEnglish"
             ReferencedContainer = "container:Bushel.xcodeproj">
          </BuildableReference>
