@@ -65,7 +65,6 @@
 		3C6B758E2305AFC40006C354 /* SourceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B758D2305AFC40006C354 /* SourceParser.swift */; };
 		3C6B75902305B17D0006C354 /* Terminology.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B758F2305B17D0006C354 /* Terminology.swift */; };
 		3C6B75922305B2C90006C354 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75912305B2C90006C354 /* Logging.swift */; };
-		3C6B75AA2305B5990006C354 /* BushelScriptEnglish.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C6B759A2305B5980006C354 /* BushelScriptEnglish.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C6B75B62305B5B80006C354 /* EnglishParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75B52305B5B80006C354 /* EnglishParser.swift */; };
 		3C6B75C02305BA270006C354 /* LangaugeConstructTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B752B2304EFF40006C354 /* LangaugeConstructTests.swift */; };
 		3C6B75C62305D6ED0006C354 /* SourceFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C52305D6ED0006C354 /* SourceFormatter.swift */; };
@@ -323,7 +322,6 @@
 		3C6B758F2305B17D0006C354 /* Terminology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminology.swift; sourceTree = "<group>"; };
 		3C6B75912305B2C90006C354 /* Logging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3C6B75982305B5980006C354 /* bushelscript_en.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bushelscript_en.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		3C6B759A2305B5980006C354 /* BushelScriptEnglish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BushelScriptEnglish.h; sourceTree = "<group>"; };
 		3C6B759B2305B5990006C354 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C6B75A02305B5990006C354 /* BushelScriptEnglishTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BushelScriptEnglishTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C6B75A92305B5990006C354 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -644,7 +642,6 @@
 				3C6B75B52305B5B80006C354 /* EnglishParser.swift */,
 				3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */,
 				3CD8398823DD3651000F2516 /* Translations */,
-				3C6B759A2305B5980006C354 /* BushelScriptEnglish.h */,
 				3C6B759B2305B5990006C354 /* Info.plist */,
 				3C6B75A62305B5990006C354 /* BushelScriptEnglishTests */,
 			);
@@ -972,14 +969,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3C6B75932305B5980006C354 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3C6B75AA2305B5990006C354 /* BushelScriptEnglish.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3C9456FD23E8FBC200D59C2C /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1085,7 +1074,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3C6B75AF2305B5990006C354 /* Build configuration list for PBXNativeTarget "BushelScriptEnglish" */;
 			buildPhases = (
-				3C6B75932305B5980006C354 /* Headers */,
 				3C6B75942305B5980006C354 /* Sources */,
 				3C6B75952305B5980006C354 /* Frameworks */,
 				3C6B75962305B5980006C354 /* Resources */,
