@@ -83,6 +83,20 @@
 			remoteGlobalIDString = 3C6B75972305B5980006C354;
 			remoteInfo = BushelScriptEnglish;
 		};
+		3CBF21C323FF9B0E00E3074A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C1D24F92306E33300D202FA /* Bushel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3C94570223E8FBC200D59C2C;
+			remoteInfo = BushelLanguageTestingTools;
+		};
+		3CBF21C523FF9B0E00E3074A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C1D24F92306E33300D202FA /* Bushel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CB328E523EDAD4C003BF646;
+			remoteInfo = BushelGUIHost;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -104,7 +118,6 @@
 		3C47423822F9F85E006EEF85 /* bushelscript */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bushelscript; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C47423B22F9F85E006EEF85 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		3C47424322F9FDF0006EEF85 /* Bushel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Bushel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3C47424522F9FEDD006EEF85 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		3C47424622FA00F7006EEF85 /* ArgumentParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentParsing.swift; sourceTree = "<group>"; };
 		3C47424822FA02E8006EEF85 /* Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
 		3C47424A22FA0C87006EEF85 /* BushelRT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelRT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -137,10 +150,12 @@
 				3C1D250A2306E33300D202FA /* BushelTests.xctest */,
 				3C1D25162306E33300D202FA /* BushelLanguage.framework */,
 				3C1D25182306E33300D202FA /* BushelLanguageTests.xctest */,
-				3C1D250C2306E33300D202FA /* BushelRT.framework */,
-				3C1D250E2306E33300D202FA /* BushelRTTests.xctest */,
+				3CBF21C423FF9B0E00E3074A /* BushelLanguageTestingTools.framework */,
 				3C1D251A2306E33300D202FA /* bushelscript_en.framework */,
 				3C1D251C2306E33300D202FA /* BushelScriptEnglishTests.xctest */,
+				3C1D250C2306E33300D202FA /* BushelRT.framework */,
+				3C1D250E2306E33300D202FA /* BushelRTTests.xctest */,
+				3CBF21C623FF9B0E00E3074A /* BushelGUIHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -173,7 +188,6 @@
 				3C47424822FA02E8006EEF85 /* Output.swift */,
 				3C6B75C92305E0260006C354 /* Versions.swift */,
 				3C8CE03923D4D34900882F76 /* StringExtensions.swift */,
-				3C47424522F9FEDD006EEF85 /* Config.xcconfig */,
 			);
 			path = bushelscript;
 			sourceTree = "<group>";
@@ -305,6 +319,20 @@
 			fileType = wrapper.cfbundle;
 			path = BushelScriptEnglishTests.xctest;
 			remoteRef = 3C1D251B2306E33300D202FA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3CBF21C423FF9B0E00E3074A /* BushelLanguageTestingTools.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BushelLanguageTestingTools.framework;
+			remoteRef = 3CBF21C323FF9B0E00E3074A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3CBF21C623FF9B0E00E3074A /* BushelGUIHost.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = BushelGUIHost.app;
+			remoteRef = 3CBF21C523FF9B0E00E3074A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -451,13 +479,11 @@
 		};
 		3C47424022F9F85E006EEF85 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C47424522F9FEDD006EEF85 /* Config.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = bushelscript/bushelscript.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				ENABLE_HARDENED_RUNTIME = YES;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../../SharedFrameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -466,18 +492,83 @@
 		};
 		3C47424122F9F85E006EEF85 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C47424522F9FEDD006EEF85 /* Config.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = bushelscript/bushelscript.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				ENABLE_HARDENED_RUNTIME = YES;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../../SharedFrameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
+		};
+		3C4897A42400B96C008EE9D1 /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Profiling;
+		};
+		3C4897A52400B96C008EE9D1 /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = bushelscript/bushelscript.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Profiling;
 		};
 /* End XCBuildConfiguration section */
 
@@ -487,6 +578,7 @@
 			buildConfigurations = (
 				3C47423D22F9F85E006EEF85 /* Debug */,
 				3C47423E22F9F85E006EEF85 /* Release */,
+				3C4897A42400B96C008EE9D1 /* Profiling */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -496,6 +588,7 @@
 			buildConfigurations = (
 				3C47424022F9F85E006EEF85 /* Debug */,
 				3C47424122F9F85E006EEF85 /* Release */,
+				3C4897A52400B96C008EE9D1 /* Profiling */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
