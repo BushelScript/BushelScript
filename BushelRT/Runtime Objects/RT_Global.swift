@@ -123,7 +123,7 @@ public class RT_Global: RT_Object {
                 }
                 var arguments = arguments
                 if
-                    arguments[ParameterInfo(.GUI_ask_title)] == nil,
+                    arguments.first(where: { $0.key.uid.ae4Code == ParameterUID.GUI_ask_title.ae12Code!.code }) == nil,
                     let scriptName = rt.topScript.name
                 {
                     arguments[ParameterInfo(.GUI_ask_title)] = RT_String(value: scriptName)

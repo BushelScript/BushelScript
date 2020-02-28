@@ -26,8 +26,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         for eventID in GUIEventID.allCases {
             let handler: Selector = {
                 switch eventID {
+                case .alert:
+                    return #selector(handleAlert)
                 case .ask:
                     return #selector(handleAsk)
+                case .chooseFrom:
+                    return #selector(handleChooseFrom)
                 case .notification:
                     return #selector(handleNotification)
                 }
@@ -59,6 +63,34 @@ private class AppDeactivationObserver: NSObject {
 
 // MARK: AppleEvent handlers
 extension AppDelegate {
+    
+    @objc func handleAlert(event: NSAppleEventDescriptor, reply: NSAppleEventDescriptor) {
+        let arguments = getArguments(from: event)
+        
+        let heading = string(from: arguments[ParameterInfo(.direct)]) ?? ""
+        let message = string(from: arguments[ParameterInfo(.GUI_alert_message)]) ?? ""
+        let title = string(from: arguments[ParameterInfo(.GUI_alert_title)]) ?? ""
+        
+        runAlert(heading: heading, message: message, title: title, suspension: suspendAppleEvent())
+    }
+    
+    @objc func handleChooseFrom(event: NSAppleEventDescriptor, reply: NSAppleEventDescriptor) {
+        let arguments = getArguments(from: event)
+        
+        let itemsArg = arguments[ParameterInfo(.direct)]
+        let items: [RT_Object] =
+            (itemsArg?.coerce() as? RT_List)?.contents ??
+            itemsArg.map { [$0] } ??
+            []
+        let stringItems = items.compactMap { string(from: $0) }
+        
+        let prompt = string(from: arguments[ParameterInfo(.GUI_chooseFrom_prompt)]) ?? ""
+        let okButtonName = string(from: arguments[ParameterInfo(.GUI_chooseFrom_confirm)]) ?? "OK"
+        let cancelButtonName = string(from: arguments[ParameterInfo(.GUI_chooseFrom_cancel)]) ?? "Cancel"
+        let title = string(from: arguments[ParameterInfo(.GUI_chooseFrom_title)]) ?? ""
+        
+        chooseFrom(list: stringItems, prompt: prompt, okButtonName: okButtonName, cancelButtonName: cancelButtonName, title: title, suspension: suspendAppleEvent())
+    }
     
     @objc func handleAsk(event: NSAppleEventDescriptor, reply: NSAppleEventDescriptor) {
         let rt = RTInfo()
@@ -110,7 +142,9 @@ extension AppDelegate {
         
         notificationCenter.requestAuthorization(options: [.sound, .alert]) { (isAuthorized, error) in
             if let error = error {
-                NSApp.presentError(error)
+                DispatchQueue.main.async {
+                    NSApp.presentError(error)
+                }
             }
             guard isAuthorized else {
                 return returnErrorStatusToSender(OSStatus(errAEPrivilegeError), for: suspension)
@@ -118,7 +152,9 @@ extension AppDelegate {
             
             notificationCenter.add(request, withCompletionHandler: { error in
                 if let error = error {
-                    NSApp.presentError(error)
+                    DispatchQueue.main.async {
+                        NSApp.presentError(error)
+                    }
                 }
             })
             returnToSender(for: suspension)
@@ -180,10 +216,14 @@ private func setResult(_ object: RT_Object, in replyEvent: NSAppleEventDescripto
     }
     do {
         let encoded = try encodable.encodeAEDescriptor(AppData())
-        replyEvent.setDescriptor(encoded, forKeyword: keyDirectObject)
+        setResult(encoded, in: replyEvent)
     } catch {
         os_log("Failed to encode reply descriptor for %@: %@", log: log, type: .error, object, String(describing: error))
     }
+}
+
+private func setResult(_ descriptor: NSAppleEventDescriptor, in replyEvent: NSAppleEventDescriptor) {
+    replyEvent.setDescriptor(descriptor, forKeyword: keyDirectObject)
 }
 
 private func setErrorStatus(_ status: OSStatus, for suspensionID: NSAppleEventManager.SuspensionID) {

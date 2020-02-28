@@ -95,11 +95,10 @@ translation:
                 aevtquit: quit
                 miscactv: activate
                 GURLGURL: open location
-                # StandardAdditions commands.
-                bShGnotf: notification
-                sysodisA: alert
-                gtqpchlt: choose from
                 # GUIHost commands.
+                bShGnotf: notification
+                bShGdisA: alert
+                bShGchlt: choose from
                 'bShGask ': ask
             id:
                 delay:
@@ -140,24 +139,26 @@ translation:
                 bShGnotfappr: title
                 bShGnotfsubt: subtitle
                 bShGnotfnsou: sound
-                sysodisAmesS: message
-                sysodisAEAlT: kind
-                sysodisAbtns: buttons
-                sysodisAdflt: default
-                sysodisAcbtn: cancel
-                sysodisAgivu: timeout
-                gtqpchltappr: title
-                gtqpchltprmp: prompt
-                gtqpchltinSL: default
-                gtqpchltokbt: confirm
-                gtqpchltcnbt: cancel
-                gtqpchltmlsl: multiple selection
-                gtqpchltempL: empty selection
+                bShGdisAappr: title
+                bShGdisAmesS: message
+                bShGdisAEAlT: kind
+                bShGdisAbtns: buttons
+                bShGdisAdflt: default
+                bShGdisAcbtn: cancel
+                bShGdisAgivu: timeout
+                bShGchlt----: list
+                bShGchltappr: title
+                bShGchltprmp: prompt
+                bShGchltinSL: default
+                bShGchltokbt: confirm
+                bShGchltcnbt: cancel
+                bShGchltmlsl: multiple selection
+                bShGchltempL: empty selection
                 bShGask ----: prompt
                 bShGask forT:
                     - for
                     - as
-                bShGask titl: title
+                bShGask appr: title
             id:
                 Math:
                     abs:

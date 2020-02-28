@@ -189,25 +189,6 @@ public extension RTInfo {
         pipeliner.addStandardFunctionPipeline("std_fn")
         pipeliner.execute()
         
-        func loadScriptingAdditions(for targetDescriptor: NSAppleEventDescriptor) throws {
-            let event = NSAppleEventDescriptor(
-                eventClass: try! FourCharCode(fourByteString: "ascr"),
-                eventID: try! FourCharCode(fourByteString: "gdut"),
-                targetDescriptor: targetDescriptor,
-                returnID: AEReturnID(kAutoGenerateReturnID),
-                transactionID: AETransactionID(kAnyTransactionID)
-            )
-            try event.sendEvent(options: .defaultOptions, timeout: TimeInterval(kNoTimeOut))
-        }
-        
-        if let currentApplicationBundleID = currentApplicationBundleID {
-            do {
-                try loadScriptingAdditions(for: NSAppleEventDescriptor(bundleIdentifier: currentApplicationBundleID))
-            } catch {
-                os_log("Failed to load scripting additions for current application %{public}@: %@", log: log, type: .debug, currentApplicationBundleID, String(describing: error))
-            }
-        }
-        
         // JIT-compile the module's IR for the current machine
         let jit = try! JIT(machine: TargetMachine())
         _ = try! jit.addEagerlyCompiledIR(module, { (name) -> JIT.TargetAddress in

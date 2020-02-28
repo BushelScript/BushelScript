@@ -43,6 +43,13 @@
 		3C37B90123EA42B600BEB5C4 /* BuiltinFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C37B90023EA42B600BEB5C4 /* BuiltinFunctions.swift */; };
 		3C3F06DC23C14165005BC0F2 /* ExpressionsAtLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06DB23C14165005BC0F2 /* ExpressionsAtLocation.swift */; };
 		3C3F06E123C14B15005BC0F2 /* Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06E023C14B15005BC0F2 /* Ranges.swift */; };
+		3C43D4E92409AC0200981DDB /* AlertWC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C43D4E72409AC0200981DDB /* AlertWC.swift */; };
+		3C43D4EA2409AC0200981DDB /* AlertWC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C43D4E82409AC0200981DDB /* AlertWC.xib */; };
+		3C43D4EC2409AF8400981DDB /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C43D4EB2409AF8400981DDB /* Alerts.swift */; };
+		3C43D4EE2409B7F700981DDB /* WindowDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C43D4ED2409B7F700981DDB /* WindowDisplay.swift */; };
+		3C43D4F92409BB6200981DDB /* ChooseFromWC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C43D4F72409BB6200981DDB /* ChooseFromWC.swift */; };
+		3C43D4FA2409BB6200981DDB /* ChooseFromWC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C43D4F82409BB6200981DDB /* ChooseFromWC.xib */; };
+		3C43D4FD2409BB8600981DDB /* ChooseFrom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C43D4FC2409BB8600981DDB /* ChooseFrom.swift */; };
 		3C554CB423F7B1A10029E71A /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C554CB723F7B1A20029E71A /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
 		3C554CB923F7B1A30029E71A /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
@@ -299,6 +306,13 @@
 		3C37B90023EA42B600BEB5C4 /* BuiltinFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinFunctions.swift; sourceTree = "<group>"; };
 		3C3F06DB23C14165005BC0F2 /* ExpressionsAtLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionsAtLocation.swift; sourceTree = "<group>"; };
 		3C3F06E023C14B15005BC0F2 /* Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ranges.swift; sourceTree = "<group>"; };
+		3C43D4E72409AC0200981DDB /* AlertWC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertWC.swift; sourceTree = "<group>"; };
+		3C43D4E82409AC0200981DDB /* AlertWC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlertWC.xib; sourceTree = "<group>"; };
+		3C43D4EB2409AF8400981DDB /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
+		3C43D4ED2409B7F700981DDB /* WindowDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDisplay.swift; sourceTree = "<group>"; };
+		3C43D4F72409BB6200981DDB /* ChooseFromWC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseFromWC.swift; sourceTree = "<group>"; };
+		3C43D4F82409BB6200981DDB /* ChooseFromWC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChooseFromWC.xib; sourceTree = "<group>"; };
+		3C43D4FC2409BB8600981DDB /* ChooseFrom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseFrom.swift; sourceTree = "<group>"; };
 		3C57DD4B2352C55A00F9F2A0 /* Weave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weave.swift; sourceTree = "<group>"; };
 		3C5B345323E7BCF90040766D /* RT_File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_File.swift; sourceTree = "<group>"; };
 		3C68743B2394164E004144AC /* UnaryOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnaryOperation.swift; sourceTree = "<group>"; };
@@ -604,6 +618,26 @@
 			path = BushelTests;
 			sourceTree = "<group>";
 		};
+		3C43D4E62409ABE100981DDB /* Alerts */ = {
+			isa = PBXGroup;
+			children = (
+				3C43D4EB2409AF8400981DDB /* Alerts.swift */,
+				3C43D4E72409AC0200981DDB /* AlertWC.swift */,
+				3C43D4E82409AC0200981DDB /* AlertWC.xib */,
+			);
+			path = Alerts;
+			sourceTree = "<group>";
+		};
+		3C43D4FB2409BB6E00981DDB /* Choose From */ = {
+			isa = PBXGroup;
+			children = (
+				3C43D4FC2409BB8600981DDB /* ChooseFrom.swift */,
+				3C43D4F72409BB6200981DDB /* ChooseFromWC.swift */,
+				3C43D4F82409BB6200981DDB /* ChooseFromWC.xib */,
+			);
+			path = "Choose From";
+			sourceTree = "<group>";
+		};
 		3C53842523DF91D5009467B2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -771,6 +805,9 @@
 			children = (
 				3CB328E723EDAD4C003BF646 /* AppDelegate.swift */,
 				3CFA68CA23EE321C00A3E87E /* Events.swift */,
+				3C43D4ED2409B7F700981DDB /* WindowDisplay.swift */,
+				3C43D4E62409ABE100981DDB /* Alerts */,
+				3C43D4FB2409BB6E00981DDB /* Choose From */,
 				3CCDDED023EDA4EF007684D1 /* Ask */,
 				3CFA68CC23EE433700A3E87E /* Logging.swift */,
 				3CB328E923EDAD50003BF646 /* Assets.xcassets */,
@@ -1360,6 +1397,8 @@
 				3C68D17B23EF43800002A7A4 /* TextFieldVC.xib in Resources */,
 				3CBD4BE323F5DCDC00C09DC5 /* NumberFieldVC.xib in Resources */,
 				3CB328EA23EDAD50003BF646 /* Assets.xcassets in Resources */,
+				3C43D4EA2409AC0200981DDB /* AlertWC.xib in Resources */,
+				3C43D4FA2409BB6200981DDB /* ChooseFromWC.xib in Resources */,
 				3CB328ED23EDAD50003BF646 /* MainMenu.xib in Resources */,
 				3CFA68B623EE2F7000A3E87E /* RadioChoicesVC.xib in Resources */,
 				3C68D17F23EF608A0002A7A4 /* FileChooserVC.xib in Resources */,
@@ -1546,15 +1585,20 @@
 			files = (
 				3CFA68B223EE2F6B00A3E87E /* RadioChoicesVC.swift in Sources */,
 				3CFA68CD23EE433700A3E87E /* Logging.swift in Sources */,
+				3C43D4FD2409BB8600981DDB /* ChooseFrom.swift in Sources */,
 				3CB328E823EDAD4C003BF646 /* AppDelegate.swift in Sources */,
 				3C68D18223EF6F240002A7A4 /* UneditableVC.swift in Sources */,
 				3CB328FA23EDBA8A003BF646 /* Ask.swift in Sources */,
 				3CBD4BE723F5E63300C09DC5 /* InvalidDataMarker.swift in Sources */,
 				3CFA68B723EE2F7000A3E87E /* CheckboxVC.swift in Sources */,
 				3CBD4BE123F5DCD200C09DC5 /* NumberFieldVC.swift in Sources */,
+				3C43D4E92409AC0200981DDB /* AlertWC.swift in Sources */,
 				3CFA68CB23EE321C00A3E87E /* Events.swift in Sources */,
+				3C43D4EE2409B7F700981DDB /* WindowDisplay.swift in Sources */,
 				3C68D17E23EF608A0002A7A4 /* FileChooserVC.swift in Sources */,
+				3C43D4F92409BB6200981DDB /* ChooseFromWC.swift in Sources */,
 				3C68D17A23EF43800002A7A4 /* TextFieldVC.swift in Sources */,
+				3C43D4EC2409AF8400981DDB /* Alerts.swift in Sources */,
 				3CFA68EB23EE59DE00A3E87E /* AskWC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

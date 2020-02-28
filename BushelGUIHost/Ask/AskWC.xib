@@ -43,7 +43,7 @@ DQ
 </string>
                         </buttonCell>
                         <connections>
-                            <action selector="close:" target="F0z-JX-Cv5" id="h92-xx-xtN"/>
+                            <action selector="close:" target="F0z-JX-Cv5" id="0di-RR-GbT"/>
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3xW-aJ-EOh">

@@ -102,16 +102,8 @@ public func ask(_ rt: RTInfo, for type: TypeInfo, prompt: String, title: String,
     let window = wc.window!
     window.title = title
     
-    NSApp.activate(ignoringOtherApps: true)
-    window.center()
-    window.makeKeyAndOrderFront(nil)
-    
-    var observation: Any?
-    observation = NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: nil) { notification in
-        NotificationCenter.default.removeObserver(observation!)
-        
+    display(window: window) {
         returnResultToSender(vc.1(), for: suspension)
-        (NSApp.delegate as! AppDelegate).lastActivatedApplication.activate()
     }
     
 }

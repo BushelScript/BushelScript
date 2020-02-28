@@ -297,6 +297,8 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
     case Math_pi
     case Math_e
     
+    case buttonReturned
+    
     public var kind: TypedTermUID.Kind {
         .property
     }
@@ -319,6 +321,8 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
             return try! FourCharCode(fourByteString: "rvse")
         case .Sequence_tail:
             return try! FourCharCode(fourByteString: "rest")
+        case .buttonReturned:
+            return try! FourCharCode(fourByteString: "bhit")
         default:
             return nil
         }
@@ -448,9 +452,9 @@ public enum CommandUID: String, TermUIDPredefinedValue {
         case .GUI_notification:
             return (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "notf"))
         case .GUI_alert:
-            return (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "disA"))
+            return (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "disA"))
         case .GUI_chooseFrom:
-            return (class: try! FourCharCode(fourByteString: "gtqp"), id: try! FourCharCode(fourByteString: "chlt"))
+            return (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "chlt"))
         case .GUI_ask:
             return (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "ask "))
         default:
@@ -511,6 +515,7 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
     case GUI_notification_title
     case GUI_notification_subtitle
     case GUI_notification_sound
+    case GUI_alert_title
     case GUI_alert_message
     case GUI_alert_kind
     case GUI_alert_buttons
@@ -545,6 +550,8 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
                     return (.GUI_notification, try! FourCharCode(fourByteString: "subt"))
                 case .GUI_notification_sound:
                     return (.GUI_notification, try! FourCharCode(fourByteString: "nsou"))
+                case .GUI_alert_title:
+                    return (.GUI_alert, try! FourCharCode(fourByteString: "appr"))
                 case .GUI_alert_message:
                     return (.GUI_alert, try! FourCharCode(fourByteString: "mesS"))
                 case .GUI_alert_kind:
@@ -574,7 +581,7 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
                 case .GUI_ask_dataType:
                     return (.GUI_ask, try! FourCharCode(fourByteString: "forT"))
                 case .GUI_ask_title:
-                    return (.GUI_ask, try! FourCharCode(fourByteString: "titl"))
+                    return (.GUI_ask, try! FourCharCode(fourByteString: "appr"))
                 default:
                     return nil
                 }
@@ -611,6 +618,8 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
                 self = .GUI_notification_subtitle
             case (.GUI_notification, try! FourCharCode(fourByteString: "nsou")):
                 self = .GUI_notification_sound
+            case (.GUI_alert, try! FourCharCode(fourByteString: "appr")):
+                self = .GUI_alert_title
             case (.GUI_alert, try! FourCharCode(fourByteString: "mesS")):
                 self = .GUI_alert_message
             case (.GUI_alert, try! FourCharCode(fourByteString: "EAlT")):
