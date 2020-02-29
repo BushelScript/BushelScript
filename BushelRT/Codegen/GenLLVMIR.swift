@@ -61,8 +61,24 @@ func generateLLVMModule(from expression: Expression, builtin: Builtin) -> Module
     
     BuiltinFunction.addFunctions(to: builder)
     
+    let rt = builtin.rt
+    let bp = builtin.irPointerValue(builder: builder)
+    
     let main = builder.addFunction("main", type: FunctionType([], PointerType.toVoid))
-    let entry = main.appendBasicBlock(named: "entry")
+    let bootstrap = main.appendBasicBlock(named: "bootstrap")
+    builder.positionAtEnd(of: bootstrap)
+    
+    let function = builder.addFunction("run", type: FunctionType([], PointerType.toVoid))
+    let functionIRPointer = builder.buildBitCast(function, type: PointerType.toVoid)
+    let commandInfoIRPointer = rt.command(forUID: TypedTermUID(CommandUID.run)).irPointerValue(builder: builder)
+    
+    _ = builder.buildCall(toExternalFunction: .newFunction, args: [bp, commandInfoIRPointer, functionIRPointer, builder.rtNull])
+    
+    let entry = function.appendBasicBlock(named: "entry")
+    
+    let returnValue = builder.buildCall(function, args: [])
+    builder.buildRet(returnValue)
+    
     builder.positionAtEnd(of: entry)
     do {
         try returningResult(builder) {
