@@ -81,55 +81,24 @@ public class RT_Global: RT_Object {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        if let commandClass = command.typedUID.ae8Code?.class {
-            let standardAdditionsCommandClasses =
-                ["syso", "gtqp", "misc"].map({ try! FourCharCode(fourByteString: $0) })
-            if standardAdditionsCommandClasses.contains(commandClass) {
-                // Run command from StandardAdditions.osax
-                do {
-                    return try RT_Application(rt, currentApplication: ()).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-                } catch let error as RemoteCommandError where (error.error as? AutomationError).map({ [errAEPrivilegeError, errAEEventNotHandled].contains($0.code) }) ?? false {
-                    // Scripting addition commands return this error code (-10004)
-                    // when they want to be run in the current process for security reasons.
-                    
-                    final class CurrentProcessSpecifier: RT_Object, RT_SASpecifierConvertible {
-                        
-                        func rootSpecifier() -> RootSpecifier {
-                            RootSpecifier(addressDescriptor: NSAppleEventDescriptor.currentProcess())
-                        }
-                        
-                        func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
-                            rootSpecifier()
-                        }
-                        
-                        let rt: RTInfo
-                        
-                        init(_ rt: RTInfo) {
-                            self.rt = rt
-                        }
-                    }
-                    
-                    do {
-                        let currentProcess = CurrentProcessSpecifier(rt)
-                        return try currentProcess.performByAppleEvent(command: command, arguments: arguments, implicitDirect: implicitDirect, target: currentProcess.rootSpecifier())
-                    } catch let error as RemoteCommandError where (error.error as? AutomationError).map({ [errAEPrivilegeError, errAEEventNotHandled].contains($0.code) }) ?? false {
-                        throw UnavailableScriptingAdditionCommand(command: command)
-                    }
-                }
-            } else if commandClass == (try! FourCharCode(fourByteString: "bShG")) {
-                // Run GUIHost command
-                guard let guiHostBundle = Bundle(applicationBundleIdentifier: "com.justcheesy.BushelGUIHost") else {
-                    throw MissingResource(resourceDescription: "BushelGUIHost application")
-                }
-                var arguments = arguments
-                if
-                    arguments.first(where: { $0.key.uid.ae4Code == ParameterUID.GUI_ask_title.ae12Code!.code }) == nil,
-                    let scriptName = rt.topScript.name
-                {
-                    arguments[ParameterInfo(.GUI_ask_title)] = RT_String(value: scriptName)
-                }
-                return try RT_Application(rt, bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+        if
+            let commandClass = command.typedUID.ae8Code?.class,
+            commandClass == (try! FourCharCode(fourByteString: "bShG"))
+        {
+            // Run GUIHost command
+            guard let guiHostBundle = Bundle(applicationBundleIdentifier: "com.justcheesy.BushelGUIHost") else {
+                throw MissingResource(resourceDescription: "BushelGUIHost application")
             }
+            
+            var arguments = arguments
+            if
+                arguments.first(where: { $0.key.uid.ae4Code == ParameterUID.GUI_ask_title.ae12Code!.code }) == nil,
+                let scriptName = rt.topScript.name
+            {
+                arguments[ParameterInfo(.GUI_ask_title)] = RT_String(value: scriptName)
+            }
+            
+            return try RT_Application(rt, bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
         
         switch CommandUID(command.typedUID) {
