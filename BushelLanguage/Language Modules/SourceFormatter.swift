@@ -33,7 +33,7 @@ public extension SourceFormatter {
                     return indentation(for: $0.kind.deindent ? level : level + 1) + formatted
                 }
                 .joined(separator: "\n")
-                + "\n\(indentation(for: level))"
+                + (level >= 0 ? "\n\(indentation(for: level))" : "")
         }
         
         return reformat(expression: expression, level: level)
