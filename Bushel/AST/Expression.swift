@@ -1,36 +1,31 @@
 import Foundation
 
-public struct Keyword: PrettyPrintable {
+public struct Terminal: PrettyPrintable {
     
     public enum Styling {
+        case comment
         case keyword
         case `operator`
         case variable
         case number
         case string
+        case weave
     }
     
-    public var keyword: String
+    public var value: String
+    public var location: SourceLocation
+    public var spacing: Spacing
     public var styling: Styling
     
-    public init(keyword: String, styling: Styling = .keyword) {
-        self.keyword = keyword
+    public init(_ value: String, at location: SourceLocation, spacing: Spacing = .leftRight, styling: Styling = .keyword) {
+        self.value = value
+        self.location = location
+        self.spacing = spacing
         self.styling = styling
     }
     
-    public func prettified(source: String, level: Int) -> String {
-        return keyword
-    }
-    
-}
-
-public struct Newline: PrettyPrintable {
-    
-    public init() {
-    }
-    
-    public func prettified(source: String, level: Int) -> String {
-        return "\n"
+    public var prettified: String {
+        value
     }
     
 }
@@ -78,7 +73,6 @@ public struct Expression {
     
     public let kind: Kind
     public let location: SourceLocation
-    public private(set) var elements: [PrettyPrintable]
     
     public static func empty(at location: SourceLocation) -> Expression {
         Expression(.empty, at: location)
@@ -87,13 +81,9 @@ public struct Expression {
         Expression(.sequence([]), at: location)
     }
     
-    public init(_ kind: Kind, _ elements: [PrettyPrintable] = [], at location: SourceLocation) {
+    public init(_ kind: Kind, at location: SourceLocation) {
         self.kind = kind
-        self.elements = elements
         self.location = location
-        if elements.isEmpty {
-            self.elements = [self]
-        }
     }
     
 }

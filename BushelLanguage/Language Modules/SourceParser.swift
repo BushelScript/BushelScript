@@ -39,7 +39,8 @@ public protocol SourceParser: AnyObject {
     var termNameStartIndex: String.Index { get set }
     
     var lexicon: Lexicon { get set }
-    var currentElements: [[PrettyPrintable]] { get set }
+    var sequenceNestingLevel: Int { get set }
+    var elements: Set<SourceElement> { get set }
     var awaitingExpressionEndKeywords: [Set<TermName>] { get set }
     var sequenceEndTags: [TermName] { get set }
     
@@ -82,10 +83,11 @@ public extension SourceParser {
         self.entireSource = source
         self.source = Substring(source)
         self.expressionStartIndex = source.startIndex
-        self.currentElements = []
+        self.sequenceNestingLevel = -1
+        self.elements = []
         
         guard !source.isEmpty else {
-            return Program(Expression.empty(at: currentLocation), source: entireSource, terms: TermPool())
+            return Program(Expression.empty(at: currentLocation), [], source: entireSource, terms: TermPool())
         }
         
         lexicon.add(ParameterTerm(TermUID(ParameterUID.direct), name: nil))
@@ -93,8 +95,7 @@ public extension SourceParser {
         lexicon.pushDictionaryTerm(forUID: .id("script"))
         defer { lexicon.pop() }
         do {
-            let ast = Expression(.sequence(try parseSequence(TermName(""))), at: SourceLocation(entireSource.range, source: entireSource))
-            return Program(ast, source: entireSource, terms: lexicon.pool)
+            return Program(try parseDocument(), elements, source: entireSource, terms: lexicon.pool)
         } catch var error as ParseError {
             if !entireSource.range.contains(error.location.range.lowerBound) {
                 error.location.range = entireSource.index(before: entireSource.endIndex)..<entireSource.endIndex
@@ -103,7 +104,7 @@ public extension SourceParser {
         }
     }
     
-    func eatCommentsAndWhitespace(eatingNewlines: Bool = false) {
+    func eatCommentsAndWhitespace(eatingNewlines: Bool = false, isSignificant: Bool = false) {
         func eatLineComment() -> Bool {
             guard eatLineCommentMarker() else {
                 return false
@@ -132,16 +133,72 @@ public extension SourceParser {
             }
         }
         
-        repeat {
+        func addAsSourceElement(from startIndex: String.Index) {
+            elements.insert(SourceElement(Terminal(String(entireSource[startIndex..<currentIndex]), at: location(from: startIndex))))
+        }
+        
+        withCurrentIndex { startIndex in
             source.removeLeadingWhitespace(removingNewlines: eatingNewlines)
-        } while eatBlockComment() || eatLineComment()
+            
+            if isSignificant, currentIndex != startIndex {
+                addAsSourceElement(from: startIndex)
+            }
+        }
+            
+        while
+            withCurrentIndex(parse: { startIndex in
+                guard eatBlockComment() || eatLineComment() else {
+                    return false
+                }
+                addAsSourceElement(from: startIndex)
+                
+                withCurrentIndex { startIndex in
+                    source.removeLeadingWhitespace(removingNewlines: eatingNewlines)
+                    if isSignificant {
+                        addAsSourceElement(from: startIndex)
+                    }
+                }
+                return true
+            })
+        {
+        }
     }
     
-    func parseSequence(_ endTag: TermName, stoppingAt stopKeywords: [String] = []) throws -> [Expression] {
+    private func addElement(from startIndex: String.Index, styling: Terminal.Styling, spacing: Spacing) {
+        guard startIndex != currentIndex else {
+            return
+        }
+        
+        let slice = String(entireSource[startIndex..<currentIndex])
+        let loc = location(from: startIndex)
+        elements.insert(SourceElement(Terminal(slice, at: loc, spacing: spacing, styling: styling)))
+    }
+    
+    func addingElement<Result>(_ styling: Terminal.Styling = .keyword, spacing: Spacing = .leftRight, parse: () throws -> Result) rethrows -> Result {
+        try withCurrentIndex { startIndex in
+            defer {
+                addElement(from: startIndex, styling: styling, spacing: spacing)
+            }
+            return try parse()
+        }
+    }
+    
+    func parseDocument() throws -> Expression {
+        let sequence = try parseSequence(TermName(""))
+        
+        eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
+        
+        return sequence
+    }
+    
+    func parseSequence(_ endTag: TermName, stoppingAt stopKeywords: [String] = []) throws -> Expression {
         sequenceEndTags.append(endTag)
         defer {
             sequenceEndTags.removeLast()
         }
+        
+        // Matched by .end check below
+        sequenceNestingLevel += 1
         
         var expressions: [Expression] = []
         
@@ -149,7 +206,7 @@ public extension SourceParser {
             eatCommentsAndWhitespace()
             while let newline = parseNewline() {
                 expressions.append(newline)
-                eatCommentsAndWhitespace()
+                addIndentation()
             }
         }
         
@@ -160,33 +217,51 @@ public extension SourceParser {
                 break
             }
             
+            let indentation = addIndentation()
+            
             if let primary = try parsePrimary() {
                 expressions.append(primary)
                 if case Expression.Kind.end = primary.kind {
+                    sequenceNestingLevel -= 1
+                    
+                    elements.remove(indentation)
+                    elements.insert(SourceElement(Indentation(level: sequenceNestingLevel, location: indentation.location)))
+                    
                     break
                 }
             }
             
             eatCommentsAndWhitespace()
             
-            guard parseNewline() != nil || source.isEmpty else {
+            let newline = parseNewline()
+            
+            if source.isEmpty {
+                if let newline = newline {
+                    expressions.append(newline)
+                }
+                break
+            }
+            
+            guard newline != nil else {
                 let nextNewline = source.firstIndex(where: { $0.isNewline }) ?? source.endIndex
                 let location = SourceLocation(source.startIndex..<nextNewline, source: entireSource)
                 throw ParseError(description: "expected line break after sequenced expression", location: location, fixes: [PrependingFix(prepending: "\n", at: location)])
             }
             
+            if stopKeywords.contains(where: { source.hasPrefix($0) }) {
+                expressions.append(newline!)
+                break
+            }
+            
             eatNewlines()
         }
         
-        return expressions
+        let result = Expression(.sequence(expressions), at: expressionLocation)
+        eatCommentsAndWhitespace()
+        return result
     }
     
     func parsePrimary(lastOperation: BinaryOperation? = nil) throws -> Expression? {
-        currentElements.append([])
-        defer {
-            currentElements.removeLast()
-        }
-        
         guard var primary = try (parsePrefixOperators() ?? parseUnprocessedPrimary()) else {
             return nil
         }
@@ -197,11 +272,13 @@ public extension SourceParser {
         
         while let processedPrimary = try (
             postprocess(primary: primary).map {
-                Expression($0, primary.elements, at: expressionLocation)
+                Expression($0, at: expressionLocation)
             } ?? parsePostfixOperators()
         ) {
             primary = processedPrimary
         }
+        
+        eatCommentsAndWhitespace()
         
         return primary
     }
@@ -245,7 +322,7 @@ public extension SourceParser {
             }
             
             expressionStartIndex = totalExpressionStartIndex
-            return Expression(.infixOperator(operation: operation, lhs: lhs, rhs: rhs), currentElements.last!, at: expressionLocation)
+            return Expression(.infixOperator(operation: operation, lhs: lhs, rhs: rhs), at: expressionLocation)
         } else if
             lhsPrecedence > rhsPrecedence ||
             (lhsPrecedence == rhsPrecedence && lhsAssociativity == .left)
@@ -281,7 +358,7 @@ public extension SourceParser {
                 throw ParseError(description: "expected expression after prefix operator", location: currentLocation)
             }
             
-            expression = Expression(.prefixOperator(operation: operation, operand: operand), currentElements.last!, at: expressionLocation)
+            expression = Expression(.prefixOperator(operation: operation, operand: operand), at: expressionLocation)
         }
         return expression
     }
@@ -297,7 +374,7 @@ public extension SourceParser {
                 throw ParseError(description: "expected expression after prefix operator", location: currentLocation)
             }
             
-            expression = Expression(.postfixOperator(operation: operation, operand: operand), currentElements.last!, at: expressionLocation)
+            expression = Expression(.postfixOperator(operation: operation, operand: operand), at: expressionLocation)
         }
         return expression
     }
@@ -315,20 +392,27 @@ public extension SourceParser {
             var bodies = [""]
             
             while !source.isEmpty {
-                source.removeFirst() // Eat leading newline
+                addingElement(.weave, spacing: .none) {
+                    _ = source.removeFirst() // Eat leading newline
+                }
+                
                 let rollbackSource = source // Preserve leading whitespace
+                let rollbackElements = elements
                 if let newHashbang = eatHashbang() {
                     hashbangs.append(newHashbang)
                     bodies.append("")
-                    if newHashbang.invocation == "bushelscript" {
+                    if newHashbang.invocation.allSatisfy({ $0.isWhitespace }) {
                         endHashbangLocation = newHashbang.location
                         break
                     }
                 } else {
                     source = rollbackSource
+                    elements = rollbackElements
                     let line = String(source.prefix { !$0.isNewline })
                     bodies[bodies.index(before: bodies.endIndex)] += "\(line)\n"
-                    source.removeFirst(line.count)
+                    addingElement(.weave, spacing: .none) {
+                        source.removeFirst(line.count)
+                    }
                 }
             }
             
@@ -340,7 +424,7 @@ public extension SourceParser {
                     let nextHashbang = hashbangs[hashbangIndex + 1]
                     return Expression(.weave(hashbang: hashbang, body: body), at: SourceLocation(hashbang.location.range.lowerBound..<nextHashbang.location.range.lowerBound, source: entireSource))
                 } else if let endLocation = endHashbangLocation {
-                    // Program continues after a #!bushelscript at endLocation
+                    // Program continues after an empty #! at endLocation
                     return Expression(.endWeave, at: endLocation)
                 } else {
                     // Program ends in a weave
@@ -350,37 +434,22 @@ public extension SourceParser {
             
             return Expression(.sequence(weaves), at: expressionLocation)
         } else if let (_, endMarker) = eatStringBeginMarker() {
-            let regex = try! NSRegularExpression(pattern: "(.*?)(?<!\\\\)\(endMarker)", options: [])
-            
-            let slicedSourceCode = String(source)
-            guard let match = regex.firstMatch(in: slicedSourceCode, options: [], range: NSRange(slicedSourceCode.range, in: slicedSourceCode)) else {
+            guard
+                let match = tryEating(try! Regex(string: "(.*?)(?<!\\\\)\(endMarker)"), .string, spacing: .right),
+                let string = match.captures[0]
+            else {
                 throw ParseError(description: "unable to parse string", location: currentLocation)
             }
-            let totalNSRange = match.range
-            let stringNSRange = match.range(at: 1)
-            
-            let totalRange = Range(totalNSRange, in: slicedSourceCode)!
-            let stringRange = Range(stringNSRange, in: slicedSourceCode)!
-            
-            let totalEndIndexInSource = source.index(currentIndex, offsetBy: slicedSourceCode.distance(from: totalRange.lowerBound, to: totalRange.upperBound))
-            let stringEndIndexInSource = source.index(currentIndex, offsetBy: slicedSourceCode.distance(from: stringRange.lowerBound, to: stringRange.upperBound))
-            
-            let stringSource = source[currentIndex..<stringEndIndexInSource]
-            source.removeFirst(stringSource.count)
-            
-            let endMarkerLength = source.distance(from: stringEndIndexInSource, to: totalEndIndexInSource)
-            source.removeFirst(endMarkerLength)
-            
-            return Expression(.string(String(stringSource)), [Keyword(keyword: String(stringSource), styling: .string)], at: SourceLocation(stringSource.range, source: entireSource))
+            return Expression(.string(string), at: expressionLocation)
         } else if let term = try eatTerm() {
             if let kind = try handle(term: Located(term, at: expressionLocation)) {
-                return Expression(kind, currentElements.last!, at: expressionLocation)
+                return Expression(kind, at: expressionLocation)
             } else {
                 return nil
             }
         } else if let termName = eatKeyword() {
             if let kind = try keywords[termName]!() {
-                return Expression(kind, currentElements.last!, at: expressionLocation)
+                return Expression(kind, at: expressionLocation)
             } else {
                 return nil
             }
@@ -394,40 +463,29 @@ public extension SourceParser {
             }
             
             if c.isNumber || c == "." {
-                func parseInteger() -> Expression? {
-                    let slicedSourceCode = String(source)
-                    let regex = try! NSRegularExpression(pattern: "^\\d++(?!\\.)", options: [.caseInsensitive])
-                    guard let numberNSRange = regex.firstMatch(in: slicedSourceCode, options: [], range: NSRange(source.range, in: source))?.range else {
-                        return nil
-                    }
-                    let numberRange = Range(numberNSRange, in: slicedSourceCode)!
-                    let numberEndIndex = source.index(currentIndex, offsetBy: slicedSourceCode.distance(from: numberRange.lowerBound, to: numberRange.upperBound))
-                    let numberSource = source[currentIndex..<numberEndIndex]
-                    guard let value = Int64(numberSource) else {
-                        return nil
-                    }
-                    source.removeFirst(numberSource.count)
+                return try withCurrentIndex { startIndex in
+                    eatCommentsAndWhitespace()
                     
-                    return Expression(.integer(value), [Keyword(keyword: String(numberSource), styling: .number)], at: SourceLocation(numberSource.range, source: entireSource))
-                }
-                func parseDouble() throws -> Expression {
-                    let slicedSourceCode = String(source)
-                    let regex = try! NSRegularExpression(pattern: "^\\d*(?:\\.\\d++(?:[ep][-+]?\\d+)?)?", options: [.caseInsensitive])
-                    guard let numberNSRange = regex.firstMatch(in: slicedSourceCode, options: [], range: NSRange(source.range, in: source))?.range else {
-                        throw ParseError(description: "unable to parse number", location: currentLocation)
+                    func parseInteger() -> Expression? {
+                        guard
+                            let match = tryEating(Regex("^\\d++(?!\\.)"), .number),
+                            let value = Int64(match.matchedString)
+                        else {
+                            return nil
+                        }
+                        return Expression(.integer(value), at: expressionLocation)
                     }
-                    let numberRange = Range(numberNSRange, in: slicedSourceCode)!
-                    let numberEndIndex = source.index(currentIndex, offsetBy: slicedSourceCode.distance(from: numberRange.lowerBound, to: numberRange.upperBound))
-                    let numberSource = source[currentIndex..<numberEndIndex]
-                    source.removeFirst(numberSource.count)
-                    
-                    guard let value = Double(numberSource) else {
-                        throw ParseError(description: "unable to parse number", location: SourceLocation(numberSource.range, source: entireSource))
+                    func parseDouble() throws -> Expression {
+                        guard
+                            let match = tryEating(Regex("^\\d*(?:\\.\\d++(?:[ep][-+]?\\d+)?)?", options: .ignoreCase), .number),
+                            let value = Double(match.matchedString)
+                        else {
+                            throw ParseError(description: "unable to parse number", location: expressionLocation)
+                        }
+                        return Expression(.double(value), at: expressionLocation)
                     }
-                    return Expression(.double(value), [Keyword(keyword: String(numberSource), styling: .number)], at: SourceLocation(numberSource.range, source: entireSource))
+                    return try parseInteger() ?? parseDouble()
                 }
-                
-                return try parseInteger() ?? parseDouble()
             } else {
                 os_log("Undefined term source: %@", log: log, type: .debug, String(source))
                 throw ParseError(description: "undefined term; perhaps you made a typo?", location: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource))
@@ -455,6 +513,8 @@ public extension SourceParser {
         }
         
         let (hasName, stoppingAt, handler) = resourceTypes[typeName]!
+        
+        eatCommentsAndWhitespace()
         
         guard !source.hasPrefix("\"") else {
             throw ParseError(description: "‘use’ binds a resource term; remove the quotation mark(s)", location: currentLocation)
@@ -565,7 +625,9 @@ public extension SourceParser {
     private func eatFromSource(_ words: [String]) {
         for word in words {
             source.removeLeadingWhitespace()
-            source.removeFirst(word.count)
+            addingElement {
+                source.removeFirst(word.count)
+            }
         }
     }
     
@@ -585,18 +647,38 @@ public extension SourceParser {
         guard source.first?.isNewline ?? false else {
             return nil
         }
-        let newline = Expression(.empty, [Newline()], at: SourceLocation(source.startIndex..<source.index(after: source.startIndex), source: entireSource))
-        source.removeFirst()
+        
+        let newline = Expression(.empty, at: currentLocation)
+        addingElement(.comment, spacing: .none) {
+            _ = source.removeFirst()
+        }
+        
+        eatCommentsAndWhitespace()
+        
         return newline
     }
     
+    @discardableResult
+    func addIndentation() -> SourceElement {
+        withCurrentIndex { startIndex in
+            eatCommentsAndWhitespace()
+            
+            let loc = SourceLocation(at: location(from: startIndex))
+            let element = SourceElement(Indentation(level: sequenceNestingLevel, location: loc))
+            elements.insert(element)
+            return element
+        }
+    }
+    
     func eatHashbang() -> Hashbang? {
-        guard tryEating(prefix: "#!") else {
+        guard tryEating(prefix: "#!", spacing: .left) else {
             return nil
         }
         
         let invocationSource = source.prefix { !$0.isNewline }
-        source.removeFirst(invocationSource.count)
+        addingElement {
+            source.removeFirst(invocationSource.count)
+        }
         
         return Hashbang(String(invocationSource), at: expressionLocation)
     }
@@ -621,11 +703,13 @@ public extension SourceParser {
     
     func eatKeyword() -> TermName? {
         let result = Array(keywords.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
-        source.removeFirst(result.termString.count)
-        if let name = result.termName {
-            currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized))
+        guard let termName = result.termName else {
+            return nil
         }
-        return result.termName
+        addingElement(spacing: termName.normalized.last!.isWordBreaking ? .left : .leftRight) {
+            source.removeFirst(result.termString.count)
+        }
+        return termName
     }
     
     func findPrefixOperator() -> (termName: TermName, operator: UnaryOperation)? {
@@ -637,11 +721,12 @@ public extension SourceParser {
     
     func eatPrefixOperator() {
         let result = Array(prefixOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
-        source.removeFirst(result.termString.count)
-        guard let name = result.termName else {
+        guard result.termName != nil else {
             return
         }
-        currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized, styling: .operator))
+        addingElement(.operator) {
+            source.removeFirst(result.termString.count)
+        }
     }
     
     func findPostfixOperator() -> (termName: TermName, operator: UnaryOperation)? {
@@ -653,11 +738,12 @@ public extension SourceParser {
     
     func eatPostfixOperator() {
         let result = Array(postfixOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
-        source.removeFirst(result.termString.count)
-        guard let name = result.termName else {
+        guard result.termName != nil else {
             return
         }
-        currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized, styling: .operator))
+        addingElement(.operator) {
+            source.removeFirst(result.termString.count)
+        }
     }
     
     func findBinaryOperator() -> (termName: TermName, operator: BinaryOperation)? {
@@ -669,34 +755,33 @@ public extension SourceParser {
     
     func eatBinaryOperator() {
         let result = Array(binaryOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
-        source.removeFirst(result.termString.count)
-        guard let name = result.termName else {
+        guard result.termName != nil else {
             return
         }
-        currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized, styling: .operator))
+        addingElement(.operator) {
+            source.removeFirst(result.termString.count)
+        }
     }
     
     func eatStringBeginMarker() -> (begin: TermName, end: TermName)? {
         let result = stringMarkers.map { $0.begin }.findTermName(in: source.prefix(while: { !$0.isNewline }))
-        source.removeFirst(result.termString.count)
         guard let termName = result.termName else {
             return nil
+        }
+        addingElement(.string, spacing: .left) {
+            source.removeFirst(result.termString.count)
         }
         return stringMarkers.first { $0.begin == termName }
     }
     
     func eatTerm() throws -> Term? {
-        let term = try eatTerm(terminology: lexicon)
-        if let name = term?.name {
-            currentElements[currentElements.endIndex - 1].append(Keyword(keyword: name.normalized, styling: .variable))
-        }
-        return term
+        try eatTerm(terminology: lexicon)
     }
     
-    func tryEating(termName: TermName) -> Bool {
+    func tryEating(termName: TermName, _ styling: Terminal.Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
         let rollbackSource = source
         for word in termName.words {
-            guard tryEating(prefix: word) else {
+            guard tryEating(prefix: word, styling, spacing: spacing) else {
                 source = rollbackSource
                 return false
             }
@@ -704,27 +789,31 @@ public extension SourceParser {
         return true
     }
     
-    func tryEating(prefix target: String) -> Bool {
-        eatCommentsAndWhitespace()
-        if
-            source.hasPrefix(target),
-            target.last!.isWordBreaking || (source.dropFirst(target.count).first?.isWordBreaking ?? true)
-        {
-            source.removeFirst(target.count)
-            currentElements[currentElements.endIndex - 1].append(Keyword(keyword: target))
-            return true
-        }
-        return false
-    }
-    
-    func tryEating(_ regex: Regex) -> MatchResult? {
+    func tryEating(prefix target: String, _ styling: Terminal.Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
         eatCommentsAndWhitespace()
         
+        guard
+            source.hasPrefix(target),
+            target.last!.isWordBreaking || (source.dropFirst(target.count).first?.isWordBreaking ?? true)
+        else {
+            return false
+        }
+        
+        addingElement(styling, spacing: spacing) {
+            source.removeFirst(target.count)
+        }
+        return true
+    }
+    
+    func tryEating(_ regex: Regex, _ styling: Terminal.Styling = .keyword, spacing: Spacing = .leftRight) -> MatchResult? {
         let restOfLine = String(source.prefix { !$0.isNewline })
         guard let match = regex.firstMatch(in: restOfLine) else {
             return nil
         }
-        source.removeFirst(match.matchedString.count)
+        
+        addingElement(styling, spacing: spacing) {
+            source.removeFirst(match.matchedString.count)
+        }
         
         return match
     }
@@ -736,10 +825,10 @@ public extension SourceParser {
         return false
     }
     
-    func withScope(parse: () throws -> [Expression]) rethrows -> Expression {
+    func withScope(parse: () throws -> Expression) rethrows -> Expression {
         lexicon.pushUnnamedDictionary()
         defer { lexicon.pop() }
-        return Expression(.scoped(Expression(.sequence(try parse()), at: expressionLocation)), at: expressionLocation)
+        return Expression(.scoped(try parse()), at: expressionLocation)
     }
     
     func withTerminology<Result>(of expression: Expression, parse: () throws -> Result) throws -> Result {
@@ -807,7 +896,7 @@ public extension SourceParser {
     }
     
     var expressionLocation: SourceLocation {
-        SourceLocation(expressionStartIndex..<currentIndex, source: entireSource)
+        location(from: expressionStartIndex)
     }
     
     var expressionStartIndex: String.Index {
@@ -820,7 +909,15 @@ public extension SourceParser {
     }
     
     var termNameLocation: SourceLocation {
-        SourceLocation(termNameStartIndex..<currentIndex, source: entireSource)
+        location(from: termNameStartIndex)
+    }
+    
+    private func withCurrentIndex<Result>(parse: (String.Index) throws -> Result) rethrows -> Result {
+        try parse(currentIndex)
+    }
+    
+    private func location(from index: String.Index) -> SourceLocation {
+        SourceLocation(index..<currentIndex, source: entireSource)
     }
     
     func eatTerm<Terminology: TerminologySource>(terminology: Terminology) throws -> Term? {
@@ -912,7 +1009,9 @@ public extension SourceParser {
             return term
         }
         
-        return try eatDefinedTerm() ?? eatRawFormTerm()
+        return try addingElement {
+            try eatDefinedTerm() ?? eatRawFormTerm()
+        }
     }
     
 }

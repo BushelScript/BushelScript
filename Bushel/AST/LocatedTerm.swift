@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol LocatedTerm: NamedTerm {
+public protocol LocatedTerm: NamedTerm, PrettyPrintable {
     
     var wrappedTerm: Term { get }
     var location: SourceLocation { get }

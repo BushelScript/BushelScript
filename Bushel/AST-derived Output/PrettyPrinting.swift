@@ -4,82 +4,174 @@ import Foundation
 
 public protocol PrettyPrintable {
     
-    func prettified(source: String, level: Int) -> String
+    var location: SourceLocation { get }
+    var spacing: Spacing { get }
+    var prettified: String { get }
     
 }
 
-public enum Printable {
+public extension PrettyPrintable {
     
-    case expression(Expression)
-    case indentation(level: Int)
-    case newline
-    
-}
-
-extension Printable {
-    
-    public func prettified(source: String) -> String {
-        return prettified(source: source, level: -1)
+    var spacing: Spacing {
+        .none
     }
     
 }
 
-private let oneLevelIndentation = "    "
-
-extension Printable {
+public enum Spacing {
     
-    public func prettified(source: String, level: Int) -> String {
+    // When applied to "b":
+    case leftRight  // a b c
+    case left       // a bc
+    case right      // ab c
+    case none       // abc
+    
+    var hasLeft: Bool {
         switch self {
-        case .expression(let prettyPrintable as PrettyPrintable):
-            return prettyPrintable.prettified(source: source, level: level)
-        case .indentation(let level):
-            return String(repeating: oneLevelIndentation, count: level)
-        case .newline:
-            return "\n"
+        case .leftRight, .left:
+            return true
+        case .right, .none:
+            return false
+        }
+    }
+    
+    var hasRight: Bool {
+        switch self {
+        case .leftRight, .right:
+            return true
+        case .left, .none:
+            return false
         }
     }
     
 }
 
-extension Expression: PrettyPrintable {
+public func prettyPrint(_ elements: Set<SourceElement>) -> String {
+    let elements = elements.sorted()
     
-    public func prettified(source: String, level: Int) -> String {
-        if case .sequence(let expressions) = kind {
-            let level = level + 1
-            
-            var printables: [Printable] = []
-            
-            if level != 0 {
-                printables.append(.newline)
-            }
-            
-            printables += [Printable](expressions.map { (expression) -> [Printable] in
-                let indentation: Int
-                switch expression.kind {
-                case .empty:
-                    indentation = 0
-                case .end:
-                    indentation = (level > 0) ? level - 1 : level
-                default:
-                    indentation = level
-                }
-                
-                return [.indentation(level: indentation), .expression(expression)]
-            }.joined(separator: [.newline]))
-                
-            return printables.reduce("", { (acc, printable) -> String in
-                acc + printable.prettified(source: source)
-            })
+    var result: String = ""
+    for index in elements.indices {
+        let element = elements[index]
+        let lastElement = elements.indices.contains(index - 1) ? elements[index - 1] : nil
+        
+        let pretty = element.prettified
+        
+        if
+            !(result.last?.isWhitespace ?? true),
+            !(pretty.first?.isWhitespace ?? true),
+            lastElement?.spacing.hasRight ?? false,
+            element.spacing.hasLeft
+        {
+            result += " "
         }
         
-        return elements.map { $0.prettified(source: source, level: level) }.joined(separator: " ")
+        result += pretty
+    }
+    
+    return result
+}
+
+public struct SourceElement: PrettyPrintable {
+    
+    public var value: PrettyPrintable
+    
+    public init(_ value: PrettyPrintable) {
+        self.value = value
+    }
+    
+    public var location: SourceLocation {
+        value.location
+    }
+    
+    public var spacing: Spacing {
+        value.spacing
+    }
+    
+    public var prettified: String {
+        value.prettified
     }
     
 }
 
-extension NamedTerm {
+extension SourceElement: Hashable {
     
-    public func prettified(source: String, level: Int) -> String {
+    public static func == (lhs: SourceElement, rhs: SourceElement) -> Bool {
+        lhs.location == rhs.location
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(location)
+    }
+    
+}
+
+extension SourceElement: Comparable {
+    
+    public static func < (lhs: SourceElement, rhs: SourceElement) -> Bool {
+        let lhs = lhs.location.range
+        let rhs = rhs.location.range
+        if lhs.lowerBound < rhs.lowerBound {
+            return true
+        } else {
+            return lhs.lowerBound == rhs.lowerBound && lhs.upperBound < rhs.upperBound
+        }
+    }
+    
+}
+
+private let oneLevelIndentation = "\t"
+
+public struct Indentation: PrettyPrintable {
+    
+    public var level: Int
+    public var location: SourceLocation
+    
+    public init(level: Int, location: SourceLocation) {
+        self.level = level
+        self.location = location
+    }
+    
+    public var prettified: String {
+        String(repeating: oneLevelIndentation, count: level)
+    }
+    
+}
+
+extension Expression {
+    
+//    public func collectElements(_ elements: inout Set<SourceElement>, level: Int) {
+//        elements.formUnion(self.elements)
+//
+//        if case .sequence(let expressions) = kind {
+//            let level = level + 1
+//
+//            for (index, expression) in expressions.enumerated() {
+//                var exprLevel = level
+//                if
+//                    case .end = expression.kind,
+//                    level > 0
+//                {
+//                    exprLevel -= 1
+//                }
+//
+//                let indentation = SourceElement(Indentation(level: exprLevel, withNewline: index != 0, location: SourceLocation(at: expression.location)))
+//                elements.remove(indentation) // Possible other occupying element
+//                elements.insert(indentation)
+//
+//                expression.collectElements(&elements, level: level)
+//            }
+//        } else {
+//            for expression in subexpressions() {
+//                expression.collectElements(&elements, level: level)
+//            }
+//        }
+//    }
+    
+}
+
+extension LocatedTerm {
+    
+    public var prettified: String {
         String(describing: self)
     }
     

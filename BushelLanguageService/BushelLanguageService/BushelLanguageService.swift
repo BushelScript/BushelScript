@@ -46,11 +46,7 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
             return reply(nil)
         }
         
-        reply(program.source) // TODO: Fix pretty printing and re-enable
-        _ = program
-        
-        // Code to use once pretty printing is fixed:
-//        reply(program.ast.prettified(source: source))
+        reply(prettyPrint(program.elements))
     }
     
     func reformatProgram(_ program: Any, usingLanguageModule module: Any, reply: @escaping (String?) -> Void) {

@@ -242,7 +242,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
         case .weave(let hashbang, let body):
             return "#!\(hashbang.invocation)\n\(body.removingTrailingWhitespace(removingNewlines: true))"
         case .endWeave:
-            return "#!bushelscript"
+            return "#!"
         }
     }
     

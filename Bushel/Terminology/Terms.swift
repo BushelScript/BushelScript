@@ -1,7 +1,7 @@
 import Foundation
 import Regex
 
-public protocol NamedTerm: CustomStringConvertible, PrettyPrintable {
+public protocol NamedTerm: CustomStringConvertible {
     
     var uid: TermUID { get }
     var name: TermName? { get }

@@ -12,7 +12,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     public lazy var termNameStartIndex: String.Index = entireSource.startIndex
     
     public var lexicon: Lexicon = Lexicon()
-    public var currentElements: [[PrettyPrintable]] = []
+    public var sequenceNestingLevel: Int = 0
+    public var elements: Set<SourceElement> = []
     public var awaitingExpressionEndKeywords: [Set<TermName>] = []
     public var sequenceEndTags: [TermName] = []
     
@@ -197,7 +198,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 throw ParseError(description: "expected expression after ‘(’", location: SourceLocation(source.range, source: entireSource))
             }
             eatCommentsAndWhitespace(eatingNewlines: true)
-            guard tryEating(prefix: ")") else {
+            guard tryEating(prefix: ")", spacing: .right) else {
                 throw ParseError(description: "expected ‘)’ to end bracketed expression", location: SourceLocation(source.range, source: entireSource))
             }
             
@@ -208,11 +209,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     private func handleOpenBrace() throws -> Expression.Kind? {
         try awaiting(endMarkers: [TermName("}"), TermName(","), TermName(":")]) {
             eatCommentsAndWhitespace(eatingNewlines: true)
-            guard !tryEating(prefix: "}") else {
+            guard !tryEating(prefix: "}", spacing: .right) else {
                 return .list([])
             }
-            guard !tryEating(prefix: ":") else {
-                guard tryEating(prefix: "}") else {
+            guard !tryEating(prefix: ":", spacing: .right) else {
+                guard tryEating(prefix: "}", spacing: .right) else {
                     throw ParseError(description: "expected key expression before ‘:’, or ‘}’ after for an empty record", location: currentLocation)
                 }
                 return .record([])
@@ -220,31 +221,31 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             
             let first = try parseListItem(as: "list item or record key")
             
-            if tryEating(prefix: "}") {
+            if tryEating(prefix: "}", spacing: .right) {
                 return .list([first])
-            } else if tryEating(prefix: ",") {
+            } else if tryEating(prefix: ",", spacing: .right) {
                 var items: [Expression] = [first]
                 repeat {
                     items.append(try parseListItem(as: "list item"))
-                } while tryEating(prefix: ",")
+                } while tryEating(prefix: ",", spacing: .right)
                 
-                guard tryEating(prefix: "}") else {
+                guard tryEating(prefix: "}", spacing: .right) else {
                     throw ParseError(description: "expected ‘}’ to end list or ‘,’ to separate additional items", location: currentLocation)
                 }
                 return .list(items)
-            } else if tryEating(prefix: ":") {
+            } else if tryEating(prefix: ":", spacing: .right) {
                 let first = (key: first, value: try parseListItem(as: "record item"))
                 var items: [(key: Expression, value: Expression)] = [first]
-                while tryEating(prefix: ",") {
+                while tryEating(prefix: ",", spacing: .right) {
                     let key = try parseListItem(as: "record key")
-                    guard tryEating(prefix: ":") else {
+                    guard tryEating(prefix: ":", spacing: .right) else {
                         throw ParseError(description: "expected ‘:’ after key in record", location: currentLocation)
                     }
                     let value = try parseListItem(as: "record item")
                     items.append((key: key, value: value))
                 }
                 
-                guard tryEating(prefix: "}") else {
+                guard tryEating(prefix: "}", spacing: .right) else {
                     throw ParseError(description: "expected ‘}’ to end record or ‘,’ to separate additional items", location: currentLocation)
                 }
                 return .record(items)
@@ -283,7 +284,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         var parameters: [Located<ParameterTerm>] = []
         var arguments: [Located<VariableTerm>] = []
-        if tryEating(prefix: ":") {
+        if tryEating(prefix: ":", spacing: .right) {
             while let parameterTermName = try parseTermNameLazily() {
                 parameters.append(Located(ParameterTerm(.id(parameterTermName.normalized), name: parameterTermName), at: termNameLocation))
                 
@@ -293,7 +294,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 }
                 arguments.append(Located(VariableTerm(.id(argumentName.normalized), name: argumentName), at: termNameLocation))
                 
-                if !tryEating(prefix: ",") {
+                if !tryEating(prefix: ",", spacing: .right) {
                     break
                 }
             }
@@ -329,7 +330,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
             
             if foundNewline {
-                return Expression(.sequence(try parseSequence(TermName("if"), stoppingAt: ["else"])), at: expressionLocation)
+                return try parseSequence(TermName("if"), stoppingAt: ["else"])
             } else {
                 guard let thenExpression = try parsePrimary() else {
                     let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
@@ -341,22 +342,26 @@ public final class EnglishParser: BushelLanguage.SourceParser {
 
         func parseElse() throws -> Expression? {
             let rollbackSource = source
-            eatCommentsAndWhitespace(eatingNewlines: true)
+            let rollbackElements = elements
+            eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
             
             let elseStartIndex = currentIndex
             guard tryEating(prefix: "else") else {
                 source = rollbackSource
+                elements = rollbackElements
                 return nil
             }
             
             if tryEating(prefix: "\n") {
-                return Expression(.sequence(try parseSequence(TermName("if"))), at: expressionLocation)
+                return try parseSequence(TermName("if"))
             } else {
                 guard let elseExpr = try parsePrimary() else {
                     let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
                     throw ParseError(description: "expected expression or line break after ‘else’ to begin ‘else’-block", location: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", by: AppendingFix(appending: " <#expression#>", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
                 }
+                
                 eatCommentsAndWhitespace()
+                
                 return elseExpr
             }
         }
@@ -375,7 +380,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             guard tryEating(prefix: "\n") else {
                 throw ParseError(description: "expected line break to begin repeat block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
             }
-            return Expression(.sequence(try parseSequence(endTag)), at: expressionLocation)
+            return try parseSequence(endTag)
         }
         
         if tryEating(prefix: "while") {
@@ -428,7 +433,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return try withTerminology(of: target) {
             let toExpr: Expression
             if foundNewline {
-                toExpr = Expression(.sequence(try parseSequence(TermName("tell"))), at: expressionLocation)
+                toExpr = try parseSequence(TermName("tell"))
             } else {
                 guard let toExpression = try parsePrimary() else {
                     let toLocation = SourceLocation(toStartIndex..<currentIndex, source: entireSource)
@@ -462,6 +467,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     private func handleUseSystem(name: TermName) throws -> ResourceTerm {
         var system = Resource.System()
         if tryEating(prefix: "version") {
+            eatCommentsAndWhitespace()
             guard let match = tryEating(Regex("[vV]?(\\d+)\\.(\\d+)(?:\\.(\\d+))?")) else {
                 throw ParseError(description: "expected OS version number", location: currentLocation)
             }
@@ -650,22 +656,30 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         switch firstWord {
         case "index":
-            source.removeFirst(firstWord.count)
+            addingElement {
+                source.removeFirst(firstWord.count)
+            }
             return try parsePrimary().map { dataExpression in
                 return .index(dataExpression)
             }
         case "named":
-            source.removeFirst(firstWord.count)
+            addingElement {
+                source.removeFirst(firstWord.count)
+            }
             return try parsePrimary().map { dataExpression in
                 return .name(dataExpression)
             }
         case "id":
-            source.removeFirst(firstWord.count)
+            addingElement {
+                source.removeFirst(firstWord.count)
+            }
             return try parsePrimary().map { dataExpression in
                 return .id(dataExpression)
             }
         case "whose", "where":
-            source.removeFirst(firstWord.count)
+            addingElement {
+                source.removeFirst(firstWord.count)
+            }
             return try parsePrimary().map { expression in
                 return .test(expression, expression.asTestPredicate())
             }
@@ -682,7 +696,9 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             
             switch midWord {
             case "thru", "through":
-                source.removeFirst(midWord!.count)
+                addingElement {
+                    source.removeFirst(midWord!.count)
+                }
                 return try parsePrimary().map { secondExpression in
                     return .range(from: firstExpression, to: secondExpression)
                 }
