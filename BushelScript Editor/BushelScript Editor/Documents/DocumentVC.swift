@@ -57,7 +57,19 @@ class DocumentVC: NSViewController {
         
     }
     
-    var status: Status? {
+    @objc dynamic var statusText: String = ""
+    
+    private var isWorking: Bool = false {
+        didSet {
+            if self.isWorking {
+                self.progressIndicator.startAnimation(self)
+            } else {
+                self.progressIndicator.stopAnimation(self)
+            }
+        }
+    }
+    
+    var statusStack: [Status] = [] {
         didSet {
             DispatchQueue.main.async {
                 self.document.isRunning = (self.status == .running)
@@ -68,16 +80,22 @@ class DocumentVC: NSViewController {
             }
         }
     }
-    private var isWorking: Bool = false {
-        didSet {
-            if self.isWorking {
-                self.progressIndicator.startAnimation(self)
-            } else {
-                self.progressIndicator.stopAnimation(self)
-            }
-        }
+    
+    var status: Status? {
+        statusStack.last
     }
-    @objc dynamic var statusText: String = ""
+    
+    func pushStatus(_ status: Status) {
+        statusStack.append(status)
+    }
+    
+    func popStatus(_ status: Status) {
+        statusStack.removeAll { $0 == status }
+    }
+    
+    func clearStatus() {
+        statusStack.removeAll()
+    }
     
     private func newLanguageServiceConnection() -> NSXPCConnection {
         return NSXPCConnection.bushelLanguageServiceConnection(interruptionHandler: { [weak self] in
@@ -88,7 +106,7 @@ class DocumentVC: NSViewController {
                 return
             }
             self.connection = nil
-            self.status = nil
+            self.clearStatus()
             DispatchQueue.main.async {
                 let alert = NSAlert()
                 alert.messageText = "The Bushel Language Service has crashed."
@@ -239,9 +257,9 @@ class DocumentVC: NSViewController {
         func compileCallback(service: BushelLanguageServiceProtocol, language: LanguageModuleToken, result: Result<ProgramToken, ErrorToken>) {
             switch result {
             case .success(let program):
-                status = .running
+                pushStatus(.running)
                 service.runProgram(program, scriptName: document.displayName, currentApplicationID: Bundle(for: DocumentVC.self).bundleIdentifier!) { result in
-                    self.status = nil
+                    self.popStatus(.running)
                     
                     DispatchQueue.main.async {
                         self.resultInspectorPanelWC?.window?.orderOut(nil)
@@ -260,9 +278,9 @@ class DocumentVC: NSViewController {
                     }
                 }
             case .failure(let error):
-                status = .fetchingData
+                pushStatus(.fetchingData)
                 service.copyNSError(fromError: error) { error in
-                    self.status = nil
+                    self.popStatus(.fetchingData)
                     DispatchQueue.main.async {
                         self.presentError(error)
                     }
@@ -284,9 +302,9 @@ class DocumentVC: NSViewController {
             case .success(_):
                 break
             case .failure(let error):
-                self.status = .fetchingData
+                self.pushStatus(.fetchingData)
                 service.copyNSError(fromError: error) { error in
-                    self.status = nil
+                    self.popStatus(.fetchingData)
                     DispatchQueue.main.async {
                         self.presentError(error)
                     }
@@ -301,15 +319,16 @@ class DocumentVC: NSViewController {
             case .failure(_):
                 break
             case .success(let program):
-                self.status = .prettyPrinting
+                self.pushStatus(.prettyPrinting)
                 service.prettyPrintProgram(program) { pretty in
-                    self.status = nil
+                    self.popStatus(.prettyPrinting)
                     guard let pretty = pretty else {
                         return
                     }
                     DispatchQueue.main.sync {
                         self.setModelSourceCodeUndoable(pretty, actionName: "Pretty Print")
                         self.displayedSourceCode = self.modelSourceCode
+                        self.compile(self.modelSourceCode, then: { _, _, _ in })
                     }
                 }
             }
@@ -328,9 +347,9 @@ class DocumentVC: NSViewController {
         func highlightPassthroughThen(service: BushelLanguageServiceProtocol, language: LanguageModuleToken, result: Result<ProgramToken, ErrorToken>) {
             switch result {
             case .success(let program):
-                self.status = .highlighting
+                self.pushStatus(.highlighting)
                 service.highlightProgram(program) { prettyData in
-                    self.status = nil
+                    self.popStatus(.highlighting)
                     guard
                         let prettyData = prettyData,
                         let pretty = try? NSAttributedString(data: prettyData, options: [.documentType: NSAttributedString.DocumentType.rtf, .defaultAttributes: defaultSourceCodeAttributes()], documentAttributes: nil)
@@ -392,16 +411,16 @@ class DocumentVC: NSViewController {
             return then(nil, nil, nil, nil)
         }
         
-        status = .loadingLanguageModule
+        pushStatus(.loadingLanguageModule)
         service.loadLanguageModule(withIdentifier: document.languageID) { language in
-            self.status = nil
+            self.popStatus(.loadingLanguageModule)
             guard let language = language else {
                 return then(service, nil, nil, nil)
             }
             
-            self.status = .compiling
+            self.pushStatus(.compiling)
             service.parseSource(source, usingLanguageModule: language) { (program, error) in
-                self.status = nil
+                self.popStatus(.compiling)
                 then(service, language as LanguageModuleToken, program as ProgramToken?, error as ErrorToken?)
             }
         }
@@ -491,10 +510,10 @@ extension DocumentVC: NSTextViewDelegate {
                     return
                 }
                 
-                self.status = .fetchingData
+                self.pushStatus(.fetchingData)
                 service.copyNSError(fromError: error) { nsError in
                     service.copySourceCharacterRange(fromError: error, forSource: source) { errorRangeValue in
-                        self.status = nil
+                        self.popStatus(.fetchingData)
                         if let errorRangeValue = errorRangeValue {
                             let errorNSRange = errorRangeValue.rangeValue
                             DispatchQueue.main.sync {
@@ -508,7 +527,7 @@ extension DocumentVC: NSTextViewDelegate {
                         }
                     }
 //                    service.getSourceFixes(fromError: error) { fixes in
-//                        self.status = nil
+//                        self.popStatus(.fetchingData)
 //
 //                        guard !fixes.isEmpty else {
 //                            DispatchQueue.main.sync {
