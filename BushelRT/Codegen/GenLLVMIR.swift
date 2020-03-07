@@ -29,10 +29,9 @@ extension IRBuilder {
         addGlobal(name, type: pointerType).initializer = pointerIRValue
     }
     
-    @discardableResult
-    func buildCall(toExternalFunctionReturningVoid function: BuiltinFunction, args: [IRValue]) -> Call {
+    func buildCall(toExternalFunctionReturningVoid function: BuiltinFunction, args: [IRValue]) {
         precondition(LLVMGetTypeKind(function.runtimeType.returnType.asLLVM()) == LLVMVoidTypeKind)
-        return buildCall(toExternalFunction: function, args: args, name: "")
+        _ = buildCall(toExternalFunction: function, args: args, name: "")
     }
     
     func buildCall(toExternalFunction function: BuiltinFunction, args: [IRValue], name: String? = nil) -> Call {
@@ -439,7 +438,8 @@ extension Expression {
                 
                 let termIRValue = variableTerm.irPointerValue(builder: builder)
                 
-                return builder.buildCall(toExternalFunctionReturningVoid: .setVariableValue, args: [bp, termIRValue, newValueIRValue])
+                builder.buildCall(toExternalFunctionReturningVoid: .setVariableValue, args: [bp, termIRValue, newValueIRValue])
+                return newValueIRValue
             } else {
                 let directParameterUIDIRValue = TypedTermUID(ParameterUID.direct).normalizedAsRTString(builder: builder, name: "dp-uid", bp: bp)
                 let toParameterUIDIRValue = TypedTermUID(ParameterUID.set_to).normalizedAsRTString(builder: builder, name: "dp-uid", bp: bp)
