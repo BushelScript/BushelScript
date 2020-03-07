@@ -30,12 +30,16 @@ public class RT_Date: RT_Object {
     public var hours: RT_Integer {
         RT_Integer(value: calendar.component(.hour, from: value))
     }
+    public var secondsSinceMidnight: RT_Integer {
+        RT_Integer(value: calendar.dateComponents([.second], from: calendar.startOfDay(for: value), to: value).second!)
+    }
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
         [
             PropertyInfo(PropertyUID.date_seconds): \RT_Date.seconds,
             PropertyInfo(PropertyUID.date_minutes): \RT_Date.minutes,
-            PropertyInfo(PropertyUID.date_hours): \RT_Date.hours
+            PropertyInfo(PropertyUID.date_hours): \RT_Date.hours,
+            PropertyInfo(PropertyUID.date_secondsSinceMidnight): \RT_Date.secondsSinceMidnight
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {

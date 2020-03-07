@@ -293,6 +293,7 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
     case date_seconds
     case date_minutes
     case date_hours
+    case date_secondsSinceMidnight
     
     case Math_pi
     case Math_e

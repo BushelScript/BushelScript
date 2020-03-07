@@ -150,7 +150,7 @@ import Bushel
     }
     
     public func evaluate() throws -> RT_Object {
-        try (self as? RT_HierarchicalSpecifier)?.evaluate() ?? self
+        try (self as? RT_HierarchicalSpecifier)?.evaluate_() ?? self
     }
     
     /// Applies a unary logical NOT operation.

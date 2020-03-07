@@ -78,6 +78,7 @@ translation:
                     seconds: seconds    # property/id:date:seconds
                     minutes: minutes
                     hours: hours
+                    seconds since midnight: seconds since midnight
                 Math:
                     pi: pi
                     e: e
