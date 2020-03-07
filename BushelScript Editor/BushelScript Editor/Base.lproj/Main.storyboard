@@ -788,39 +788,29 @@ CQ
                                             <rect key="frame" x="0.0" y="0.0" width="376" height="253"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <textView importsGraphics="NO" richText="NO" horizontallyResizable="YES" verticallyResizable="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" textCompletion="NO" smartInsertDelete="YES" id="hPn-VJ-vRi">
+                                                <textView importsGraphics="NO" horizontallyResizable="YES" verticallyResizable="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" textCompletion="NO" smartInsertDelete="YES" id="hPn-VJ-vRi">
                                                     <rect key="frame" x="0.0" y="60" width="376" height="253"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="backgroundColor" red="0.10588235294117647" green="0.10588235294117647" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <size key="minSize" width="376" height="253"/>
                                                     <size key="maxSize" width="10000000" height="10000000"/>
                                                     <attributedString key="textStorage">
                                                         <fragment content=" ">
                                                             <attributes>
-                                                                <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 <font key="NSFont" size="13" name="SFMono-Regular"/>
                                                                 <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                             </attributes>
                                                         </fragment>
                                                     </attributedString>
-                                                    <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="insertionPointColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="number" keyPath="enabledTextCheckingTypes">
                                                             <integer key="value" value="0"/>
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
-                                                        <binding destination="5gI-5U-AMq" name="value" keyPath="sourceCode" id="sTv-df-2b1">
-                                                            <dictionary key="options">
-                                                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                                            </dictionary>
-                                                        </binding>
-                                                        <binding destination="unH-Oi-by7" name="font" keyPath="values.SourceCodeFont" id="R7O-8o-Zz7">
-                                                            <dictionary key="options">
-                                                                <string key="NSValueTransformerName">UnarchiveFontVT</string>
-                                                            </dictionary>
-                                                        </binding>
                                                         <outlet property="delegate" destination="5gI-5U-AMq" id="RSJ-qy-XjX"/>
                                                     </connections>
                                                 </textView>

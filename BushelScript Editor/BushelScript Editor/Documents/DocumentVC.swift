@@ -12,6 +12,13 @@ import BushelLanguage // For module descriptors
 import BushelLanguageServiceConnectionCreation
 import Defaults
 
+private func defaultSourceCodeAttributes() -> [NSAttributedString.Key : Any] {
+    [
+        .font: Defaults[.sourceCodeFont],
+        .foregroundColor: NSColor.white
+    ]
+}
+
 class DocumentVC: NSViewController {
     
     @IBOutlet var textView: NSTextView!
@@ -26,6 +33,7 @@ class DocumentVC: NSViewController {
         
         case loadingLanguageModule
         case compiling
+        case highlighting
         case prettyPrinting
         case running
         case fetchingData
@@ -36,6 +44,8 @@ class DocumentVC: NSViewController {
                 return "Loading language module…"
             case .compiling:
                 return "Compiling…"
+            case .highlighting:
+                return "Highlighting syntax…"
             case .prettyPrinting:
                 return "Pretty printing…"
             case .running:
@@ -110,19 +120,69 @@ class DocumentVC: NSViewController {
         Defaults[.sourceCodeFont]
     }
     
-    @objc dynamic var sourceCode = "" {
+    var displayedAttributedSourceCode = NSAttributedString(string: "") {
         didSet {
-            document.undoManager?.registerUndo(withTarget: self) {
-                $0.sourceCode = oldValue
+            let selectedRanges = textView.selectedRanges
+            let selectionAffinity = textView.selectionAffinity
+            let selectionGranularity = textView.selectionGranularity
+            defer {
+                textView.setSelectedRanges(selectedRanges, affinity: selectionAffinity, stillSelecting: false)
+                textView.selectionGranularity = selectionGranularity
             }
-            document.sourceCode = sourceCode
+            
+            let textUpdated = (displayedSourceCode != textView.string)
+            
+            if textUpdated {
+                guard textView.shouldChangeText(in: NSRange(location: 0, length: (textView.string as NSString).length), replacementString: displayedSourceCode) else {
+                    return
+                }
+            }
+            defer {
+                if textUpdated {
+                    textView.didChangeText()
+                }
+                
+                textView.typingAttributes = defaultSourceCodeAttributes()
+            }
+            
+            textView.textStorage?.beginEditing()
+            textView.textStorage?.setAttributedString(self.displayedAttributedSourceCode)
+            textView.textStorage?.endEditing()
+        }
+    }
+    
+    var displayedSourceCode: String {
+        get {
+            displayedAttributedSourceCode.string
+        }
+        set {
+            displayedAttributedSourceCode = NSAttributedString(string: newValue, attributes: defaultSourceCodeAttributes())
+        }
+    }
+    
+    var modelSourceCode: String {
+        get {
+            document.sourceCode
+        }
+        set {
+            document.sourceCode = newValue
+        }
+    }
+    
+    private func setModelSourceCodeUndoable(_ newValue: String, actionName: String) {
+        let oldValue = modelSourceCode
+        
+        modelSourceCode = newValue
+        
+        document.undoManager?.setActionName(actionName)
+        document.undoManager?.registerUndo(withTarget: self) {
+            $0.modelSourceCode = oldValue
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
         if let window = view.window {
             NotificationCenter.default.addObserver(self, selector: #selector(repositionSuggestionWindow), name: NSWindow.didMoveNotification, object: window)
         }
@@ -135,7 +195,6 @@ class DocumentVC: NSViewController {
     
     override var representedObject: Any? {
         didSet {
-            // Update the view, if already loaded.
             if let document = representedObject as? Document {
                 self.document = document
             }
@@ -147,8 +206,10 @@ class DocumentVC: NSViewController {
     private var document: Document! {
         didSet {
             document.undoManager?.disableUndoRegistration()
-            defer { document.undoManager?.enableUndoRegistration() }
-            sourceCode = document.sourceCode
+            defer {
+                document.undoManager?.enableUndoRegistration()
+            }
+            displayedSourceCode = document.sourceCode
             
             DispatchQueue.main.async {
                 self.documentLanguageIDObservation = self.document.observe(\.languageID, options: [.initial]) { [weak self] (document, change) in
@@ -159,7 +220,6 @@ class DocumentVC: NSViewController {
                     self.compile(document.sourceCode, then: { _, _, _ in })
                 }
             }
-            
         }
     }
     
@@ -210,7 +270,7 @@ class DocumentVC: NSViewController {
             }
         }
         
-        let source = document.sourceCode
+        let source = modelSourceCode
         if Defaults[.prettyPrintBeforeRunning] {
             prettyPrint(source, then: compileCallback)
         } else {
@@ -219,7 +279,7 @@ class DocumentVC: NSViewController {
     }
     
     @IBAction func compileScript( _ sender: Any?) {
-        prettyPrint(document.sourceCode) { service, language, result in
+        prettyPrint(modelSourceCode) { service, language, result in
             switch result {
             case .success(_):
                 break
@@ -242,15 +302,14 @@ class DocumentVC: NSViewController {
                 break
             case .success(let program):
                 self.status = .prettyPrinting
-                // TOOD: When pretty printing is fixed, change this back to: service.prettyPrintProgram(program)
                 service.prettyPrintProgram(program) { pretty in
                     self.status = nil
                     guard let pretty = pretty else {
                         return
                     }
                     DispatchQueue.main.sync {
-                        self.document.undoManager?.setActionName("Pretty Print")
-                        self.sourceCode = pretty
+                        self.setModelSourceCodeUndoable(pretty, actionName: "Pretty Print")
+                        self.displayedSourceCode = self.modelSourceCode
                     }
                 }
             }
@@ -266,6 +325,44 @@ class DocumentVC: NSViewController {
     }
     
     private func compile(_ source: String, then: @escaping (_ service: BushelLanguageServiceProtocol, _ language: LanguageModuleToken, _ result: Result<ProgramToken, ErrorToken>) -> Void) {
+        func highlightPassthroughThen(service: BushelLanguageServiceProtocol, language: LanguageModuleToken, result: Result<ProgramToken, ErrorToken>) {
+            switch result {
+            case .success(let program):
+                self.status = .highlighting
+                service.highlightProgram(program) { prettyData in
+                    self.status = nil
+                    guard
+                        let prettyData = prettyData,
+                        let pretty = try? NSAttributedString(data: prettyData, options: [.documentType: NSAttributedString.DocumentType.rtf, .defaultAttributes: defaultSourceCodeAttributes()], documentAttributes: nil)
+                    else {
+                        return
+                    }
+                    
+                    let prettyCopy = pretty.mutableCopy() as! NSMutableAttributedString
+                    prettyCopy.addAttribute(.font, value: self.documentFont, range: NSRange(location: 0, length: (prettyCopy.string as NSString).length))
+                    
+                    DispatchQueue.main.sync {
+                        guard source == self.textView.string else {
+                            // Text has changed since this information was generated
+                            return
+                        }
+                        
+                        self.document.undoManager?.disableUndoRegistration()
+                        defer {
+                            self.document.undoManager?.enableUndoRegistration()
+                        }
+                        self.displayedAttributedSourceCode = prettyCopy
+                    }
+                }
+            case .failure(_):
+                break
+            }
+            
+            then(service, language, result)
+        }
+        
+        let then = highlightPassthroughThen
+        
         parse(source) { service, language, program, error in
             guard
                 let service = service,
@@ -365,7 +462,12 @@ class DocumentVC: NSViewController {
 extension DocumentVC: NSTextViewDelegate {
     
     func textDidChange(_ notification: Notification) {
+        textDidChange()
+    }
+    
+    private func textDidChange() {
         let source = textView.string
+        modelSourceCode = source
         
         if program != nil {
             program = nil
@@ -378,11 +480,12 @@ extension DocumentVC: NSTextViewDelegate {
         compile(source) { (service, language, result) in
             switch result {
             case .success(_):
-                DispatchQueue.main.sync {
+                DispatchQueue.main.async {
                     // No errors
                     self.removeErrorDisplay()
 //                    self.dismissSuggestionList()
                 }
+                
             case .failure(let error):
                 guard Defaults[.liveErrorsEnabled] else {
                     return
@@ -429,7 +532,7 @@ extension DocumentVC: NSTextViewDelegate {
     private func display(error: Error, at sourceRange: NSRange) {
         func hightlightError() {
             textView.textStorage?.addAttribute(.backgroundColor, value: NSColor(named: "ErrorHighlightColor")!, range: sourceRange)
-            textView.typingAttributes[.backgroundColor] = nil
+            textView.typingAttributes = defaultSourceCodeAttributes()
         }
         func addInlineErrorView() {
             let firstLineScreenRect = textView.firstRect(forCharacterRange: sourceRange, actualRange: nil)
@@ -469,7 +572,7 @@ extension DocumentVC: NSTextViewDelegate {
     
     private func removeErrorDisplay() {
         func clearErrorHighlighting() {
-            textView.textStorage?.setAttributes([.font: documentFont], range: NSRange(location: 0, length: (self.textView.string as NSString).length))
+            textView.textStorage?.setAttributes(defaultSourceCodeAttributes(), range: NSRange(location: 0, length: (self.textView.string as NSString).length))
         }
         func removeInlineErrorView() {
             guard let oldInlineErrorVC = self.inlineErrorVC else {
@@ -534,7 +637,8 @@ extension DocumentVC {
         suggestion.service.applyFix(suggestion.fix, toSource: document.sourceCode) { fixedSource in
             if let fixedSource = fixedSource {
                 DispatchQueue.main.sync {
-                    self.sourceCode = fixedSource
+                    self.setModelSourceCodeUndoable(fixedSource, actionName: "Apply Fix")
+                    self.displayedSourceCode = self.modelSourceCode
                 }
             }
         }

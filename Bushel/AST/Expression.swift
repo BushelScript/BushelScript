@@ -6,7 +6,14 @@ public struct Terminal: PrettyPrintable {
         case comment
         case keyword
         case `operator`
+        case dictionary
+        case type
+        case property
+        case constant
+        case command
+        case parameter
         case variable
+        case resource
         case number
         case string
         case weave

@@ -417,7 +417,7 @@
 				3C0566F823135690004CDB1A /* BushelLanguage.framework */,
 				3C0566FA23135690004CDB1A /* BushelLanguageTests.xctest */,
 				3CFA68C423EE300E00A3E87E /* BushelLanguageTestingTools.framework */,
-				3C0566FC23135690004CDB1A /* bushelscript_en.framework */,
+				3C0566FC23135690004CDB1A /* bushelscript_en.bundle */,
 				3C0566FE23135690004CDB1A /* BushelScriptEnglishTests.xctest */,
 				3C0566EE23135690004CDB1A /* BushelRT.framework */,
 				3C0566F023135690004CDB1A /* BushelRTTests.xctest */,
@@ -784,10 +784,10 @@
 			remoteRef = 3C0566F923135690004CDB1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		3C0566FC23135690004CDB1A /* bushelscript_en.framework */ = {
+		3C0566FC23135690004CDB1A /* bushelscript_en.bundle */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = bushelscript_en.framework;
+			fileType = wrapper.cfbundle;
+			path = bushelscript_en.bundle;
 			remoteRef = 3C0566FB23135690004CDB1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

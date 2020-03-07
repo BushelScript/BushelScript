@@ -6,6 +6,7 @@ public protocol PrettyPrintable {
     
     var location: SourceLocation { get }
     var spacing: Spacing { get }
+    var styling: Terminal.Styling { get }
     var prettified: String { get }
     
 }
@@ -14,6 +15,9 @@ public extension PrettyPrintable {
     
     var spacing: Spacing {
         .none
+    }
+    var styling: Terminal.Styling {
+        .comment
     }
     
 }
@@ -71,6 +75,24 @@ public func prettyPrint(_ elements: Set<SourceElement>) -> String {
     return result
 }
 
+public func highlight(source: Substring, _ elements: Set<SourceElement>, with colors: SyntaxColors) -> NSAttributedString {
+    let elements = elements.sorted()
+    let colors = colors.compactMapValues { NSColor(cgColor: $0) }
+    
+    guard let commentColor = colors[.comment] else {
+        return NSAttributedString(string: String(source))
+    }
+    
+    let result = NSMutableAttributedString(string: String(source), attributes: [.foregroundColor: commentColor])
+    for element in elements {
+        let color = colors[element.styling] ?? commentColor
+        let range = NSRange(element.location.range, in: source)
+        result.addAttribute(.foregroundColor, value: color, range: range)
+    }
+    
+    return result
+}
+
 public struct SourceElement: PrettyPrintable {
     
     public var value: PrettyPrintable
@@ -85,6 +107,10 @@ public struct SourceElement: PrettyPrintable {
     
     public var spacing: Spacing {
         value.spacing
+    }
+    
+    public var styling: Terminal.Styling {
+        value.styling
     }
     
     public var prettified: String {
@@ -137,38 +163,6 @@ public struct Indentation: PrettyPrintable {
     
 }
 
-extension Expression {
-    
-//    public func collectElements(_ elements: inout Set<SourceElement>, level: Int) {
-//        elements.formUnion(self.elements)
-//
-//        if case .sequence(let expressions) = kind {
-//            let level = level + 1
-//
-//            for (index, expression) in expressions.enumerated() {
-//                var exprLevel = level
-//                if
-//                    case .end = expression.kind,
-//                    level > 0
-//                {
-//                    exprLevel -= 1
-//                }
-//
-//                let indentation = SourceElement(Indentation(level: exprLevel, withNewline: index != 0, location: SourceLocation(at: expression.location)))
-//                elements.remove(indentation) // Possible other occupying element
-//                elements.insert(indentation)
-//
-//                expression.collectElements(&elements, level: level)
-//            }
-//        } else {
-//            for expression in subexpressions() {
-//                expression.collectElements(&elements, level: level)
-//            }
-//        }
-//    }
-    
-}
-
 extension LocatedTerm {
     
     public var prettified: String {
@@ -176,3 +170,5 @@ extension LocatedTerm {
     }
     
 }
+
+public typealias SyntaxColors = [Terminal.Styling : CGColor]

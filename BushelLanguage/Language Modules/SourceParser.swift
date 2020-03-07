@@ -134,7 +134,7 @@ public extension SourceParser {
         }
         
         func addAsSourceElement(from startIndex: String.Index) {
-            elements.insert(SourceElement(Terminal(String(entireSource[startIndex..<currentIndex]), at: location(from: startIndex))))
+            elements.insert(SourceElement(Terminal(String(entireSource[startIndex..<currentIndex]), at: location(from: startIndex), styling: .comment)))
         }
         
         withCurrentIndex { startIndex in
@@ -538,7 +538,7 @@ public extension SourceParser {
     
     func parseVariableTerm(stoppingAt: [String] = []) throws -> Located<VariableTerm>? {
         guard
-            let termName = try parseTermNameEagerly(stoppingAt: stoppingAt),
+            let termName = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .variable),
             !termName.words.isEmpty
         else {
             return nil
@@ -546,7 +546,7 @@ public extension SourceParser {
         return Located(VariableTerm(lexicon.makeUID(forName: termName), name: termName), at: termNameLocation)
     }
     
-    func parseTermNameEagerly(stoppingAt: [String] = []) throws -> TermName? {
+    func parseTermNameEagerly(stoppingAt: [String] = [], styling: Terminal.Styling = .keyword) throws -> TermName? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
         let allWords = TermName.words(in: restOfLine)
@@ -567,7 +567,7 @@ public extension SourceParser {
             words.append(word)
         }
         
-        eatFromSource(words)
+        eatFromSource(words, styling: styling)
         termNameStartIndex = startIndex
         return TermName(words)
     }
@@ -596,7 +596,7 @@ public extension SourceParser {
         }
     }
     
-    func parseTermNameLazily() throws -> TermName? {
+    func parseTermNameLazily(styling: Terminal.Styling = .keyword) throws -> TermName? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
         let words = TermName.words(in: restOfLine)
@@ -605,12 +605,12 @@ public extension SourceParser {
             return nil
         }
         
-        eatFromSource([firstWord])
+        eatFromSource([firstWord], styling: styling)
         if firstWord == "|" {
             for wordIndex in words.indices.dropFirst() {
                 if words[wordIndex] == "|" {
                     let wordsWithoutPipes = Array(words[1..<wordIndex])
-                    eatFromSource(wordsWithoutPipes + ["|"])
+                    eatFromSource(wordsWithoutPipes + ["|"], styling: styling)
                     termNameStartIndex = startIndex
                     return TermName(wordsWithoutPipes)
                 }
@@ -622,10 +622,10 @@ public extension SourceParser {
         }
     }
     
-    private func eatFromSource(_ words: [String]) {
+    private func eatFromSource(_ words: [String], styling: Terminal.Styling = .keyword) {
         for word in words {
             source.removeLeadingWhitespace()
-            addingElement {
+            addingElement(styling) {
                 source.removeFirst(word.count)
             }
         }
@@ -921,6 +921,27 @@ public extension SourceParser {
     }
     
     func eatTerm<Terminology: TerminologySource>(terminology: Terminology) throws -> Term? {
+        func styling(for term: Term) -> Terminal.Styling {
+            switch term.enumerated {
+            case .dictionary:
+                return .dictionary
+            case .class_, .pluralClass:
+                return .type
+            case .enumerator:
+                return .constant
+            case .command:
+                return .command
+            case .parameter:
+                return .parameter
+            case .variable:
+                return .variable
+            case .resource:
+                return .resource
+            default:
+                return .keyword
+            }
+        }
+        
         func eatDefinedTerm() -> Term? {
             func findTerm<Terminology: TerminologySource>(in dictionary: Terminology) -> (termString: Substring, term: Term)? {
                 eatCommentsAndWhitespace()
@@ -940,8 +961,12 @@ public extension SourceParser {
             guard var (termString, term) = findTerm(in: terminology) else {
                 return nil
             }
-            source.removeFirst(termString.count)
+            
+            addingElement(styling(for: term)) {
+                source.removeFirst(termString.count)
+            }
             eatCommentsAndWhitespace()
+            
             var sourceWithColon: Substring = source
             while tryEating(prefix: ":") {
                 // For explicit term specification Lhs : rhs,
@@ -961,57 +986,64 @@ public extension SourceParser {
                 
                 // Eat rhs.
                 (termString, term) = result
-                source.removeFirst(termString.count)
+                
+                addingElement(styling(for: term)) {
+                    source.removeFirst(termString.count)
+                }
                 eatCommentsAndWhitespace()
                 
                 // We're committed to this colon forming an explicit specification
                 sourceWithColon = source
             }
+            
             return term
         }
         func eatRawFormTerm() throws -> Term? {
-            guard source.removePrefix("«") else {
-                return nil
-            }
-            
-            eatCommentsAndWhitespace()
-            
-            let kindString = source.prefix(while: { !$0.isWhitespace })
-            source.removeFirst(kindString.count)
-            guard let kind = TypedTermUID.Kind(rawValue: String(kindString)) else {
-                throw ParseError(description: "invalid raw term type", location: currentLocation)
-            }
-            
-            eatCommentsAndWhitespace()
-            
-            guard let closeBracketRange = source.range(of: "»") else {
-                throw ParseError(description: "expected term UID followed by ‘»’", location: currentLocation)
-            }
-            let uidString = source[..<closeBracketRange.lowerBound]
-            source = source[closeBracketRange.upperBound...]
-            guard let uid = TermUID(normalized: String(uidString)) else {
-                throw ParseError(description: "expected term UID", location: currentLocation)
-            }
-            
-            var maybeTerm = lexicon.term(forUID: TypedTermUID(kind, uid))
-            if maybeTerm == nil {
-                let termType = kind.termType
-                maybeTerm = termType.init(uid, name: TermName(""))
-                guard maybeTerm != nil else {
-                    throw ParseError(description: "this term is undefined and cannot be ad-hoc constructed", location: currentLocation)
+            return try withCurrentIndex { startIndex in
+                guard source.removePrefix("«") else {
+                    return nil
                 }
-                lexicon.pool.add(maybeTerm!)
+                
+                eatCommentsAndWhitespace()
+                
+                let kindString = source.prefix(while: { !$0.isWhitespace })
+                source.removeFirst(kindString.count)
+                guard let kind = TypedTermUID.Kind(rawValue: String(kindString)) else {
+                    throw ParseError(description: "invalid raw term type", location: currentLocation)
+                }
+                
+                eatCommentsAndWhitespace()
+                
+                guard let closeBracketRange = source.range(of: "»") else {
+                    throw ParseError(description: "expected term UID followed by ‘»’", location: currentLocation)
+                }
+                let uidString = source[..<closeBracketRange.lowerBound]
+                source = source[closeBracketRange.upperBound...]
+                guard let uid = TermUID(normalized: String(uidString)) else {
+                    throw ParseError(description: "expected term UID", location: currentLocation)
+                }
+                
+                var maybeTerm = lexicon.term(forUID: TypedTermUID(kind, uid))
+                if maybeTerm == nil {
+                    let termType = kind.termType
+                    maybeTerm = termType.init(uid, name: TermName(""))
+                    guard maybeTerm != nil else {
+                        throw ParseError(description: "this term is undefined and cannot be ad-hoc constructed", location: currentLocation)
+                    }
+                    lexicon.pool.add(maybeTerm!)
+                }
+                
+                guard let term = maybeTerm as? Terminology.Term else {
+                    throw ParseError(description: "wrong type of term for context", location: currentLocation)
+                }
+                
+                addElement(from: startIndex, styling: styling(for: term), spacing: .leftRight)
+                
+                return term
             }
-            
-            guard let term = maybeTerm as? Terminology.Term else {
-                throw ParseError(description: "wrong type of term for context", location: currentLocation)
-            }
-            return term
         }
         
-        return try addingElement {
-            try eatDefinedTerm() ?? eatRawFormTerm()
-        }
+        return try eatDefinedTerm() ?? eatRawFormTerm()
     }
     
 }
