@@ -161,7 +161,23 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         case let root as RT_SpecifierRemoteRoot:
             return try root.perform(command: command, arguments: arguments, implicitDirect: implicitDirect, for: self)
         default:
-            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+            switch CommandUID(command.uid) {
+            case .set:
+                guard let property = property else {
+                    throw NonPropertyIsNotWritable(specifier: self)
+                }
+                
+                let setTo = ParameterInfo(ParameterUID.set_to)
+                guard let newValue = arguments[setTo] else {
+                    throw MissingParameter(command: command, parameter: setTo)
+                }
+                
+                try parent.evaluate().setProperty(property, to: newValue)
+                return newValue
+                
+            default:
+                return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+            }
         }
     }
     

@@ -77,9 +77,8 @@ import Bushel
     /// - Parameter property: The requested property.
     ///
     /// - Throws:
-    ///     - `NoPropertyExists` if the property does not exist on this
-    ///        object.
-    ///     - Any errors produced during evaluation of the property.
+    ///   - `NoPropertyExists` if the property does not exist on this object.
+    ///   - Any errors produced during evaluation of the property.
     ///
     /// Overridable to allow for more efficient dynamic property lookup.
     /// Dynamic properties from the `properties` member are automatically
@@ -117,6 +116,24 @@ import Bushel
         }
     }
     
+    /// Sets this object's value for the requested property,
+    /// if such a property can exist. Throws if it cannot exist or be set.
+    ///
+    /// - Parameters:
+    ///   - property: The targeted property.
+    ///   - newValue: The new value to assign for the property.
+    ///
+    /// - Throws:
+    ///   - `NoWritablePropertyExists` if the property cannot exist on this
+    ///     object or is not writable.
+    ///   - `Uncoercible` if the proposed new value cannot be coerced to
+    ///     a suitable type for the property.
+    ///
+    /// This is called by the `RT_Specifier` implementation of the `set` command.
+    public func setProperty(_ property: PropertyInfo, to newValue: RT_Object) throws {
+        throw NoWritablePropertyExists(type: dynamicTypeInfo, property: property)
+    }
+    
     public func coerce(to type: TypeInfo) -> RT_Object? {
         if dynamicTypeInfo.isA(type) {
             return self
@@ -130,6 +147,10 @@ import Bushel
                 return nil
             }
         }
+    }
+    
+    public func evaluate() throws -> RT_Object {
+        try (self as? RT_HierarchicalSpecifier)?.evaluate() ?? self
     }
     
     /// Applies a unary logical NOT operation.
@@ -564,6 +585,13 @@ extension RT_Object {
     /// in something that is not a `To`, `nil` is returned.
     public func coerce<To: RT_Object>() -> To? {
         coerce(to: To.typeInfo) as? To
+    }
+    
+    public func coerceOrThrow<To: RT_Object>() throws -> To {
+        guard let coerced = coerce() as? To else {
+            throw Uncoercible(expectedType: To.typeInfo, object: self)
+        }
+        return coerced
     }
     
 }

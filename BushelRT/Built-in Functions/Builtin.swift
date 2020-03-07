@@ -384,9 +384,7 @@ final class Builtin {
     }
     
     func evaluateSpecifier(_ objectPointer: RTObjectPointer) -> RTObjectPointer {
-        guard let specifier = fromOpaque(objectPointer) as? RT_Specifier else {
-            return objectPointer
-        }
+        let specifier = fromOpaque(objectPointer)
         do {
             return toOpaque(retain(try specifier.evaluate()))
         } catch {
@@ -641,7 +639,7 @@ internal class RT_Private_ArgumentRecord: RT_Object {
 
 extension RT_HierarchicalSpecifier {
     
-    public func evaluate() throws -> RT_Object {
+    public func evaluate_() throws -> RT_Object {
         switch rootAncestor() {
         case let root as RT_SpecifierRemoteRoot:
             // Let remote root handle evaluation.

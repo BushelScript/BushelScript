@@ -106,9 +106,9 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                 case .and:
                     return "and"
                 case .isA:
-                    return "is \("aeiou".contains(formattedRhs.first!) ? "an" : "a")"
+                    return "is \(formattedRhs.startsWithVowel ? "an" : "a")"
                 case .isNotA:
-                    return "is not \("aeiou".contains(formattedRhs.first!) ? "an" : "a")"
+                    return "is not \(formattedRhs.startsWithVowel ? "an" : "a")"
                 case .less:
                     return "<"
                 case .lessEqual:

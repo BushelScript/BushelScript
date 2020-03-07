@@ -65,6 +65,49 @@ public struct NoPropertyExists: LocalizedError {
     
 }
 
+public struct NoWritablePropertyExists: LocalizedError {
+    
+    public let type: TypeInfo
+    public let property: PropertyInfo
+    
+    public var errorDescription: String? {
+        "Objects of type \(type) do not have a writable property named \(property)"
+    }
+    
+}
+
+public struct NonPropertyIsNotWritable: LocalizedError {
+    
+    public let specifier: RT_Specifier
+    
+    public var errorDescription: String? {
+        "‘\(specifier)’ cannot be written to because it not refer to a property"
+    }
+    
+}
+
+public struct Uncoercible: LocalizedError {
+    
+    public let expectedType: TypeInfo
+    public let object: RT_Object
+    
+    public var errorDescription: String? {
+        "The \(object.dynamicTypeInfo) ‘\(object)’ cannot be converted to \("\(expectedType)".startsWithVowel ? "an" : "a") \(expectedType)"
+    }
+    
+}
+
+public struct MissingParameter: LocalizedError {
+    
+    public let command: CommandInfo
+    public let parameter: ParameterInfo
+    
+    public var errorDescription: String? {
+        "The required \(ParameterUID(parameter.uid) == .direct ? "direct object parameter" : "parameter \(parameter)") is missing from a call to \(command)"
+    }
+    
+}
+
 public struct UnsupportedIndexForm: LocalizedError {
     
     public enum IndexForm: String {
