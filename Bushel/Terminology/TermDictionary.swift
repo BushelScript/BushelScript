@@ -164,7 +164,18 @@ extension TermDictionary {
         } catch is SDEFError {
             return
         }
-        add(try parse(sdef: sdef, under: pool))
+        
+        var terms = try parse(sdef: sdef, under: pool)
+        
+        terms.removeAll { term in
+            // Don't import terms that shadow the "set" and "get"
+            // builtin special-case commands
+            [CommandUID.get, CommandUID.set]
+                .map { TypedTermUID($0) }
+                .contains(term.typedUID)
+        }
+        
+        add(terms)
     }
     
 }
