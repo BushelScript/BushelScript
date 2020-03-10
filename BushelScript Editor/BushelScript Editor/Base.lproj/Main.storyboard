@@ -782,7 +782,7 @@ CQ
                             <splitView verticalHuggingPriority="249" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l0q-o3-ggk">
                                 <rect key="frame" x="0.0" y="23" width="560" height="253"/>
                                 <subviews>
-                                    <scrollView appearanceType="aqua" verticalCompressionResistancePriority="1000" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="97e-Pl-npf">
+                                    <scrollView appearanceType="darkAqua" verticalCompressionResistancePriority="1000" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="97e-Pl-npf">
                                         <rect key="frame" x="0.0" y="0.0" width="376" height="253"/>
                                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="maB-Wi-doq">
                                             <rect key="frame" x="0.0" y="0.0" width="376" height="253"/>
