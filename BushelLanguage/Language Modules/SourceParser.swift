@@ -684,25 +684,25 @@ public extension SourceParser {
     }
     
     func eatLineCommentMarker() -> Bool {
-        let result = lineCommentMarkers.findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = lineCommentMarkers.findTermName(in: source)
         source.removeFirst(result.termString.count)
         return result.termName != nil
     }
     
     func eatBlockCommentBeginMarker() -> Bool {
-        let result = blockCommentMarkers.map { $0.begin }.findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = blockCommentMarkers.map { $0.begin }.findTermName(in: source)
         source.removeFirst(result.termString.count)
         return result.termName != nil
     }
     
     func eatBlockCommentEndMarker() -> Bool {
-        let result = blockCommentMarkers.map { $0.end }.findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = blockCommentMarkers.map { $0.end }.findTermName(in: source)
         source.removeFirst(result.termString.count)
         return result.termName != nil
     }
     
     func eatKeyword() -> TermName? {
-        let result = Array(keywords.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = Array(keywords.keys).findTermName(in: source)
         guard let termName = result.termName else {
             return nil
         }
@@ -713,14 +713,14 @@ public extension SourceParser {
     }
     
     func findPrefixOperator() -> (termName: TermName, operator: UnaryOperation)? {
-        let result = Array(prefixOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = Array(prefixOperators.keys).findTermName(in: source)
         return result.termName.map { name in
             (termName: name, operator: prefixOperators[name]!)
         }
     }
     
     func eatPrefixOperator() {
-        let result = Array(prefixOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = Array(prefixOperators.keys).findTermName(in: source)
         guard result.termName != nil else {
             return
         }
@@ -730,14 +730,14 @@ public extension SourceParser {
     }
     
     func findPostfixOperator() -> (termName: TermName, operator: UnaryOperation)? {
-        let result = Array(postfixOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = Array(postfixOperators.keys).findTermName(in: source)
         return result.termName.map { name in
             (termName: name, operator: postfixOperators[name]!)
         }
     }
     
     func eatPostfixOperator() {
-        let result = Array(postfixOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = Array(postfixOperators.keys).findTermName(in: source)
         guard result.termName != nil else {
             return
         }
@@ -747,14 +747,14 @@ public extension SourceParser {
     }
     
     func findBinaryOperator() -> (termName: TermName, operator: BinaryOperation)? {
-        let result = Array(binaryOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = Array(binaryOperators.keys).findTermName(in: source)
         return result.termName.map { name in
             (termName: name, operator: binaryOperators[name]!)
         }
     }
     
     func eatBinaryOperator() {
-        let result = Array(binaryOperators.keys).findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = Array(binaryOperators.keys).findTermName(in: source)
         guard result.termName != nil else {
             return
         }
@@ -764,7 +764,7 @@ public extension SourceParser {
     }
     
     func eatStringBeginMarker() -> (begin: TermName, end: TermName)? {
-        let result = stringMarkers.map { $0.begin }.findTermName(in: source.prefix(while: { !$0.isNewline }))
+        let result = stringMarkers.map { $0.begin }.findTermName(in: source)
         guard let termName = result.termName else {
             return nil
         }

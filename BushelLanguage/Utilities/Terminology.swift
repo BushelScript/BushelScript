@@ -3,20 +3,32 @@ import Bushel
 public extension Array where Element == TermName {
     
     func findTermName(in source: Substring) -> (termString: Substring, termName: TermName?) {
-        var termString = source
-        while let lastNonWhitespace = termString.lastIndex(where: { !$0.isWhitespace }) {
-            termString = termString[...lastNonWhitespace]
-            
-            let termName = TermName(String(termString))
-            if self.contains(termName) {
-                return (termString, termName)
-            } else if let lastWord = termName.words.last {
-                termString.removeLast(lastWord.count)
-            } else if !termString.isEmpty {
-                termString.removeLast()
-            }
+        var line = source.prefix(while: { !$0.isNewline })
+        guard let lastNonWhitespace = line.lastIndex(where: { !$0.isWhitespace }) else {
+            // Only whitespace
+            return (source[source.startIndex..<source.startIndex], nil)
         }
-        return (termString, nil)
+        
+        var termName = TermName(String(source[...lastNonWhitespace]))
+        
+        repeat {
+            if self.contains(termName) {
+                return (line, termName)
+            }
+            
+            // Word
+            line.removeLast(termName.words.last!.count)
+            // Whitespace after word
+            guard let lastNonWhitespace = line.lastIndex(where: { !$0.isWhitespace }) else {
+                break
+            }
+            line = line[...lastNonWhitespace]
+            
+            termName.words.removeLast()
+        } while !termName.words.isEmpty
+        
+        // No match
+        return (source[source.startIndex..<source.startIndex], nil)
     }
     
 }
