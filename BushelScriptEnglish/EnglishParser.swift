@@ -264,18 +264,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return item
     }
     
-    private func handleEnd() throws -> Expression.Kind? {
-        eatCommentsAndWhitespace()
-        if findExpressionEndKeyword() || source.hasPrefix("\n") || source.isEmpty {
-            return .end
-        }
-        let endTag = sequenceEndTags.last!
-        guard tryEating(termName: endTag) else {
-            throw ParseError(description: "expected ‘\(endTag)’ or line break", location: currentLocation, fixes: [SequencingFix(fixes: [DeletingFix(at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource)), AppendingFix(appending: "\(endTag)", at: currentLocation)]), AppendingFix(appending: "\(endTag)\n", at: currentLocation)])
-        }
-        return .end
-    }
-    
     private func handleFunctionStart() throws -> Expression.Kind? {
         guard let termName = try parseTermNameEagerly(stoppingAt: [":"]) else {
             throw ParseError(description: "expected function name", location: SourceLocation(source.range, source: entireSource))

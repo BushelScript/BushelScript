@@ -536,6 +536,17 @@ public extension SourceParser {
         return .use(resource: Located(resourceTerm, at: termNameLocation))
     }
     
+    func handleEnd() throws -> Expression.Kind? {
+        if findExpressionEndKeyword() || source.hasPrefix("\n") || source.isEmpty {
+            return .end
+        }
+        let endTag = sequenceEndTags.last!
+        guard tryEating(termName: endTag) else {
+            throw ParseError(description: "expected ‘\(endTag)’ or line break", location: currentLocation, fixes: [SequencingFix(fixes: [DeletingFix(at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource)), AppendingFix(appending: "\(endTag)", at: currentLocation)]), AppendingFix(appending: "\(endTag)\n", at: currentLocation)])
+        }
+        return .end
+    }
+    
     func parseVariableTerm(stoppingAt: [String] = []) throws -> Located<VariableTerm>? {
         guard
             let termName = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .variable),
