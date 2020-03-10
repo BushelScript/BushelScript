@@ -591,7 +591,9 @@ extension DocumentVC: NSTextViewDelegate {
     
     private func removeErrorDisplay() {
         func clearErrorHighlighting() {
-            textView.textStorage?.setAttributes(defaultSourceCodeAttributes(), range: NSRange(location: 0, length: (self.textView.string as NSString).length))
+            let entireSourceRange = NSRange(location: 0, length: (self.textView.string as NSString).length)
+            textView.textStorage?.removeAttribute(.backgroundColor, range: entireSourceRange)
+            textView.typingAttributes = defaultSourceCodeAttributes()
         }
         func removeInlineErrorView() {
             guard let oldInlineErrorVC = self.inlineErrorVC else {
