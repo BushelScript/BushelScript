@@ -44,7 +44,6 @@ translation:
                 cmpd: comparison test specifier
                 logi: logical test specifier
                 type: type
-                msng: 'null'
             id:
                 global: BushelScript
                 script: script
