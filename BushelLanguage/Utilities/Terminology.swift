@@ -9,34 +9,52 @@ public extension Collection where Element == TermName {
             return (source[source.startIndex..<source.startIndex], nil)
         }
         
-        var termName = TermName(String(source[...lastNonWhitespace]))
-        let initialWords = termName.words
+        let initialWords = TermName(String(source[...lastNonWhitespace])).words
         
-        repeat {
-            if self.contains(termName) {
-                var termString = line
-                
-                let wordsRemovedCount = initialWords.count - termName.words.count
-                let wordsRemoved = initialWords.suffix(wordsRemovedCount)
-                
-                for word in wordsRemoved.reversed() {
-                    // Word
-                    termString.removeLast(word.count)
-                    // Whitespace after last word
-                    guard let lastNonWhitespace = termString.lastIndex(where: { !$0.isWhitespace }) else {
-                        break
-                    }
-                    termString = termString[...lastNonWhitespace]
-                }
-                
-                return (termString, termName)
+        var candidates = self.filter { $0.words.first == initialWords.first }
+        guard !candidates.isEmpty else {
+            // No match
+            return (source[source.startIndex..<source.startIndex], nil)
+        }
+        
+        // We now know that we have *some* kind of match.
+        // It could be near or it could be far.
+        // i.e., for the set of terms {'bacon', 'bacon and eggs'},
+        // A string starting with `bacon` could match either but is guaranteed
+        // to match one.
+        
+        for wordsKept in initialWords.indices {
+            guard candidates.count > 1 else {
+                // Already have a single match
+                break
             }
             
-            termName.words.removeLast()
-        } while !termName.words.isEmpty
+            let newCandidates = candidates.filter { $0.words[...wordsKept] == initialWords[...wordsKept] }
+            guard !newCandidates.isEmpty else {
+                // There is no more-specific term name to eat.
+                break
+            }
+            
+            candidates = newCandidates
+        }
         
-        // No match
-        return (source[source.startIndex..<source.startIndex], nil)
+        let termName = candidates.first!
+        var termString = line
+        
+        let wordsRemovedCount = initialWords.count - termName.words.count
+        let wordsRemoved = initialWords.suffix(wordsRemovedCount)
+        
+        for word in wordsRemoved.reversed() {
+            // Word
+            termString.removeLast(word.count)
+            // Whitespace after last word
+            guard let lastNonWhitespace = termString.lastIndex(where: { !$0.isWhitespace }) else {
+                break
+            }
+            termString = termString[...lastNonWhitespace]
+        }
+        
+        return (termString, termName)
     }
     
 }
