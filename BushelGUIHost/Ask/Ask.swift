@@ -6,8 +6,6 @@ private typealias Constructor = () -> RT_Object
 public func ask(_ rt: RTInfo, for type: TypeInfo, prompt: String, title: String, suspension: NSAppleEventManager.SuspensionID) {
     
     func makeViewController() -> (NSViewController, Constructor) {
-        let bundle = Bundle.main
-        
         func uneditableVC() -> (UneditableVC, Constructor) {
             (UneditableVC(), { RT_Null.null })
         }

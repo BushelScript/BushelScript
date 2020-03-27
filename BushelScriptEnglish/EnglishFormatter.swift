@@ -12,7 +12,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             return ""
         case .end:
             return ""
-        case .sequence(let sequence):
+        case .sequence(_):
             fatalError("unreachable")
         case .scoped(let expression):
             return format(expression, level: level)

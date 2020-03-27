@@ -423,7 +423,6 @@ final class Builtin {
     }
     
     private func run(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RTObjectPointer {
-        var arguments = arguments
         let target = stack.target
         
         var argumentsWithoutDirect = arguments

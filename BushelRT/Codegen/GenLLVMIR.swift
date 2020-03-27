@@ -203,8 +203,8 @@ extension Expression {
             
             let conditionTest = builder.buildCall(toExternalFunction: .isTruthy, args: [bp, conditionValue])
             
-            var thenBlock = function.appendBasicBlock(named: "then")
-            var elseBlock = BasicBlock(context: builder.module.context, name: "else")
+            let thenBlock = function.appendBasicBlock(named: "then")
+            let elseBlock = BasicBlock(context: builder.module.context, name: "else")
             let mergeBlock = BasicBlock(context: builder.module.context, name: "merge")
             
             builder.buildCondBr(condition: conditionTest, then: thenBlock, else: elseBlock)
@@ -566,7 +566,6 @@ extension TypedTermUID {
 extension Specifier {
     
     func generateLLVMIR(_ builder: IRBuilder, _ builtin: Builtin, options: CodeGenOptions, lastResult: IRValue) throws -> IRValue {
-        let rt = builtin.rt
         let bp = builtin.irPointerValue(builder: builder)
         
         let uidIRValue = builder.buildGlobalString(idTerm.term.typedUID.normalized).asRTString(builder: builder, bp: bp)

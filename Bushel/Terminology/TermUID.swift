@@ -118,8 +118,8 @@ extension TermUID {
     
     public var ae8Code: (class: AEEventClass, id: AEEventID)? {
         switch self {
-        case .ae8(let codes):
-            return codes
+        case .ae8(let `class`, let id):
+            return (class: `class`, id: id)
         case .variant(_, let uid):
             return uid.ae8Code
         default:
@@ -129,8 +129,8 @@ extension TermUID {
     
     public var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {
         switch self {
-        case .ae12(let codes):
-            return codes
+        case .ae12(let `class`, let id, let code):
+            return (class: `class`, id: id, code: code)
         case .variant(_, let uid):
             return uid.ae12Code
         default:

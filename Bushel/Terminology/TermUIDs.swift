@@ -465,29 +465,29 @@ public enum CommandUID: String, TermUIDPredefinedValue {
     
     public init?(_ uid: TermUID) {
         switch uid {
-        case .ae8(let aeCodes):
-            switch aeCodes {
-            case (class: kAECoreSuite, id: kAEGetData):
+        case .ae8(let `class`, let id):
+            switch (`class`, id) {
+            case (kAECoreSuite, kAEGetData):
                 self = .get
-            case (class: kAECoreSuite, id: kAESetData):
+            case (kAECoreSuite, kAESetData):
                 self = .set
-            case (class: kCoreEventClass, id: kAEOpenApplication):
+            case (kCoreEventClass, kAEOpenApplication):
                 self = .run
-            case (class: kCoreEventClass, id: kAEReopenApplication):
+            case (kCoreEventClass, kAEReopenApplication):
                 self = .reopen
-            case (class: kCoreEventClass, id: kAEOpenDocuments):
+            case (kCoreEventClass, kAEOpenDocuments):
                 self = .open
-            case (class: kCoreEventClass, id: kAEPrintDocuments):
+            case (kCoreEventClass, kAEPrintDocuments):
                 self = .print
-            case (class: kCoreEventClass, id: kAEQuitApplication):
+            case (kCoreEventClass, kAEQuitApplication):
                 self = .quit
-            case (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "notf")):
+            case (try! FourCharCode(fourByteString: "bShG"), try! FourCharCode(fourByteString: "notf")):
                 self = .GUI_notification
-            case (class: try! FourCharCode(fourByteString: "syso"), id: try! FourCharCode(fourByteString: "disA")):
+            case (try! FourCharCode(fourByteString: "syso"), try! FourCharCode(fourByteString: "disA")):
                 self = .GUI_alert
-            case (class: try! FourCharCode(fourByteString: "gtqp"), id: try! FourCharCode(fourByteString: "chlt")):
+            case (try! FourCharCode(fourByteString: "gtqp"), try! FourCharCode(fourByteString: "chlt")):
                 self = .GUI_chooseFrom
-            case (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "ask ")):
+            case (try! FourCharCode(fourByteString: "bShG"), try! FourCharCode(fourByteString: "ask ")):
                 self = .GUI_ask
             default:
                 return nil
@@ -603,12 +603,12 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
             default:
                 return nil
             }
-        case .ae12(let aeCodes):
-            if aeCodes.code == keyDirectObject {
+        case .ae12(let `class`, let id, let code):
+            if code == keyDirectObject {
                 self = .direct
                 return
             }
-            switch (CommandUID(TermUID.ae8(class: aeCodes.class, id: aeCodes.id)), aeCodes.code) {
+            switch (CommandUID(.ae8(class: `class`, id: id)), code) {
             case (.set, keyAEData):
                 self = .set_to
             case (.open, keyAESearchText):

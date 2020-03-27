@@ -548,8 +548,9 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         switch term.wrappedTerm.enumerated {
         case .enumerator(let term): // MARK: .enumerator
             return .enumerator(term)
-        case .dictionary(let term): // MARK: .dictionary
-            // FIXME: unimplemented
+        case .dictionary(_): // MARK: .dictionary
+            // TODO: Such purely organizational dictionaries should probably
+            // have a runtime reflection type.
             return .null
         case .class_(let term): // MARK: .class_
             if let specifierKind = try parseSpecifierAfterClassName() {
