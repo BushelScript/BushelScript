@@ -7,8 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "BushelLanguageServiceProtocol.h"
-#import "BushelLanguageService-Swift.h"
 
 @interface ServiceDelegate : NSObject <NSXPCListenerDelegate>
 @end
@@ -20,10 +18,10 @@
     
     // Configure the connection.
     // First, set the interface that the exported object implements.
-    newConnection.exportedInterface = [NSXPCInterface interfaceWithProtocol:@protocol(BushelLanguageServiceProtocol)];
+    newConnection.exportedInterface = [NSXPCInterface interfaceWithProtocol:NSProtocolFromString(@"BushelLanguageServiceProtocol")];
     
     // Next, set the object that the connection exports. All messages sent on the connection to this service will be sent to the exported object to handle. The connection retains the exported object.
-    BushelLanguageService *exportedObject = [BushelLanguageService new];
+    id exportedObject = [NSClassFromString(@"BushelLanguageService") new];
     newConnection.exportedObject = exportedObject;
     
     // Resuming the connection allows the system to deliver more incoming messages.
