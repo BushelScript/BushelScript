@@ -214,36 +214,28 @@ extension Expression {
             let thenValue = try catchingEarlyReturn(builder, branchingTo: mergeBlock) {
                 try then.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult)
             }
-            thenBlock = builder.insertBlock!
+            let thenMergeBlock = builder.insertBlock!
             
             function.append(elseBlock)
             builder.positionAtEnd(of: elseBlock)
+            
             let elseValue: IRValue
             if let else_ = else_ {
                 elseValue = try catchingEarlyReturn(builder, branchingTo: mergeBlock) {
                     try else_.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult)
                 }
-                elseBlock = builder.insertBlock!
             } else {
                 builder.buildBr(mergeBlock)
                 elseValue = lastResult
             }
+            let elseMergeBlock = builder.insertBlock!
             
             function.append(mergeBlock)
             builder.positionAtEnd(of: mergeBlock)
             
-            switch (thenValue.isUndef, elseValue.isUndef) {
-            case (false, false):
-                let phi = builder.buildPhi(PointerType.toVoid, name: "if-then-else")
-                phi.addIncoming([(thenValue, thenBlock), (elseValue, elseBlock)])
-                return phi
-            case (true, false):
-                return elseValue
-            case (false, true):
-                return thenValue
-            case (true, true):
-                return builder.buildUnreachable()
-            }
+            let phi = builder.buildPhi(PointerType.toVoid, name: "if-then-else")
+            phi.addIncoming([(thenValue, thenMergeBlock), (elseValue, elseMergeBlock)])
+            return phi
         case .repeatWhile(let condition, let repeating): // MARK: .repeatWhile
             let repeatBlock = function.appendBasicBlock(named: "repeat")
             let afterRepeatBlock = BasicBlock(context: builder.module.context, name: "after-repeat")
@@ -263,13 +255,15 @@ extension Expression {
                 try repeating.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult)
             }
             
+            let repeatMergeBlock = builder.insertBlock!
+            
             function.append(afterRepeatBlock)
             builder.positionAtEnd(of: afterRepeatBlock)
             
             let result = builder.buildPhi(PointerType.toVoid, name: "repeat-result-or-that")
-            result.addIncoming([(repeatResult, repeatBlock), (lastResult, lastBlock)])
+            result.addIncoming([(repeatResult, repeatMergeBlock), (lastResult, lastBlock)])
             
-            return repeatResult
+            return result
         case .repeatTimes(let times, let repeating): // MARK: .repeatTimes
             let repeatHeaderBlock = function.appendBasicBlock(named: "repeat-header")
             let repeatBlock = function.appendBasicBlock(named: "repeat")
@@ -303,8 +297,10 @@ extension Expression {
             builder.positionAtEnd(of: repeatBlock)
             
             _ = try catchingEarlyReturn(builder, branchingTo: repeatHeaderBlock) {
+                let repeatMergeBlock = builder.insertBlock!
+                
                 let newRepeatResult = try repeating.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult)
-                repeatResult.addIncoming([(newRepeatResult, builder.insertBlock!)])
+                repeatResult.addIncoming([(newRepeatResult, repeatMergeBlock)])
                 
                 let newRepeatCount = builder.buildBinaryOperation(.add, repeatCount, IntType.int64.constant(1), name: "next-repeat-index")
                 repeatCount.addIncoming([(newRepeatCount, builder.insertBlock!)])
@@ -356,8 +352,10 @@ extension Expression {
                 let variableTermIRValue = variable.term.irPointerValue(builder: builder)
                 builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [bp, variableTermIRValue, elementIRValue])
                 
+                let repeatMergeBlock = builder.insertBlock!
+                
                 let newRepeatResult = try repeating.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult)
-                repeatResult.addIncoming([(newRepeatResult, builder.insertBlock!)])
+                repeatResult.addIncoming([(newRepeatResult, repeatMergeBlock)])
                 
                 let newRepeatCount = builder.buildBinaryOperation(.add, repeatCount, IntType.int64.constant(1), name: "next-repeat-index")
                 repeatCount.addIncoming([(newRepeatCount, builder.insertBlock!)])
