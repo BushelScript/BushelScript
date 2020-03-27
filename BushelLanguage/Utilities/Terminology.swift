@@ -9,36 +9,33 @@ public extension Collection where Element == TermName {
             return (source[source.startIndex..<source.startIndex], nil)
         }
         
-        let initialWords = TermName(String(source[...lastNonWhitespace])).words
+        let initialTermName = TermName(String(source[...lastNonWhitespace]))
+        let initialWords = initialTermName.words
         
-        var candidates = self.filter { $0.words.first == initialWords.first }
-        guard !candidates.isEmpty else {
+        var words: [String] = []
+        var matches: [TermName?] = []
+        var candidates = [TermName](self) // Just an optimization
+        
+        for word in initialWords {
+            words.append(word)
+            let termName = TermName(words)
+            
+            matches.append(self.contains(termName) ? termName : nil)
+            
+            candidates.removeAll { (candidate: TermName) -> Bool in
+                candidate.words.count < words.count || candidate.words[..<words.count] != ArraySlice(words)
+            }
+            if candidates.isEmpty {
+                // No more-specific term name can be matched
+                break
+            }
+        }
+        
+        guard let termName = matches.last(where: { $0 != nil }) as? TermName else {
             // No match
             return (source[source.startIndex..<source.startIndex], nil)
         }
         
-        // We now know that we have *some* kind of match.
-        // It could be near or it could be far.
-        // i.e., for the set of terms {'bacon', 'bacon and eggs'},
-        // A string starting with `bacon` could match either but is guaranteed
-        // to match one.
-        
-        for wordsKept in initialWords.indices {
-            guard candidates.count > 1 else {
-                // Already have a single match
-                break
-            }
-            
-            let newCandidates = candidates.filter { $0.words[...wordsKept] == initialWords[...wordsKept] }
-            guard !newCandidates.isEmpty else {
-                // There is no more-specific term name to eat.
-                break
-            }
-            
-            candidates = newCandidates
-        }
-        
-        let termName = candidates.first!
         var termString = line
         
         let wordsRemovedCount = initialWords.count - termName.words.count
