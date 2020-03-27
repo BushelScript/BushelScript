@@ -1,6 +1,6 @@
 import Bushel
 
-public extension Array where Element == TermName {
+public extension Collection where Element == TermName {
     
     func findTermName(in source: Substring) -> (termString: Substring, termName: TermName?) {
         let line = source.prefix(while: { !$0.isNewline })
