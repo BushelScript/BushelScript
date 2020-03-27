@@ -97,6 +97,7 @@
 		3CA2699023F9F09F009E1944 /* RT_System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA2698F23F9F09F009E1944 /* RT_System.swift */; };
 		3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */; };
 		3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */; };
+		3CACF810241846BD002E1A52 /* TermNameSearchingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CACF80B24184443002E1A52 /* TermNameSearchingTests.swift */; };
 		3CB328E823EDAD4C003BF646 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB328E723EDAD4C003BF646 /* AppDelegate.swift */; };
 		3CB328EA23EDAD50003BF646 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CB328E923EDAD50003BF646 /* Assets.xcassets */; };
 		3CB328ED23EDAD50003BF646 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CB328EB23EDAD50003BF646 /* MainMenu.xib */; };
@@ -377,6 +378,7 @@
 		3CA2698F23F9F09F009E1944 /* RT_System.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_System.swift; sourceTree = "<group>"; };
 		3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermDictionary.swift; sourceTree = "<group>"; };
 		3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lexicon.swift; sourceTree = "<group>"; };
+		3CACF80B24184443002E1A52 /* TermNameSearchingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermNameSearchingTests.swift; sourceTree = "<group>"; };
 		3CB253AD240087A3005DD807 /* Installation.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Installation.xcconfig; sourceTree = "<group>"; };
 		3CB253AE240087A3005DD807 /* Installation-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Installation-Debug.xcconfig"; sourceTree = "<group>"; };
 		3CB328E523EDAD4C003BF646 /* BushelGUIHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BushelGUIHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -665,6 +667,7 @@
 		3C6B757D2305AF3F0006C354 /* BushelLanguageTests */ = {
 			isa = PBXGroup;
 			children = (
+				3CACF80B24184443002E1A52 /* TermNameSearchingTests.swift */,
 				3C6B757E2305AF3F0006C354 /* TranslationTests.swift */,
 				3C6B75802305AF3F0006C354 /* Info.plist */,
 			);
@@ -1553,6 +1556,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C6B757F2305AF3F0006C354 /* TranslationTests.swift in Sources */,
+				3CACF810241846BD002E1A52 /* TermNameSearchingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
