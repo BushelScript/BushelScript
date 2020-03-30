@@ -8,7 +8,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v1
     - name: Switch to Xcode 11.4 (until GitHub makes it the default)
       run: sudo xcode-select -s /Applications/Xcode_11.4_beta.app/Contents/Developer
     - name: Install LLVM
