@@ -12,8 +12,6 @@ translation:
         resource:
             res:
                 system: system
-                appid:
-                    com.apple.finder: Finder
         type:
             ae4:
                 cobj: item
