@@ -72,7 +72,7 @@ Additionally, the Smart Suggestions feature retrieves data from this and other a
 	<key>NSContactsUsageDescription</key>
 	<string>This permission is needed to be able to communicate with the Contacts app. If you deny, you will not be able to script Contacts from within the editor.</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2019 Ian Gregory. All rights reserved.</string>
+	<string>Copyright © 2019–2020 Ian A. Gregory. All rights reserved.</string>
 	<key>NSMainStoryboardFile</key>
 	<string>Main</string>
 	<key>NSPrincipalClass</key>
