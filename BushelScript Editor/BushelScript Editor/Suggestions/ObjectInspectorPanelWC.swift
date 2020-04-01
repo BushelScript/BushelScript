@@ -1,10 +1,6 @@
-//
-//  ObjectInspectorPanelWC.swift
-//  BushelScript Editor
-//
-//  Created by Ian Gregory on 28-09-2019.
-//  Copyright © 2019 Ian Gregory. All rights reserved.
-//
+// BushelScript Editor application
+// © 2019-2020 Ian A. Gregory.
+// See file LICENSE.txt for licensing information.
 
 import Cocoa
 import KVODelegate

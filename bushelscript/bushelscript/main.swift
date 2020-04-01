@@ -1,6 +1,6 @@
 // BushelScript command-line interface.
 //
-// © 2019 Ian A. Gregory, licensed under the terms of the GPL v3 or later.
+// © 2019-2020 Ian A. Gregory, licensed under the terms of the GPL v3 or later.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

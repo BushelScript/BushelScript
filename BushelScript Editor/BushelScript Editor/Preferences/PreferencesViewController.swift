@@ -1,8 +1,14 @@
+// BushelScript Editor application
+// © 2019-2020 Ian A. Gregory.
+// See file LICENSE.txt for licensing information.
+
+// This file is also available at
+// https://gist.github.com/ThatsJustCheesy/8148106fa7269326162d473408d3f75a
+
 // Thanks to mminer on GitHub
 // https://gist.github.com/mminer/caec00d2165362ff65e9f1f728cecae2
 
 import Cocoa
-import Defaults
 
 class PreferencesViewController: NSTabViewController {
     

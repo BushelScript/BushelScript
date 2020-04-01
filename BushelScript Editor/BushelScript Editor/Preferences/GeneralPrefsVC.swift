@@ -1,10 +1,6 @@
-//
-//  GeneralPrefsVC.swift
-//  BushelScript Editor
-//
-//  Created by Ian Gregory on 28 Jan ’20.
-//  Copyright © 2020 Ian Gregory. All rights reserved.
-//
+// BushelScript Editor application
+// © 2019-2020 Ian A. Gregory.
+// See file LICENSE.txt for licensing information.
 
 import Cocoa
 import Defaults

@@ -1,3 +1,7 @@
+// BushelScript Editor application
+// © 2019-2020 Ian A. Gregory.
+// See file LICENSE.txt for licensing information.
+
 import Foundation
 import Defaults
 

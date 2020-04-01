@@ -1,10 +1,6 @@
-//
-//  HashbangTests.swift
-//  BushelScript EditorTests
-//
-//  Created by Ian Gregory on 31-08-2019.
-//  Copyright © 2019 Ian Gregory. All rights reserved.
-//
+// BushelScript Editor application
+// © 2019-2020 Ian A. Gregory.
+// See file LICENSE.txt for licensing information.
 
 import XCTest
 @testable import BushelScript_Editor
