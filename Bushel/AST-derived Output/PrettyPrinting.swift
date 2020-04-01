@@ -6,7 +6,7 @@ public protocol PrettyPrintable {
     
     var location: SourceLocation { get }
     var spacing: Spacing { get }
-    var styling: Terminal.Styling { get }
+    var styling: Styling { get }
     var prettified: String { get }
     
 }
@@ -16,7 +16,7 @@ public extension PrettyPrintable {
     var spacing: Spacing {
         .none
     }
-    var styling: Terminal.Styling {
+    var styling: Styling {
         .comment
     }
     
@@ -109,7 +109,7 @@ public struct SourceElement: PrettyPrintable {
         value.spacing
     }
     
-    public var styling: Terminal.Styling {
+    public var styling: Styling {
         value.styling
     }
     
@@ -163,6 +163,45 @@ public struct Indentation: PrettyPrintable {
     
 }
 
+public struct Terminal: PrettyPrintable {
+    
+    public var value: String
+    public var location: SourceLocation
+    public var spacing: Spacing
+    public var styling: Styling
+    
+    public init(_ value: String, at location: SourceLocation, spacing: Spacing = .leftRight, styling: Styling = .keyword) {
+        self.value = value
+        self.location = location
+        self.spacing = spacing
+        self.styling = styling
+    }
+    
+    public var prettified: String {
+        value
+    }
+    
+}
+
+public enum Styling {
+    case comment
+    case keyword
+    case `operator`
+    case dictionary
+    case type
+    case property
+    case constant
+    case command
+    case parameter
+    case variable
+    case resource
+    case number
+    case string
+    case weave
+}
+
+public typealias SyntaxColors = [Styling : CGColor]
+
 extension LocatedTerm {
     
     public var prettified: String {
@@ -170,5 +209,3 @@ extension LocatedTerm {
     }
     
 }
-
-public typealias SyntaxColors = [Terminal.Styling : CGColor]

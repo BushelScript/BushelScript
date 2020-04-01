@@ -1,42 +1,5 @@
 import Foundation
 
-public struct Terminal: PrettyPrintable {
-    
-    public enum Styling {
-        case comment
-        case keyword
-        case `operator`
-        case dictionary
-        case type
-        case property
-        case constant
-        case command
-        case parameter
-        case variable
-        case resource
-        case number
-        case string
-        case weave
-    }
-    
-    public var value: String
-    public var location: SourceLocation
-    public var spacing: Spacing
-    public var styling: Styling
-    
-    public init(_ value: String, at location: SourceLocation, spacing: Spacing = .leftRight, styling: Styling = .keyword) {
-        self.value = value
-        self.location = location
-        self.spacing = spacing
-        self.styling = styling
-    }
-    
-    public var prettified: String {
-        value
-    }
-    
-}
-
 public struct Expression {
     
     public indirect enum Kind {

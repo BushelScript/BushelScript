@@ -164,7 +164,7 @@ public extension SourceParser {
         }
     }
     
-    private func addElement(from startIndex: String.Index, styling: Terminal.Styling, spacing: Spacing) {
+    private func addElement(from startIndex: String.Index, styling: Styling, spacing: Spacing) {
         guard startIndex != currentIndex else {
             return
         }
@@ -174,7 +174,7 @@ public extension SourceParser {
         elements.insert(SourceElement(Terminal(slice, at: loc, spacing: spacing, styling: styling)))
     }
     
-    func addingElement<Result>(_ styling: Terminal.Styling = .keyword, spacing: Spacing = .leftRight, parse: () throws -> Result) rethrows -> Result {
+    func addingElement<Result>(_ styling: Styling = .keyword, spacing: Spacing = .leftRight, parse: () throws -> Result) rethrows -> Result {
         try withCurrentIndex { startIndex in
             defer {
                 addElement(from: startIndex, styling: styling, spacing: spacing)
@@ -557,7 +557,7 @@ public extension SourceParser {
         return Located(VariableTerm(lexicon.makeUID(forName: termName), name: termName), at: termNameLocation)
     }
     
-    func parseTermNameEagerly(stoppingAt: [String] = [], styling: Terminal.Styling = .keyword) throws -> TermName? {
+    func parseTermNameEagerly(stoppingAt: [String] = [], styling: Styling = .keyword) throws -> TermName? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
         let allWords = TermName.words(in: restOfLine)
@@ -607,7 +607,7 @@ public extension SourceParser {
         }
     }
     
-    func parseTermNameLazily(styling: Terminal.Styling = .keyword) throws -> TermName? {
+    func parseTermNameLazily(styling: Styling = .keyword) throws -> TermName? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
         let words = TermName.words(in: restOfLine)
@@ -633,7 +633,7 @@ public extension SourceParser {
         }
     }
     
-    private func eatFromSource(_ words: [String], styling: Terminal.Styling = .keyword) {
+    private func eatFromSource(_ words: [String], styling: Styling = .keyword) {
         for word in words {
             source.removeLeadingWhitespace()
             addingElement(styling) {
@@ -789,7 +789,7 @@ public extension SourceParser {
         try eatTerm(terminology: lexicon)
     }
     
-    func tryEating(termName: TermName, _ styling: Terminal.Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
+    func tryEating(termName: TermName, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
         let rollbackSource = source
         for word in termName.words {
             guard tryEating(prefix: word, styling, spacing: spacing) else {
@@ -800,7 +800,7 @@ public extension SourceParser {
         return true
     }
     
-    func tryEating(prefix target: String, _ styling: Terminal.Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
+    func tryEating(prefix target: String, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
         eatCommentsAndWhitespace()
         
         guard
@@ -816,7 +816,7 @@ public extension SourceParser {
         return true
     }
     
-    func tryEating(_ regex: Regex, _ styling: Terminal.Styling = .keyword, spacing: Spacing = .leftRight) -> MatchResult? {
+    func tryEating(_ regex: Regex, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> MatchResult? {
         let restOfLine = String(source.prefix { !$0.isNewline })
         guard let match = regex.firstMatch(in: restOfLine) else {
             return nil
@@ -932,7 +932,7 @@ public extension SourceParser {
     }
     
     func eatTerm<Terminology: TerminologySource>(terminology: Terminology) throws -> Term? {
-        func styling(for term: Term) -> Terminal.Styling {
+        func styling(for term: Term) -> Styling {
             switch term.enumerated {
             case .dictionary:
                 return .dictionary
