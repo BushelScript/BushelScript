@@ -42,10 +42,6 @@
 		3C3C1811231A20B100553072 /* DocumentWC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1810231A20B100553072 /* DocumentWC.swift */; };
 		3C3C1813231AA65300553072 /* LinkOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1812231AA65300553072 /* LinkOpener.swift */; };
 		3C3C1815231AA70B00553072 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1814231AA70B00553072 /* Logging.swift */; };
-		3C3C1818231AAB8A00553072 /* AboutBushelScriptViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1817231AAB8A00553072 /* AboutBushelScriptViewController.mm */; };
-		3C3C181C231AAF7900553072 /* About.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C3C181B231AAF7900553072 /* About.storyboard */; };
-		3C3C181F231AB0BD00553072 /* LinkLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C181E231AB0BD00553072 /* LinkLabel.m */; };
-		3C3C1823231AB0FB00553072 /* BackgroundMovableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1822231AB0FB00553072 /* BackgroundMovableWindow.m */; };
 		3C3C1828231AE12700553072 /* HashbangTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3C1827231AE12700553072 /* HashbangTests.swift */; };
 		3C3C182A231B585200553072 /* CustomHashbang.bushel in Resources */ = {isa = PBXBuildFile; fileRef = 3C3C1829231B585200553072 /* CustomHashbang.bushel */; };
 		3C3F06E323C1551C005BC0F2 /* ObjectInspectorDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06E223C1551C005BC0F2 /* ObjectInspectorDetailVC.swift */; };
@@ -250,15 +246,6 @@
 		3C3C1810231A20B100553072 /* DocumentWC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentWC.swift; sourceTree = "<group>"; };
 		3C3C1812231AA65300553072 /* LinkOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkOpener.swift; sourceTree = "<group>"; };
 		3C3C1814231AA70B00553072 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
-		3C3C1816231AAB8900553072 /* AboutBushelScriptViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutBushelScriptViewController.h; sourceTree = "<group>"; };
-		3C3C1817231AAB8A00553072 /* AboutBushelScriptViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AboutBushelScriptViewController.mm; sourceTree = "<group>"; };
-		3C3C1819231AABE500553072 /* Credits.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = Credits.inc; sourceTree = "<group>"; };
-		3C3C181B231AAF7900553072 /* About.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = About.storyboard; sourceTree = "<group>"; };
-		3C3C181D231AB0BD00553072 /* LinkLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkLabel.h; sourceTree = "<group>"; };
-		3C3C181E231AB0BD00553072 /* LinkLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LinkLabel.m; sourceTree = "<group>"; };
-		3C3C1821231AB0FB00553072 /* BackgroundMovableWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundMovableWindow.h; sourceTree = "<group>"; };
-		3C3C1822231AB0FB00553072 /* BackgroundMovableWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundMovableWindow.m; sourceTree = "<group>"; };
-		3C3C1824231AB35900553072 /* Libraries.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = Libraries.inc; sourceTree = "<group>"; };
 		3C3C1827231AE12700553072 /* HashbangTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashbangTests.swift; sourceTree = "<group>"; };
 		3C3C1829231B585200553072 /* CustomHashbang.bushel */ = {isa = PBXFileReference; lastKnownFileType = text; path = CustomHashbang.bushel; sourceTree = "<group>"; };
 		3C3F06E223C1551C005BC0F2 /* ObjectInspectorDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectInspectorDetailVC.swift; sourceTree = "<group>"; };
@@ -362,7 +349,6 @@
 				3C2BC9B323E2754600CB8C20 /* Inline Errors */,
 				3C05672323137CFB004CDB1A /* Suggestions */,
 				3C04308223199A1800758339 /* Preferences */,
-				3C3C1820231AB0CF00553072 /* About */,
 				3C2BC9EE23E27F4F00CB8C20 /* Utilities */,
 				3C3C1826231ADED200553072 /* App Bookkeeping */,
 				3C2BC9B623E2766100CB8C20 /* Assets */,
@@ -528,22 +514,6 @@
 				3C3C1829231B585200553072 /* CustomHashbang.bushel */,
 			);
 			path = HashbangTests;
-			sourceTree = "<group>";
-		};
-		3C3C1820231AB0CF00553072 /* About */ = {
-			isa = PBXGroup;
-			children = (
-				3C3C181B231AAF7900553072 /* About.storyboard */,
-				3C3C1816231AAB8900553072 /* AboutBushelScriptViewController.h */,
-				3C3C1817231AAB8A00553072 /* AboutBushelScriptViewController.mm */,
-				3C3C1821231AB0FB00553072 /* BackgroundMovableWindow.h */,
-				3C3C1822231AB0FB00553072 /* BackgroundMovableWindow.m */,
-				3C3C181D231AB0BD00553072 /* LinkLabel.h */,
-				3C3C181E231AB0BD00553072 /* LinkLabel.m */,
-				3C3C1819231AABE500553072 /* Credits.inc */,
-				3C3C1824231AB35900553072 /* Libraries.inc */,
-			);
-			path = About;
 			sourceTree = "<group>";
 		};
 		3C3C1826231ADED200553072 /* App Bookkeeping */ = {
@@ -796,7 +766,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C3C181C231AAF7900553072 /* About.storyboard in Resources */,
 				3C20C0BF23400BEE00CBB613 /* ObjectInspectorVC.storyboard in Resources */,
 				3C2BC9CB23E2774200CB8C20 /* SERunScriptTemplate.pdf in Resources */,
 				3C05672F23139EF6004CDB1A /* SuggestionList.storyboard in Resources */,
@@ -858,12 +827,10 @@
 			files = (
 				3C05672923138143004CDB1A /* SuggestionListVC.swift in Sources */,
 				3C20C0CD234014EC00CBB613 /* ObjectInspectorPanelWC.swift in Sources */,
-				3C3C1823231AB0FB00553072 /* BackgroundMovableWindow.m in Sources */,
 				3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */,
 				3C056717231359C6004CDB1A /* Errors.swift in Sources */,
 				3C0566B023135673004CDB1A /* DocumentVC.swift in Sources */,
 				3C2BC9AB23E258E400CB8C20 /* InlineErrorVC.swift in Sources */,
-				3C3C1818231AAB8A00553072 /* AboutBushelScriptViewController.mm in Sources */,
 				3C0430082314BFC200758339 /* AppDelegate+Swizzling.m in Sources */,
 				3C05672223137CEE004CDB1A /* SuggestionListView.swift in Sources */,
 				3C3C1813231AA65300553072 /* LinkOpener.swift in Sources */,
@@ -873,7 +840,6 @@
 				3C3F06E323C1551C005BC0F2 /* ObjectInspectorDetailVC.swift in Sources */,
 				3C0430022314BECD00758339 /* ModelPropagation.swift in Sources */,
 				3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */,
-				3C3C181F231AB0BD00553072 /* LinkLabel.m in Sources */,
 				3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */,
 				3C04300A2314CF7900758339 /* PropagatingTabViewController.swift in Sources */,
 				3C3C1811231A20B100553072 /* DocumentWC.swift in Sources */,
