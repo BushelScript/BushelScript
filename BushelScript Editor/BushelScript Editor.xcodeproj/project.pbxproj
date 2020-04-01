@@ -57,7 +57,6 @@
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
 		3C907703239F3DD000A01D8D /* KVODelegate in Frameworks */ = {isa = PBXBuildFile; productRef = 3C907702239F3DD000A01D8D /* KVODelegate */; };
-		3C9FD7BA23E53E5E00279945 /* bushelscript in Embed Command-Line Tool */ = {isa = PBXBuildFile; fileRef = 3C9FD7B923E53E5500279945 /* bushelscript */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3CC4320023E5C319002592D3 /* CommandLineToolVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC431FF23E5C319002592D3 /* CommandLineToolVC.swift */; };
 		3CC4320423E5CD0E002592D3 /* CommandLineToolVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CC4320223E5CD0E002592D3 /* CommandLineToolVC.storyboard */; };
 		3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1D0602319A07100DD01A9 /* Defaults.swift */; };
@@ -212,20 +211,6 @@
 			remoteInfo = BushelGUIHost;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		3C9FD7B123E53DBC00279945 /* Embed Command-Line Tool */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 8;
-			dstPath = bin;
-			dstSubfolderSpec = 6;
-			files = (
-				3C9FD7BA23E53E5E00279945 /* bushelscript in Embed Command-Line Tool */,
-			);
-			name = "Embed Command-Line Tool";
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3C0430012314BECD00758339 /* ModelPropagation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPropagation.swift; sourceTree = "<group>"; };
@@ -606,7 +591,6 @@
 				3C0566A623135673004CDB1A /* Sources */,
 				3C0566A723135673004CDB1A /* Frameworks */,
 				3C0566A823135673004CDB1A /* Resources */,
-				3C9FD7B123E53DBC00279945 /* Embed Command-Line Tool */,
 				3C6D20A023BA7A5500E7E321 /* Copy SPM Dependency Licenses */,
 			);
 			buildRules = (

@@ -311,8 +311,8 @@
 		};
 		3C1D251A2306E33300D202FA /* bushelscript_en.framework */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = bushelscript_en.framework;
+			fileType = wrapper.cfbundle;
+			path = bushelscript_en.bundle;
 			remoteRef = 3C1D25192306E33300D202FA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -490,7 +490,6 @@
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -506,7 +505,6 @@
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -576,7 +574,6 @@
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Profiling;
