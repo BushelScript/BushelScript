@@ -578,6 +578,10 @@ public extension SourceParser {
             words.append(word)
         }
         
+        guard !words.isEmpty else {
+            return nil
+        }
+        
         eatFromSource(words, styling: styling)
         termNameStartIndex = startIndex
         return TermName(words)
