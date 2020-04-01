@@ -133,6 +133,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("repeating"): handleRepeat(TermName("repeating")),
         TermName("tell"): handleTell,
         TermName("let"): handleLet,
+        TermName("define"): handleDefine,
+        TermName("defining"): handleDefining,
         TermName("return"): {
             self.eatCommentsAndWhitespace()
             if self.source.first?.isNewline ?? true {
@@ -443,6 +445,52 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         lexicon.add(term)
         
         return .let_(term, initialValue: initialValue)
+    }
+    
+    private func parseDefineLine() throws -> (term: Term, existingTerm: Term?) {
+        guard let termType = parseTermTypeName() else {
+            throw ParseError(description: "expected term type", location: currentLocation)
+        }
+        
+        guard let termName = try parseTermNameEagerly(stoppingAt: ["as"], styling: styling(for: termType)) else {
+            throw ParseError(description: "expected term name", location: currentLocation)
+        }
+        
+        let existingTerm: Term? = try {
+            guard tryEating(prefix: "as") else {
+                return nil
+            }
+            guard let existingTerm = try eatTerm() else {
+                throw ParseError(description: "expected a term", location: currentLocation)
+            }
+            return existingTerm
+        }()
+        
+        guard
+            let term = Term.make(
+                for: TypedTermUID(termType, existingTerm?.uid ?? lexicon.makeUID(forName: termName)),
+                name: termName
+            )
+        else {
+            throw ParseError(description: "this term type cannot have this definition; \(existingTerm == nil ? "try providing a valid one with 'as'" : "try a different definition or try removing 'as'")", location: currentLocation)
+        }
+        
+        lexicon.add(term)
+        
+        return (term: term, existingTerm: existingTerm)
+    }
+    
+    private func handleDefine() throws -> Expression.Kind? {
+        let (term: term, existingTerm: existingTerm) = try parseDefineLine()
+        return .define(term, as: existingTerm)
+    }
+    
+    private func handleDefining() throws -> Expression.Kind? {
+        let (term: term, existingTerm: existingTerm) = try parseDefineLine()
+        let body = try withTerminology(of: term) {
+            try parseSequence(TermName("defining"))
+        }
+        return .defining(term, as: existingTerm, body: body)
     }
     
     private func handleUseSystem(name: TermName) throws -> ResourceTerm {

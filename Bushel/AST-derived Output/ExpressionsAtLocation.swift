@@ -42,6 +42,10 @@ extension Expression {
             return [target, to]
         case let .let_(_, initialValue):
             return initialValue.map { [$0] } ?? []
+        case .define(_, as: _):
+            return []
+        case let .defining(_, as: _, body):
+            return [body]
         case let .return_(expression):
             return expression.map { [$0] } ?? []
         case .use(resource: _):

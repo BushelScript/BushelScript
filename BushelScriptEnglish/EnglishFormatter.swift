@@ -63,6 +63,19 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                 formatted += " be \(format(initialValue, level: level))"
             }
             return formatted
+        case let .define(term, as: existingTerm):
+            var formatted = "define \(term)"
+            if let existingTerm = existingTerm {
+                formatted += " as \(existingTerm)"
+            }
+            return formatted
+        case let .defining(term, as: existingTerm, body: body):
+            var formatted = "defining \(term)"
+            if let existingTerm = existingTerm {
+                formatted += " as \(existingTerm)"
+            }
+            formatted += "\n\(format(body, level: level))end defining"
+            return formatted
         case .return_(let returnValue):
             var formatted = "return"
             if let returnValue = returnValue {

@@ -18,7 +18,8 @@ public struct Expression {
         case repeatFor(variable: VariableTerm, container: Expression, repeating: Expression)
         case tell(target: Expression, to: Expression)
         case let_(VariableTerm, initialValue: Expression?)
-//        case define(named: Term, as: Term?)
+        case define(Term, as: Term?)
+        case defining(Term, as: Term?, body: Expression)
         case return_(Expression?)
         case use(resource: ResourceTerm)
         case resource(ResourceTerm)
@@ -113,6 +114,10 @@ extension Expression.Kind {
             return ("Tell expression", "Changes the current command target and pushes the new target’s dictionary, if any, onto the lexicon.")
         case .let_:
             return ("Variable binding expression", "Defines a new variable term and assigns it the result of the initial value expression, or “null” if absent.")
+        case .define:
+            return ("Define expression", "Defines a new term in the current dictionary.")
+        case .defining:
+            return ("Defining expression", "Defines a new term in the current dictionary, and elaborates on its contents by opening a block where it is the new current dictionary (i.e., is pushed onto the lexicon).")
         case .return_:
             return ("Return expression", "Immediately transfers control out of the current function. The result of the function is that of the specified expression, or “null” if absent.")
         case .use:

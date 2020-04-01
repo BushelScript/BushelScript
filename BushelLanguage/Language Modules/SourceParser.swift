@@ -845,6 +845,19 @@ public extension SourceParser {
         return Expression(.scoped(try parse()), at: expressionLocation)
     }
     
+    func withTerminology<Result>(of term: Term, parse: () throws -> Result) throws -> Result {
+        guard let term = term as? TermDictionaryContainer else {
+            return try parse()
+        }
+        
+        lexicon.push(for: term)
+        defer {
+            lexicon.pop()
+        }
+        
+        return try parse()
+    }
+    
     func withTerminology<Result>(of expression: Expression, parse: () throws -> Result) throws -> Result {
         var terminologyPushed = false
         defer {
@@ -935,27 +948,6 @@ public extension SourceParser {
     }
     
     func eatTerm<Terminology: TerminologySource>(terminology: Terminology) throws -> Term? {
-        func styling(for term: Term) -> Styling {
-            switch term.enumerated {
-            case .dictionary:
-                return .dictionary
-            case .class_, .pluralClass:
-                return .type
-            case .enumerator:
-                return .constant
-            case .command:
-                return .command
-            case .parameter:
-                return .parameter
-            case .variable:
-                return .variable
-            case .resource:
-                return .resource
-            default:
-                return .keyword
-            }
-        }
-        
         func eatDefinedTerm() -> Term? {
             func findTerm<Terminology: TerminologySource>(in dictionary: Terminology) -> (termString: Substring, term: Term)? {
                 eatCommentsAndWhitespace()
@@ -1020,9 +1012,7 @@ public extension SourceParser {
                 
                 eatCommentsAndWhitespace()
                 
-                let kindString = source.prefix(while: { !$0.isWhitespace })
-                source.removeFirst(kindString.count)
-                guard let kind = TypedTermUID.Kind(rawValue: String(kindString)) else {
+                guard let kind = eatTermTypeName() else {
                     throw ParseError(description: "invalid raw term type", location: currentLocation)
                 }
                 
@@ -1058,6 +1048,46 @@ public extension SourceParser {
         }
         
         return try eatDefinedTerm() ?? eatRawFormTerm()
+    }
+    
+    func parseTermTypeName() -> TypedTermUID.Kind? {
+        addingElement {
+            eatTermTypeName()
+        }
+    }
+    
+    func eatTermTypeName() -> TypedTermUID.Kind? {
+        guard let kindString = TermName.nextWord(in: source) else {
+            return nil
+        }
+        source.removeLeadingWhitespace()
+        source.removeFirst(kindString.count)
+        return TypedTermUID.Kind(rawValue: String(kindString))
+    }
+    
+    func styling(for term: Term) -> Styling {
+        styling(for: term.typedUID.kind)
+    }
+    
+    func styling(for termKind: TypedTermUID.Kind) -> Styling {
+        switch termKind {
+        case .dictionary:
+            return .dictionary
+        case .type:
+            return .type
+        case .property:
+            return .keyword // TODO: add property style
+        case .constant:
+            return .constant
+        case .command:
+            return .command
+        case .parameter:
+            return .parameter
+        case .variable:
+            return .variable
+        case .resource:
+            return .resource
+        }
     }
     
 }

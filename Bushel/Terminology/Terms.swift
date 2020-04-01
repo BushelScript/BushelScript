@@ -65,7 +65,7 @@ public /*abstract*/ class Term: NamedTerm, Hashable {
     public var typedUID: TypedTermUID {
         TypedTermUID(type(of: self).kind, uid)
     }
-
+    
     public static func make(for typedUID: TypedTermUID, name: TermName) -> Term? {
         let termType: Term.Type
         switch typedUID.kind {

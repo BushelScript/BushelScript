@@ -384,6 +384,10 @@ extension Expression {
             builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [bp, termIRValue, initialIRValue])
             
             return initialIRValue
+        case .define(_, as: _): // MARK: .define
+            return lastResult
+        case .defining(_, as: _, body: let body): // MARK: .defining
+            return try body.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult)
         case .return_(let returnValue): // MARK: .return_
             let returnIRValue = (try returnValue?.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult) ?? builder.rtNull)
             
