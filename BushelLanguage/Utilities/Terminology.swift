@@ -42,14 +42,10 @@ public extension Collection where Element == TermName {
         let wordsRemoved = initialWords.suffix(wordsRemovedCount)
         
         for word in wordsRemoved.reversed() {
-            // Word
+            termString.removeTrailingWhitespace()
             termString.removeLast(word.count)
-            // Whitespace after last word
-            guard let lastNonWhitespace = termString.lastIndex(where: { !$0.isWhitespace }) else {
-                break
-            }
-            termString = termString[...lastNonWhitespace]
         }
+        termString.removeTrailingWhitespace()
         
         return (termString, termName)
     }
