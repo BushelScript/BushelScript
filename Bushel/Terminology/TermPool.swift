@@ -20,10 +20,6 @@ public class TermPool: TerminologySource {
         return byTypedUID[uid]
     }
     
-    public func term(forCode code: OSType) -> Term? {
-        return byUID[.ae4(code: code)]
-    }
-    
     public func term(named name: TermName) -> Term? {
         return byName[name]
     }
@@ -46,10 +42,6 @@ public class TermPool: TerminologySource {
         byTypedUID.merge(pool.byTypedUID, uniquingKeysWith: { $1 })
         byUID.merge(pool.byUID, uniquingKeysWith: { $1 })
         byName.merge(pool.byName, uniquingKeysWith: { $1 })
-    }
-    
-    public var pool: TermPool {
-        return self
     }
     
 }
