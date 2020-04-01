@@ -1,25 +1,20 @@
 import Bushel
 
-public class RT_System: RT_Object {
-    
-    public let rt: RTInfo
+private let systemEventsBundleID = "com.apple.systemevents"
+
+public final class RT_System: RT_Application {
     
     public init(_ rt: RTInfo) {
-        self.rt = rt
+        super.init(rt, target: .bundleIdentifier(systemEventsBundleID, false))
     }
     
     public override var description: String {
         "system"
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.system)
+    private static let typeInfo_ = TypeInfo(TypeUID.system, [.supertype(TypeInfo(TypeUID.application))])
     public override class var typeInfo: TypeInfo {
         typeInfo_
-    }
-    
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        // FIXME: fix
-        try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
     }
     
 }
