@@ -152,7 +152,7 @@
 				3C1D25162306E33300D202FA /* BushelLanguage.framework */,
 				3C1D25182306E33300D202FA /* BushelLanguageTests.xctest */,
 				3CBF21C423FF9B0E00E3074A /* BushelLanguageTestingTools.framework */,
-				3C1D251A2306E33300D202FA /* bushelscript_en.framework */,
+				3C1D251A2306E33300D202FA /* bushelscript_en.bundle */,
 				3C1D251C2306E33300D202FA /* BushelScriptEnglishTests.xctest */,
 				3C1D250C2306E33300D202FA /* BushelRT.framework */,
 				3C1D250E2306E33300D202FA /* BushelRTTests.xctest */,
@@ -309,7 +309,7 @@
 			remoteRef = 3C1D25172306E33300D202FA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		3C1D251A2306E33300D202FA /* bushelscript_en.framework */ = {
+		3C1D251A2306E33300D202FA /* bushelscript_en.bundle */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = bushelscript_en.bundle;
@@ -488,6 +488,7 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -503,6 +504,7 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -572,6 +574,7 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
