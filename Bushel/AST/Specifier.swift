@@ -6,11 +6,11 @@ public class Specifier {
     ///
     /// For instance:
     ///
-    ///      window 1 of application "Safari"
-    ///      ^^^^^^^^    ~~~~~~~~~~~~~~~~~~~~
-    ///     specifier          parent
+    ///      window 1 of Safari
+    ///      ^^^^^^^^    ~~~~~~
+    ///     specifier    parent
     ///
-    /// Here, `application "Safari"` is parent to `window 1`.
+    /// Here, `Safari` is parent to `window 1`.
     public var parent: Expression?
     
     /// The class of data specified.
