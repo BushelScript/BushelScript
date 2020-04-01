@@ -57,8 +57,6 @@
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
 		3C907703239F3DD000A01D8D /* KVODelegate in Frameworks */ = {isa = PBXBuildFile; productRef = 3C907702239F3DD000A01D8D /* KVODelegate */; };
-		3CC4320023E5C319002592D3 /* CommandLineToolVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC431FF23E5C319002592D3 /* CommandLineToolVC.swift */; };
-		3CC4320423E5CD0E002592D3 /* CommandLineToolVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CC4320223E5CD0E002592D3 /* CommandLineToolVC.storyboard */; };
 		3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1D0602319A07100DD01A9 /* Defaults.swift */; };
 /* End PBXBuildFile section */
 
@@ -275,8 +273,6 @@
 		3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSADictionaryWindowCustomization.swift; sourceTree = "<group>"; };
 		3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryDocument.swift; sourceTree = "<group>"; };
 		3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = bushelscript.xcodeproj; path = ../bushelscript/bushelscript.xcodeproj; sourceTree = "<group>"; };
-		3CC431FF23E5C319002592D3 /* CommandLineToolVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandLineToolVC.swift; sourceTree = "<group>"; };
-		3CC4320323E5CD0E002592D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "BushelScript Editor/Base.lproj/CommandLineToolVC.storyboard"; sourceTree = SOURCE_ROOT; };
 		3CD1D0602319A07100DD01A9 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		3CEF504023529437008603E3 /* SwiftAutomation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEF50422352948E008603E3 /* BushelScript Editor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BushelScript Editor.entitlements"; sourceTree = "<group>"; };
@@ -365,7 +361,6 @@
 				3C2BC9EF23E27FAE00CB8C20 /* Documents */,
 				3C2BC9B323E2754600CB8C20 /* Inline Errors */,
 				3C05672323137CFB004CDB1A /* Suggestions */,
-				3CC4320123E5CCB7002592D3 /* Command-Line Tool */,
 				3C04308223199A1800758339 /* Preferences */,
 				3C3C1820231AB0CF00553072 /* About */,
 				3C2BC9EE23E27F4F00CB8C20 /* Utilities */,
@@ -570,15 +565,6 @@
 				3C9FD7B923E53E5500279945 /* bushelscript */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		3CC4320123E5CCB7002592D3 /* Command-Line Tool */ = {
-			isa = PBXGroup;
-			children = (
-				3CC431FF23E5C319002592D3 /* CommandLineToolVC.swift */,
-				3CC4320223E5CD0E002592D3 /* CommandLineToolVC.storyboard */,
-			);
-			path = "Command-Line Tool";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -819,7 +805,6 @@
 				3C0566B423135675004CDB1A /* Assets.xcassets in Resources */,
 				3C2BC9EC23E27E6200CB8C20 /* Main.storyboard in Resources */,
 				3C04308423199A2800758339 /* Preferences.storyboard in Resources */,
-				3CC4320423E5CD0E002592D3 /* CommandLineToolVC.storyboard in Resources */,
 				3C2BC9AC23E258E400CB8C20 /* InlineErrorVC.xib in Resources */,
 				3C20C0C1234010E100CBB613 /* ObjectInspectorPanelWC.xib in Resources */,
 			);
@@ -885,7 +870,6 @@
 				3C0566AE23135673004CDB1A /* AppDelegate.swift in Sources */,
 				3C3355F123490F2500AEAAE9 /* NSTabViewController+SelectionConvenience.swift in Sources */,
 				3C0566B223135673004CDB1A /* Document.swift in Sources */,
-				3CC4320023E5C319002592D3 /* CommandLineToolVC.swift in Sources */,
 				3C3F06E323C1551C005BC0F2 /* ObjectInspectorDetailVC.swift in Sources */,
 				3C0430022314BECD00758339 /* ModelPropagation.swift in Sources */,
 				3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */,
@@ -972,14 +956,6 @@
 				3C0566B623135675004CDB1A /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		3CC4320223E5CD0E002592D3 /* CommandLineToolVC.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3CC4320323E5CD0E002592D3 /* Base */,
-			);
-			name = CommandLineToolVC.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
