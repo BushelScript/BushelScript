@@ -84,7 +84,6 @@
 		3C75067523A1A4F1006E7591 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
 		3C8FEEF322DE2B8300C1F1CF /* Builtin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8FEEF222DE2B8300C1F1CF /* Builtin.swift */; };
 		3C906F00231CD30A0099B139 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906EFF231CD30A0099B139 /* Ordering.swift */; };
-		3C906F28231DDBB40099B139 /* LocatedTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906F27231DDBB40099B139 /* LocatedTerm.swift */; };
 		3C9456F823E8F7DE00D59C2C /* FormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9456F623E8F7DE00D59C2C /* FormatterTests.swift */; };
 		3C94570623E8FBC200D59C2C /* BushelLanguageTestingTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C94570423E8FBC200D59C2C /* BushelLanguageTestingTools.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C94570A23E8FC2100D59C2C /* FormatterTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9456FB23E8FAC600D59C2C /* FormatterTestCase.swift */; };
@@ -366,7 +365,6 @@
 		3C72CEF822E102AF00A98EC7 /* SwiftAE.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SwiftAE.xcodeproj; path = swiftae/SwiftAE.xcodeproj; sourceTree = SOURCE_ROOT; };
 		3C8FEEF222DE2B8300C1F1CF /* Builtin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Builtin.swift; sourceTree = "<group>"; };
 		3C906EFF231CD30A0099B139 /* Ordering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ordering.swift; sourceTree = "<group>"; };
-		3C906F27231DDBB40099B139 /* LocatedTerm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocatedTerm.swift; sourceTree = "<group>"; };
 		3C9456F623E8F7DE00D59C2C /* FormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FormatterTests.swift; path = BushelScriptEnglish/BushelScriptEnglishTests/Formatter/FormatterTests.swift; sourceTree = SOURCE_ROOT; };
 		3C9456FB23E8FAC600D59C2C /* FormatterTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormatterTestCase.swift; sourceTree = "<group>"; };
 		3C94570223E8FBC200D59C2C /* BushelLanguageTestingTools.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BushelLanguageTestingTools.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -938,7 +936,6 @@
 				3C68D2442353BA300059FD3E /* BinaryOperation.swift */,
 				3C68743B2394164E004144AC /* UnaryOperation.swift */,
 				3C6874402394188F004144AC /* PrecedenceGroup.swift */,
-				3C906F27231DDBB40099B139 /* LocatedTerm.swift */,
 				3C35A5D522C81E60002D4582 /* SourceLocation.swift */,
 			);
 			path = AST;
@@ -1500,7 +1497,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C35A5DE22C81E60002D4582 /* Specifier.swift in Sources */,
-				3C906F28231DDBB40099B139 /* LocatedTerm.swift in Sources */,
 				3C6874412394188F004144AC /* PrecedenceGroup.swift in Sources */,
 				3C3065B3230B7E2000833CE8 /* TerminologySource.swift in Sources */,
 				3C57DD4C2352C55A00F9F2A0 /* Weave.swift in Sources */,

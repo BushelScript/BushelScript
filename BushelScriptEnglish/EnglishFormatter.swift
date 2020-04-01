@@ -70,7 +70,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             }
             return formatted
         case .use(let resourceTerm):
-            return "use \(resourceTerm.term.formattedForUseStatement)"
+            return "use \(resourceTerm.formattedForUseStatement)"
         case .resource(let resource):
             return "\(resource)"
         case .that:
@@ -157,7 +157,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             var formatted = "\(term)"
             
             // Do direct parameter first
-            if parameters.first?.key.term.uid == TermUID(ParameterUID.direct) {
+            if parameters.first?.key.uid == TermUID(ParameterUID.direct) {
                 formatted += " \(format(parameters.removeFirst().value, level: level))"
             }
             
@@ -176,7 +176,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
         case .specifier(let specifier):
             var formatted: String
             
-            let className = "\(specifier.idTerm.term)"
+            let className = "\(specifier.idTerm)"
             switch specifier.kind {
             case .simple(let dataExpression):
                 formatted = "\(className) \(format(dataExpression, level: level))"

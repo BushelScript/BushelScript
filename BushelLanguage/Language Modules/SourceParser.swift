@@ -55,7 +55,7 @@ public protocol SourceParser: AnyObject {
     
     init()
     
-    func handle(term: LocatedTerm) throws -> Expression.Kind?
+    func handle(term: Term) throws -> Expression.Kind?
     
     /// For any required post-processing.
     /// e.g., possessive specifiers (like "xyz's first widget") modify
@@ -442,7 +442,7 @@ public extension SourceParser {
             }
             return Expression(.string(string), at: expressionLocation)
         } else if let term = try eatTerm() {
-            if let kind = try handle(term: Located(term, at: expressionLocation)) {
+            if let kind = try handle(term: term) {
                 return Expression(kind, at: expressionLocation)
             } else {
                 return nil
@@ -533,7 +533,7 @@ public extension SourceParser {
         eatCommentsAndWhitespace()
         
         let resourceTerm = try handler(name)
-        return .use(resource: Located(resourceTerm, at: termNameLocation))
+        return .use(resource: resourceTerm)
     }
     
     func handleEnd() throws -> Expression.Kind? {
@@ -547,14 +547,14 @@ public extension SourceParser {
         return .end
     }
     
-    func parseVariableTerm(stoppingAt: [String] = []) throws -> Located<VariableTerm>? {
+    func parseVariableTerm(stoppingAt: [String] = []) throws -> VariableTerm? {
         guard
             let termName = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .variable),
             !termName.words.isEmpty
         else {
             return nil
         }
-        return Located(VariableTerm(lexicon.makeUID(forName: termName), name: termName), at: termNameLocation)
+        return VariableTerm(lexicon.makeUID(forName: termName), name: termName)
     }
     
     func parseTermNameEagerly(stoppingAt: [String] = [], styling: Styling = .keyword) throws -> TermName? {
@@ -583,12 +583,11 @@ public extension SourceParser {
         return TermName(words)
     }
     
-    func parseTypeTerm() throws -> Located<Bushel.ClassTerm>? {
-        let startIndex = currentIndex
+    func parseTypeTerm() throws -> Bushel.ClassTerm? {
         switch try eatTerm()?.enumerated {
         case .class_(let typeTerm),
              .pluralClass(let typeTerm as Bushel.ClassTerm):
-            return Located(typeTerm, at: SourceLocation(startIndex..<currentIndex, source: entireSource))
+            return typeTerm
         default:
             throw ParseError(description: "expected type name", location: currentLocation)
         }
@@ -854,7 +853,7 @@ public extension SourceParser {
             let appBundle: Bundle
             switch expression.kind {
             case .specifier(let specifier):
-                guard specifier.idTerm.term.uid == TermUID(TypeUID.application) else {
+                guard specifier.idTerm.uid == TermUID(TypeUID.application) else {
                     break noTerminology
                 }
                 
@@ -884,7 +883,7 @@ public extension SourceParser {
                 try dictionary.loadTerminology(at: appBundle.bundleURL)
             case .use(let term),
                  .resource(let term):
-                lexicon.push(for: term.term)
+                lexicon.push(for: term)
                 terminologyPushed = true
             default:
                 break noTerminology

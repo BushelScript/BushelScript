@@ -201,11 +201,3 @@ public enum Styling {
 }
 
 public typealias SyntaxColors = [Styling : CGColor]
-
-extension LocatedTerm {
-    
-    public var prettified: String {
-        String(describing: self)
-    }
-    
-}

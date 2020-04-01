@@ -263,19 +263,19 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         guard let termName = try parseTermNameEagerly(stoppingAt: [":"]) else {
             throw ParseError(description: "expected function name", location: SourceLocation(source.range, source: entireSource))
         }
-        let functionNameTerm = Located(VariableTerm(.id(termName.normalized), name: termName), at: termNameLocation)
+        let functionNameTerm = VariableTerm(.id(termName.normalized), name: termName)
         
-        var parameters: [Located<ParameterTerm>] = []
-        var arguments: [Located<VariableTerm>] = []
+        var parameters: [ParameterTerm] = []
+        var arguments: [VariableTerm] = []
         if tryEating(prefix: ":", spacing: .right) {
             while let parameterTermName = try parseTermNameLazily() {
-                parameters.append(Located(ParameterTerm(.id(parameterTermName.normalized), name: parameterTermName), at: termNameLocation))
+                parameters.append(ParameterTerm(.id(parameterTermName.normalized), name: parameterTermName))
                 
                 var argumentName = try parseTermNameEagerly(stoppingAt: [","]) ?? parameterTermName
                 if argumentName.words.isEmpty {
                     argumentName = parameterTermName
                 }
-                arguments.append(Located(VariableTerm(.id(argumentName.normalized), name: argumentName), at: termNameLocation))
+                arguments.append(VariableTerm(.id(argumentName.normalized), name: argumentName))
                 
                 if !tryEating(prefix: ",", spacing: .right) {
                     break
@@ -283,16 +283,14 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
         }
         
-        let parameterTerms = parameters.map { $0.term }
-        
-        let commandTerm = CommandTerm(.id(termName.normalized), name: termName, parameters: ParameterTermDictionary(contents: parameterTerms))
+        let commandTerm = CommandTerm(.id(termName.normalized), name: termName, parameters: ParameterTermDictionary(contents: parameters))
         lexicon.add(commandTerm)
         
         guard tryEating(prefix: "\n") else {
             throw ParseError(description: "expected line break to begin function body", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
         }
         let body = try withScope {
-            lexicon.add(Set(arguments.map { $0.term }))
+            lexicon.add(Set(arguments))
             return try parseSequence(functionNameTerm.name!)
         }
         
@@ -543,9 +541,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
     }
     
-    public func handle(term: LocatedTerm) throws -> Expression.Kind? {
-        let termLocation = term.location
-        switch term.wrappedTerm.enumerated {
+    public func handle(term: Term) throws -> Expression.Kind? {
+        switch term.enumerated {
         case .enumerator(let term): // MARK: .enumerator
             return .enumerator(term)
         case .dictionary(_): // MARK: .dictionary
@@ -554,8 +551,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             return .null
         case .class_(let term): // MARK: .class_
             if let specifierKind = try parseSpecifierAfterClassName() {
-                return .specifier(Specifier(class: Located(term, at: termLocation), kind: specifierKind))
-            } else if let specifier = try parseRelativeSpecifierAfterClassName(term, at: termLocation) {
+                return .specifier(Specifier(class: term, kind: specifierKind))
+            } else if let specifier = try parseRelativeSpecifierAfterClassName(term) {
                 return .specifier(specifier)
             } else {
                 // Just the class name
@@ -563,34 +560,30 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
         case .pluralClass(let term): // MARK: .pluralClass
             if let specifierKind = try parseSpecifierAfterClassName() {
-                return .specifier(Specifier(class: Located(term, at: termLocation), kind: specifierKind))
+                return .specifier(Specifier(class: term, kind: specifierKind))
             } else {
                 // Just the plural class name
                 // Equivalent to an "all" specifier
-                return .specifier(Specifier(class: Located(term, at: termLocation), kind: .all))
+                return .specifier(Specifier(class: term, kind: .all))
             }
         case .property(let term): // MARK: .property
-            let specifier = Specifier(class: Located(term, at: expressionLocation), kind: .property)
+            let specifier = Specifier(class: term, kind: .property)
             return .specifier(specifier)
         case .command(let term): // MARK: .command
-            let termLocation = expressionLocation
-            
-            var parameters: [(Located<ParameterTerm>, Expression)] = []
+            var parameters: [(ParameterTerm, Expression)] = []
             func parseParameter() throws -> Bool {
-                let startIndex = currentIndex
                 guard let parameterTerm = try eatTerm(terminology: term.parameters) as? ParameterTerm else {
                     return false
                 }
-                let locatedParameterTerm = Located(parameterTerm, at: SourceLocation(startIndex..<currentIndex, source: entireSource))
                 
                 guard let parameterValue = try parsePrimary() else {
                     throw ParseError(description: "expected expression after parameter name, but found end of script", location: currentLocation)
                 }
-                parameters.append((locatedParameterTerm, parameterValue))
+                parameters.append((parameterTerm, parameterValue))
                 return true
             }
             func result() -> Expression.Kind {
-                return .command(Located(term, at: termLocation), parameters: parameters)
+                return .command(term, parameters: parameters)
             }
             
             // First, try parsing a named parameter.
@@ -602,7 +595,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 eatCommentsAndWhitespace()
                 if !(source.first?.isNewline ?? true) {
                     // Direct parameter
-                    let directParameterLocation = currentLocation
                     let directParameterValue: Expression
                     do {
                         guard let dpValue = try parsePrimary() else {
@@ -610,7 +602,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                         }
                         directParameterValue = dpValue
                     }
-                    parameters.append((Located(lexicon.pool.term(forUID: TypedTermUID(ParameterUID.direct)) as! ParameterTerm, at: directParameterLocation), directParameterValue))
+                    parameters.append((lexicon.pool.term(forUID: TypedTermUID(ParameterUID.direct)) as! ParameterTerm, directParameterValue))
                 }
             }
             
@@ -624,7 +616,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         case .variable(let term): // MARK: .variable
             return .variable(term)
         case .resource(let term): // MARK: .resource
-            return .resource(Located(term, at: expressionLocation))
+            return .resource(term)
         }
     }
     
@@ -692,19 +684,19 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
     }
     
-    public func parseRelativeSpecifierAfterClassName(_ term: ClassTerm, at termLocation: SourceLocation) throws -> Specifier? {
+    public func parseRelativeSpecifierAfterClassName(_ term: ClassTerm) throws -> Specifier? {
         if tryEating(prefix: "before") {
             guard let parentExpression = try parsePrimary() else {
                 // e.g., window before
                 throw ParseError(description: "expected expression after ‘before’", location: currentLocation)
             }
-            return Specifier(class: Located(term, at: termLocation), kind: .previous, parent: parentExpression)
+            return Specifier(class: term, kind: .previous, parent: parentExpression)
         } else if tryEating(prefix: "after") {
             guard let parentExpression = try parsePrimary() else {
                 // e.g., window before
                 throw ParseError(description: "expected expression after ‘after’", location: currentLocation)
             }
-            return Specifier(class: Located(term, at: termLocation), kind: .next, parent: parentExpression)
+            return Specifier(class: term, kind: .next, parent: parentExpression)
         } else {
             return nil
         }
@@ -714,7 +706,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         guard let type = try parseTypeTerm() else {
             throw ParseError(description: "expected type name", location: currentLocation)
         }
-        let specifier = Specifier(class: Located(type.term, at: type.location), kind: kind)
+        let specifier = Specifier(class: type, kind: kind)
         return .specifier(specifier)
     }
     

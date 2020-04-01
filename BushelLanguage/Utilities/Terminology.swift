@@ -55,11 +55,3 @@ public extension Collection where Element == TermName {
     }
     
 }
-
-public extension Lexicon {
-    
-    mutating func add(_ term: LocatedTerm) {
-        add(term.wrappedTerm)
-    }
-    
-}

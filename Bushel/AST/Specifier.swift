@@ -15,11 +15,11 @@ public class Specifier {
     
     /// The class of data specified.
     /// Eventually encoded as `keyAEDesiredClass`.
-    public var idTerm: Located<Term>
+    public var idTerm: Term
     
     public var kind: Kind
     
-    public init(class: Located<Term>, kind: Kind, parent: Expression? = nil) {
+    public init(class: Term, kind: Kind, parent: Expression? = nil) {
         self.idTerm = `class`
         self.kind = kind
         self.parent = parent
@@ -162,9 +162,9 @@ extension Expression {
         case .specifier(let childSpecifier):
             return childSpecifier
         case .class_(let `class`):
-            return Specifier(class: Located(PropertyTerm(`class`.uid, name: `class`.name), at: location), kind: .property)
+            return Specifier(class: PropertyTerm(`class`.uid, name: `class`.name), kind: .property)
         case .enumerator(let enumerator):
-            return Specifier(class: Located(PropertyTerm(enumerator.uid, name: enumerator.name), at: location), kind: .property)
+            return Specifier(class: PropertyTerm(enumerator.uid, name: enumerator.name), kind: .property)
         default:
             return nil
         }
