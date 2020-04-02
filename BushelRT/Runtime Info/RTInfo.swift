@@ -8,6 +8,7 @@ public class RTInfo {
     
     public let termPool = TermPool()
     public let topScript: RT_Script
+    public var global: RT_Global!
     
     private let objectPool = NSMapTable<RT_Object, NSNumber>(keyOptions: [.strongMemory, .objectPointerPersonality], valueOptions: .copyIn)
     
@@ -16,6 +17,8 @@ public class RTInfo {
     public init(scriptName: String? = nil, currentApplicationBundleID: String? = nil) {
         self.topScript = RT_Script(name: scriptName)
         self.currentApplicationBundleID = currentApplicationBundleID
+        self.global = nil
+        self.global = RT_Global(self)
     }
     
     public func inject(terms: TermPool) {

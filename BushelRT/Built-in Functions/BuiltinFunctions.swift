@@ -7,8 +7,7 @@ enum BuiltinFunction: String {
     
     // MARK: 1/3 Declare enum case
     case release
-    case pushFrame, pushFrameWithTarget, popFrame
-    case getCurrentTarget
+    case pushFrame, popFrame
     case newVariable, getVariableValue, setVariableValue
     case isTruthy
     case numericEqual
@@ -56,9 +55,7 @@ enum BuiltinFunction: String {
         switch self {
         case .release: return ([object], void)
         case .pushFrame: return ([], void)
-        case .pushFrameWithTarget: return ([object], void)
         case .popFrame: return ([], void)
-        case .getCurrentTarget: return ([], object)
         case .newVariable: return ([object, object], void)
         case .getVariableValue: return ([object], object)
         case .setVariableValue: return ([object, object], void)
@@ -88,11 +85,11 @@ enum BuiltinFunction: String {
         case .newSpecifier1: return ([object, object, int32, object], object)
         case .newSpecifier2: return ([object, object, int32, object, object], object)
         case .newTestSpecifier: return ([int32, object, object], object)
-        case .qualifySpecifier: return ([object], object)
+        case .qualifySpecifier: return ([object, object], object)
         case .evaluateSpecifier: return ([object], object)
         case .newScript: return ([object], object)
         case .newFunction: return ([object, PointerType.toVoid, object], object)
-        case .runCommand: return ([object, object], object)
+        case .runCommand: return ([object, object, object], object)
         case .runWeave: return ([object, object, object], object)
         }
         
@@ -118,14 +115,8 @@ extension BuiltinFunction {
         let pushFrame: @convention(c) (Builtin.Pointer) -> Void = { a in ø(a).pushFrame() }
         builder.addExternalFunctionAsGlobal(pushFrame, .pushFrame)
         
-        let pushFrameWithTarget: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer) -> Void = { a, b in ø(a).pushFrame(newTarget: b) }
-        builder.addExternalFunctionAsGlobal(pushFrameWithTarget, .pushFrameWithTarget)
-        
         let popFrame: @convention(c) (Builtin.Pointer) -> Void = { a in ø(a).popFrame() }
         builder.addExternalFunctionAsGlobal(popFrame, .popFrame)
-        
-        let getCurrentTarget: @convention(c) (Builtin.Pointer) -> Builtin.RTObjectPointer = { a in ø(a).getCurrentTarget() }
-        builder.addExternalFunctionAsGlobal(getCurrentTarget, .getCurrentTarget)
         
         let newVariable: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Void = { a, b, c in ø(a).newVariable(b, c) }
         builder.addExternalFunctionAsGlobal(newVariable, .newVariable)
@@ -212,7 +203,7 @@ extension BuiltinFunction {
         let newTestSpecifier: @convention(c) (Builtin.Pointer, UInt32, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b, c, d in ø(a).newTestSpecifier(b, c, d) }
         builder.addExternalFunctionAsGlobal(newTestSpecifier, .newTestSpecifier)
         
-        let qualifySpecifier: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b in ø(a).qualifySpecifier(b) }
+        let qualifySpecifier: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b, c in ø(a).qualifySpecifier(b, c) }
         builder.addExternalFunctionAsGlobal(qualifySpecifier, .qualifySpecifier)
         
         let evaluateSpecifier: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b in ø(a).evaluateSpecifier(b) }
@@ -224,7 +215,7 @@ extension BuiltinFunction {
         let newFunction: @convention(c) (Builtin.Pointer, Builtin.InfoPointer, UnsafeRawPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b, c, d in ø(a).newFunction(b, c, d) }
         builder.addExternalFunctionAsGlobal(newFunction, .newFunction)
         
-        let runCommand: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b, c in ø(a).runCommand(b, c) }
+        let runCommand: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b, c, d in ø(a).runCommand(b, c, d) }
         builder.addExternalFunctionAsGlobal(runCommand, .runCommand)
         
         let runWeave: @convention(c) (Builtin.Pointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer, Builtin.RTObjectPointer) -> Builtin.RTObjectPointer = { a, b, c, d in ø(a).runWeave(b, c, d) }
