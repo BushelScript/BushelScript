@@ -54,14 +54,7 @@ final class Builtin {
         if !throwing {
             throwing = true
             defer { throwing = false }
-            _ = try? RT_Global(rt).perform(command: CommandInfo(.GUI_alert), arguments: [
-                ParameterInfo(.GUI_alert_kind): RT_Integer(value: 2),
-                ParameterInfo(.direct): RT_String(value: "An error occurred:"),
-                ParameterInfo(.GUI_alert_message): RT_String(value: message + "\n\nThe script will be terminated."),
-                ParameterInfo(.GUI_alert_buttons): RT_List(contents: [
-                    RT_String(value: "OK")
-                ])
-            ], implicitDirect: nil)
+            stack.currentErrorHandler(message, rt)
         }
         fatalError(message)
     }

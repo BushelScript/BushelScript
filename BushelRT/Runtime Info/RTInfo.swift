@@ -178,6 +178,19 @@ public extension RTInfo {
     func run(_ expression: Expression) -> RT_Object {
         let builtin = Builtin()
         builtin.rt = self
+
+        builtin.stack.pushErrorHandler { message, rt in
+            _ = try? RT_Global(rt).perform(command: CommandInfo(.GUI_alert), arguments: [
+                ParameterInfo(.GUI_alert_kind): RT_Integer(value: 2),
+                ParameterInfo(.direct): RT_String(value: "An error occurred:"),
+                ParameterInfo(.GUI_alert_message): RT_String(value: message + "\n\nThe script will be terminated."),
+                ParameterInfo(.GUI_alert_buttons): RT_List(contents: [
+                    RT_String(value: "OK")
+                ])
+            ], implicitDirect: nil)
+            fatalError(message)
+        }
+        
         let module = generateLLVMModule(from: expression, builtin: builtin)
         
         // Let LLVM verify that the module's IR code is well-formed
