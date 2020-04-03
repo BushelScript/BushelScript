@@ -79,6 +79,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func verifyAEPermission() {
+        guard !((ProcessInfo.processInfo.environment["BUSHEL_AUTOMATED_TESTING_MODE"] as NSString?)?.boolValue ?? false) else {
+            // Don't ruin automated tests
+            return
+        }
         if Defaults[.hasBushelGUIHostEventPermission] {
             // Should already have permission
             return
