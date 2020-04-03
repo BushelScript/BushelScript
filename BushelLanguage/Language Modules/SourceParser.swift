@@ -1076,7 +1076,7 @@ public extension SourceParser {
         case .type:
             return .type
         case .property:
-            return .keyword // TODO: add property style
+            return .property
         case .constant:
             return .constant
         case .command:
