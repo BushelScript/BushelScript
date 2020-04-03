@@ -6,7 +6,20 @@ import XCTest
 @testable import BushelScript_Editor
 import Defaults
 
+private var hasBushelGUIHostEventPermission_oldValue: Bool!
+
 class HashbangTests: XCTestCase {
+    
+    override class func setUp() {
+        if hasBushelGUIHostEventPermission_oldValue == nil {
+            hasBushelGUIHostEventPermission_oldValue = Defaults[.hasBushelGUIHostEventPermission]
+        }
+        Defaults[.hasBushelGUIHostEventPermission] = true
+    }
+    
+    override func tearDown() {
+        Defaults[.hasBushelGUIHostEventPermission] = hasBushelGUIHostEventPermission_oldValue
+    }
     
     // We'd need variadic generics to properly express this in terms of `Defaults.Key<>`s
     private func withDefaults(_ newDefaults: [(String, Any?)], perform action: () throws -> Void) rethrows {
