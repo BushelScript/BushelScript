@@ -7,6 +7,8 @@ import Defaults
 
 extension Defaults.Keys {
     
+    static let hasBushelGUIHostEventPermission = Key<Bool>("HasBushelGUIHostEventPermission", default: false)
+    
     static let sourceCodeFont = NSSecureCodingKey<NSFont>("SourceCodeFont", default: NSFont(name: "Menlo", size: 12) ?? NSFont.systemFont(ofSize: -1))
     static let prettyPrintBeforeRunning = Key<Bool>("PrettyPrintBeforeRunning", default: false)
     

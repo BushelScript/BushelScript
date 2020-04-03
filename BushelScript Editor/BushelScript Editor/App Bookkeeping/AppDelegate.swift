@@ -17,6 +17,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         
+        DispatchQueue.main.async {
+            self.verifyAEPermission()
+        }
+        
         defaultsObservations += [
             Defaults.observe(.liveParsingEnabled) { change in
                 if !change.newValue {
@@ -72,6 +76,61 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBAction func chooseAndOpenDictionaries(_ sender: Any?) {
         OSADictionary.choose()
+    }
+    
+    private func verifyAEPermission() {
+        if Defaults[.hasBushelGUIHostEventPermission] {
+            // Should already have permission
+            return
+        }
+        
+        let alert = NSAlert()
+        alert.messageText = "BushelScript Editor needs to be able to communicate with BushelGUIHost."
+        alert.informativeText = "In the forthcoming dialog, please select “OK”. If no dialog appears, go to System Preferences → Security & Privacy → Privacy → Automation and check the “BushelGUIHost” box under “BushelScript Editor”."
+        alert.runModal()
+        
+        if !determineGUIHostEventPermission() {
+            let alert = NSAlert()
+            alert.messageText = "BushelScript Editor needs to be able to communicate with BushelGUIHost."
+            alert.informativeText = "Please go to System Preferences → Security & Privacy → Privacy → Automation and check the “BushelGUIHost” box under “BushelScript Editor,” then click OK."
+            alert.runModal()
+            
+            if !determineGUIHostEventPermission() {
+                let alert = NSAlert()
+                alert.messageText = "BushelScript Editor needs to be able to communicate with BushelGUIHost."
+                alert.informativeText = "BushelScript Editor still doesn’t seem to have permission. Try reinstalling if this persists."
+                alert.runModal()
+                return
+            }
+        }
+        
+        // Permission was granted
+        Defaults[.hasBushelGUIHostEventPermission] = true
+    }
+    
+    private func determineGUIHostEventPermission() -> Bool {
+        let guiHostBundleID = "com.justcheesy.BushelGUIHost"
+        
+        NSWorkspace.shared.launchApplication(withBundleIdentifier: guiHostBundleID, options: [.withoutActivation], additionalEventParamDescriptor: nil, launchIdentifier: nil)
+        
+        // AEDeterminePermissionToAutomateTarget just hangs for me; don't ask why.
+        // UGHHHH fine Apple, you've left me no choice but to do it the dumb way:
+        var errorInfo: NSDictionary?
+        NSAppleScript(source: "missing value 1 of app id \"\(guiHostBundleID)\"")!.executeAndReturnError(&errorInfo)
+        
+        if let errorInfo = errorInfo {
+            guard let errorNumber = errorInfo[NSAppleScript.errorNumber] as? Int else {
+                return false
+            }
+            return !(
+                errorNumber == errAETargetAddressNotPermitted ||
+                errorNumber == errAEEventNotPermitted ||
+                errorNumber == errAEEventWouldRequireUserConsent ||
+                errorNumber == procNotFound
+            )
+        } else {
+            return true
+        }
     }
     
 }
