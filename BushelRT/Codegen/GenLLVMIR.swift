@@ -166,7 +166,7 @@ extension Expression {
         switch kind {
         case .empty, .end: // MARK: .empty, .end
             return lastResult
-        case .that:
+        case .that: // MARK: .that
             return
                 evaluateSpecifiers ?
                 lastResult.evaluatingSpecifier(builder: builder, bp: bp) :
