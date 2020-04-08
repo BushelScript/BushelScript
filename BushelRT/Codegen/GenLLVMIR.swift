@@ -164,8 +164,13 @@ extension Expression {
         let function = lastBlock.parent!
         
         switch kind {
-        case .empty, .end, .that: // MARK: .empty, .end, .that
+        case .empty, .end: // MARK: .empty, .end
             return lastResult
+        case .that:
+            return
+                evaluateSpecifiers ?
+                lastResult.evaluatingSpecifier(builder: builder, bp: bp) :
+                lastResult
         case .it: // MARK: .it
             return
                 evaluateSpecifiers ?
