@@ -28,7 +28,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override func concatenating(_ other: RT_Object) -> RT_Object? {
-        if let other = other.coerce() as? RT_List {
+        if let other = other.coerce(to: RT_List.self) {
             return RT_List(contents: self.contents + other.contents)
         } else {
             return RT_List(contents: self.contents + [other])
@@ -36,7 +36,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override func concatenated(to other: RT_Object) -> RT_Object? {
-        if let other = other.coerce() as? RT_List {
+        if let other = other.coerce(to: RT_List.self) {
             return RT_List(contents: other.contents + self.contents)
         } else {
             return RT_List(contents: [other] + self.contents)
@@ -100,8 +100,8 @@ public class RT_List: RT_Object, AEEncodable {
         let filteredContents = self.filteredContents(type)
         
         guard
-            let from = (from.coerce() as? RT_Numeric)?.numericValue,
-            let to = (thru.coerce() as? RT_Numeric)?.numericValue
+            let from = ((from.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (from.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue,
+            let to = ((thru.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (thru.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue
         else {
             // FIXME: use the error system
             fatalError("range types incorrect")
@@ -134,11 +134,11 @@ public class RT_List: RT_Object, AEEncodable {
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         switch CommandUID(command.typedUID) {
         case .Sequence_join:
-            guard let separator = arguments[ParameterInfo(.Sequence_join_with)]?.coerce() as? RT_String else {
+            guard let separator = arguments[ParameterInfo(.Sequence_join_with)]?.coerce(to: RT_String.self) else {
                 // TODO: Throw error
                 return nil
             }
-            guard let strings = contents.map({ ($0.coerce() as? RT_String)?.value }) as? [String] else {
+            guard let strings = contents.map({ $0.coerce(to: RT_String.self)?.value }) as? [String] else {
                 // TODO: Throw error
                 return nil
             }

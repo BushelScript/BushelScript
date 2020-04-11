@@ -23,7 +23,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func concatenating(_ other: RT_Object) -> RT_Object? {
-        if let other = other.coerce() as? RT_String {
+        if let other = other.coerce(to: RT_String.self) {
             return RT_String(value: self.value + other.value)
         } else {
             return nil
@@ -97,24 +97,24 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func startsWith(_ other: RT_Object) -> RT_Object? {
-        (other.coerce() as? RT_String)
+        other.coerce(to: RT_String.self)
             .map { RT_Boolean.withValue(value.hasPrefix($0.value)) }
     }
     
     public override func endsWith(_ other: RT_Object) -> RT_Object? {
-        (other.coerce() as? RT_String)
+        other.coerce(to: RT_String.self)
             .map { RT_Boolean.withValue(value.hasSuffix($0.value)) }
     }
     
     public override func contains(_ other: RT_Object) -> RT_Object? {
-        (other.coerce() as? RT_String)
+        other.coerce(to: RT_String.self)
             .map { RT_Boolean.withValue(value.contains($0.value)) }
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         switch CommandUID(command.typedUID) {
         case .String_split:
-            guard let separator = arguments[ParameterInfo(.String_split_by)]?.coerce() as? RT_String else {
+            guard let separator = arguments[ParameterInfo(.String_split_by)]?.coerce(to: RT_String.self) else {
                 // TODO: Throw error
                 return nil
             }

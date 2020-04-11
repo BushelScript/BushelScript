@@ -578,17 +578,17 @@ extension RT_Object {
     /// Attempts to coerce this object to another runtime type,
     /// according to the specified static result type.
     ///
-    /// e.g., `RT_Integer(value: 42).coerce() as? RT_Real`
+    /// e.g., `RT_Integer(value: 42).coerce(to: RT_Real.self)
     ///
-    /// The runtime type to which coercion is attempted is `To.typeInfo`, where
+    /// The runtime type to which coercion is attempted is `To.typeInfo`, and
     /// `To?` is `coerce()`'s result type. If this coercion fails or results
     /// in something that is not a `To`, `nil` is returned.
-    public func coerce<To: RT_Object>() -> To? {
+    public func coerce<To: RT_Object>(to _: To.Type) -> To? {
         coerce(to: To.typeInfo) as? To
     }
     
     public func coerceOrThrow<To: RT_Object>() throws -> To {
-        guard let coerced = coerce() as? To else {
+        guard let coerced = coerce(to: To.self) else {
             throw Uncoercible(expectedType: To.typeInfo, object: self)
         }
         return coerced

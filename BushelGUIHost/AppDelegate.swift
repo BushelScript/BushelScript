@@ -79,7 +79,7 @@ extension AppDelegate {
         
         let itemsArg = arguments[ParameterInfo(.direct)]
         let items: [RT_Object] =
-            (itemsArg?.coerce() as? RT_List)?.contents ??
+            itemsArg?.coerce(to: RT_List.self)?.contents ??
             itemsArg.map { [$0] } ??
             []
         let stringItems = items.compactMap { string(from: $0) }
@@ -97,16 +97,16 @@ extension AppDelegate {
         let arguments = getArguments(from: event)
         
         let typeArg = arguments[ParameterInfo(.GUI_ask_dataType)]
-        let type = (typeArg?.coerce() as? RT_Class)?.value ??
+        let type = typeArg?.coerce(to: RT_Class.self)?.value ??
             rt.type(forUID: TypedTermUID(TypeUID.string))
         
         let promptArg = arguments[ParameterInfo(.direct)]
-        let prompt = (promptArg?.coerce() as? RT_String)?.value ??
+        let prompt = promptArg?.coerce(to: RT_String.self)?.value ??
             promptArg.map { String(describing: $0) } ??
             "Please enter a value:"
         
         let titleArg = arguments[ParameterInfo(.GUI_ask_title)]
-        let title = (titleArg?.coerce() as? RT_String)?.value ??
+        let title = titleArg?.coerce(to: RT_String.self)?.value ??
             titleArg.map { String(describing: $0) } ??
             ""
         
@@ -192,7 +192,7 @@ private func string(from argument: RT_Object?) -> String? {
     guard let argument = argument else {
         return nil
     }
-    return (argument.coerce() as? RT_String)?.value ?? String(describing: argument)
+    return argument.coerce(to: RT_String.self)?.value ?? String(describing: argument)
 }
 
 func returnResultToSender(_ result: RT_Object, for suspensionID: NSAppleEventManager.SuspensionID) {

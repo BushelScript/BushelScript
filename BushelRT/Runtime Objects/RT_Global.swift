@@ -65,7 +65,7 @@ public class RT_Global: RT_Object {
         switch TypeUID(type.uid) {
         case .application:
             guard
-                let appBundleID = (id.coerce() as RT_String?)?.value,
+                let appBundleID = id.coerce(to: RT_String.self)?.value,
                 let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
             else {
                 return RT_Null.null
@@ -111,7 +111,7 @@ public class RT_Global: RT_Object {
                 // TODO: Throw error
                 return RT_Null.null
             }
-            print((message.coerce() as? RT_String)?.value ?? String(describing: message))
+            print(message.coerce(to: RT_String.self)?.value ?? String(describing: message))
             return RT_Null.null
         default:
             return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)

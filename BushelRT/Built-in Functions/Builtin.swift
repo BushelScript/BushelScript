@@ -246,9 +246,9 @@ final class Builtin {
             case .and:
                 return lhs.and(rhs)
             case .isA:
-                return (rhs.coerce() as? RT_Class).map { RT_Boolean.withValue(lhs.dynamicTypeInfo.isA($0.value)) }
+                return rhs.coerce(to: RT_Class.self).map { RT_Boolean.withValue(lhs.dynamicTypeInfo.isA($0.value)) }
             case .isNotA:
-                return (rhs.coerce() as? RT_Class).map { RT_Boolean.withValue(!lhs.dynamicTypeInfo.isA($0.value)) }
+                return rhs.coerce(to: RT_Class.self).map { RT_Boolean.withValue(!lhs.dynamicTypeInfo.isA($0.value)) }
             case .equal:
                 return lhs.equal(to: rhs)
             case .notEqual:
