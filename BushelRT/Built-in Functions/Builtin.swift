@@ -429,8 +429,8 @@ final class Builtin {
         func catchingErrors(do action: () throws -> RT_Object?) -> RT_Object? {
             do {
                 return try action()
-            } catch let error as Unencodable where error.object is CommandInfo {
-                // Tried to send a non-AE command to a remote object
+            } catch let error as Unencodable where error.object is CommandInfo || error.object is ParameterInfo {
+                // Tried to send an inapplicable command to a remote object
                 // Ignore it and fall through to the next target
             } catch {
                 throwError(message: "\(error.localizedDescription)")

@@ -36,8 +36,8 @@ extension RT_SASpecifierConvertible where Self: RT_Object {
 }
 
 internal func encode(arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, for object: RT_Object, appData: AppData) throws -> [OSType : NSAppleEventDescriptor] {
-    guard !arguments.keys.contains(where: { $0.typedUID.ae4Code == nil }) else {
-        throw Unencodable(object: object)
+    if let unencodableKey = arguments.keys.first(where: { $0.typedUID.ae4Code == nil }) {
+        throw Unencodable(object: unencodableKey)
     }
     let keys = arguments.keys.map { $0.typedUID.ae4Code! }
     
