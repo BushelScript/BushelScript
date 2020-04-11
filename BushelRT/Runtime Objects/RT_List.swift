@@ -82,13 +82,13 @@ public class RT_List: RT_Object, AEEncodable {
     public override func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object {
         switch positioning {
         case .first:
-            return try element(type, at: 0)
+            return try element(type, at: 1)
         case .middle:
             return try element(type, at: Int64(contents.count / 2))
         case .last:
-            return try element(type, at: Int64(contents.count - 1))
+            return try element(type, at: Int64(contents.count))
         case .random:
-            return try element(type, at: Int64(arc4random_uniform(UInt32(contents.count))))
+            return try element(type, at: Int64(arc4random_uniform(UInt32(contents.count)) + 1))
         }
     }
     
@@ -98,6 +98,7 @@ public class RT_List: RT_Object, AEEncodable {
     
     public override func elements(_ type: TypeInfo, from: RT_Object, thru: RT_Object) throws -> RT_Object {
         let filteredContents = self.filteredContents(type)
+        
         guard
             let from = (from.coerce() as? RT_Numeric)?.numericValue,
             let to = (thru.coerce() as? RT_Numeric)?.numericValue
@@ -105,11 +106,18 @@ public class RT_List: RT_Object, AEEncodable {
             // FIXME: use the error system
             fatalError("range types incorrect")
         }
-        guard filteredContents.indices.contains(Int(from)), filteredContents.indices.contains(Int(to)) else {
+        
+        let zeroBasedFrom = Int(from - 1)
+        let zeroBasedTo = Int(to - 1)
+        guard
+            filteredContents.indices.contains(zeroBasedFrom),
+            filteredContents.indices.contains(zeroBasedTo)
+        else {
             // FIXME: use the error system
             fatalError("range out of bounds")
         }
-        return RT_List(contents: Array(filteredContents[Int(from)...Int(to)]))
+        
+        return RT_List(contents: Array(filteredContents[zeroBasedFrom...zeroBasedTo]))
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
