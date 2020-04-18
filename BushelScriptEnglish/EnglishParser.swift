@@ -149,6 +149,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("use"): handleUse,
         TermName("that"): handleThat,
         TermName("it"): handleIt,
+        TermName("null"): handleNull,
         TermName("every"): handleQuantifier(.all),
         TermName("all"): handleQuantifier(.all),
         TermName("first"): handleQuantifier(.first),
@@ -160,7 +161,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("ref"): handleRef(TermName("ref")),
         TermName("get"): handleGet(TermName("get")),
         TermName("set"): handleSet,
-        TermName("null"): { .null }
     ]
     
     public lazy var resourceTypes: [TermName : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] = [

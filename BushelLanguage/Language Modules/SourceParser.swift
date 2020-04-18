@@ -698,6 +698,10 @@ public extension SourceParser {
         .it
     }
     
+    func handleNull() throws -> Expression.Kind? {
+        .null
+    }
+    
     func handleRef(_ keyword: TermName) -> () throws -> Expression.Kind? {
         { [weak self] in
             try self?.handleRef(keyword)
