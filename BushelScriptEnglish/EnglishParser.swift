@@ -118,6 +118,14 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         (begin: TermName("("), end: TermName(")"))
     ]
     
+    public let listMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName])] = []
+    
+    public let recordMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])] = []
+    
+    public let listAndRecordMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])] = [
+        (begin: TermName("{"), end: TermName("}"), itemSeparators: [TermName(",")], keyValueSeparators: [TermName(":")])
+    ]
+    
     public let lineCommentMarkers: [TermName] = [
         TermName("--")
     ]
@@ -127,7 +135,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     ]
     
     public lazy var keywords: [TermName : KeywordHandler] = [
-        TermName("{"): handleOpenBrace,
         TermName("end"): handleEnd,
         TermName("on"): handleFunctionStart,
         TermName("to"): handleFunctionStart,
@@ -190,64 +197,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         TermName("AppleScript"): (true, ["at"], handleUseAppleScript),
     ]
-    
-    private func handleOpenBrace() throws -> Expression.Kind? {
-        try awaiting(endMarkers: [TermName("}"), TermName(","), TermName(":")]) {
-            eatCommentsAndWhitespace(eatingNewlines: true)
-            guard !tryEating(prefix: "}", spacing: .right) else {
-                return .list([])
-            }
-            guard !tryEating(prefix: ":", spacing: .right) else {
-                guard tryEating(prefix: "}", spacing: .right) else {
-                    throw ParseError(description: "expected key expression before ‘:’, or ‘}’ after for an empty record", location: currentLocation)
-                }
-                return .record([])
-            }
-            
-            let first = try parseListItem(as: "list item or record key")
-            
-            if tryEating(prefix: "}", spacing: .right) {
-                return .list([first])
-            } else if tryEating(prefix: ",", spacing: .right) {
-                var items: [Expression] = [first]
-                repeat {
-                    items.append(try parseListItem(as: "list item"))
-                } while tryEating(prefix: ",", spacing: .right)
-                
-                guard tryEating(prefix: "}", spacing: .right) else {
-                    throw ParseError(description: "expected ‘}’ to end list or ‘,’ to separate additional items", location: currentLocation)
-                }
-                return .list(items)
-            } else if tryEating(prefix: ":", spacing: .right) {
-                let first = (key: first, value: try parseListItem(as: "record item"))
-                var items: [(key: Expression, value: Expression)] = [first]
-                while tryEating(prefix: ",", spacing: .right) {
-                    let key = try parseListItem(as: "record key")
-                    guard tryEating(prefix: ":", spacing: .right) else {
-                        throw ParseError(description: "expected ‘:’ after key in record", location: currentLocation)
-                    }
-                    let value = try parseListItem(as: "record item")
-                    items.append((key: key, value: value))
-                }
-                
-                guard tryEating(prefix: "}", spacing: .right) else {
-                    throw ParseError(description: "expected ‘}’ to end record or ‘,’ to separate additional items", location: currentLocation)
-                }
-                return .record(items)
-            } else {
-                throw ParseError(description: "expected ‘}’ to end list, ‘,’ to separate additional items or ‘:’ to make a record", location: currentLocation)
-            }
-        }
-    }
-    
-    private func parseListItem(as location: String) throws -> Expression {
-        eatCommentsAndWhitespace(eatingNewlines: true)
-        guard let item = try parsePrimary() else {
-            throw ParseError(description: "expected \(location)", location: currentLocation)
-        }
-        eatCommentsAndWhitespace(eatingNewlines: true)
-        return item
-    }
     
     private func handleFunctionStart() throws -> Expression.Kind? {
         guard let termName = try parseTermNameEagerly(stoppingAt: [":"]) else {

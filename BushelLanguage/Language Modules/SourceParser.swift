@@ -51,6 +51,9 @@ public protocol SourceParser: AnyObject {
     var binaryOperators: [TermName : BinaryOperation] { get }
     var stringMarkers: [(begin: TermName, end: TermName)] { get }
     var expressionGroupingMarkers: [(begin: TermName, end: TermName)] { get }
+    var listMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName])] { get }
+    var recordMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])] { get }
+    var listAndRecordMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])] { get }
     var lineCommentMarkers: [TermName] { get }
     var blockCommentMarkers: [(begin: TermName, end: TermName)] { get }
     
@@ -457,6 +460,120 @@ public extension SourceParser {
                 
                 return Expression(.parentheses(enclosed), at: expressionLocation)
             }
+        } else if let (_, endMarker, itemSeparators, keyValueSeparators) = eatListAndRecordBeginMarker() {
+            return try awaiting(endMarkers: Set([endMarker] + itemSeparators + keyValueSeparators)) {
+                eatCommentsAndWhitespace(eatingNewlines: true)
+                
+                guard !tryEating(endMarker, spacing: .right) else {
+                    return Expression(.list([]), at: expressionLocation)
+                }
+                if let initialKeyValueSeparator = tryEating(oneOf: keyValueSeparators, spacing: .right) {
+                    guard tryEating(endMarker, spacing: .right) else {
+                        throw ParseError(description: "expected key expression before ‘\(initialKeyValueSeparator)’, or ‘\(endMarker)’ after for an empty record", location: currentLocation)
+                    }
+                    return Expression(.record([]), at: expressionLocation)
+                }
+                
+                let first = try parseListItem(as: "list item or record key")
+                
+                if tryEating(endMarker, spacing: .right) {
+                    return Expression(.list([first]), at: expressionLocation)
+                } else if let itemSeparator = tryEating(oneOf: itemSeparators, spacing: .right) {
+                    var items: [Expression] = [first]
+                    repeat {
+                        items.append(try parseListItem(as: "list item"))
+                    } while tryEating(itemSeparator, spacing: .right)
+                    
+                    guard tryEating(endMarker, spacing: .right) else {
+                        throw ParseError(description: "expected ‘\(endMarker)’ to end list or ‘\(itemSeparator)’ to separate additional items", location: currentLocation)
+                    }
+                    return Expression(.list(items), at: expressionLocation)
+                } else if let keyValueSeparator = tryEating(oneOf: keyValueSeparators, spacing: .right) {
+                    let first = (key: first, value: try parseListItem(as: "record item"))
+                    var items: [(key: Expression, value: Expression)] = [first]
+                    
+                    if let itemSeparator = tryEating(oneOf: itemSeparators, spacing: .right) {
+                        repeat {
+                            let key = try parseListItem(as: "record key")
+                            guard tryEating(keyValueSeparator, spacing: .right) else {
+                                throw ParseError(description: "expected ‘\(keyValueSeparator)’ after key in record", location: currentLocation)
+                            }
+                            let value = try parseListItem(as: "record item")
+                            items.append((key: key, value: value))
+                        } while tryEating(itemSeparator, spacing: .right)
+                    }
+                    
+                    guard tryEating(endMarker, spacing: .right) else {
+                        throw ParseError(description: "expected ‘\(endMarker)’ to end record or ‘\(itemSeparators.first!)’ to separate additional items", location: currentLocation)
+                    }
+                    return Expression(.record(items), at: expressionLocation)
+                } else {
+                    throw ParseError(description: "expected ‘\(endMarker)’ to end list, ‘\(itemSeparators.first!)’ to separate additional items or ‘\(keyValueSeparators.first!)’ to make a record", location: currentLocation)
+                }
+            }
+        } else if let (_, endMarker, itemSeparators) = eatListBeginMarker() {
+            return try awaiting(endMarkers: Set([endMarker] + itemSeparators)) {
+                eatCommentsAndWhitespace(eatingNewlines: true)
+                
+                guard !tryEating(endMarker, spacing: .right) else {
+                    return Expression(.list([]), at: expressionLocation)
+                }
+                
+                let first = try parseListItem(as: "list item")
+                
+                if tryEating(endMarker, spacing: .right) {
+                    return Expression(.list([first]), at: expressionLocation)
+                } else if let itemSeparator = tryEating(oneOf: itemSeparators, spacing: .right) {
+                    var items: [Expression] = [first]
+                    repeat {
+                        items.append(try parseListItem(as: "list item"))
+                    } while tryEating(itemSeparator, spacing: .right)
+                    
+                    guard tryEating(endMarker, spacing: .right) else {
+                        throw ParseError(description: "expected ‘\(endMarker)’ to end list or ‘\(itemSeparator)’ to separate additional items", location: currentLocation)
+                    }
+                    return Expression(.list(items), at: expressionLocation)
+                } else {
+                    throw ParseError(description: "expected ‘\(endMarker)’ to end list or ‘\(itemSeparators.first!)’ to separate additional items", location: currentLocation)
+                }
+            }
+        } else if let (_, endMarker, itemSeparators, keyValueSeparators) = eatRecordBeginMarker() {
+            return try awaiting(endMarkers: Set([endMarker] + itemSeparators + keyValueSeparators)) {
+                eatCommentsAndWhitespace(eatingNewlines: true)
+                
+                guard !tryEating(endMarker, spacing: .right) else {
+                    return Expression(.record([]), at: expressionLocation)
+                }
+                if let initialKeyValueSeparator = tryEating(oneOf: keyValueSeparators, spacing: .right) {
+                    guard tryEating(endMarker, spacing: .right) else {
+                        throw ParseError(description: "expected key expression before ‘\(initialKeyValueSeparator)’, or ‘\(endMarker)’ after for an empty record", location: currentLocation)
+                    }
+                    return Expression(.record([]), at: expressionLocation)
+                }
+                
+                let firstKey = try parseListItem(as: "record key")
+                guard let keyValueSeparator = tryEating(oneOf: keyValueSeparators, spacing: .right) else {
+                    throw ParseError(description: "expected ‘\(keyValueSeparators.first!)’ after key in record", location: currentLocation)
+                }
+                let first = (key: firstKey, value: try parseListItem(as: "record item"))
+                
+                var items: [(key: Expression, value: Expression)] = [first]
+                if let itemSeparator = tryEating(oneOf: itemSeparators, spacing: .right) {
+                    repeat {
+                        let key = try parseListItem(as: "record key")
+                        guard tryEating(keyValueSeparator, spacing: .right) else {
+                            throw ParseError(description: "expected ‘\(keyValueSeparator)’ after key in record", location: currentLocation)
+                        }
+                        let value = try parseListItem(as: "record item")
+                        items.append((key: key, value: value))
+                    } while tryEating(itemSeparator, spacing: .right)
+                }
+                
+                guard tryEating(endMarker, spacing: .right) else {
+                    throw ParseError(description: "expected ‘\(endMarker)’ to end record or ‘\(itemSeparators.first!)’ to separate additional items", location: currentLocation)
+                }
+                return Expression(.record(items), at: expressionLocation)
+            }
         } else if let term = try eatTerm() {
             if let kind = try handle(term: term) {
                 return Expression(kind, at: expressionLocation)
@@ -661,6 +778,17 @@ public extension SourceParser {
         }
     }
     
+    private func parseListItem(as location: String) throws -> Expression {
+        eatCommentsAndWhitespace(eatingNewlines: true)
+        
+        guard let item = try parsePrimary() else {
+            throw ParseError(description: "expected \(location)", location: currentLocation)
+        }
+        
+        eatCommentsAndWhitespace(eatingNewlines: true)
+        return item
+    }
+    
     func awaiting<Result>(endMarkers: Set<TermName>, perform action: () throws -> Result) rethrows -> Result {
         awaitingExpressionEndKeywords.append(endMarkers)
         defer {
@@ -813,6 +941,33 @@ public extension SourceParser {
         return expressionGroupingMarkers.first { $0.begin == termName }
     }
     
+    func eatListBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName])? {
+        let result = listMarkers.map { $0.begin }.findTermName(in: source)
+        guard let termName = result.termName else {
+            return nil
+        }
+        assume(tryEating(termName, spacing: .left))
+        return listMarkers.first { $0.begin == termName }
+    }
+    
+    func eatRecordBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])? {
+        let result = recordMarkers.map { $0.begin }.findTermName(in: source)
+        guard let termName = result.termName else {
+            return nil
+        }
+        assume(tryEating(termName, spacing: .left))
+        return recordMarkers.first { $0.begin == termName }
+    }
+    
+    func eatListAndRecordBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])? {
+        let result = listAndRecordMarkers.map { $0.begin }.findTermName(in: source)
+        guard let termName = result.termName else {
+            return nil
+        }
+        assume(tryEating(termName, spacing: .left))
+        return listAndRecordMarkers.first { $0.begin == termName }
+    }
+    
     func eatTerm() throws -> Term? {
         try eatTerm(terminology: lexicon)
     }
@@ -826,6 +981,10 @@ public extension SourceParser {
             }
         }
         return true
+    }
+    
+    func tryEating(oneOf termNames: [TermName], _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> TermName? {
+        termNames.first { tryEating($0, styling, spacing: spacing) }
     }
     
     func tryEating(prefix target: String, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
