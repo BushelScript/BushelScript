@@ -50,6 +50,7 @@ public protocol SourceParser: AnyObject {
     var postfixOperators: [TermName : UnaryOperation] { get }
     var binaryOperators: [TermName : BinaryOperation] { get }
     var stringMarkers: [(begin: TermName, end: TermName)] { get }
+    var expressionGroupingMarkers: [(begin: TermName, end: TermName)] { get }
     var lineCommentMarkers: [TermName] { get }
     var blockCommentMarkers: [(begin: TermName, end: TermName)] { get }
     
@@ -441,6 +442,21 @@ public extension SourceParser {
                 throw ParseError(description: "unable to parse string", location: currentLocation)
             }
             return Expression(.string(string), at: expressionLocation)
+        } else if let (beginMarker, endMarker) = eatExpressionGroupingBeginMarker() {
+            return try awaiting(endMarker: endMarker) {
+                eatCommentsAndWhitespace(eatingNewlines: true)
+                
+                guard let enclosed = try parsePrimary() else {
+                    throw ParseError(description: "expected grouped expression after ‘\(beginMarker)’", location: expressionLocation)
+                }
+                
+                eatCommentsAndWhitespace(eatingNewlines: true)
+                guard tryEating(endMarker, spacing: .right) else {
+                    throw ParseError(description: "expected ‘\(endMarker)’ to end grouped expression", location: expressionLocation)
+                }
+                
+                return Expression(.parentheses(enclosed), at: expressionLocation)
+            }
         } else if let term = try eatTerm() {
             if let kind = try handle(term: term) {
                 return Expression(kind, at: expressionLocation)
@@ -502,7 +518,7 @@ public extension SourceParser {
             .sorted(by: { lhs, rhs in lhs.normalized.caseInsensitiveCompare(rhs.normalized) == .orderedAscending })
             .reversed()
         
-        guard let typeName = typeNamesLongestFirst.first(where: { tryEating(termName: $0) }) else {
+        guard let typeName = typeNamesLongestFirst.first(where: { tryEating($0) }) else {
             let formattedTypeNames =
                 typeNamesLongestFirst
                     .reversed()
@@ -541,7 +557,7 @@ public extension SourceParser {
             return .end
         }
         let endTag = sequenceEndTags.last!
-        guard tryEating(termName: endTag) else {
+        guard tryEating(endTag) else {
             throw ParseError(description: "expected ‘\(endTag)’ or line break", location: currentLocation, fixes: [SequencingFix(fixes: [DeletingFix(at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource)), AppendingFix(appending: "\(endTag)", at: currentLocation)]), AppendingFix(appending: "\(endTag)\n", at: currentLocation)])
         }
         return .end
@@ -788,11 +804,20 @@ public extension SourceParser {
         return stringMarkers.first { $0.begin == termName }
     }
     
+    func eatExpressionGroupingBeginMarker() -> (begin: TermName, end: TermName)? {
+        let result = expressionGroupingMarkers.map { $0.begin }.findTermName(in: source)
+        guard let termName = result.termName else {
+            return nil
+        }
+        assume(tryEating(termName, spacing: .left))
+        return expressionGroupingMarkers.first { $0.begin == termName }
+    }
+    
     func eatTerm() throws -> Term? {
         try eatTerm(terminology: lexicon)
     }
     
-    func tryEating(termName: TermName, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
+    func tryEating(_ termName: TermName, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
         let rollbackSource = source
         for word in termName.words {
             guard tryEating(prefix: word, styling, spacing: spacing) else {
@@ -1123,4 +1148,18 @@ public extension TypedTermUID.Kind {
         }
     }
     
+}
+
+/// An `assert()` that always evaluates its condition.
+///
+/// - Parameters:
+///   - condition: The condition to test; always evaluated.
+///   - message: A string to print if condition is evaluated to false.
+///              The default is an empty string.
+///   - file: The file name to print with message if the assertion fails.
+///           The default is the file where `assume(_:_:file:line:)` is called.
+///   - line: The line number to print along with message if the assertion fails.
+///           The default is the line number where `assume(_:_:file:line:)` is called.
+private func assume(_ condition: Bool, _ message: @autoclosure () -> String = String(), file: StaticString = #file, line: UInt = #line) {
+    assert(condition, message(), file: file, line: line)
 }

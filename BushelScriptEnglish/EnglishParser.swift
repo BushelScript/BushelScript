@@ -114,6 +114,10 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         (begin: TermName("“"), end: TermName("”"))
     ]
     
+    public let expressionGroupingMarkers: [(begin: TermName, end: TermName)] = [
+        (begin: TermName("("), end: TermName(")"))
+    ]
+    
     public let lineCommentMarkers: [TermName] = [
         TermName("--")
     ]
@@ -123,7 +127,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     ]
     
     public lazy var keywords: [TermName : KeywordHandler] = [
-        TermName("("): handleOpenParenthesis,
         TermName("{"): handleOpenBrace,
         TermName("end"): handleEnd,
         TermName("on"): handleFunctionStart,
@@ -187,21 +190,6 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         TermName("AppleScript"): (true, ["at"], handleUseAppleScript),
     ]
-    
-    private func handleOpenParenthesis() throws -> Expression.Kind? {
-        try awaiting(endMarker: TermName(")")) {
-            eatCommentsAndWhitespace(eatingNewlines: true)
-            guard let enclosed = try parsePrimary() else {
-                throw ParseError(description: "expected expression after ‘(’", location: SourceLocation(source.range, source: entireSource))
-            }
-            eatCommentsAndWhitespace(eatingNewlines: true)
-            guard tryEating(prefix: ")", spacing: .right) else {
-                throw ParseError(description: "expected ‘)’ to end bracketed expression", location: SourceLocation(source.range, source: entireSource))
-            }
-            
-            return .parentheses(enclosed)
-        }
-    }
     
     private func handleOpenBrace() throws -> Expression.Kind? {
         try awaiting(endMarkers: [TermName("}"), TermName(","), TermName(":")]) {
