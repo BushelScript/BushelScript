@@ -690,6 +690,14 @@ public extension SourceParser {
         }
     }
     
+    func handleThat() throws -> Expression.Kind? {
+        .that
+    }
+    
+    func handleIt() throws -> Expression.Kind? {
+        .it
+    }
+    
     func parseVariableTerm(stoppingAt: [String] = []) throws -> VariableTerm? {
         guard
             let termName = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .variable),
