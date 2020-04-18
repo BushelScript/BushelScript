@@ -145,14 +145,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("let"): handleLet,
         TermName("define"): handleDefine,
         TermName("defining"): handleDefining,
-        TermName("return"): {
-            self.eatCommentsAndWhitespace()
-            if self.source.first?.isNewline ?? true {
-                return .return_(Expression.empty(at: self.currentLocation))
-            } else {
-                return .return_(try self.parsePrimary())
-            }
-        },
+        TermName("return"): handleReturn,
         TermName("use"): handleUse,
         TermName("that"): { .that },
         TermName("it"): { .it },

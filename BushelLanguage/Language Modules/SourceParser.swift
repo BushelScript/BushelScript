@@ -680,6 +680,16 @@ public extension SourceParser {
         return .end
     }
     
+    func handleReturn() throws -> Expression.Kind? {
+        eatCommentsAndWhitespace()
+        
+        if source.first?.isNewline ?? true {
+            return .return_(Expression.empty(at: currentLocation))
+        } else {
+            return .return_(try parsePrimary())
+        }
+    }
+    
     func parseVariableTerm(stoppingAt: [String] = []) throws -> VariableTerm? {
         guard
             let termName = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .variable),
