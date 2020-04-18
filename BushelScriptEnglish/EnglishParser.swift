@@ -6,6 +6,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     public static var sdefCache: [URL : Data] = [:]
     
+    public let messageFormatter: MessageFormatter = EnglishMessageFormatter()
+    
     public var entireSource: String = ""
     public lazy var source: Substring = Substring(entireSource)
     public var expressionStartIndices: [String.Index] = []
@@ -183,7 +185,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleFunctionStart() throws -> Expression.Kind? {
         guard let termName = try parseTermNameEagerly(stoppingAt: [":"]) else {
-            throw ParseError(description: "expected function name", location: SourceLocation(source.range, source: entireSource))
+            throw AdHocParseError("expected function name", at: SourceLocation(source.range, source: entireSource))
         }
         let functionNameTerm = VariableTerm(.id(termName.normalized), name: termName)
         
@@ -209,7 +211,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         lexicon.add(commandTerm)
         
         guard tryEating(prefix: "\n") else {
-            throw ParseError(description: "expected line break to begin function body", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
+            throw AdHocParseError("expected line break to begin function body", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
         }
         let body = try withScope {
             lexicon.add(Set(arguments))
@@ -221,7 +223,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleIf() throws -> Expression.Kind? {
         guard let condition = try parsePrimary() else {
-            throw ParseError(description: "expected condition expression after ‘if’", location: currentLocation)
+            throw AdHocParseError("expected condition expression after ‘if’", at: currentLocation)
         }
         
         func parseThen() throws -> Expression {
@@ -229,7 +231,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             let foundThen = tryEating(prefix: "then")
             let foundNewline = tryEating(prefix: "\n")
             guard foundThen || foundNewline else {
-                throw ParseError(description: "expected ‘then’ or line break after condition expression to begin ‘if’-block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
+                throw AdHocParseError("expected ‘then’ or line break after condition expression to begin ‘if’-block", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
             }
             
             if foundNewline {
@@ -237,7 +239,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             } else {
                 guard let thenExpression = try parsePrimary() else {
                     let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
-                    throw ParseError(description: "expected expression or line break after ‘then’ to begin ‘if’-block", location: thenLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: thenLocation))])
+                    throw AdHocParseError("expected expression or line break after ‘then’ to begin ‘if’-block", at: thenLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: thenLocation))])
                 }
                 return thenExpression
             }
@@ -260,7 +262,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             } else {
                 guard let elseExpr = try parsePrimary() else {
                     let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
-                    throw ParseError(description: "expected expression or line break after ‘else’ to begin ‘else’-block", location: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", by: AppendingFix(appending: " <#expression#>", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
+                    throw AdHocParseError("expected expression or line break after ‘else’ to begin ‘else’-block", at: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", by: AppendingFix(appending: " <#expression#>", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
                 }
                 
                 eatCommentsAndWhitespace()
@@ -281,28 +283,28 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     private func handleRepeat(_ keyword: TermName) throws -> Expression.Kind? {
         func parseRepeatBlock() throws -> Expression {
             guard tryEating(prefix: "\n") else {
-                throw ParseError(description: "expected line break to begin repeat block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
+                throw AdHocParseError("expected line break to begin repeat block", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
             }
             return try parseSequence(keyword)
         }
         
         if tryEating(prefix: "while") {
             guard let condition = try parsePrimary() else {
-                throw ParseError(description: "expected condition expression after ‘\(keyword) while’", location: currentLocation)
+                throw AdHocParseError("expected condition expression after ‘\(keyword) while’", at: currentLocation)
             }
             
             return .repeatWhile(condition: condition, repeating: try parseRepeatBlock())
         } else if tryEating(prefix: "for") {
             guard let variableTerm = try parseVariableTerm(stoppingAt: ["in"]) else {
-                throw ParseError(description: "expected variable name after ‘repeat for’", location: currentLocation)
+                throw AdHocParseError("expected variable name after ‘repeat for’", at: currentLocation)
             }
             
             guard tryEating(prefix: "in") else {
-                throw ParseError(description: "expected ‘in’ to begin container expression in ‘repeat for’", location: currentLocation)
+                throw AdHocParseError("expected ‘in’ to begin container expression in ‘repeat for’", at: currentLocation)
             }
             
             guard let expression = try parsePrimary() else {
-                throw ParseError(description: "expected container expression in ‘repeat for’", location: currentLocation)
+                throw AdHocParseError("expected container expression in ‘repeat for’", at: currentLocation)
             }
             
             lexicon.add(variableTerm)
@@ -310,11 +312,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             return .repeatFor(variable: variableTerm, container: expression, repeating: try parseRepeatBlock())
         } else {
             guard let times = try parsePrimary() else {
-                throw ParseError(description: "expected times expression after ‘\(expressionLocation.snippet(in: entireSource))’", location: currentLocation)
+                throw AdHocParseError("expected times expression after ‘\(expressionLocation.snippet(in: entireSource))’", at: currentLocation)
             }
             
             guard tryEating(prefix: "times") else {
-                throw ParseError(description: "expected ‘times’ after times expression", location: currentLocation, fixes: [AppendingFix(appending: " times", at: currentLocation)])
+                throw AdHocParseError("expected ‘times’ after times expression", at: currentLocation, fixes: [AppendingFix(appending: " times", at: currentLocation)])
             }
             
             return .repeatTimes(times: times, repeating: try parseRepeatBlock())
@@ -323,14 +325,14 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleTell() throws -> Expression.Kind? {
         guard let target = try parsePrimary() else {
-            throw ParseError(description: "expected target expression after ‘tell’", location: currentLocation)
+            throw AdHocParseError("expected target expression after ‘tell’", at: currentLocation)
         }
         
         let toStartIndex = currentIndex
         let foundTo = tryEating(prefix: "to")
         let foundNewline = tryEating(prefix: "\n")
         guard foundTo && !foundNewline || !foundTo && foundNewline else {
-            throw ParseError(description: "expected ‘to’ or line break following target expression to begin ‘tell’-block", location: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " to", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
+            throw AdHocParseError("expected ‘to’ or line break following target expression to begin ‘tell’-block", at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " to", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
         }
         
         return try withTerminology(of: target) {
@@ -340,7 +342,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             } else {
                 guard let toExpression = try parsePrimary() else {
                     let toLocation = SourceLocation(toStartIndex..<currentIndex, source: entireSource)
-                    throw ParseError(description: "expected expression after ‘to’ in ‘tell’-expression", location: toLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it with a new target", by: AppendingFix(appending: " <#expression#>", at: currentLocation))])
+                    throw AdHocParseError("expected expression after ‘to’ in ‘tell’-expression", at: toLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it with a new target", by: AppendingFix(appending: " <#expression#>", at: currentLocation))])
                 }
                 toExpr = toExpression
             }
@@ -351,13 +353,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleLet() throws -> Expression.Kind? {
         guard let term = try parseVariableTerm(stoppingAt: ["be"]) else {
-            throw ParseError(description: "expected variable name after ‘let’", location: currentLocation)
+            throw AdHocParseError("expected variable name after ‘let’", at: currentLocation)
         }
         
         var initialValue: Expression? = nil
         if tryEating(prefix: "be") {
             guard let value = try parsePrimary() else {
-                throw ParseError(description: "expected initial value expression after ‘be’", location: currentLocation)
+                throw AdHocParseError("expected initial value expression after ‘be’", at: currentLocation)
             }
             initialValue = value
         }
@@ -369,11 +371,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func parseDefineLine() throws -> (term: Term, existingTerm: Term?) {
         guard let termType = parseTermTypeName() else {
-            throw ParseError(description: "expected term type", location: currentLocation)
+            throw AdHocParseError("expected term type", at: currentLocation)
         }
         
         guard let termName = try parseTermNameEagerly(stoppingAt: ["as"], styling: styling(for: termType)) else {
-            throw ParseError(description: "expected term name", location: currentLocation)
+            throw AdHocParseError("expected term name", at: currentLocation)
         }
         
         let existingTerm: Term? = try {
@@ -381,7 +383,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 return nil
             }
             guard let existingTerm = try eatTerm() else {
-                throw ParseError(description: "expected a term", location: currentLocation)
+                throw AdHocParseError("expected a term", at: currentLocation)
             }
             return existingTerm
         }()
@@ -392,7 +394,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 name: termName
             )
         else {
-            throw ParseError(description: "this term type cannot have this definition; \(existingTerm == nil ? "try providing a valid one with 'as'" : "try a different definition or try removing 'as'")", location: currentLocation)
+            throw AdHocParseError("this term type cannot have this definition; \(existingTerm == nil ? "try providing a valid one with 'as'" : "try a different definition or try removing 'as'")", at: currentLocation)
         }
         
         lexicon.add(term)
@@ -418,7 +420,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         if tryEating(prefix: "version") {
             eatCommentsAndWhitespace()
             guard let match = tryEating(Regex("[vV]?(\\d+)\\.(\\d+)(?:\\.(\\d+))?")) else {
-                throw ParseError(description: "expected OS version number", location: currentLocation)
+                throw AdHocParseError("expected OS version number", at: currentLocation)
             }
             
             let versionComponents = match.captures.compactMap { $0.map { Int($0)! } }
@@ -429,7 +431,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             let version = OperatingSystemVersion(majorVersion: majorVersion, minorVersion: minorVersion, patchVersion: patchVersion)
             guard let resolved = Resource.System(version: version) else {
                 let realVersion = ProcessInfo.processInfo.operatingSystemVersionString
-                throw ParseError(description: "this script requires an operating system version of at least \(match.matchedString); your system is running \(realVersion)", location: expressionLocation)
+                throw AdHocParseError("this script requires an operating system version of at least \(match.matchedString); your system is running \(realVersion)", at: expressionLocation)
             }
             
             system = resolved
@@ -444,7 +446,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleUseApplicationName(name: TermName) throws -> ResourceTerm {
         guard let application = Resource.ApplicationByName(name: name.normalized) else {
-            throw ParseError(description: "this script requires the application “\(name)”, which was not found on your system", location: termNameLocation)
+            throw AdHocParseError("this script requires the application “\(name)”, which was not found on your system", at: termNameLocation)
         }
         
         let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: application.enumerated())
@@ -457,7 +459,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleUseApplicationID(name: TermName) throws -> ResourceTerm {
         guard let application = Resource.ApplicationByID(id: name.normalized) else {
-            throw ParseError(description: "this script requires an application with identifier “\(name)”, which was not found on your system", location: termNameLocation)
+            throw AdHocParseError("this script requires an application with identifier “\(name)”, which was not found on your system", at: termNameLocation)
         }
         let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: application.enumerated())
         
@@ -469,18 +471,18 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleUseAppleScript(name: TermName) throws -> ResourceTerm {
         guard tryEating(prefix: "at") else {
-            throw ParseError(description: "expected ‘at’ (more addressing modes coming soon)", location: currentLocation)
+            throw AdHocParseError("expected ‘at’ (more addressing modes coming soon)", at: currentLocation)
         }
         
         let pathStartIndex = currentIndex
         guard var (_, path) = try parseString() else {
-            throw ParseError(description: "expected path string", location: currentLocation)
+            throw AdHocParseError("expected path string", at: currentLocation)
         }
         
         path = (path as NSString).expandingTildeInPath
         
         guard let applescript = Resource.AppleScriptAtPath(path: path) else {
-            throw ParseError(description: "this script requires an AppleScript script at path “\(path)”, which was not found on your system", location: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
+            throw AdHocParseError("this script requires an AppleScript script at path “\(path)”, which was not found on your system", at: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
         }
         let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: applescript.enumerated())
         
@@ -492,13 +494,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleSet() throws -> Expression.Kind? {
         guard let destinationExpression = try parsePrimary() else {
-            throw ParseError(description: "expected destination-expression after ‘set’", location: currentLocation)
+            throw AdHocParseError("expected destination-expression after ‘set’", at: currentLocation)
         }
         guard tryEating(prefix: "to") else {
-            throw ParseError(description: "expected ‘to’ after ‘set’ destination-expression to begin new-value-expression", location: currentLocation)
+            throw AdHocParseError("expected ‘to’ after ‘set’ destination-expression to begin new-value-expression", at: currentLocation)
         }
         guard let newValueExpression = try parsePrimary() else {
-            throw ParseError(description: "expected new-value-expression after ‘to’", location: currentLocation)
+            throw AdHocParseError("expected new-value-expression after ‘to’", at: currentLocation)
         }
         return .set(destinationExpression, to: newValueExpression)
     }
@@ -545,7 +547,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 }
                 
                 guard let parameterValue = try parsePrimary() else {
-                    throw ParseError(description: "expected expression after parameter name, but found end of script", location: currentLocation)
+                    throw AdHocParseError("expected expression after parameter name, but found end of script", at: currentLocation)
                 }
                 parameters.append((parameterTerm, parameterValue))
                 return true
@@ -580,7 +582,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             
             return result()
         case .parameter: // MARK: .parameter
-            throw ParseError(description: "parameter term outside of a command invocation", location: expressionLocation)
+            throw AdHocParseError("parameter term outside of a command invocation", at: expressionLocation)
         case .variable(let term): // MARK: .variable
             return .variable(term)
         case .resource(let term): // MARK: .resource
@@ -656,13 +658,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         if tryEating(prefix: "before") {
             guard let parentExpression = try parsePrimary() else {
                 // e.g., window before
-                throw ParseError(description: "expected expression after ‘before’", location: currentLocation)
+                throw AdHocParseError("expected expression after ‘before’", at: currentLocation)
             }
             return Specifier(class: term, kind: .previous, parent: parentExpression)
         } else if tryEating(prefix: "after") {
             guard let parentExpression = try parsePrimary() else {
                 // e.g., window before
-                throw ParseError(description: "expected expression after ‘after’", location: currentLocation)
+                throw AdHocParseError("expected expression after ‘after’", at: currentLocation)
             }
             return Specifier(class: term, kind: .next, parent: parentExpression)
         } else {
@@ -672,7 +674,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     public func parseSpecifierAfterQuantifier(kind: Specifier.Kind, startIndex: Substring.Index) throws -> Expression.Kind? {
         guard let type = try parseTypeTerm() else {
-            throw ParseError(description: "expected type name", location: currentLocation)
+            throw AdHocParseError("expected type name", at: currentLocation)
         }
         let specifier = Specifier(class: type, kind: kind)
         return .specifier(specifier)
@@ -692,7 +694,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         
         guard let parentExpression = try parsePrimary() else {
             // e.g., character 1 of
-            throw ParseError(description: "expected expression after ‘of’ or ‘in’", location: currentLocation)
+            throw AdHocParseError("expected expression after ‘of’ or ‘in’", at: currentLocation)
         }
 
         childSpecifier.setRootAncestor(parentExpression)
@@ -714,12 +716,12 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         guard let newChildExpression = try parsePrimary() else {
             // e.g., "hello"'s
             let possessiveLocation = SourceLocation(possessiveStartIndex..<currentIndex, source: entireSource)
-            throw ParseError(description: "expected specifier after possessive, but found end of script", location: currentLocation, fixes: [DeletingFix(at: possessiveLocation)])
+            throw AdHocParseError("expected specifier after possessive, but found end of script", at: currentLocation, fixes: [DeletingFix(at: possessiveLocation)])
         }
         
         guard let newChildSpecifier = newChildExpression.asSpecifier() else {
             // e.g., "hello"'s 123
-            throw ParseError(description: "a non-specifier expression may only come first in a possessive-specifier-phrase", location: newChildExpression.location)
+            throw AdHocParseError("a non-specifier expression may only come first in a possessive-specifier-phrase", at: newChildExpression.location)
         }
         
         newChildSpecifier.parent = chainTo

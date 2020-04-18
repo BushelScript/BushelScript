@@ -11,6 +11,8 @@ public typealias ResourceTypeHandler = (_ name: TermName) throws -> ResourceTerm
 /// Parses source code into an AST.
 public protocol SourceParser: AnyObject {
     
+    var messageFormatter: MessageFormatter { get }
+    
     var entireSource: String { get set }
     var source: Substring { get set }
     var expressionStartIndices: [String.Index] { get set }
@@ -79,11 +81,11 @@ extension SourceParser {
         defer { lexicon.pop() }
         do {
             return Program(try parseDocument(), elements, source: entireSource, terms: lexicon.pool)
-        } catch var error as ParseError {
+        } catch var error as ParseErrorProtocol {
             if !entireSource.range.contains(error.location.range.lowerBound) {
                 error.location.range = entireSource.index(before: entireSource.endIndex)..<entireSource.endIndex
             }
-            throw error
+            throw messageFormatter.format(error: error)
         }
     }
     
@@ -108,13 +110,8 @@ extension SourceParser {
             .reversed()
         
         guard let typeName = typeNamesLongestFirst.first(where: { tryEating($0) }) else {
-            let formattedTypeNames =
-                typeNamesLongestFirst
-                    .reversed()
-                    .map { $0.normalized }
-                    .joined(separator: ", ")
-            
-            throw ParseError(description: "invalid resource type; valid types are: \(formattedTypeNames)", location: SourceLocation(currentIndex..<source.endIndex, source: entireSource))
+            throw ParseError(.invalidResourceType(validTypes: typeNamesLongestFirst
+            .reversed()), at: SourceLocation(currentIndex..<source.endIndex, source: entireSource))
         }
         
         let (hasName, stoppingAt, handler) = resourceTypes[typeName]!
@@ -122,7 +119,7 @@ extension SourceParser {
         eatCommentsAndWhitespace()
         
         guard !source.hasPrefix("\"") else {
-            throw ParseError(description: "‘use’ binds a resource term; remove the quotation mark(s)", location: currentLocation)
+            throw ParseError(.quotedResourceTerm, at: currentLocation)
         }
         
         eatCommentsAndWhitespace()
@@ -130,7 +127,7 @@ extension SourceParser {
         var name = TermName("")
         if hasName {
             guard let name_ = try parseTermNameEagerly(stoppingAt: stoppingAt) else {
-                throw ParseError(description: "expected resource name", location: currentLocation)
+                throw ParseError(.missing(.resourceName), at: currentLocation)
             }
             name = name_
         }
@@ -147,7 +144,7 @@ extension SourceParser {
         }
         let endTag = sequenceEndTags.last!
         guard tryEating(endTag) else {
-            throw ParseError(description: "expected ‘\(endTag)’ or line break", location: currentLocation, fixes: [SequencingFix(fixes: [DeletingFix(at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource)), AppendingFix(appending: "\(endTag)", at: currentLocation)]), AppendingFix(appending: "\(endTag)\n", at: currentLocation)])
+            throw ParseError(.missing(.endTagOrLineBreak(endTag: endTag)), at: currentLocation, fixes: [SequencingFix(fixes: [DeletingFix(at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource)), AppendingFix(appending: "\(endTag)", at: currentLocation)]), AppendingFix(appending: "\(endTag)\n", at: currentLocation)])
         }
         return .end
     }
@@ -182,7 +179,7 @@ extension SourceParser {
     
     public func handleRef(_ keyword: TermName) throws -> Expression.Kind? {
         guard let expression = try parsePrimary() else {
-            throw ParseError(description: "expected expression after ‘\(keyword)’", location: currentLocation)
+            throw ParseError(.missing(.expressionAfterKeyword(keyword: keyword)), at: currentLocation)
         }
         return .reference(to: expression)
     }
@@ -195,7 +192,7 @@ extension SourceParser {
     
     public func handleGet(_ keyword: TermName) throws -> Expression.Kind? {
         guard let expression = try self.parsePrimary() else {
-            throw ParseError(description: "expected expression after ‘\(keyword)’", location: self.currentLocation)
+            throw ParseError(.missing(.expressionAfterKeyword(keyword: keyword)), at: currentLocation)
         }
         return .get(expression)
     }
@@ -259,7 +256,7 @@ extension SourceParser {
             guard newline != nil else {
                 let nextNewline = source.firstIndex(where: { $0.isNewline }) ?? source.endIndex
                 let location = SourceLocation(source.startIndex..<nextNewline, source: entireSource)
-                throw ParseError(description: "expected line break after sequenced expression", location: location, fixes: [PrependingFix(prepending: "\n", at: location)])
+                throw ParseError(.missing(.lineBreakAfterSequencedExpression), at: location, fixes: [PrependingFix(prepending: "\n", at: location)])
             }
             
             if stopKeywords.contains(where: { source.hasPrefix($0) }) {
@@ -332,7 +329,7 @@ extension SourceParser {
             let totalExpressionStartIndex = expressionStartIndex
             source.removeLeadingWhitespace()
             guard let rhs = try parsePrimary(lastOperation: operation) else {
-                throw ParseError(description: "expected expression after binary operator", location: currentLocation)
+                throw ParseError(.missing(.expressionAfterBinaryOperator), at: currentLocation)
             }
             
             expressionStartIndex = totalExpressionStartIndex
@@ -369,7 +366,7 @@ extension SourceParser {
         for operation in operations.reversed() {
             eatCommentsAndWhitespace()
             guard let operand = try expression ?? parsePrimary() else {
-                throw ParseError(description: "expected expression after prefix operator", location: currentLocation)
+                throw ParseError(.missing(.expressionAfterPrefixOperator), at: expressionLocation)
             }
             
             expression = Expression(.prefixOperator(operation: operation, operand: operand), at: expressionLocation)
@@ -385,7 +382,7 @@ extension SourceParser {
             
             eatCommentsAndWhitespace()
             guard let operand = try expression ?? parsePrimary() else {
-                throw ParseError(description: "expected expression after prefix operator", location: currentLocation)
+                throw ParseError(.missing(.expressionAfterPostfixOperator), at: expressionLocation)
             }
             
             expression = Expression(.postfixOperator(operation: operation, operand: operand), at: expressionLocation)
@@ -452,7 +449,7 @@ extension SourceParser {
                 let match = tryEating(try! Regex(string: "(.*?)(?<!\\\\)\(endMarker)"), .string, spacing: .right),
                 let string = match.captures[0]
             else {
-                throw ParseError(description: "unable to parse string", location: currentLocation)
+                throw ParseError(.invalidString, at: currentLocation)
             }
             return Expression(.string(string), at: expressionLocation)
         } else if let (beginMarker, endMarker) = eatExpressionGroupingBeginMarker() {
@@ -460,12 +457,12 @@ extension SourceParser {
                 eatCommentsAndWhitespace(eatingNewlines: true)
                 
                 guard let enclosed = try parsePrimary() else {
-                    throw ParseError(description: "expected grouped expression after ‘\(beginMarker)’", location: expressionLocation)
+                    throw ParseError(.missing(.groupedExpressionAfterBeginMarker(beginMarker: beginMarker)), at: expressionLocation)
                 }
                 
                 eatCommentsAndWhitespace(eatingNewlines: true)
                 guard tryEating(endMarker, spacing: .right) else {
-                    throw ParseError(description: "expected ‘\(endMarker)’ to end grouped expression", location: expressionLocation)
+                    throw ParseError(.missing(.groupedExpressionEndMarker(endMarker: endMarker)), at: expressionLocation)
                 }
                 
                 return Expression(.parentheses(enclosed), at: expressionLocation)
@@ -479,46 +476,57 @@ extension SourceParser {
                 }
                 if let initialKeyValueSeparator = tryEating(oneOf: keyValueSeparators, spacing: .right) {
                     guard tryEating(endMarker, spacing: .right) else {
-                        throw ParseError(description: "expected key expression before ‘\(initialKeyValueSeparator)’, or ‘\(endMarker)’ after for an empty record", location: currentLocation)
+                        throw ParseError(.missing(.recordKeyBeforeKeyValueSeparatorOrEndMarkerAfter(keyValueSeparator: initialKeyValueSeparator, endMarker: endMarker)), at: currentLocation)
                     }
                     return Expression(.record([]), at: expressionLocation)
                 }
                 
-                let first = try parseListItem(as: "list item or record key")
+                let first = try parseListItem(as: .listItemOrRecordKey)
                 
                 if tryEating(endMarker, spacing: .right) {
                     return Expression(.list([first]), at: expressionLocation)
                 } else if let itemSeparator = tryEating(oneOf: itemSeparators, spacing: .right) {
                     var items: [Expression] = [first]
                     repeat {
-                        items.append(try parseListItem(as: "list item"))
+                        items.append(try parseListItem(as: .listItem))
                     } while tryEating(itemSeparator, spacing: .right)
                     
                     guard tryEating(endMarker, spacing: .right) else {
-                        throw ParseError(description: "expected ‘\(endMarker)’ to end list or ‘\(itemSeparator)’ to separate additional items", location: currentLocation)
+                        throw ParseError(.missing(.listItemSeparatorOrEndMarker(itemSeparator: itemSeparator, endMarker: endMarker)), at: currentLocation)
                     }
                     return Expression(.list(items), at: expressionLocation)
                 } else if let keyValueSeparator = tryEating(oneOf: keyValueSeparators, spacing: .right) {
-                    let first = (key: first, value: try parseListItem(as: "record item"))
+                    let first = (key: first, value: try parseListItem(as: .recordItem))
                     var items: [(key: Expression, value: Expression)] = [first]
                     
                     if let itemSeparator = tryEating(oneOf: itemSeparators, spacing: .right) {
                         repeat {
-                            let key = try parseListItem(as: "record key")
+                            let key = try parseListItem(as: .recordKey)
                             guard tryEating(keyValueSeparator, spacing: .right) else {
-                                throw ParseError(description: "expected ‘\(keyValueSeparator)’ after key in record", location: currentLocation)
+                                throw ParseError(.missing(.recordKeyValueSeparatorAfterKey(keyValueSeparator: keyValueSeparator)), at: currentLocation)
                             }
-                            let value = try parseListItem(as: "record item")
+                            let value = try parseListItem(as: .recordItem)
                             items.append((key: key, value: value))
                         } while tryEating(itemSeparator, spacing: .right)
                     }
                     
                     guard tryEating(endMarker, spacing: .right) else {
-                        throw ParseError(description: "expected ‘\(endMarker)’ to end record or ‘\(itemSeparators.first!)’ to separate additional items", location: currentLocation)
+                        throw ParseError(.missing(
+                            .recordItemSeparatorOrEndMarker(
+                                itemSeparator: itemSeparators.first!,
+                                endMarker: endMarker
+                            )
+                        ), at: currentLocation)
                     }
                     return Expression(.record(items), at: expressionLocation)
                 } else {
-                    throw ParseError(description: "expected ‘\(endMarker)’ to end list, ‘\(itemSeparators.first!)’ to separate additional items or ‘\(keyValueSeparators.first!)’ to make a record", location: currentLocation)
+                    throw ParseError(.missing(
+                        .listAndRecordItemSeparatorOrKeyValueSeparatorOrEndMarker(
+                            itemSeparator: itemSeparators.first!,
+                            keyValueSeparator: keyValueSeparators.first!,
+                            endMarker: endMarker
+                        )
+                    ), at: currentLocation)
                 }
             }
         } else if let (_, endMarker, itemSeparators) = eatListBeginMarker() {
@@ -529,22 +537,22 @@ extension SourceParser {
                     return Expression(.list([]), at: expressionLocation)
                 }
                 
-                let first = try parseListItem(as: "list item")
+                let first = try parseListItem(as: .listItem)
                 
                 if tryEating(endMarker, spacing: .right) {
                     return Expression(.list([first]), at: expressionLocation)
                 } else if let itemSeparator = tryEating(oneOf: itemSeparators, spacing: .right) {
                     var items: [Expression] = [first]
                     repeat {
-                        items.append(try parseListItem(as: "list item"))
+                        items.append(try parseListItem(as: .listItem))
                     } while tryEating(itemSeparator, spacing: .right)
                     
                     guard tryEating(endMarker, spacing: .right) else {
-                        throw ParseError(description: "expected ‘\(endMarker)’ to end list or ‘\(itemSeparator)’ to separate additional items", location: currentLocation)
+                        throw ParseError(.missing(.listItemSeparatorOrEndMarker(itemSeparator: itemSeparator, endMarker: endMarker)), at: currentLocation)
                     }
                     return Expression(.list(items), at: expressionLocation)
                 } else {
-                    throw ParseError(description: "expected ‘\(endMarker)’ to end list or ‘\(itemSeparators.first!)’ to separate additional items", location: currentLocation)
+                    throw ParseError(.missing(.listItemSeparatorOrEndMarker(itemSeparator: itemSeparators.first!, endMarker: endMarker)), at: currentLocation)
                 }
             }
         } else if let (_, endMarker, itemSeparators, keyValueSeparators) = eatRecordBeginMarker() {
@@ -556,31 +564,36 @@ extension SourceParser {
                 }
                 if let initialKeyValueSeparator = tryEating(oneOf: keyValueSeparators, spacing: .right) {
                     guard tryEating(endMarker, spacing: .right) else {
-                        throw ParseError(description: "expected key expression before ‘\(initialKeyValueSeparator)’, or ‘\(endMarker)’ after for an empty record", location: currentLocation)
+                        throw ParseError(.missing(
+                            .recordKeyBeforeKeyValueSeparatorOrEndMarkerAfter(
+                                keyValueSeparator: initialKeyValueSeparator,
+                                endMarker: endMarker
+                            )
+                        ), at: currentLocation)
                     }
                     return Expression(.record([]), at: expressionLocation)
                 }
                 
-                let firstKey = try parseListItem(as: "record key")
+                let firstKey = try parseListItem(as: .recordKey)
                 guard let keyValueSeparator = tryEating(oneOf: keyValueSeparators, spacing: .right) else {
-                    throw ParseError(description: "expected ‘\(keyValueSeparators.first!)’ after key in record", location: currentLocation)
+                    throw ParseError(.missing(.recordKeyValueSeparatorAfterKey(keyValueSeparator: keyValueSeparators.first!)), at: currentLocation)
                 }
-                let first = (key: firstKey, value: try parseListItem(as: "record item"))
+                let first = (key: firstKey, value: try parseListItem(as: .recordItem))
                 
                 var items: [(key: Expression, value: Expression)] = [first]
                 if let itemSeparator = tryEating(oneOf: itemSeparators, spacing: .right) {
                     repeat {
-                        let key = try parseListItem(as: "record key")
+                        let key = try parseListItem(as: .recordKey)
                         guard tryEating(keyValueSeparator, spacing: .right) else {
-                            throw ParseError(description: "expected ‘\(keyValueSeparator)’ after key in record", location: currentLocation)
+                            throw AdHocParseError("expected ‘\(keyValueSeparator)’ after key in record", at: currentLocation)
                         }
-                        let value = try parseListItem(as: "record item")
+                        let value = try parseListItem(as: .recordItem)
                         items.append((key: key, value: value))
                     } while tryEating(itemSeparator, spacing: .right)
                 }
                 
                 guard tryEating(endMarker, spacing: .right) else {
-                    throw ParseError(description: "expected ‘\(endMarker)’ to end record or ‘\(itemSeparators.first!)’ to separate additional items", location: currentLocation)
+                    throw AdHocParseError("expected ‘\(endMarker)’ to end record or ‘\(itemSeparators.first!)’ to separate additional items", at: currentLocation)
                 }
                 return Expression(.record(items), at: expressionLocation)
             }
@@ -623,7 +636,7 @@ extension SourceParser {
                             let match = tryEating(Regex("^\\d*(?:\\.\\d++(?:[ep][-+]?\\d+)?)?", options: .ignoreCase), .number),
                             let value = Double(match.matchedString)
                         else {
-                            throw ParseError(description: "unable to parse number", location: expressionLocation)
+                            throw AdHocParseError("unable to parse number", at: expressionLocation)
                         }
                         return Expression(.double(value), at: expressionLocation)
                     }
@@ -631,7 +644,7 @@ extension SourceParser {
                 }
             } else {
                 os_log("Undefined term source: %@", log: log, type: .debug, String(source))
-                throw ParseError(description: "undefined term; perhaps you made a typo?", location: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource))
+                throw AdHocParseError("undefined term; perhaps you made a typo?", at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource))
             }
         }
     }
@@ -687,7 +700,7 @@ extension SourceParser {
              .pluralClass(let typeTerm as Bushel.ClassTerm):
             return typeTerm
         default:
-            throw ParseError(description: "expected type name", location: currentLocation)
+            throw AdHocParseError("expected type name", at: currentLocation)
         }
         
     }
@@ -723,7 +736,7 @@ extension SourceParser {
                     return TermName(wordsWithoutPipes)
                 }
             }
-            throw ParseError(description: "mismatched ‘|’", location: SourceLocation(termNameStartIndex..<source.startIndex, source: entireSource))
+            throw AdHocParseError("mismatched ‘|’", at: SourceLocation(termNameStartIndex..<source.startIndex, source: entireSource))
         } else {
             termNameStartIndex = startIndex
             return TermName(firstWord)
@@ -754,11 +767,11 @@ extension SourceParser {
         }
     }
     
-    private func parseListItem(as location: String) throws -> Expression {
+    private func parseListItem(as element: ParseError.Error.SourceElement) throws -> Expression {
         eatCommentsAndWhitespace(eatingNewlines: true)
         
         guard let item = try parsePrimary() else {
-            throw ParseError(description: "expected \(location)", location: currentLocation)
+            throw ParseError(.missing(element), at: currentLocation)
         }
         
         eatCommentsAndWhitespace(eatingNewlines: true)
@@ -1041,7 +1054,7 @@ extension SourceParser {
                         break noTerminology
                     }
                     guard let bundle = Bundle(applicationName: name) else {
-                        throw ParseError(description: "no application found with name ‘\(name)’", location: expression.location)
+                        throw AdHocParseError("no application found with name ‘\(name)’", at: expression.location)
                     }
                     appBundle = bundle
                 case .id(let dataExpression):
@@ -1049,7 +1062,7 @@ extension SourceParser {
                         break noTerminology
                     }
                     guard let bundle = Bundle(applicationBundleIdentifier: bundleID) else {
-                        throw ParseError(description: "no application found for bundle identifier ‘\(bundleID)’", location: expression.location)
+                        throw AdHocParseError("no application found for bundle identifier ‘\(bundleID)’", at: expression.location)
                     }
                     appBundle = bundle
                 default:
@@ -1066,10 +1079,10 @@ extension SourceParser {
             default:
                 break noTerminology
             }
-        } catch let error as ParseError {
+        } catch let error as ParseErrorProtocol {
             throw error
         } catch {
-            throw ParseError(description: "an error occurred while retrieving terminology: \(error)", location: expression.location)
+            throw ParseError(.terminologyImportFailure(error: error), at: expression.location)
         }
         
         return try parse()
@@ -1178,18 +1191,18 @@ extension SourceParser {
                 eatCommentsAndWhitespace()
                 
                 guard let kind = eatTermTypeName() else {
-                    throw ParseError(description: "invalid raw term type", location: currentLocation)
+                    throw ParseError(.invalidTermType, at: currentLocation)
                 }
                 
                 eatCommentsAndWhitespace()
                 
                 guard let closeBracketRange = source.range(of: "»") else {
-                    throw ParseError(description: "expected term UID followed by ‘»’", location: currentLocation)
+                    throw ParseError(.missing(.termUIDAndRawFormEndMarker), at: currentLocation)
                 }
                 let uidString = source[..<closeBracketRange.lowerBound]
                 source = source[closeBracketRange.upperBound...]
                 guard let uid = TermUID(normalized: String(uidString)) else {
-                    throw ParseError(description: "expected term UID", location: currentLocation)
+                    throw ParseError(.missing(.termUID), at: currentLocation)
                 }
                 
                 var maybeTerm = lexicon.term(forUID: TypedTermUID(kind, uid))
@@ -1197,13 +1210,13 @@ extension SourceParser {
                     let termType = kind.termType
                     maybeTerm = termType.init(uid, name: TermName(""))
                     guard maybeTerm != nil else {
-                        throw ParseError(description: "this term is undefined and cannot be ad-hoc constructed", location: currentLocation)
+                        throw ParseError(.rawFormTermNotConstructible, at: currentLocation)
                     }
                     lexicon.pool.add(maybeTerm!)
                 }
                 
                 guard let term = maybeTerm as? Terminology.Term else {
-                    throw ParseError(description: "wrong type of term for context", location: currentLocation)
+                    throw ParseError(.wrongTermTypeForContext, at: currentLocation)
                 }
                 
                 addElement(from: startIndex, styling: styling(for: term), spacing: .leftRight)
@@ -1350,28 +1363,6 @@ extension TypedTermUID.Kind {
         case .resource:
             return ResourceTerm.self
         }
-    }
-    
-}
-
-public struct ParseError: Error {
-    
-    public let description: String
-    public var location: SourceLocation
-    public let fixes: [SourceFix]
-    
-    public init(description: String, location: SourceLocation, fixes: [SourceFix] = []) {
-        self.description = description
-        self.location = location
-        self.fixes = fixes
-    }
-    
-}
-
-extension ParseError: CodableLocalizedError {
-    
-    public var errorDescription: String? {
-        description
     }
     
 }

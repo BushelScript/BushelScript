@@ -113,6 +113,8 @@
 		3CC224982391E08800448D25 /* TermUIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224972391E08800448D25 /* TermUIDs.swift */; };
 		3CC774812414270E00EC1E3B /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC774802414270E00EC1E3B /* Formatting.swift */; };
 		3CCA1C7E235D0C010037058C /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCA1C7B235D0C010037058C /* Logging.swift */; };
+		3CCB8A75244B91C7003EBCD2 /* EnglishMessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCB8A74244B91C7003EBCD2 /* EnglishMessageFormatter.swift */; };
+		3CCB8A7A244B990F003EBCD2 /* ParseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCB8A79244B990F003EBCD2 /* ParseError.swift */; };
 		3CCD8AB822CC45040049C74F /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
 		3CCD8ABD22CC45040049C74F /* BushelRTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8ABC22CC45040049C74F /* BushelRTTests.swift */; };
 		3CCD8ABF22CC45040049C74F /* BushelRT.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCD8AB122CC45040049C74F /* BushelRT.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -401,6 +403,8 @@
 		3CC224A02391FA2A00448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC774802414270E00EC1E3B /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		3CCA1C7B235D0C010037058C /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		3CCB8A74244B91C7003EBCD2 /* EnglishMessageFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnglishMessageFormatter.swift; sourceTree = "<group>"; };
+		3CCB8A79244B990F003EBCD2 /* ParseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseError.swift; sourceTree = "<group>"; };
 		3CCD8AAF22CC45040049C74F /* BushelRT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BushelRT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CCD8AB122CC45040049C74F /* BushelRT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BushelRT.h; sourceTree = "<group>"; };
 		3CCD8AB222CC45040049C74F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -653,7 +657,7 @@
 			children = (
 				3CC224A12391FB4A00448D25 /* Language Modules */,
 				3CD8397B23DD2419000F2516 /* Translations */,
-				3CCE9EAD2325A9EA00198564 /* Auto-fixes */,
+				3CCE9EAD2325A9EA00198564 /* Errors */,
 				3CC224A22391FC7F00448D25 /* Utilities */,
 				3CC224A42391FCB500448D25 /* Config */,
 				3C6B757D2305AF3F0006C354 /* BushelLanguageTests */,
@@ -677,6 +681,7 @@
 			children = (
 				3C08E14E230647B900CBA90E /* EntryPoint.swift */,
 				3C6B75B52305B5B80006C354 /* EnglishParser.swift */,
+				3CCB8A74244B91C7003EBCD2 /* EnglishMessageFormatter.swift */,
 				3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */,
 				3CD8398823DD3651000F2516 /* Translations */,
 				3C6B759B2305B5990006C354 /* Info.plist */,
@@ -974,12 +979,13 @@
 			path = Ask;
 			sourceTree = "<group>";
 		};
-		3CCE9EAD2325A9EA00198564 /* Auto-fixes */ = {
+		3CCE9EAD2325A9EA00198564 /* Errors */ = {
 			isa = PBXGroup;
 			children = (
+				3CCB8A79244B990F003EBCD2 /* ParseError.swift */,
 				3CCE9EAB2325A9E200198564 /* SourceFix.swift */,
 			);
-			path = "Auto-fixes";
+			path = Errors;
 			sourceTree = "<group>";
 		};
 		3CD8397B23DD2419000F2516 /* Translations */ = {
@@ -1539,6 +1545,7 @@
 				3C6B75CF2305F95A0006C354 /* LanguageModule.swift in Sources */,
 				3CD8397D23DD2454000F2516 /* Translation.swift in Sources */,
 				3CCE9EAC2325A9E200198564 /* SourceFix.swift in Sources */,
+				3CCB8A7A244B990F003EBCD2 /* ParseError.swift in Sources */,
 				3C6B75922305B2C90006C354 /* Logging.swift in Sources */,
 				3C6B75C62305D6ED0006C354 /* SourceFormatter.swift in Sources */,
 				3CCE9EA82325907D00198564 /* CodableErrors.swift in Sources */,
@@ -1563,6 +1570,7 @@
 				3C6B75C82305D8EA0006C354 /* EnglishFormatter.swift in Sources */,
 				3C08E14F230647B900CBA90E /* EntryPoint.swift in Sources */,
 				3C6B75B62305B5B80006C354 /* EnglishParser.swift in Sources */,
+				3CCB8A75244B91C7003EBCD2 /* EnglishMessageFormatter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

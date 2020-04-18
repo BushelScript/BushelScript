@@ -69,7 +69,7 @@ extension ToolInvocation {
         do {
             let program = try parser(&state, for: language).parse(source: source)
             print(state.rt.run(program))
-        } catch let error as ParseError {
+        } catch let error as ParseErrorProtocol {
             print(error: error, in: source, fileName: fileName)
         }
     }
@@ -126,12 +126,12 @@ extension ToolInvocation {
     
 }
 
-private func print(error: ParseError, in source: String, fileName: String) {
+private func print(error: ParseErrorProtocol, in source: String, fileName: String) {
     let location = error.location
 
     let lines = location.lines(in: source).colloquialStringRepresentation
     let columns = location.columns(in: source).colloquialStringRepresentation
-    print("error in \(fileName):\(lines):\(columns): \(error.description)")
+    print("error in \(fileName):\(lines):\(columns): \(error)") // FIXME: format the error
     
     printLocationSnippet(for: location, in: source, indentation: 4, withMarker: true)
     

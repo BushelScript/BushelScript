@@ -1,11 +1,27 @@
-import Foundation
+import Bushel
 
-/// Planned but currently unused. Intended to format error messages according
-/// to the represented human language. This could be done with strings files instead…
+/// Formats error messages.
 public protocol MessageFormatter {
     
-    func format(error: ParseError) -> String
+    func message(for error: ParseError) -> String
     
     init()
+    
+}
+
+// MARK: Consumer interface
+extension MessageFormatter {
+    
+    public func format(error: ParseErrorProtocol) -> ParseErrorProtocol {
+        if let error = error as? ParseError {
+            return format(error: error)
+        } else {
+            return error
+        }
+    }
+    
+    public func format(error: ParseError) -> FormattedParseError {
+        FormattedParseError(error, description: message(for: error))
+    }
     
 }

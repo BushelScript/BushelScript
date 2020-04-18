@@ -12,10 +12,14 @@ public class LanguageModule {
     private let types: Types
     
     private typealias Types = (
+        messageFormatter: MessageFormatter.Type,
         parser: SourceParser.Type,
         formatter: SourceFormatter.Type
     )
     
+    public func messageFormatter() -> MessageFormatter {
+        types.messageFormatter.init()
+    }
     public func parser() -> SourceParser {
         types.parser.init(translations: translations)
     }
@@ -62,15 +66,16 @@ public class LanguageModule {
         
         let moduleTypes = entryPoint.moduleTypes
         guard
+            let messageFormatter = moduleTypes["MessageFormatter"] as? MessageFormatter.Type,
             let parser = moduleTypes["SourceParser"] as? SourceParser.Type,
-            let formatter = moduleTypes["SourceFormatter"] as? SourceFormatter.Type//,
-//            let messageFormatter = moduleTypes["MessageFormatter"] as? MessageFormatter.Type
+            let formatter = moduleTypes["SourceFormatter"] as? SourceFormatter.Type
         else {
             os_log("Could not load language module \"%{public}@\" (identifier \"%{public}@\"): moduleTypes did not return all required types", log: log, type: .info, name, identifier)
             return nil
         }
         
         self.types = (
+            messageFormatter: messageFormatter,
             parser: parser,
             formatter: formatter
         )

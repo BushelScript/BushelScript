@@ -7,7 +7,8 @@ public class BushelScriptEnglishEntryPoint: NSObject, LanguageModuleEntryPoint {
     @objc public static var moduleTypes: [String : Any] {
         return [
             "SourceParser": EnglishParser.self,
-            "SourceFormatter": EnglishFormatter.self
+            "SourceFormatter": EnglishFormatter.self,
+            "MessageFormatter": EnglishMessageFormatter.self
         ]
     }
     
