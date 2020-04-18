@@ -157,18 +157,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("last"): handleQuantifier(.last),
         TermName("back"): handleQuantifier(.last),
         TermName("some"): handleQuantifier(.random),
-        TermName("ref"): {
-            guard let expression = try self.parsePrimary() else {
-                throw ParseError(description: "expected expression after ‘ref’", location: self.currentLocation)
-            }
-            return .reference(to: expression)
-        },
-        TermName("get"): {
-            guard let sourceExpression = try self.parsePrimary() else {
-                throw ParseError(description: "expected source-expression after ‘get’", location: self.currentLocation)
-            }
-            return .get(sourceExpression)
-        },
+        TermName("ref"): handleRef(TermName("ref")),
+        TermName("get"): handleGet(TermName("get")),
         TermName("set"): handleSet,
         TermName("null"): { .null }
     ]
@@ -282,23 +272,23 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return .if_(condition: condition, then: try parseThen(), else: try parseElse())
     }
     
-    private func handleRepeat(_ endTag: TermName) -> () throws -> Expression.Kind? {
-        {
-            try self.handleRepeat(endTag)
+    private func handleRepeat(_ keyword: TermName) -> () throws -> Expression.Kind? {
+        { [weak self] in
+            try self?.handleRepeat(keyword)
         }
     }
     
-    private func handleRepeat(_ endTag: TermName) throws -> Expression.Kind? {
+    private func handleRepeat(_ keyword: TermName) throws -> Expression.Kind? {
         func parseRepeatBlock() throws -> Expression {
             guard tryEating(prefix: "\n") else {
                 throw ParseError(description: "expected line break to begin repeat block", location: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
             }
-            return try parseSequence(endTag)
+            return try parseSequence(keyword)
         }
         
         if tryEating(prefix: "while") {
             guard let condition = try parsePrimary() else {
-                throw ParseError(description: "expected condition expression after ‘\(endTag) while’", location: currentLocation)
+                throw ParseError(description: "expected condition expression after ‘\(keyword) while’", location: currentLocation)
             }
             
             return .repeatWhile(condition: condition, repeating: try parseRepeatBlock())

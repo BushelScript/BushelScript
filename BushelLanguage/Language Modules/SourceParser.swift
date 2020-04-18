@@ -698,6 +698,32 @@ public extension SourceParser {
         .it
     }
     
+    func handleRef(_ keyword: TermName) -> () throws -> Expression.Kind? {
+        { [weak self] in
+            try self?.handleRef(keyword)
+        }
+    }
+    
+    func handleRef(_ keyword: TermName) throws -> Expression.Kind? {
+        guard let expression = try parsePrimary() else {
+            throw ParseError(description: "expected expression after ‘\(keyword)’", location: currentLocation)
+        }
+        return .reference(to: expression)
+    }
+    
+    func handleGet(_ keyword: TermName) -> () throws -> Expression.Kind? {
+        { [weak self] in
+            try self?.handleGet(keyword)
+        }
+    }
+    
+    func handleGet(_ keyword: TermName) throws -> Expression.Kind? {
+        guard let expression = try self.parsePrimary() else {
+            throw ParseError(description: "expected expression after ‘\(keyword)’", location: self.currentLocation)
+        }
+        return .get(expression)
+    }
+    
     func parseVariableTerm(stoppingAt: [String] = []) throws -> VariableTerm? {
         guard
             let termName = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .variable),
