@@ -43,10 +43,15 @@ public class LanguageModule {
         self.name = name
         
         guard (protocolMajorVersion as AnyObject).intValue == 0 else {
-            os_log("Could not load language module \"%{public}@\" (identifier \"%{public}@\"): the module's declared protocol version is incompatible", log: log, type: .info, name, identifier)
+            os_log("Could not load language module \"%{public}@\" (identifier \"%{public}@\"): the module's declared protocol major version is incompatible", log: log, type: .info, name, identifier)
             return nil
         }
-        _ = protocolMinorVersion // To be used in the future to e.g. add new non-breaking APIs
+        // In v1.0 and beyond, this should *not* fail, but for now we consider
+        // every minor version to be ABI-breaking
+        guard (protocolMinorVersion as AnyObject).intValue == 2 else {
+            os_log("Could not load language module \"%{public}@\" (identifier \"%{public}@\"): the module's declared protocol minor version is incompatible", log: log, type: .info, name, identifier)
+            return nil
+        }
         
         guard
             let principalClassName = infoDictionary["NSPrincipalClass"] as? String,
