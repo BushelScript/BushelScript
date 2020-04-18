@@ -5,28 +5,6 @@ import Regex
 
 private let log = OSLog(subsystem: logSubsystem, category: "Source parser")
 
-public struct ParseError: Error {
-    
-    public let description: String
-    public var location: SourceLocation
-    public let fixes: [SourceFix]
-    
-    public init(description: String, location: SourceLocation, fixes: [SourceFix] = []) {
-        self.description = description
-        self.location = location
-        self.fixes = fixes
-    }
-    
-}
-
-extension ParseError: CodableLocalizedError {
-    
-    public var errorDescription: String? {
-        description
-    }
-    
-}
-
 public typealias KeywordHandler = () throws -> Expression.Kind?
 public typealias ResourceTypeHandler = (_ name: TermName) throws -> ResourceTerm
 
@@ -71,16 +49,17 @@ public protocol SourceParser: AnyObject {
     
 }
 
-public extension SourceParser {
+// MARK: Consumer interface
+extension SourceParser {
     
-    init(translations: [Translation]) {
+    public init(translations: [Translation]) {
         self.init()
         for translation in translations {
             lexicon.add(translation.makeTerms(under: lexicon.pool))
         }
     }
     
-    func parse(source: String) throws -> Program {
+    public func parse(source: String) throws -> Program {
         signpostBegin()
         defer { signpostEnd() }
         
@@ -108,86 +87,7 @@ public extension SourceParser {
         }
     }
     
-    func eatCommentsAndWhitespace(eatingNewlines: Bool = false, isSignificant: Bool = false) {
-        func eatLineComment() -> Bool {
-            guard eatLineCommentMarker() else {
-                return false
-            }
-            source.removeFirst(while: { !$0.isNewline })
-            return true
-        }
-        func eatBlockComment() -> Bool {
-            func awaitEndMarker() {
-                while !eatBlockCommentEndMarker(), !source.isEmpty {
-                    if eatBlockCommentBeginMarker() {
-                        // Handle nested comments au façon Swift
-                        /* e.g., /* must end twice */ */
-                        awaitEndMarker()
-                    }
-                    if !source.isEmpty {
-                        source.removeFirst()
-                    }
-                }
-            }
-            if eatBlockCommentBeginMarker() {
-                awaitEndMarker()
-                return true
-            } else {
-                return false
-            }
-        }
-        
-        func addAsSourceElement(from startIndex: String.Index) {
-            elements.insert(SourceElement(Terminal(String(entireSource[startIndex..<currentIndex]), at: location(from: startIndex), styling: .comment)))
-        }
-        
-        withCurrentIndex { startIndex in
-            source.removeLeadingWhitespace(removingNewlines: eatingNewlines)
-            
-            if isSignificant, currentIndex != startIndex {
-                addAsSourceElement(from: startIndex)
-            }
-        }
-            
-        while
-            withCurrentIndex(parse: { startIndex in
-                guard eatBlockComment() || eatLineComment() else {
-                    return false
-                }
-                addAsSourceElement(from: startIndex)
-                
-                withCurrentIndex { startIndex in
-                    source.removeLeadingWhitespace(removingNewlines: eatingNewlines)
-                    if isSignificant {
-                        addAsSourceElement(from: startIndex)
-                    }
-                }
-                return true
-            })
-        {
-        }
-    }
-    
-    private func addElement(from startIndex: String.Index, styling: Styling, spacing: Spacing) {
-        guard startIndex != currentIndex else {
-            return
-        }
-        
-        let slice = String(entireSource[startIndex..<currentIndex])
-        let loc = location(from: startIndex)
-        elements.insert(SourceElement(Terminal(slice, at: loc, spacing: spacing, styling: styling)))
-    }
-    
-    func addingElement<Result>(_ styling: Styling = .keyword, spacing: Spacing = .leftRight, parse: () throws -> Result) rethrows -> Result {
-        try withCurrentIndex { startIndex in
-            defer {
-                addElement(from: startIndex, styling: styling, spacing: spacing)
-            }
-            return try parse()
-        }
-    }
-    
-    func parseDocument() throws -> Expression {
+    private func parseDocument() throws -> Expression {
         let sequence = try parseSequence(TermName(""))
         
         eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
@@ -195,7 +95,117 @@ public extension SourceParser {
         return sequence
     }
     
-    func parseSequence(_ endTag: TermName, stoppingAt stopKeywords: [String] = []) throws -> Expression {
+}
+
+// MARK: Off-the-shelf keyword handlers
+extension SourceParser {
+    
+    public func handleUse() throws -> Expression.Kind? {
+        eatCommentsAndWhitespace()
+        
+        let typeNamesLongestFirst = resourceTypes.keys
+            .sorted(by: { lhs, rhs in lhs.normalized.caseInsensitiveCompare(rhs.normalized) == .orderedAscending })
+            .reversed()
+        
+        guard let typeName = typeNamesLongestFirst.first(where: { tryEating($0) }) else {
+            let formattedTypeNames =
+                typeNamesLongestFirst
+                    .reversed()
+                    .map { $0.normalized }
+                    .joined(separator: ", ")
+            
+            throw ParseError(description: "invalid resource type; valid types are: \(formattedTypeNames)", location: SourceLocation(currentIndex..<source.endIndex, source: entireSource))
+        }
+        
+        let (hasName, stoppingAt, handler) = resourceTypes[typeName]!
+        
+        eatCommentsAndWhitespace()
+        
+        guard !source.hasPrefix("\"") else {
+            throw ParseError(description: "‘use’ binds a resource term; remove the quotation mark(s)", location: currentLocation)
+        }
+        
+        eatCommentsAndWhitespace()
+        
+        var name = TermName("")
+        if hasName {
+            guard let name_ = try parseTermNameEagerly(stoppingAt: stoppingAt) else {
+                throw ParseError(description: "expected resource name", location: currentLocation)
+            }
+            name = name_
+        }
+        
+        eatCommentsAndWhitespace()
+        
+        let resourceTerm = try handler(name)
+        return .use(resource: resourceTerm)
+    }
+    
+    public func handleEnd() throws -> Expression.Kind? {
+        if findExpressionEndKeyword() || source.hasPrefix("\n") || source.isEmpty {
+            return .end
+        }
+        let endTag = sequenceEndTags.last!
+        guard tryEating(endTag) else {
+            throw ParseError(description: "expected ‘\(endTag)’ or line break", location: currentLocation, fixes: [SequencingFix(fixes: [DeletingFix(at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource)), AppendingFix(appending: "\(endTag)", at: currentLocation)]), AppendingFix(appending: "\(endTag)\n", at: currentLocation)])
+        }
+        return .end
+    }
+    
+    public func handleReturn() throws -> Expression.Kind? {
+        eatCommentsAndWhitespace()
+        
+        if source.first?.isNewline ?? true {
+            return .return_(Expression.empty(at: currentLocation))
+        } else {
+            return .return_(try parsePrimary())
+        }
+    }
+    
+    public func handleThat() throws -> Expression.Kind? {
+        .that
+    }
+    
+    public func handleIt() throws -> Expression.Kind? {
+        .it
+    }
+    
+    public func handleNull() throws -> Expression.Kind? {
+        .null
+    }
+    
+    public func handleRef(_ keyword: TermName) -> () throws -> Expression.Kind? {
+        { [weak self] in
+            try self?.handleRef(keyword)
+        }
+    }
+    
+    public func handleRef(_ keyword: TermName) throws -> Expression.Kind? {
+        guard let expression = try parsePrimary() else {
+            throw ParseError(description: "expected expression after ‘\(keyword)’", location: currentLocation)
+        }
+        return .reference(to: expression)
+    }
+    
+    public func handleGet(_ keyword: TermName) -> () throws -> Expression.Kind? {
+        { [weak self] in
+            try self?.handleGet(keyword)
+        }
+    }
+    
+    public func handleGet(_ keyword: TermName) throws -> Expression.Kind? {
+        guard let expression = try self.parsePrimary() else {
+            throw ParseError(description: "expected expression after ‘\(keyword)’", location: self.currentLocation)
+        }
+        return .get(expression)
+    }
+    
+}
+    
+// MARK: Primary and sequence parsing
+extension SourceParser {
+    
+    public func parseSequence(_ endTag: TermName, stoppingAt stopKeywords: [String] = []) throws -> Expression {
         sequenceEndTags.append(endTag)
         defer {
             sequenceEndTags.removeLast()
@@ -265,7 +275,7 @@ public extension SourceParser {
         return result
     }
     
-    func parsePrimary(lastOperation: BinaryOperation? = nil) throws -> Expression? {
+    public func parsePrimary(lastOperation: BinaryOperation? = nil) throws -> Expression? {
         guard var primary = try (parsePrefixOperators() ?? parseUnprocessedPrimary()) else {
             return nil
         }
@@ -626,109 +636,12 @@ public extension SourceParser {
         }
     }
     
-    // MARK: Off-the-shelf keyword handlers
+}
+
+// MARK: Parse helpers
+extension SourceParser {
     
-    func handleUse() throws -> Expression.Kind? {
-        eatCommentsAndWhitespace()
-        
-        let typeNamesLongestFirst = resourceTypes.keys
-            .sorted(by: { lhs, rhs in lhs.normalized.caseInsensitiveCompare(rhs.normalized) == .orderedAscending })
-            .reversed()
-        
-        guard let typeName = typeNamesLongestFirst.first(where: { tryEating($0) }) else {
-            let formattedTypeNames =
-                typeNamesLongestFirst
-                    .reversed()
-                    .map { $0.normalized }
-                    .joined(separator: ", ")
-            
-            throw ParseError(description: "invalid resource type; valid types are: \(formattedTypeNames)", location: SourceLocation(currentIndex..<source.endIndex, source: entireSource))
-        }
-        
-        let (hasName, stoppingAt, handler) = resourceTypes[typeName]!
-        
-        eatCommentsAndWhitespace()
-        
-        guard !source.hasPrefix("\"") else {
-            throw ParseError(description: "‘use’ binds a resource term; remove the quotation mark(s)", location: currentLocation)
-        }
-        
-        eatCommentsAndWhitespace()
-        
-        var name = TermName("")
-        if hasName {
-            guard let name_ = try parseTermNameEagerly(stoppingAt: stoppingAt) else {
-                throw ParseError(description: "expected resource name", location: currentLocation)
-            }
-            name = name_
-        }
-        
-        eatCommentsAndWhitespace()
-        
-        let resourceTerm = try handler(name)
-        return .use(resource: resourceTerm)
-    }
-    
-    func handleEnd() throws -> Expression.Kind? {
-        if findExpressionEndKeyword() || source.hasPrefix("\n") || source.isEmpty {
-            return .end
-        }
-        let endTag = sequenceEndTags.last!
-        guard tryEating(endTag) else {
-            throw ParseError(description: "expected ‘\(endTag)’ or line break", location: currentLocation, fixes: [SequencingFix(fixes: [DeletingFix(at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource)), AppendingFix(appending: "\(endTag)", at: currentLocation)]), AppendingFix(appending: "\(endTag)\n", at: currentLocation)])
-        }
-        return .end
-    }
-    
-    func handleReturn() throws -> Expression.Kind? {
-        eatCommentsAndWhitespace()
-        
-        if source.first?.isNewline ?? true {
-            return .return_(Expression.empty(at: currentLocation))
-        } else {
-            return .return_(try parsePrimary())
-        }
-    }
-    
-    func handleThat() throws -> Expression.Kind? {
-        .that
-    }
-    
-    func handleIt() throws -> Expression.Kind? {
-        .it
-    }
-    
-    func handleNull() throws -> Expression.Kind? {
-        .null
-    }
-    
-    func handleRef(_ keyword: TermName) -> () throws -> Expression.Kind? {
-        { [weak self] in
-            try self?.handleRef(keyword)
-        }
-    }
-    
-    func handleRef(_ keyword: TermName) throws -> Expression.Kind? {
-        guard let expression = try parsePrimary() else {
-            throw ParseError(description: "expected expression after ‘\(keyword)’", location: currentLocation)
-        }
-        return .reference(to: expression)
-    }
-    
-    func handleGet(_ keyword: TermName) -> () throws -> Expression.Kind? {
-        { [weak self] in
-            try self?.handleGet(keyword)
-        }
-    }
-    
-    func handleGet(_ keyword: TermName) throws -> Expression.Kind? {
-        guard let expression = try self.parsePrimary() else {
-            throw ParseError(description: "expected expression after ‘\(keyword)’", location: self.currentLocation)
-        }
-        return .get(expression)
-    }
-    
-    func parseVariableTerm(stoppingAt: [String] = []) throws -> VariableTerm? {
+    public func parseVariableTerm(stoppingAt: [String] = []) throws -> VariableTerm? {
         guard
             let termName = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .variable),
             !termName.words.isEmpty
@@ -738,7 +651,7 @@ public extension SourceParser {
         return VariableTerm(lexicon.makeUID(forName: termName), name: termName)
     }
     
-    func parseTermNameEagerly(stoppingAt: [String] = [], styling: Styling = .keyword) throws -> TermName? {
+    public func parseTermNameEagerly(stoppingAt: [String] = [], styling: Styling = .keyword) throws -> TermName? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
         let allWords = TermName.words(in: restOfLine)
@@ -768,7 +681,7 @@ public extension SourceParser {
         return TermName(words)
     }
     
-    func parseTypeTerm() throws -> Bushel.ClassTerm? {
+    public func parseTypeTerm() throws -> Bushel.ClassTerm? {
         switch try eatTerm()?.enumerated {
         case .class_(let typeTerm),
              .pluralClass(let typeTerm as Bushel.ClassTerm):
@@ -779,7 +692,7 @@ public extension SourceParser {
         
     }
     
-    func parseString() throws -> (expression: Expression, value: String)? {
+    public func parseString() throws -> (expression: Expression, value: String)? {
         guard let expression = try parsePrimary() else {
             return nil
         }
@@ -791,7 +704,7 @@ public extension SourceParser {
         }
     }
     
-    func parseTermNameLazily(styling: Styling = .keyword) throws -> TermName? {
+    public func parseTermNameLazily(styling: Styling = .keyword) throws -> TermName? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
         let words = TermName.words(in: restOfLine)
@@ -817,6 +730,21 @@ public extension SourceParser {
         }
     }
     
+    public func parseTermTypeName() -> TypedTermUID.Kind? {
+        addingElement {
+            eatTermTypeName()
+        }
+    }
+    
+    private func eatTermTypeName() -> TypedTermUID.Kind? {
+        guard let kindString = TermName.nextWord(in: source) else {
+            return nil
+        }
+        source.removeLeadingWhitespace()
+        source.removeFirst(kindString.count)
+        return TypedTermUID.Kind(rawValue: String(kindString))
+    }
+    
     private func eatFromSource(_ words: [String], styling: Styling = .keyword) {
         for word in words {
             source.removeLeadingWhitespace()
@@ -837,19 +765,7 @@ public extension SourceParser {
         return item
     }
     
-    func awaiting<Result>(endMarkers: Set<TermName>, perform action: () throws -> Result) rethrows -> Result {
-        awaitingExpressionEndKeywords.append(endMarkers)
-        defer {
-            awaitingExpressionEndKeywords.removeLast()
-        }
-        return try action()
-    }
-    
-    func awaiting<Result>(endMarker: TermName, perform action: () throws -> Result) rethrows -> Result {
-        try awaiting(endMarkers: [endMarker], perform: action)
-    }
-    
-    func parseNewline() -> Expression? {
+    private func parseNewline() -> Expression? {
         guard source.first?.isNewline ?? false else {
             return nil
         }
@@ -865,7 +781,7 @@ public extension SourceParser {
     }
     
     @discardableResult
-    func addIndentation() -> SourceElement {
+    private func addIndentation() -> SourceElement {
         withCurrentIndex { startIndex in
             eatCommentsAndWhitespace()
             
@@ -876,7 +792,7 @@ public extension SourceParser {
         }
     }
     
-    func eatHashbang() -> Hashbang? {
+    private func eatHashbang() -> Hashbang? {
         guard tryEating(prefix: "#!", spacing: .left) else {
             return nil
         }
@@ -889,25 +805,25 @@ public extension SourceParser {
         return Hashbang(String(invocationSource), at: expressionLocation)
     }
     
-    func eatLineCommentMarker() -> Bool {
+    private func eatLineCommentMarker() -> Bool {
         let result = lineCommentMarkers.findTermName(in: source)
         source.removeFirst(result.termString.count)
         return result.termName != nil
     }
     
-    func eatBlockCommentBeginMarker() -> Bool {
+    private func eatBlockCommentBeginMarker() -> Bool {
         let result = blockCommentMarkers.map { $0.begin }.findTermName(in: source)
         source.removeFirst(result.termString.count)
         return result.termName != nil
     }
     
-    func eatBlockCommentEndMarker() -> Bool {
+    private func eatBlockCommentEndMarker() -> Bool {
         let result = blockCommentMarkers.map { $0.end }.findTermName(in: source)
         source.removeFirst(result.termString.count)
         return result.termName != nil
     }
     
-    func eatKeyword() -> TermName? {
+    private func eatKeyword() -> TermName? {
         let result = Array(keywords.keys).findTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -918,14 +834,14 @@ public extension SourceParser {
         return termName
     }
     
-    func findPrefixOperator() -> (termName: TermName, operator: UnaryOperation)? {
+    private func findPrefixOperator() -> (termName: TermName, operator: UnaryOperation)? {
         let result = Array(prefixOperators.keys).findTermName(in: source)
         return result.termName.map { name in
             (termName: name, operator: prefixOperators[name]!)
         }
     }
     
-    func eatPrefixOperator() {
+    private func eatPrefixOperator() {
         let result = Array(prefixOperators.keys).findTermName(in: source)
         guard result.termName != nil else {
             return
@@ -935,14 +851,14 @@ public extension SourceParser {
         }
     }
     
-    func findPostfixOperator() -> (termName: TermName, operator: UnaryOperation)? {
+    private func findPostfixOperator() -> (termName: TermName, operator: UnaryOperation)? {
         let result = Array(postfixOperators.keys).findTermName(in: source)
         return result.termName.map { name in
             (termName: name, operator: postfixOperators[name]!)
         }
     }
     
-    func eatPostfixOperator() {
+    private func eatPostfixOperator() {
         let result = Array(postfixOperators.keys).findTermName(in: source)
         guard result.termName != nil else {
             return
@@ -952,14 +868,14 @@ public extension SourceParser {
         }
     }
     
-    func findBinaryOperator() -> (termName: TermName, operator: BinaryOperation)? {
+    private func findBinaryOperator() -> (termName: TermName, operator: BinaryOperation)? {
         let result = Array(binaryOperators.keys).findTermName(in: source)
         return result.termName.map { name in
             (termName: name, operator: binaryOperators[name]!)
         }
     }
     
-    func eatBinaryOperator() {
+    private func eatBinaryOperator() {
         let result = Array(binaryOperators.keys).findTermName(in: source)
         guard result.termName != nil else {
             return
@@ -969,7 +885,7 @@ public extension SourceParser {
         }
     }
     
-    func eatStringBeginMarker() -> (begin: TermName, end: TermName)? {
+    private func eatStringBeginMarker() -> (begin: TermName, end: TermName)? {
         let result = stringMarkers.map { $0.begin }.findTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -980,7 +896,7 @@ public extension SourceParser {
         return stringMarkers.first { $0.begin == termName }
     }
     
-    func eatExpressionGroupingBeginMarker() -> (begin: TermName, end: TermName)? {
+    private func eatExpressionGroupingBeginMarker() -> (begin: TermName, end: TermName)? {
         let result = expressionGroupingMarkers.map { $0.begin }.findTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -989,7 +905,7 @@ public extension SourceParser {
         return expressionGroupingMarkers.first { $0.begin == termName }
     }
     
-    func eatListBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName])? {
+    private func eatListBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName])? {
         let result = listMarkers.map { $0.begin }.findTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -998,7 +914,7 @@ public extension SourceParser {
         return listMarkers.first { $0.begin == termName }
     }
     
-    func eatRecordBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])? {
+    private func eatRecordBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])? {
         let result = recordMarkers.map { $0.begin }.findTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -1007,7 +923,7 @@ public extension SourceParser {
         return recordMarkers.first { $0.begin == termName }
     }
     
-    func eatListAndRecordBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])? {
+    private func eatListAndRecordBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])? {
         let result = listAndRecordMarkers.map { $0.begin }.findTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -1016,11 +932,19 @@ public extension SourceParser {
         return listAndRecordMarkers.first { $0.begin == termName }
     }
     
-    func eatTerm() throws -> Term? {
-        try eatTerm(terminology: lexicon)
+    private func findExpressionEndKeyword() -> Bool {
+        if case (_, _?)? = awaitingExpressionEndKeywords.last.map({ Array($0) })?.findTermName(in: source) ?? nil {
+            return true
+        }
+        return false
     }
     
-    func tryEating(_ termName: TermName, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
+}
+
+// MARK: Parse primitives
+extension SourceParser {
+    
+    public func tryEating(_ termName: TermName, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
         let rollbackSource = source
         for word in termName.words {
             guard tryEating(prefix: word, styling, spacing: spacing) else {
@@ -1031,11 +955,11 @@ public extension SourceParser {
         return true
     }
     
-    func tryEating(oneOf termNames: [TermName], _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> TermName? {
+    public func tryEating(oneOf termNames: [TermName], _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> TermName? {
         termNames.first { tryEating($0, styling, spacing: spacing) }
     }
     
-    func tryEating(prefix target: String, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
+    public func tryEating(prefix target: String, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
         eatCommentsAndWhitespace()
         
         guard
@@ -1051,7 +975,7 @@ public extension SourceParser {
         return true
     }
     
-    func tryEating(_ regex: Regex, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> MatchResult? {
+    public func tryEating(_ regex: Regex, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> MatchResult? {
         let restOfLine = String(source.prefix { !$0.isNewline })
         guard let match = regex.firstMatch(in: restOfLine) else {
             return nil
@@ -1064,20 +988,25 @@ public extension SourceParser {
         return match
     }
     
-    func findExpressionEndKeyword() -> Bool {
-        if case (_, _?)? = awaitingExpressionEndKeywords.last.map({ Array($0) })?.findTermName(in: source) ?? nil {
-            return true
+    public func awaiting<Result>(endMarkers: Set<TermName>, perform action: () throws -> Result) rethrows -> Result {
+        awaitingExpressionEndKeywords.append(endMarkers)
+        defer {
+            awaitingExpressionEndKeywords.removeLast()
         }
-        return false
+        return try action()
     }
     
-    func withScope(parse: () throws -> Expression) rethrows -> Expression {
+    public func awaiting<Result>(endMarker: TermName, perform action: () throws -> Result) rethrows -> Result {
+        try awaiting(endMarkers: [endMarker], perform: action)
+    }
+    
+    public func withScope(parse: () throws -> Expression) rethrows -> Expression {
         lexicon.pushUnnamedDictionary()
         defer { lexicon.pop() }
         return Expression(.scoped(try parse()), at: expressionLocation)
     }
     
-    func withTerminology<Result>(of term: Term, parse: () throws -> Result) throws -> Result {
+    public func withTerminology<Result>(of term: Term, parse: () throws -> Result) throws -> Result {
         guard let term = term as? TermDictionaryContainer else {
             return try parse()
         }
@@ -1090,7 +1019,7 @@ public extension SourceParser {
         return try parse()
     }
     
-    func withTerminology<Result>(of expression: Expression, parse: () throws -> Result) throws -> Result {
+    public func withTerminology<Result>(of expression: Expression, parse: () throws -> Result) throws -> Result {
         var terminologyPushed = false
         defer {
             if terminologyPushed {
@@ -1146,19 +1075,19 @@ public extension SourceParser {
         return try parse()
     }
     
-    var currentLocation: SourceLocation {
+    public var currentLocation: SourceLocation {
         SourceLocation(at: currentIndex, source: entireSource)
     }
     
-    var currentIndex: String.Index {
+    public var currentIndex: String.Index {
         source.startIndex
     }
     
-    var expressionLocation: SourceLocation {
+    public var expressionLocation: SourceLocation {
         location(from: expressionStartIndex)
     }
     
-    var expressionStartIndex: String.Index {
+    public var expressionStartIndex: String.Index {
         get {
             expressionStartIndices.last ?? entireSource.startIndex
         }
@@ -1167,7 +1096,7 @@ public extension SourceParser {
         }
     }
     
-    var termNameLocation: SourceLocation {
+    public var termNameLocation: SourceLocation {
         location(from: termNameStartIndex)
     }
     
@@ -1179,7 +1108,11 @@ public extension SourceParser {
         SourceLocation(index..<currentIndex, source: entireSource)
     }
     
-    func eatTerm<Terminology: TerminologySource>(terminology: Terminology) throws -> Term? {
+    public func eatTerm() throws -> Term? {
+        try eatTerm(terminology: lexicon)
+    }
+    
+    public func eatTerm<Terminology: TerminologySource>(terminology: Terminology) throws -> Term? {
         func eatDefinedTerm() -> Term? {
             func findTerm<Terminology: TerminologySource>(in dictionary: Terminology) -> (termString: Substring, term: Term)? {
                 eatCommentsAndWhitespace()
@@ -1282,26 +1215,90 @@ public extension SourceParser {
         return try eatDefinedTerm() ?? eatRawFormTerm()
     }
     
-    func parseTermTypeName() -> TypedTermUID.Kind? {
-        addingElement {
-            eatTermTypeName()
+    public func eatCommentsAndWhitespace(eatingNewlines: Bool = false, isSignificant: Bool = false) {
+        func eatLineComment() -> Bool {
+            guard eatLineCommentMarker() else {
+                return false
+            }
+            source.removeFirst(while: { !$0.isNewline })
+            return true
+        }
+        func eatBlockComment() -> Bool {
+            func awaitEndMarker() {
+                while !eatBlockCommentEndMarker(), !source.isEmpty {
+                    if eatBlockCommentBeginMarker() {
+                        // Handle nested comments au façon Swift
+                        /* e.g., /* must end twice */ */
+                        awaitEndMarker()
+                    }
+                    if !source.isEmpty {
+                        source.removeFirst()
+                    }
+                }
+            }
+            if eatBlockCommentBeginMarker() {
+                awaitEndMarker()
+                return true
+            } else {
+                return false
+            }
+        }
+        
+        func addAsSourceElement(from startIndex: String.Index) {
+            elements.insert(SourceElement(Terminal(String(entireSource[startIndex..<currentIndex]), at: location(from: startIndex), styling: .comment)))
+        }
+        
+        withCurrentIndex { startIndex in
+            source.removeLeadingWhitespace(removingNewlines: eatingNewlines)
+            
+            if isSignificant, currentIndex != startIndex {
+                addAsSourceElement(from: startIndex)
+            }
+        }
+            
+        while
+            withCurrentIndex(parse: { startIndex in
+                guard eatBlockComment() || eatLineComment() else {
+                    return false
+                }
+                addAsSourceElement(from: startIndex)
+                
+                withCurrentIndex { startIndex in
+                    source.removeLeadingWhitespace(removingNewlines: eatingNewlines)
+                    if isSignificant {
+                        addAsSourceElement(from: startIndex)
+                    }
+                }
+                return true
+            })
+        {
         }
     }
     
-    func eatTermTypeName() -> TypedTermUID.Kind? {
-        guard let kindString = TermName.nextWord(in: source) else {
-            return nil
+    public func addingElement<Result>(_ styling: Styling = .keyword, spacing: Spacing = .leftRight, parse: () throws -> Result) rethrows -> Result {
+        try withCurrentIndex { startIndex in
+            defer {
+                addElement(from: startIndex, styling: styling, spacing: spacing)
+            }
+            return try parse()
         }
-        source.removeLeadingWhitespace()
-        source.removeFirst(kindString.count)
-        return TypedTermUID.Kind(rawValue: String(kindString))
+    }
+
+    private func addElement(from startIndex: String.Index, styling: Styling, spacing: Spacing) {
+        guard startIndex != currentIndex else {
+            return
+        }
+        
+        let slice = String(entireSource[startIndex..<currentIndex])
+        let loc = location(from: startIndex)
+        elements.insert(SourceElement(Terminal(slice, at: loc, spacing: spacing, styling: styling)))
     }
     
-    func styling(for term: Term) -> Styling {
+    public func styling(for term: Term) -> Styling {
         styling(for: term.typedUID.kind)
     }
     
-    func styling(for termKind: TypedTermUID.Kind) -> Styling {
+    public func styling(for termKind: TypedTermUID.Kind) -> Styling {
         switch termKind {
         case .dictionary:
             return .dictionary
@@ -1324,17 +1321,17 @@ public extension SourceParser {
     
 }
 
-public extension StringProtocol {
+extension StringProtocol {
     
-    var range: Range<Index> {
+    public var range: Range<Index> {
         return startIndex..<endIndex
     }
     
 }
 
-public extension TypedTermUID.Kind {
+extension TypedTermUID.Kind {
     
-    var termType: Term.Type {
+    public var termType: Term.Type {
         switch self {
         case .constant:
             return EnumeratorTerm.self
@@ -1353,6 +1350,28 @@ public extension TypedTermUID.Kind {
         case .resource:
             return ResourceTerm.self
         }
+    }
+    
+}
+
+public struct ParseError: Error {
+    
+    public let description: String
+    public var location: SourceLocation
+    public let fixes: [SourceFix]
+    
+    public init(description: String, location: SourceLocation, fixes: [SourceFix] = []) {
+        self.description = description
+        self.location = location
+        self.fixes = fixes
+    }
+    
+}
+
+extension ParseError: CodableLocalizedError {
+    
+    public var errorDescription: String? {
+        description
     }
     
 }
