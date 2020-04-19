@@ -4,9 +4,13 @@ set -eo pipefail
 # Set up LLVM in case that hasn't been done yet.
 ./set-up-llvm.sh
 
+function get_project_version {
+	xcodebuild -showBuildSettings -workspace Bushel.xcworkspace -scheme BushelScript\ Editor | grep MARKETING_VERSION | head -1 | tr -d '[:alpha:][:space:]_='
+}
+
 PKG_FILENAME="BushelScript.pkg"
 PKG_IDENTIFIER="com.justcheesy.BushelScript-Installer"
-PKG_VERSION="$(git describe --tags)"
+PKG_VERSION="${RELEASE_VERSION:-$(get_project_version)+git.$(git rev-parse --short HEAD)}"
 
 # The temporary installed products dir.
 # Will be created automatically.
@@ -17,7 +21,8 @@ echo "Building to ${INSTALL_DIR}"
 # Build everything into the installation directory.
 echo 'Installing.'
 function install {
-	xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT="$INSTALL_DIR" # Includes all language modules.
+	# Includes all language modules.
+	xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT="$INSTALL_DIR" MARKETING_VERSION="$PKG_VERSION"
 	if [ $? -ne 0 ]
 	then
 		echo 'xcodebuild install failed; not creating a pkg.'
