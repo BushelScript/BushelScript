@@ -360,28 +360,53 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
-                                        <menuItem title="BushelScript Editor Help" keyEquivalent="?" id="FKE-Sm-Kum">
-                                            <connections>
-                                                <action selector="showHelp:" target="Ady-hI-5gd" id="y7X-2Q-9no"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="PQq-iq-a24"/>
                                         <menuItem title="BushelScript Website" id="PxN-qA-qOM">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="openLink:" target="OXF-AH-Jih" id="baf-HH-2gz"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="BushelScript Quick Tutorial" id="5Yg-6y-ng2">
+                                        <menuItem title="BushelScript on GitHub" id="XbD-VX-JdK">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="openLink:" target="PMs-4m-F4f" id="4QL-o1-yQz"/>
+                                                <action selector="openLink:" target="yiC-i7-bhB" id="Aug-pt-1Nd"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="AppleScript Translation Guide" id="VK3-4a-n3X">
+                                        <menuItem isSeparatorItem="YES" id="EVC-LS-dVp"/>
+                                        <menuItem title="BushelScript Help" id="MLn-hw-wY6">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="openLink:" target="1sS-mL-F5k" id="rr0-H3-tzI"/>
+                                                <action selector="openLink:" target="VwF-vr-fCI" id="reW-8e-Fth"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Quick Tutorial" indentationLevel="1" id="5Yg-6y-ng2">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openLink:" target="557-j8-moW" id="432-1A-O1X"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Language Reference" indentationLevel="1" id="VK3-4a-n3X">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openLink:" target="a43-Xa-bLL" id="dqF-YN-pKT"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Integration" indentationLevel="1" id="ptM-IS-xpj">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openLink:" target="Sse-F2-PFG" id="E7g-pi-PhQ"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Internals" indentationLevel="1" id="Ahr-0G-eij">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openLink:" target="6TS-hB-hOr" id="vjr-ge-Naw"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Join Community Discord Server" id="nMX-WC-3O3">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openLink:" target="02s-cX-nD6" id="imc-0z-f02"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="5me-yQ-FHZ"/>
@@ -406,19 +431,44 @@ DQ
                     </connections>
                 </customObject>
                 <customObject id="sh2-hA-rfQ" customClass="ScriptLanguageMenuDelegate" customModule="BushelScript_Editor" customModuleProvider="target"/>
-                <customObject id="OXF-AH-Jih" userLabel="Website Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
+                <customObject id="OXF-AH-Jih" userLabel="BushelScript Website Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
                     <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io/"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io"/>
                     </userDefinedRuntimeAttributes>
                 </customObject>
-                <customObject id="PMs-4m-F4f" userLabel="Quick Tutorial Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
+                <customObject id="yiC-i7-bhB" userLabel="BushelScript on GitHub Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
                     <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io/quick-tutorial/"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://github.com/BushelScript"/>
                     </userDefinedRuntimeAttributes>
                 </customObject>
-                <customObject id="1sS-mL-F5k" userLabel="AS Translation Guide Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
+                <customObject id="VwF-vr-fCI" userLabel="BushelScript Help Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
                     <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io/applescript-translation/"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io/help/"/>
+                    </userDefinedRuntimeAttributes>
+                </customObject>
+                <customObject id="557-j8-moW" userLabel="Quick Tutorial Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io/help/docs/tutorial/"/>
+                    </userDefinedRuntimeAttributes>
+                </customObject>
+                <customObject id="a43-Xa-bLL" userLabel="Language Reference Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io/help/docs/ref/"/>
+                    </userDefinedRuntimeAttributes>
+                </customObject>
+                <customObject id="Sse-F2-PFG" userLabel="Integration Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io/help/docs/integration/"/>
+                    </userDefinedRuntimeAttributes>
+                </customObject>
+                <customObject id="6TS-hB-hOr" userLabel="Internals Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io/help/docs/internal/"/>
+                    </userDefinedRuntimeAttributes>
+                </customObject>
+                <customObject id="02s-cX-nD6" userLabel="Join Community Discord Server Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://discord.gg/xdyCK9t"/>
                     </userDefinedRuntimeAttributes>
                 </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
