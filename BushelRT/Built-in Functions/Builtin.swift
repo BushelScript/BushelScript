@@ -309,7 +309,8 @@ final class Builtin {
                 return RT_Application(rt, bundle: bundle)
             case .scriptingAdditionByName(_):
                 return RT_Global(rt)
-            case .applescriptAtPath(_, let script):
+            case .applescriptLibraryByName(_, _, let script),
+                 .applescriptAtPath(_, let script):
                 return RT_AppleScript(rt, name: term.name!.normalized, value: script)
             }
         }() as RT_Object))

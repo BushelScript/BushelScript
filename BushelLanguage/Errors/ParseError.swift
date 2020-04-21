@@ -74,6 +74,7 @@ public struct ParseError: ParseErrorProtocol {
             case system(version: String)
             case applicationByName(name: String)
             case applicationByBundleID(bundleID: String)
+            case applescriptLibraryByName(name: String)
             case applescriptAtPath(path: String)
             
         }

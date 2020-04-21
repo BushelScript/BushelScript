@@ -1,5 +1,8 @@
 import Foundation
 import SwiftAutomation
+import os.log
+
+private let log = OSLog(subsystem: logSubsystem, category: "Resource location")
 
 extension Bundle {
     
@@ -49,3 +52,38 @@ extension Bundle {
     }
     
 }
+
+public func findAppleScriptLibrary(named libraryName: String) -> (url: URL, applescript: NSAppleScript)? {
+    signpostBegin()
+    defer { signpostEnd() }
+    
+    for libraryDirURL in scriptLibraryDirectories {
+        let validExtensions = ["applescript", "scpt", "scptd"]
+        let libraryURLs = validExtensions.map { `extension` in
+            libraryDirURL.appendingPathComponent("\(libraryName).\(`extension`)")
+        }
+        
+        for libraryURL in libraryURLs {
+            if let applescript = NSAppleScript(contentsOf: libraryURL, error: nil) {
+                os_log("Found AppleScript library at %@", log: log, type: .debug, libraryURL as NSURL)
+                return (url: libraryURL, applescript: applescript)
+            }
+        }
+    }
+
+    os_log("Failed to find AppleScript library with name '%@'", log: log, type: .debug, libraryName)
+    return nil
+}
+    
+private var scriptLibraryDirectories: [URL] = {
+    let libraryURLs = FileManager.default.urls(for: .libraryDirectory, in: .allDomainsMask)
+    return libraryURLs.flatMap { url in
+        [
+            url
+                .appendingPathComponent("BushelScript", isDirectory: true)
+                .appendingPathComponent("Libraries", isDirectory: true),
+            url
+                .appendingPathComponent("Script Libraries", isDirectory: true)
+        ]
+    }
+}()

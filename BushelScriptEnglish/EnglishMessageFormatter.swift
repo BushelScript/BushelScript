@@ -64,6 +64,8 @@ public final class EnglishMessageFormatter: BushelLanguage.MessageFormatter {
                 return "this script requires the application “\(name)”, which was not found on your system"
             case let .applicationByBundleID(bundleID):
                 return "this script requires an application with identifier “\(bundleID)”, which was not found on your system"
+            case let .applescriptLibraryByName(name):
+                return "this script requires the AppleScript library “\(name)”, which was not found on your system"
             case let .applescriptAtPath(path):
                 return "this script requires an AppleScript script at path “\(path)”, which was not found on your system"
             }

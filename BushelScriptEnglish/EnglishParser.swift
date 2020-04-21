@@ -180,6 +180,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("application id"): (true, [], handleUseApplicationID),
         TermName("app id"): (true, [], handleUseApplicationID),
         
+        TermName("AppleScript library"): (true, [], handleUseAppleScriptLibrary),
+        
         TermName("AppleScript"): (true, ["at"], handleUseAppleScript),
     ]
     
@@ -430,8 +432,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             
             let version = OperatingSystemVersion(majorVersion: majorVersion, minorVersion: minorVersion, patchVersion: patchVersion)
             guard let resolved = Resource.System(version: version) else {
-                let realVersion = ProcessInfo.processInfo.operatingSystemVersionString
-                throw AdHocParseError("this script requires an operating system version of at least \(match.matchedString); your system is running \(realVersion)", at: expressionLocation)
+                throw ParseError(.unmetResourceRequirement(.system(version: match.matchedString)), at: termNameLocation)
             }
             
             system = resolved
@@ -446,7 +447,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleUseApplicationName(name: TermName) throws -> ResourceTerm {
         guard let application = Resource.ApplicationByName(name: name.normalized) else {
-            throw AdHocParseError("this script requires the application “\(name)”, which was not found on your system", at: termNameLocation)
+            throw ParseError(.unmetResourceRequirement(.applicationByName(name: name.normalized)), at: termNameLocation)
         }
         
         let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: application.enumerated())
@@ -459,7 +460,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleUseApplicationID(name: TermName) throws -> ResourceTerm {
         guard let application = Resource.ApplicationByID(id: name.normalized) else {
-            throw AdHocParseError("this script requires an application with identifier “\(name)”, which was not found on your system", at: termNameLocation)
+            throw ParseError(.unmetResourceRequirement(.applicationByBundleID(bundleID: name.normalized)), at: termNameLocation)
         }
         let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: application.enumerated())
         
@@ -469,9 +470,21 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return term
     }
     
+    private func handleUseAppleScriptLibrary(name: TermName) throws -> ResourceTerm {
+        guard let applescript = Resource.AppleScriptLibraryByName(name: name.normalized) else {
+            throw ParseError(.unmetResourceRequirement(.applescriptLibraryByName(name: name.normalized)), at: termNameLocation)
+        }
+        let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: applescript.enumerated())
+        
+        try? term.loadResourceTerminology(under: lexicon.pool)
+        lexicon.add(term)
+        
+        return term
+    }
+    
     private func handleUseAppleScript(name: TermName) throws -> ResourceTerm {
         guard tryEating(prefix: "at") else {
-            throw AdHocParseError("expected ‘at’ (more addressing modes coming soon)", at: currentLocation)
+            throw AdHocParseError("expected ‘at’ followed by path string", at: currentLocation)
         }
         
         let pathStartIndex = currentIndex
@@ -482,7 +495,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         path = (path as NSString).expandingTildeInPath
         
         guard let applescript = Resource.AppleScriptAtPath(path: path) else {
-            throw AdHocParseError("this script requires an AppleScript script at path “\(path)”, which was not found on your system", at: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
+            throw ParseError(.unmetResourceRequirement(.applescriptAtPath(path: path)), at: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
         }
         let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: applescript.enumerated())
         
