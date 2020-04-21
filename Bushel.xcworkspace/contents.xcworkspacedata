@@ -25,6 +25,13 @@
          <FileRef
             location = "group:LICENSING.txt">
          </FileRef>
+         <Group
+            location = "group:Images"
+            name = "Images">
+            <FileRef
+               location = "group:editor-demo.gif">
+            </FileRef>
+         </Group>
       </Group>
       <Group
          location = "group:/Users/ian/Documents/Bushel/Config"
