@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="tIW-kw-HeA">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="tIW-kw-HeA">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -31,7 +31,7 @@
             <objects>
                 <tabViewController tabStyle="toolbar" id="imV-Ii-MB7" customClass="PreferencesViewController" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <tabViewItems>
-                        <tabViewItem image="NSPreferencesGeneral" id="2gf-WD-WkL"/>
+                        <tabViewItem image="EditorPrefs" id="2gf-WD-WkL"/>
                         <tabViewItem identifier="" image="SuggestionsPrefs" id="Eyd-3q-QAg"/>
                         <tabViewItem image="SavingPrefs" id="Rpy-Iy-lAn"/>
                         <tabViewItem identifier="" image="PrivacyPrefs" id="diS-XI-NV8"/>
@@ -95,7 +95,7 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="MJd-ru-GpH">
                                 <rect key="frame" x="134" y="71" width="298" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" title="Makes saved documents executable by passing them as input to the specified program." id="R8c-hI-jjK">
-                                    <font key="font" metaFont="menu" size="11"/>
+                                    <font key="font" metaFont="message" size="11"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -238,7 +238,7 @@
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K3d-xb-cxu">
                                                 <rect key="frame" x="200" y="1" width="153" height="14"/>
                                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Disabled by Privacy settings" id="k9L-rV-Sgr">
-                                                    <font key="font" metaFont="menu" size="11"/>
+                                                    <font key="font" metaFont="message" size="11"/>
                                                     <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
@@ -324,7 +324,7 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="WqC-h4-gBF">
                                 <rect key="frame" x="38" y="20" width="394" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" title="When enabled, press Option-Escape to complete with words that appear previously in the document." id="9nM-aV-Ich">
-                                    <font key="font" metaFont="menu" size="11"/>
+                                    <font key="font" metaFont="message" size="11"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -344,7 +344,7 @@
                                 <rect key="frame" x="188" y="244" width="258" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" selectable="YES" title="Note: not all of these features are implemented as of yet." id="VSm-da-CfP">
-                                    <font key="font" metaFont="menu" size="11"/>
+                                    <font key="font" metaFont="message" size="11"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -373,10 +373,10 @@
             </objects>
             <point key="canvasLocation" x="723" y="180"/>
         </scene>
-        <!--General-->
+        <!--Editor-->
         <scene sceneID="elx-bb-SDp">
             <objects>
-                <viewController title="General" id="Jnz-gE-XA3" customClass="GeneralPrefsVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Editor" id="Jnz-gE-XA3" customClass="GeneralPrefsVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="wh5-5I-Lfb">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="95"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -487,7 +487,7 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dxa-dg-ow9">
                                 <rect key="frame" x="126" y="54" width="306" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" title="These features show you relevant data from applications on your system during editing." id="0Ue-Bm-qUi">
-                                    <font key="font" metaFont="menu" size="11"/>
+                                    <font key="font" metaFont="message" size="11"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -567,8 +567,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="EditorPrefs" width="700" height="601"/>
         <image name="NSFontPanel" width="32" height="32"/>
-        <image name="NSPreferencesGeneral" width="32" height="32"/>
         <image name="PrivacyPrefs" width="600" height="600"/>
         <image name="SavingPrefs" width="600" height="600"/>
         <image name="SuggestionsPrefs" width="580" height="580"/>
