@@ -8,7 +8,7 @@ BushelScript is a next-generation open-source alternative to AppleScript; check 
 
 ## How do I…?
 
-Check out the [help site](https://bushelscript.github.io/help/) for guides, reference material, and a community Discord server where you ask questions.
+Check out the [help site](https://bushelscript.github.io/help/) for guides, reference material, and a community Discord server where you can ask questions.
 
 ## Disclaimer
 
