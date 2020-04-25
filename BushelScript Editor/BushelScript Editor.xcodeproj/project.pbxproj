@@ -52,6 +52,7 @@
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
 		3C907703239F3DD000A01D8D /* KVODelegate in Frameworks */ = {isa = PBXBuildFile; productRef = 3C907702239F3DD000A01D8D /* KVODelegate */; };
+		3CA0F60B2450AB3900EDB1C4 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0F60A2450AB3900EDB1C4 /* AppVersion.swift */; };
 		3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1D0602319A07100DD01A9 /* Defaults.swift */; };
 /* End PBXBuildFile section */
 
@@ -249,6 +250,7 @@
 		3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSADictionaryWindowCustomization.swift; sourceTree = "<group>"; };
 		3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryDocument.swift; sourceTree = "<group>"; };
 		3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = bushelscript.xcodeproj; path = ../bushelscript/bushelscript.xcodeproj; sourceTree = "<group>"; };
+		3CA0F60A2450AB3900EDB1C4 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
 		3CD1D0602319A07100DD01A9 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		3CEF504023529437008603E3 /* SwiftAutomation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEF50422352948E008603E3 /* BushelScript Editor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BushelScript Editor.entitlements"; sourceTree = "<group>"; };
@@ -494,6 +496,7 @@
 				3C0430072314BFC200758339 /* AppDelegate+Swizzling.m */,
 				3C0566AD23135673004CDB1A /* AppDelegate.swift */,
 				3CD1D0602319A07100DD01A9 /* Defaults.swift */,
+				3CA0F60A2450AB3900EDB1C4 /* AppVersion.swift */,
 				3C056716231359C6004CDB1A /* Errors.swift */,
 				3C3C1814231AA70B00553072 /* Logging.swift */,
 			);
@@ -769,6 +772,7 @@
 				3C05672923138143004CDB1A /* SuggestionListVC.swift in Sources */,
 				3C20C0CD234014EC00CBB613 /* ObjectInspectorPanelWC.swift in Sources */,
 				3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */,
+				3CA0F60B2450AB3900EDB1C4 /* AppVersion.swift in Sources */,
 				3C056717231359C6004CDB1A /* Errors.swift in Sources */,
 				3C0566B023135673004CDB1A /* DocumentVC.swift in Sources */,
 				3C2BC9AB23E258E400CB8C20 /* InlineErrorVC.swift in Sources */,

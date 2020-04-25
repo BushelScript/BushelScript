@@ -83,7 +83,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // Don't ruin automated tests
             return
         }
-        if Defaults[.hasBushelGUIHostEventPermission] {
+        if Defaults[.hasBushelGUIHostEventPermission] == .current {
             // Should already have permission
             return
         }
@@ -109,7 +109,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         // Permission was granted
-        Defaults[.hasBushelGUIHostEventPermission] = true
+        Defaults[.hasBushelGUIHostEventPermission] = .current
     }
     
     private func determineGUIHostEventPermission() -> Bool {
