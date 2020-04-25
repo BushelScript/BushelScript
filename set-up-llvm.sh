@@ -12,7 +12,7 @@ else
 	PREVDIR="$(pwd)"
 	
 	cd "$PACKAGES_DIR/checkouts/LLVMSwift"
-	PATH="$(brew --prefix llvm)/bin:$PATH" swift utils/make-pkgconfig.swift
+	PATH="$(brew --prefix llvm@9)/bin:$PATH" swift utils/make-pkgconfig.swift
 	
 	cd "$PREVDIR"
 	rm -rf "$PACKAGES_DIR"

@@ -38,8 +38,17 @@ else
 	install
 fi
 
+echo 'Cloning applescript-stdlib into install dir.'
+APPLESCRIPT_STDLIB_INSTALL_DIR="${INSTALL_DIR}/Library/BushelScript/Libraries"
+APPLESCRIPT_STDLIB_CLONE_DIR="${INSTALL_DIR}/applescript-stdlib"
+rm -rf "$APPLESCRIPT_STDLIB_CLONE_DIR"
+git clone --depth=1 'https://github.com/BushelScript/applescript-stdlib.git' "$APPLESCRIPT_STDLIB_CLONE_DIR"
+mkdir -p "$APPLESCRIPT_STDLIB_INSTALL_DIR"
+cp -r "$APPLESCRIPT_STDLIB_CLONE_DIR"/*.scptd "$APPLESCRIPT_STDLIB_INSTALL_DIR"
+rm -rf "$APPLESCRIPT_STDLIB_CLONE_DIR"
+
 echo "Temporary measure: copying LLVM's libc++.1.dylib to install dir."
-LLVM_LIB_DIR="$(brew --prefix llvm)/lib"
+LLVM_LIB_DIR="$(brew --prefix llvm@9)/lib"
 mkdir -p "$INSTALL_DIR/$LLVM_LIB_DIR"
 LLVM_LIBCPP="$LLVM_LIB_DIR/libc++.1.dylib"
 cp "$LLVM_LIBCPP" "$INSTALL_DIR/$LLVM_LIBCPP"
@@ -56,5 +65,5 @@ fi
 if [ "$1" != "noclean" ]
 then
 	echo "Removing build directory $INSTALL_DIR (specify \`noclean\` to disable.)"
-	rm -r "$INSTALL_DIR"
+	rm -rf "$INSTALL_DIR"
 fi

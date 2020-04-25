@@ -31,7 +31,7 @@ To build BushelScript and create an installer package:
 
 1. Clone this repository to your local machine. (`git clone https://github.com/BushelScript/BushelScript.git` in a Terminal prompt, or download the zip file from the web interface).
 2. Make sure [Homebrew](https://brew.sh) and [Xcode](https://developer.apple.com/xcode) are installed. 
-3. Install LLVM as a system package: `brew install llvm`
+3. Install LLVM 9 as a system package: `brew install llvm@9`
 4. In the directory that `git clone` created: `./make-pkg.sh`
 
 Now you can `open BushelScript.pkg` (or double-click it) to run the installer.
