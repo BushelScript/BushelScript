@@ -84,6 +84,8 @@ extension Expression {
             return [expression, toExpression]
         case let .command(_, parameters: parameters):
             return parameters.map { $0.value }
+        case .multilineString(_, _):
+            return []
         case .weave(_, _):
             return []
         case .endWeave:

@@ -39,6 +39,7 @@ public struct Expression {
         case get(Expression)
         case set(Expression, to: Expression)
         case command(CommandTerm, parameters: [(key: ParameterTerm, value: Expression)])
+        case multilineString(bihash: Bihash, body: String)
         case weave(hashbang: Hashbang, body: String)
         case endWeave
     }
@@ -156,6 +157,8 @@ extension Expression.Kind {
             return ("Set command", "Assigns a new value to the target expression. The target may be a variable or a local or remote property.")
         case .command:
             return ("Command invocation", "Invokes the specified command with the given arguments.\n\nIf there is no direct object, the current command target is used as the direct object. First, asks the direct object to perform the command. If it cannot handle the command, and the current command target was not used as the direct object, asks the current command target to perform the command. In either case, if the command has still not been handled, asks the built-in top-level command target to perform the command.")
+        case .multilineString:
+            return ("Multiline string", "A string representing the specified multiline text; a heredoc.\n\nMultiline strings are an experimental feature and are likely to change with time.")
         case .weave:
             return ("Weave expression", "Calls out to an external shell program using the given hashbang line.\n\nInput and output: The result of the previous expression is coerced to a string and written to standard input; the weave expression’s result is a string containing whatever the program writes to standard output.\n\nHashbangs: If the hashbang line begins with a ‘/’, e.g., “#!/bin/sh”, it is used verbatim. Otherwise, the line is fed as input into ‘env’, e.g., “#!ruby” is transformed to “#!/usr/bin/env ruby”.\n\nEnding a weave: To end the weave, either write a new hashbang line with a different shell program, or write “#!” to return to the previous BushelScript context.\n\nWeaves are an experimental feature and are likely to change with time.")
         case .endWeave:

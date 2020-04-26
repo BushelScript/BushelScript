@@ -1,5 +1,15 @@
 import Foundation
 
+public struct Bihash {
+    
+    public let delimiter: String
+    
+    public init(delimiter: String) {
+        self.delimiter = delimiter
+    }
+    
+}
+
 public struct Hashbang {
     
     public let invocation: String

@@ -252,6 +252,9 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             
             formatted += "end \(name)"
             return formatted
+        case .multilineString(let bihash, let body):
+            return
+                "##\(bihash.delimiter.isEmpty ? "" : "(\(bihash.delimiter))")\n\(body)\n##"
         case .weave(let hashbang, let body):
             return "#!\(hashbang.invocation)\n\(body.removingTrailingWhitespace(removingNewlines: true))"
         case .endWeave:

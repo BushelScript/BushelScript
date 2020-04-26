@@ -397,7 +397,31 @@ extension SourceParser {
             expressionStartIndices.removeLast()
         }
         
-        if let hashbang = eatHashbang() {
+        if let bihash = eatBihash() {
+            var body = ""
+            
+            while !source.isEmpty {
+                addingElement(.string, spacing: .none) {
+                    _ = source.removeFirst() // Eat leading newline
+                }
+                
+                let rollbackSource = source // Preserve leading whitespace
+                let rollbackElements = elements
+                if let _ = eatBihash(delimiter: bihash.delimiter) {
+                    break
+                } else {
+                    source = rollbackSource
+                    elements = rollbackElements
+                    let line = String(source.prefix { !$0.isNewline })
+                    body += "\(line)\n"
+                    addingElement(.string, spacing: .none) {
+                        source.removeFirst(line.count)
+                    }
+                }
+            }
+            
+            return Expression(.multilineString(bihash: bihash, body: body), at: expressionLocation)
+        } else if let hashbang = eatHashbang() {
             var hashbangs = [hashbang]
             var endHashbangLocation: SourceLocation?
             var bodies = [""]
@@ -803,6 +827,15 @@ extension SourceParser {
             elements.insert(element)
             return element
         }
+    }
+    
+    private func eatBihash(delimiter: String? = nil) -> Bihash? {
+        guard tryEating(prefix: "##", spacing: .left) else {
+            return nil
+        }
+        // FIXME: Parse delimiters and deal with parameter delimiter
+        _ = delimiter
+        return Bihash(delimiter: "")
     }
     
     private func eatHashbang() -> Hashbang? {

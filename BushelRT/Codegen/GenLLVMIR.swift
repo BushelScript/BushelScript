@@ -524,6 +524,8 @@ extension Expression {
             _ = builder.buildCall(toExternalFunction: .newFunction, args: [bp, commandInfoIRPointer, functionIRPointer, builder.rtNull])
             
             return lastResult
+        case .multilineString(_, let body): // MARK: .multilineString
+            return builder.addGlobalString(name: "multiline-str", value: body).asRTString(builder: builder, bp: bp)
         case .weave(let hashbang, let body): // MARK: .weave
             let hashbangRTString = builder.addGlobalString(name: "weave-hashbang", value: hashbang.invocation).asRTString(builder: builder, bp: bp)
             let bodyRTString = builder.addGlobalString(name: "weave-body", value: body).asRTString(builder: builder, bp: bp)
