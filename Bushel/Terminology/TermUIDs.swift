@@ -98,6 +98,8 @@ public extension TypedTermUID {
 
 public enum DictionaryUID: String, TermUIDPredefinedValue {
     
+    case function
+    
     case BushelScript
     case Math
     case Sequence

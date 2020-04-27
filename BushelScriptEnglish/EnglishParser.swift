@@ -217,6 +217,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
         let body = try withScope {
             lexicon.add(Set(arguments))
+            lexicon.add(DictionaryTerm(TermUID(DictionaryUID.function), name: TermName("function"), terminology: lexicon.dictionaryStack.last!))
             return try parseSequence(functionNameTerm.name!)
         }
         
