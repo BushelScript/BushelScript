@@ -269,6 +269,8 @@ extension ResourceTerm {
     public var formattedForUseStatement: String {
         let name = self.name!
         switch resource {
+        case .bushelscript:
+            return "BushelScript"
         case .system(let version):
             return "system\(version.map { " version \($0)" } ?? "")"
         case .applicationByName:

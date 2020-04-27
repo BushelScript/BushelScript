@@ -302,6 +302,8 @@ final class Builtin {
                 return RT_Null.null
             }
             switch term.resource {
+            case .bushelscript:
+                return RT_Global(rt)
             case .system(_):
                 return RT_System(rt)
             case .applicationByName(let bundle),

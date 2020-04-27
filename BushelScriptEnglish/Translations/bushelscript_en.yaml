@@ -11,6 +11,7 @@ translation:
                 CLI: CLI
         resource:
             res:
+                bushelscript: BushelScript
                 system: system
         type:
             ae4:
@@ -43,7 +44,7 @@ translation:
                 logi: logical test specifier
                 type: type
             id:
-                global: BushelScript
+                global: builtin
                 script: script
                 function: function
         property:
@@ -58,7 +59,7 @@ translation:
                 rest: tail
                 bhit: button returned
             id:
-                top script: me
+                top script: top script
                 current date: current date
                 file:
                     basename:

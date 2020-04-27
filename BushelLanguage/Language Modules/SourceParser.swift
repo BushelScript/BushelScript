@@ -59,6 +59,16 @@ extension SourceParser {
         for translation in translations {
             lexicon.add(translation.makeTerms(under: lexicon.pool))
         }
+        lexicon.add(ParameterTerm(TermUID(ParameterUID.direct), name: nil))
+        
+        // Assign the builtins dictionary to the 'BushelScript' resource term.
+        if
+            let bushelscript = lexicon.term(forUID:
+                TypedTermUID(.resource, TermUID(ResourceUID.bushelscript))
+            ) as? ResourceTerm
+        {
+            bushelscript.storedDictionary = lexicon.dictionaryStack.last!
+        }
     }
     
     public func parse(source: String) throws -> Program {
@@ -74,8 +84,6 @@ extension SourceParser {
         guard !source.isEmpty else {
             return Program(Expression.empty(at: currentLocation), [], source: entireSource, terms: TermPool())
         }
-        
-        lexicon.add(ParameterTerm(TermUID(ParameterUID.direct), name: nil))
         
         lexicon.pushDictionaryTerm(forUID: .id("script"))
         defer { lexicon.pop() }

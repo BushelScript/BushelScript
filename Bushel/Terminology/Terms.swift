@@ -313,6 +313,7 @@ public final class ResourceTerm: Term, TermDictionaryContainer {
 
 public enum Resource {
     
+    case bushelscript
     case system(version: String?)
     case applicationByName(bundle: Bundle)
     case applicationByID(bundle: Bundle)
@@ -338,6 +339,17 @@ extension OperatingSystemVersion: CustomStringConvertible {
 
 // MARK: Resource resolution
 extension Resource {
+    
+    public struct BushelScript: ResolvedResource {
+        
+        public init() {
+        }
+        
+        public func enumerated() -> Resource {
+            .bushelscript
+        }
+        
+    }
     
     public struct System: ResolvedResource {
         
@@ -491,6 +503,7 @@ extension Resource: CustomStringConvertible {
     }
     
     public enum Kind: String {
+        case bushelscript
         case system
         case applicationByName = "app"
         case applicationByID = "appid"
@@ -501,6 +514,8 @@ extension Resource: CustomStringConvertible {
     
     public var kind: Kind {
         switch self {
+        case .bushelscript:
+            return .bushelscript
         case .system:
             return .system
         case .applicationByName:
@@ -518,7 +533,8 @@ extension Resource: CustomStringConvertible {
     
     public var data: String {
         switch self {
-        case .system:
+        case .bushelscript,
+             .system:
             return ""
         case .applicationByName(let bundle):
             return bundle.fileSystemName
@@ -553,6 +569,8 @@ extension Resource {
         guard
             let resolved: ResolvedResource = { () -> ResolvedResource? in
                 switch kind {
+                case .bushelscript:
+                    return BushelScript()
                 case .system:
                     return System()
                 case .applicationByName:
@@ -581,6 +599,9 @@ extension ResourceTerm {
     
     public func loadResourceTerminology(under pool: TermPool) throws {
         switch resource {
+        case .bushelscript:
+            // Always loaded implicitly
+            return
         case .system(_):
             guard let application = Resource.ApplicationByID(id: "com.apple.SystemEvents") else {
                 return

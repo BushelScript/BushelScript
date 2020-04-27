@@ -79,7 +79,7 @@ public struct Lexicon: TerminologySource {
     }
     
     private mutating func pushRoot() {
-        let rootUID = TermUID(DictionaryUID.BushelScript)
+        let rootUID = TermUID(ResourceUID.bushelscript)
         push(dictionary: TermDictionary(pool: pool, uid: rootUID, name: nil, exports: false))
     }
     

@@ -75,7 +75,9 @@ public extension TermUID {
                 } else if let (aeClassCode, aeIDCode, aeCode) = predefined.ae12Code {
                     return .ae12(class: aeClassCode, id: aeIDCode, code: aeCode)
                 } else if let idName = predefined.idName {
-                    return .id(idName)
+                    return (predefined.kind == .resource) ?
+                        .res(idName) :
+                        .id(idName)
                 } else {
                     return nil
                 }
@@ -100,7 +102,6 @@ public enum DictionaryUID: String, TermUIDPredefinedValue {
     
     case function
     
-    case BushelScript
     case Math
     case Sequence
     case String
@@ -109,17 +110,6 @@ public enum DictionaryUID: String, TermUIDPredefinedValue {
     
     public var kind: TypedTermUID.Kind {
         .property
-    }
-    
-    public var idName: String? {
-        // We need to bypass the default implementation for names
-        // that have capital letters that do not denote word breaks.
-        switch self {
-        case .BushelScript:
-            return "BushelScript"
-        default:
-            return makeIDName(from: rawValue)
-        }
     }
     
     public init?(_ uid: TermUID) {
@@ -667,6 +657,7 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
 
 public enum ResourceUID: String, TermUIDPredefinedValue {
     
+    case bushelscript
     case system
     
     public var kind: TypedTermUID.Kind {
@@ -675,7 +666,7 @@ public enum ResourceUID: String, TermUIDPredefinedValue {
     
     public init?(_ uid: TermUID) {
         switch uid {
-        case .id(let name):
+        case .res(let name):
             self.init(idName: name)
         default:
             return nil

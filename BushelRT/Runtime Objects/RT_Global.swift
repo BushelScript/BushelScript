@@ -15,7 +15,7 @@ public class RT_Global: RT_Object {
     }
     
     public override var description: String {
-        "BushelScript"
+        "builtin"
     }
     
     public func property(_ property: PropertyInfo) -> RT_Object? {
