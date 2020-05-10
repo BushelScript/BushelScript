@@ -937,6 +937,7 @@ extension SourceParser {
         addingElement(.operator) {
             source.removeFirst(result.termString.count)
         }
+        eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
     }
     
     private func eatStringBeginMarker() -> (begin: TermName, end: TermName)? {
