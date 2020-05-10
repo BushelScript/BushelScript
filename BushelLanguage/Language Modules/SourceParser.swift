@@ -478,7 +478,7 @@ extension SourceParser {
             return Expression(.sequence(weaves), at: expressionLocation)
         } else if let (_, endMarker) = eatStringBeginMarker() {
             guard
-                let match = tryEating(try! Regex(string: "(.*?)(?<!\\\\)\(endMarker)"), .string, spacing: .right),
+                let match = tryEating(try! Regex(string: "(.*?)(?<!\\\\)\(endMarker)", options: .dotMatchesLineSeparators), .string, spacing: .right),
                 let string = match.captures[0]
             else {
                 throw ParseError(.invalidString, at: currentLocation)
