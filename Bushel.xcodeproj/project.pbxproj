@@ -2160,7 +2160,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BushelScriptEnglish/Info.plist;
 				INSTALL_PATH = "$(BUSHELSCRIPT_LANGUAGES_DIR)";
-				LANGUAGE_MODULE_NAME = "BushelScript (English)";
+				LANGUAGE_MODULE_NAME = "BushelScript English";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2360,7 +2360,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BushelScriptEnglish/Info.plist;
 				INSTALL_PATH = "$(BUSHELSCRIPT_LANGUAGES_DIR)";
-				LANGUAGE_MODULE_NAME = "BushelScript (English) (DevEnvironment)";
+				LANGUAGE_MODULE_NAME = "BushelScript English (DevEnvironment)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2386,7 +2386,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BushelScriptEnglish/Info.plist;
 				INSTALL_PATH = "$(BUSHELSCRIPT_LANGUAGES_DIR)";
-				LANGUAGE_MODULE_NAME = "BushelScript (English)";
+				LANGUAGE_MODULE_NAME = "BushelScript English";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
