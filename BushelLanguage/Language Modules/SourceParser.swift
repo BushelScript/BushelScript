@@ -1031,8 +1031,14 @@ extension SourceParser {
     }
     
     public func tryEating(_ regex: Regex, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> MatchResult? {
-        let restOfLine = String(source.prefix { !$0.isNewline })
-        guard let match = regex.firstMatch(in: restOfLine) else {
+        eatCommentsAndWhitespace()
+        
+        // TODO: Patch Regex to accept substrings?
+        let restOfSource = String(source)
+        guard
+            let match = regex.firstMatch(in: restOfSource),
+            match.range.lowerBound == restOfSource.startIndex
+        else {
             return nil
         }
         
