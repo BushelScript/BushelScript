@@ -1170,7 +1170,7 @@ extension SourceParser {
         func eatDefinedTerm() -> Term? {
             func findTerm<Terminology: TerminologySource>(in dictionary: Terminology) -> (termString: Substring, term: Term)? {
                 eatCommentsAndWhitespace()
-                var termString = source.prefix { !$0.isWordBreaking || $0.isWhitespace || $0 == ":" }
+                var termString = source.prefix { !$0.isNewline }.prefix { !$0.isWordBreaking || $0.isWhitespace || $0 == ":" }
                 while let lastNonBreakingIndex = termString.lastIndex(where: { !$0.isWordBreaking }) {
                     termString = termString[...lastNonBreakingIndex]
                     let termName = TermName(String(termString))
