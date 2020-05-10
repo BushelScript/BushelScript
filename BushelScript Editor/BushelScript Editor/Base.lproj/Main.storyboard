@@ -662,17 +662,7 @@ CQ
                                                 </fragment>
                                                 <fragment>
                                                     <string key="content"> "Question" by Arnav Sameer from thenounproject.com
-</string>
-                                                    <attributes>
-                                                        <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                        <font key="NSFont" metaFont="user"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO"/>
-                                                    </attributes>
-                                                </fragment>
-                                                <fragment>
-                                                    <string key="content" base64-UTF8="YES">
-CQ
-</string>
+	</string>
                                                     <attributes>
                                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                         <font key="NSFont" metaFont="user"/>
@@ -688,17 +678,7 @@ CQ
                                                 </fragment>
                                                 <fragment>
                                                     <string key="content"> "Pencil and paper" by Joe Pictos from thenounproject.com
-</string>
-                                                    <attributes>
-                                                        <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                        <font key="NSFont" metaFont="user"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO"/>
-                                                    </attributes>
-                                                </fragment>
-                                                <fragment>
-                                                    <string key="content" base64-UTF8="YES">
-CQ
-</string>
+	</string>
                                                     <attributes>
                                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                         <font key="NSFont" metaFont="user"/>
@@ -793,11 +773,11 @@ CQ
             <objects>
                 <viewController id="5gI-5U-AMq" customClass="DocumentVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ERx-hH-rdd">
-                        <rect key="frame" x="0.0" y="0.0" width="560" height="276"/>
+                        <rect key="frame" x="0.0" y="0.0" width="680" height="360"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="cX1-w8-oNb" userLabel="Status Bar">
-                                <rect key="frame" x="0.0" y="0.0" width="560" height="22"/>
+                                <rect key="frame" x="0.0" y="0.0" width="680" height="22"/>
                                 <subviews>
                                     <progressIndicator wantsLayer="YES" maxValue="1" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="1za-9N-l7c">
                                         <rect key="frame" x="6" y="4" width="16" height="16"/>
@@ -814,7 +794,7 @@ CQ
                                         </connections>
                                     </textField>
                                     <button toolTip="Toggle Result panel" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ihm-ze-IVU">
-                                        <rect key="frame" x="500" y="0.0" width="40" height="23"/>
+                                        <rect key="frame" x="620" y="0.0" width="40" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="40" id="imB-Wz-eml"/>
                                         </constraints>
@@ -845,20 +825,20 @@ CQ
                                 </constraints>
                             </customView>
                             <splitView verticalHuggingPriority="249" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l0q-o3-ggk">
-                                <rect key="frame" x="0.0" y="23" width="560" height="253"/>
+                                <rect key="frame" x="0.0" y="23" width="680" height="337"/>
                                 <subviews>
                                     <scrollView appearanceType="darkAqua" verticalCompressionResistancePriority="1000" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="97e-Pl-npf">
-                                        <rect key="frame" x="0.0" y="0.0" width="376" height="253"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="496" height="337"/>
                                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="maB-Wi-doq">
-                                            <rect key="frame" x="0.0" y="0.0" width="376" height="253"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="496" height="337"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <textView importsGraphics="NO" horizontallyResizable="YES" verticallyResizable="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" textCompletion="NO" smartInsertDelete="YES" id="hPn-VJ-vRi">
-                                                    <rect key="frame" x="0.0" y="60" width="376" height="253"/>
+                                                    <rect key="frame" x="0.0" y="60" width="496" height="337"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <color key="backgroundColor" red="0.10588235294117647" green="0.10588235294117647" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <size key="minSize" width="376" height="253"/>
+                                                    <size key="minSize" width="496" height="337"/>
                                                     <size key="maxSize" width="10000000" height="10000000"/>
                                                     <attributedString key="textStorage">
                                                         <fragment content=" ">
@@ -890,25 +870,25 @@ CQ
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="whd-Mx-xlS">
-                                            <rect key="frame" x="360" y="0.0" width="16" height="253"/>
+                                            <rect key="frame" x="480" y="0.0" width="16" height="337"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                     </scrollView>
                                     <scrollView fixedFrame="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="Bnq-13-QDF" userLabel="Obj Inspector Scroll View">
-                                        <rect key="frame" x="377" y="0.0" width="183" height="253"/>
+                                        <rect key="frame" x="497" y="0.0" width="183" height="337"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <clipView key="contentView" id="7Qh-le-8b6" userLabel="Obj Inspector Clip View">
-                                            <rect key="frame" x="1" y="1" width="181" height="251"/>
+                                            <rect key="frame" x="1" y="1" width="181" height="335"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <view translatesAutoresizingMaskIntoConstraints="NO" id="zap-gd-biD" userLabel="Obj Inspector Outer View">
-                                                    <rect key="frame" x="0.0" y="1" width="181" height="250"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="181" height="335"/>
                                                     <subviews>
                                                         <view translatesAutoresizingMaskIntoConstraints="NO" id="md1-5V-L9M" userLabel="Obj Inspector Inner Sizing View">
-                                                            <rect key="frame" x="0.0" y="0.0" width="181" height="250"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="181" height="335"/>
                                                             <subviews>
                                                                 <containerView verticalCompressionResistancePriority="1000" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SnG-SJ-34u" userLabel="Obj Inspector Container View">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="181" height="250"/>
+                                                                    <rect key="frame" x="0.0" y="-62" width="181" height="397"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                     <accessibility identifier="objInspectorContainerView"/>
                                                                     <connections>
@@ -917,7 +897,7 @@ CQ
                                                                 </containerView>
                                                             </subviews>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="250" placeholder="YES" id="f74-xO-V33"/>
+                                                                <constraint firstAttribute="height" constant="335" placeholder="YES" id="f74-xO-V33"/>
                                                             </constraints>
                                                             <accessibility identifier="objInspectorInnerSizingView"/>
                                                         </view>
@@ -944,11 +924,11 @@ CQ
                                             <accessibility identifier="objInspectorClipView"/>
                                         </clipView>
                                         <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="NgT-Y4-2BG">
-                                            <rect key="frame" x="1" y="236" width="181" height="16"/>
+                                            <rect key="frame" x="1" y="320" width="181" height="16"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="0.99938455226177048" horizontal="NO" id="kmu-Yt-waY">
-                                            <rect key="frame" x="166" y="1" width="16" height="251"/>
+                                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="0.967741935483871" horizontal="NO" id="kmu-Yt-waY">
+                                            <rect key="frame" x="166" y="1" width="16" height="335"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <accessibility identifier="objInspectorScrollView"/>
@@ -960,7 +940,7 @@ CQ
                                 </holdingPriorities>
                             </splitView>
                             <box verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="H7Z-cU-gdd">
-                                <rect key="frame" x="0.0" y="18" width="560" height="5"/>
+                                <rect key="frame" x="0.0" y="18" width="680" height="5"/>
                             </box>
                         </subviews>
                         <constraints>
@@ -985,7 +965,7 @@ CQ
                 <customObject id="2Tp-Fl-jBw" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="unH-Oi-by7"/>
             </objects>
-            <point key="canvasLocation" x="84" y="876.5"/>
+            <point key="canvasLocation" x="84" y="876"/>
         </scene>
         <!--ExpressionInspector-->
         <scene sceneID="Mi7-xb-a5x">
