@@ -87,6 +87,8 @@ func formatRootSpecifier(_ specifier: RootSpecifier) -> String {
         return "«container»"
     case .specimen:
         return "«specimen»"
+    case let .object(descriptor):
+        return "«object root: \(descriptor)»"
     }
 }
 

@@ -423,6 +423,11 @@ public class RootSpecifier: Specifier, ObjectSpecifierProtocol {
         /// compared in a by-test specifier.
         /// e.g., `every track where (rating of «specimen» > 50)`.
         case specimen
+        /// Root of an object specifier that descends from a descriptor object.
+        /// e.g., `item 1 of {1,2,3}`.
+        /// (These sorts of descriptors are effectively exclusively generated
+        /// by AppleScript).
+        case object(NSAppleEventDescriptor)
     }
     
     public var kind: Kind
@@ -433,10 +438,10 @@ public class RootSpecifier: Specifier, ObjectSpecifierProtocol {
     }
     
     public var wantType: NSAppleEventDescriptor {
-        return .null()
+        .null()
     }
     public var selectorForm: NSAppleEventDescriptor {
-        return .null()
+        .null()
     }
     
     public var selectorData: Any {
@@ -447,21 +452,23 @@ public class RootSpecifier: Specifier, ObjectSpecifierProtocol {
             return NSAppleEventDescriptor(descriptorType: typeCurrentContainer, data: nil)!
         case .specimen:
             return NSAppleEventDescriptor(descriptorType: typeObjectBeingExamined, data: nil)!
+        case let .object(descriptor):
+            return descriptor
         }
     }
     
     // Query/Specifier-inherited properties and methods that recursively call their parent specifiers are overridden here to ensure they terminate:
     
     public var parentQuery: Query {
-        return self
+        self
     }
     
     public override var rootSpecifier: RootSpecifier {
-        return self
+        self
     }
     
     public override func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
-        return try appData.pack(selectorData)
+        try appData.pack(selectorData)
     }
     
 }

@@ -475,7 +475,7 @@ extension Expression {
         case .reference(let expression): // MARK: .reference
             return try expression.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult, target: target, evaluateSpecifiers: false)
         case .get(let expression): // MARK: .get
-            return try expression.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult, target: target, evaluateSpecifiers: true)
+            return try expression.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult, target: target).evaluatingSpecifier(builder: builder, bp: bp)
         case .specifier(let specifier): // MARK: .specifier
             let specifierIRValue = try specifier.generateLLVMIR(builder, builtin, options: options, lastResult: lastResult, target: target)
             return evaluateSpecifiers ? specifierIRValue.evaluatingSpecifier(builder: builder, bp: bp) : specifierIRValue
