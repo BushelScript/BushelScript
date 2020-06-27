@@ -213,9 +213,10 @@ extension AppData {
         } else if let t = T.self as? AEDecodable.Type { // note: Symbol, MissingValueType, Array<>, Dictionary<>, Set<>, and Optional<> types unpack the descriptor themselves, as do any custom structs and enums defined in glues
             return try t.init(from: desc, appData: self) as! T
         } else if T.self == Query.self {
-            // note: user typically specifies exact class ([PREFIX][Object|Elements]Specifier)
             if let result = try self.unpackAsAny(desc) as? T { // specifiers can be composed of several AE types, so unpack first then check type
                 return result
+            } else {
+                return RootSpecifier(.object(desc), appData: self) as! T
             }
         } else if isMissingValue(desc) {
             throw UnpackError(appData: self, descriptor: desc, type: T.self, message: "Can't coerce 'missing value' descriptor to \(T.self).") // Important: AppData must not unpack a 'missing value' constant as anything except `MissingValue` or `nil` (i.e. the types to which it self-unpacks). AppleScript doesn't have this problem as all descriptors unpack to their own preferred type, but unpack<T>() forces a descriptor to unpack as a specific type or fail trying. While its role is to act as a `nil`-style placeholder when no other value is given, its descriptor type is typeType so left to its own devices it would naturally unpack the same as any other typeType descriptor. e.g. One of AEM's vagaries is that it supports typeType to typeUnicodeText coercions, so while permitting cDocument to coerce to "docu" might be acceptable [if not exactly helpful], allowing cMissingValue to coerce to "msng" would defeat its whole purpose.

@@ -286,7 +286,10 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
                 }
                 parent = RT_Application(rt, bundle: bundle)
             } else {
-                parent = RT_RootSpecifier(rt, kind: rootSpecifier.kind)
+                guard let root = try? RT_RootSpecifier.fromSARootSpecifier(rt, rootSpecifier) else {
+                    return nil
+                }
+                parent = root
             }
         } else {
             fatalError("unknown Query type for SwiftAutomation.Specifier.parentQuery")
@@ -387,7 +390,13 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
     }
     
     public override var description: String {
-        let parentDescription = (parent is RT_RootSpecifier) ? nil : parent.description
+        let parentDescription: String? = {
+            if let parent = parent as? RT_RootSpecifier {
+                return parent.rootDescription
+            } else {
+                return parent.description
+            }
+        }()
         
         let selfDescription: String
         
