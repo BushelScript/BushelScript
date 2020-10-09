@@ -2757,15 +2757,15 @@
 			repositoryURL = "https://github.com/jpsim/Yams.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 4.0.0;
 			};
 		};
 		3CEF505523529A1B008603E3 /* XCRemoteSwiftPackageReference "LLVMSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ThatsJustCheesy/LLVMSwift.git";
+			repositoryURL = "https://github.com/llvm-swift/LLVMSwift.git";
 			requirement = {
-				branch = "llvm-9";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.7.0;
 			};
 		};
 		3CF7486D23B825AC00A2F981 /* XCRemoteSwiftPackageReference "InAnyCase" */ = {
