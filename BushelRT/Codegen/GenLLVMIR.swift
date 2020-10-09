@@ -9,7 +9,7 @@ extension IRBuilder {
     
     /// A pointer IRValue to the singleton instance of `RT_Null`.
     var rtNull: IRValue {
-        return buildLoad(module.global(named: "rt_null")!)
+        return buildLoad(module.global(named: "rt_null")!, type: PointerType.toVoid)
     }
     
 }
@@ -40,7 +40,7 @@ extension IRBuilder {
     }
     
     func buildCallToExternalFunction(named fnName: String, type fnType: FunctionType, args: [IRValue], name: String = "") -> Call {
-        let fnPointerValue = buildLoad(module.global(named: fnName)!, name: fnName)
+        let fnPointerValue = buildLoad(module.global(named: fnName)!, type: fnType, name: fnName)
         return buildCall(fnPointerValue, args: args, name: name)
     }
     
