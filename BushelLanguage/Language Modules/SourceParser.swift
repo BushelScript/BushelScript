@@ -1031,8 +1031,6 @@ extension SourceParser {
     }
     
     public func tryEating(_ regex: Regex, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> MatchResult? {
-        eatCommentsAndWhitespace()
-        
         // TODO: Patch Regex to accept substrings?
         let restOfSource = String(source)
         guard
