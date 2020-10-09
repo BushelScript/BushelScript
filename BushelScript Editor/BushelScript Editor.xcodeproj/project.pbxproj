@@ -592,7 +592,6 @@
 			packageReferences = (
 				3C12EF9F2354E7640057E0CC /* XCRemoteSwiftPackageReference "Defaults" */,
 				3C907701239F3DD000A01D8D /* XCRemoteSwiftPackageReference "KVODelegate" */,
-				3C10564723DFB47C00877A5C /* XCRemoteSwiftPackageReference "Yams" */,
 			);
 			productRefGroup = 3C0566AB23135673004CDB1A /* Products */;
 			projectDirPath = "";
@@ -1203,14 +1202,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		3C10564723DFB47C00877A5C /* XCRemoteSwiftPackageReference "Yams" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/jpsim/Yams.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 		3C12EF9F2354E7640057E0CC /* XCRemoteSwiftPackageReference "Defaults" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/Defaults.git";

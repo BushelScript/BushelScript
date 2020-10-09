@@ -2,12 +2,30 @@
   "object": {
     "pins": [
       {
+        "package": "Chalk",
+        "repositoryURL": "https://github.com/mxcl/Chalk.git",
+        "state": {
+          "branch": null,
+          "revision": "9aa9f348b86db3cf6702a3e43c081ecec80cf3c7",
+          "version": "0.4.0"
+        }
+      },
+      {
         "package": "Defaults",
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
           "branch": null,
           "revision": "55ffea9487fb9b559406d909ee31dcd955fe77aa",
           "version": "3.1.1"
+        }
+      },
+      {
+        "package": "FileCheck",
+        "repositoryURL": "https://github.com/llvm-swift/FileCheck.git",
+        "state": {
+          "branch": null,
+          "revision": "f25bfb4c69b9e05bf6b8d0862dcedb875c1b0f68",
+          "version": "0.2.4"
         }
       },
       {
@@ -30,11 +48,11 @@
       },
       {
         "package": "LLVM",
-        "repositoryURL": "https://github.com/ThatsJustCheesy/LLVMSwift.git",
+        "repositoryURL": "https://github.com/llvm-swift/LLVMSwift.git",
         "state": {
-          "branch": "llvm-9",
-          "revision": "6e8fdd0a31ce88f0bc82e5b755a3f22d5f2928e7",
-          "version": null
+          "branch": null,
+          "revision": "bc303e09b3100b807d66efe6c98b7e7019a69d70",
+          "version": "0.7.0"
         }
       },
       {
@@ -56,12 +74,21 @@
         }
       },
       {
+        "package": "swift-tools-support-core",
+        "repositoryURL": "https://github.com/apple/swift-tools-support-core.git",
+        "state": {
+          "branch": null,
+          "revision": "693aba4c4c9dcc4767cc853a0dd38bf90ad8c258",
+          "version": "0.0.1"
+        }
+      },
+      {
         "package": "Yams",
         "repositoryURL": "https://github.com/jpsim/Yams.git",
         "state": {
           "branch": null,
-          "revision": "c947a306d2e80ecb2c0859047b35c73b8e1ca27f",
-          "version": "2.0.0"
+          "revision": "88caa2e6fffdbef2e91c2022d038576062042907",
+          "version": "4.0.0"
         }
       }
     ]
