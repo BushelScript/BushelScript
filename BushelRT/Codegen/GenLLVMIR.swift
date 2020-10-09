@@ -40,7 +40,7 @@ extension IRBuilder {
     }
     
     func buildCallToExternalFunction(named fnName: String, type fnType: FunctionType, args: [IRValue], name: String = "") -> Call {
-        let fnPointerValue = buildLoad(module.global(named: fnName)!, type: fnType, name: fnName)
+        let fnPointerValue = buildLoad(module.global(named: fnName)!, type: PointerType(pointee: fnType), name: fnName)
         return buildCall(fnPointerValue, args: args, name: name)
     }
     
