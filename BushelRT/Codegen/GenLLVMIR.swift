@@ -128,16 +128,6 @@ private func catchingEarlyReturn(_ builder: IRBuilder, _ diBuilder: DIBuilder, b
     return resultValue
 }
 
-public struct CodeGenOptions {
-    
-    /// Whether the stack should be runtime-introspectable.
-    /// Generates push and pop runtime calls, and forces all variables to be
-    /// tracked dynamically.
-    /// For end-user debugging purposes.
-    public let stackIntrospectability: Bool
-    
-}
-
 extension Expression {
     
     /// Recursively builds an LLVM IR program out of this expression.

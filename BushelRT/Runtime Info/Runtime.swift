@@ -4,6 +4,16 @@ import os
 
 private let log = OSLog(subsystem: logSubsystem, category: "Runtime")
 
+public struct CodeGenOptions {
+    
+    /// Whether the stack should be runtime-introspectable.
+    /// Generates push and pop runtime calls, and forces all variables to be
+    /// tracked dynamically.
+    /// For end-user debugging purposes.
+    public let stackIntrospectability: Bool
+    
+}
+
 public class Runtime {
     
     public struct RuntimeError: CodableLocalizedError {
@@ -194,46 +204,12 @@ public extension Runtime {
         builtin.rt = self
 
         builtin.stack.pushErrorHandler { message, rt in
-//            _ = try? RT_Global(rt).perform(command: CommandInfo(.GUI_alert), arguments: [
-//                ParameterInfo(.GUI_alert_kind): RT_Integer(value: 2),
-//                ParameterInfo(.direct): RT_String(value: "An error occurred:"),
-//                ParameterInfo(.GUI_alert_message): RT_String(value: message + "\n\nThe script will be terminated."),
-//                ParameterInfo(.GUI_alert_buttons): RT_List(contents: [
-//                    RT_String(value: "OK")
-//                ])
-//            ], implicitDirect: nil)
             throw RuntimeError(description: message)
         }
         
-//        let module = generateLLVMModule(from: expression, builtin: builtin)
-        
-        // Let LLVM verify that the module's IR code is well-formed
-//        do {
-//            try module.verify()
-//        } catch {
-//            os_log("Module verification error: %@", log: log, type: .error, String(describing: error))
-//        }
-        
-//        let pipeliner = PassPipeliner(module: module)
-//        pipeliner.addStandardModulePipeline("std_module")
-//        pipeliner.addStandardFunctionPipeline("std_fn")
-//        pipeliner.execute()
-        
-        // JIT-compile the module's IR for the current machine
-//        let jit = try! JIT(machine: TargetMachine())
-//        _ = try! jit.addEagerlyCompiledIR(module, { (name) -> JIT.TargetAddress in
-//            return JIT.TargetAddress()
-//        })
-        
-        // Call the main function in the module and return the result
-//        typealias MainPtr = @convention(c) () -> UnsafeMutableRawPointer
-//        let address = try! jit.address(of: "main")
-//        let main = unsafeBitCast(address, to: MainPtr.self)
-//        let resultObject = Unmanaged<RT_Object>.fromOpaque(main()).takeUnretainedValue()
-//        os_log("Execution result: %@", log: log, type: .debug, String(describing: resultObject))
-//        return resultObject
-        return try runPrimary(expression, lastResult: ExprValue(expression, RT_Null.null), target: ExprValue(expression, global))
-        
+        let result = try runPrimary(expression, lastResult: ExprValue(expression, RT_Null.null), target: ExprValue(expression, global))
+        os_log("Execution result: %@", log: log, type: .debug, String(describing: result))
+        return result
     }
     
     private struct EarlyReturn: Error {
