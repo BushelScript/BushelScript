@@ -68,7 +68,7 @@ extension ToolInvocation {
         
         do {
             let program = try parser(&state, for: language).parse(source: source)
-            print(state.rt.run(program))
+            print(try state.rt.run(program))
         } catch let error as ParseErrorProtocol {
             print(error: error, in: source, fileName: fileName)
         }

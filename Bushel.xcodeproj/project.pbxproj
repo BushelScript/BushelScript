@@ -93,6 +93,7 @@
 		3C9703D8235520D20099AA05 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3C9703DE235520D50099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C9703E5235520DF0099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
+		3C9CA8392532620C0098708F /* CodableErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9E9B23258ECF00198564 /* CodableErrors.swift */; };
 		3CA2699023F9F09F009E1944 /* RT_System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA2698F23F9F09F009E1944 /* RT_System.swift */; };
 		3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */; };
 		3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */; };
@@ -124,7 +125,6 @@
 		3CCDDEBB23ED024D007684D1 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
 		3CCDDEC323ED0257007684D1 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3CCDDECA23ED06E8007684D1 /* RT_AppleScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */; };
-		3CCE9EA82325907D00198564 /* CodableErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9E9B23258ECF00198564 /* CodableErrors.swift */; };
 		3CCE9EAC2325A9E200198564 /* SourceFix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9EAB2325A9E200198564 /* SourceFix.swift */; };
 		3CD113D422FB700000329583 /* ResourceLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113D322FB700000329583 /* ResourceLocation.swift */; };
 		3CD113DB22FC6E9300329583 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113DA22FC6E9300329583 /* Logging.swift */; };
@@ -758,6 +758,7 @@
 				3CC774802414270E00EC1E3B /* Formatting.swift */,
 				3C3F06E023C14B15005BC0F2 /* Ranges.swift */,
 				3C906EFF231CD30A0099B139 /* Ordering.swift */,
+				3CCE9E9B23258ECF00198564 /* CodableErrors.swift */,
 				3CD113DA22FC6E9300329583 /* Logging.swift */,
 			);
 			path = Utility;
@@ -892,7 +893,6 @@
 			isa = PBXGroup;
 			children = (
 				3C6B758F2305B17D0006C354 /* Terminology.swift */,
-				3CCE9E9B23258ECF00198564 /* CodableErrors.swift */,
 				3C6B75912305B2C90006C354 /* Logging.swift */,
 			);
 			path = Utilities;
@@ -1515,6 +1515,7 @@
 				3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */,
 				3C3F06E123C14B15005BC0F2 /* Ranges.swift in Sources */,
 				3C6FB1E423E2A2530009315B /* TermDictionaryContainer.swift in Sources */,
+				3C9CA8392532620C0098708F /* CodableErrors.swift in Sources */,
 				3C35A5DC22C81E60002D4582 /* Terms.swift in Sources */,
 				3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */,
 				3C3F06DC23C14165005BC0F2 /* ExpressionsAtLocation.swift in Sources */,
@@ -1548,7 +1549,6 @@
 				3CCB8A7A244B990F003EBCD2 /* ParseError.swift in Sources */,
 				3C6B75922305B2C90006C354 /* Logging.swift in Sources */,
 				3C6B75C62305D6ED0006C354 /* SourceFormatter.swift in Sources */,
-				3CCE9EA82325907D00198564 /* CodableErrors.swift in Sources */,
 				3C3065B5230B83B500833CE8 /* MessageFormatter.swift in Sources */,
 				3C6B75902305B17D0006C354 /* Terminology.swift in Sources */,
 			);
