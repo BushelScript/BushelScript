@@ -102,4 +102,4 @@ public struct StackFrame {
     
 }
 
-public typealias ErrorHandler = (_ message: String, _ rt: Runtime) -> Void
+public typealias ErrorHandler = (_ message: String, _ rt: Runtime) throws -> Void

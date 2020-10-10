@@ -50,17 +50,17 @@ final class Builtin {
     }
     
     var throwing: Bool = false
-    func throwError(message: String) {
+    func throwError(message: String) throws {
         if !throwing {
             throwing = true
             defer { throwing = false }
-            stack.currentErrorHandler(message, rt)
+            try stack.currentErrorHandler(message, rt)
         }
         fatalError(message)
     }
     
-    func throwError(_ message: RTObjectPointer) {
-        throwError(message: (fromOpaque(message) as? RT_String)?.value ?? "throwError() was not passed a string to print")
+    func throwError(_ message: RTObjectPointer) throws {
+        try throwError(message: (fromOpaque(message) as? RT_String)?.value ?? "throwError() was not passed a string to print")
     }
     
     func release(_ objectPointer: RTObjectPointer) {
@@ -97,11 +97,11 @@ final class Builtin {
         return fromOpaque(object).truthy
     }
     
-    func numericEqual(_ lhs: RTObjectPointer, _ rhs: RTObjectPointer) -> Bool {
+    func numericEqual(_ lhs: RTObjectPointer, _ rhs: RTObjectPointer) throws -> Bool {
         let lhs = fromOpaque(lhs)
         let rhs = fromOpaque(rhs)
         guard let lhsNumeric = lhs as? RT_Numeric else {
-            throwError(message: "loop variable must be of numeric type, not ‘\(lhs.dynamicTypeInfo))’")
+            try throwError(message: "loop variable must be of numeric type, not ‘\(lhs.dynamicTypeInfo))’")
             
             // Basically, we want to stop the currently executing loop
             // if there is no comparison defined between the operands.
@@ -109,7 +109,7 @@ final class Builtin {
             return true
         }
         guard let rhsNumeric = rhs as? RT_Numeric else {
-            throwError(message: "loop variable must be of numeric type, not ‘\(rhs.dynamicTypeInfo))’")
+            try throwError(message: "loop variable must be of numeric type, not ‘\(rhs.dynamicTypeInfo))’")
             
             // Ditto.
             return true
@@ -183,25 +183,25 @@ final class Builtin {
         record.contents[typedUID] = value
     }
     
-    func getSequenceLength(_ sequencePointer: RTObjectPointer) -> Int64 {
+    func getSequenceLength(_ sequencePointer: RTObjectPointer) throws -> Int64 {
         let sequence = fromOpaque(sequencePointer)
         do {
             let length = try sequence.property(rt.property(forUID: TypedTermUID(PropertyUID.Sequence_length))) as? RT_Numeric
             // TODO: Throw error for non-numeric length
             return Int64(length?.numericValue ?? 0)
         } catch {
-            throwError(message: error.localizedDescription)
+            try throwError(message: error.localizedDescription)
             return 0
         }
     }
     
-    func getFromSequenceAtIndex(_ sequencePointer: RTObjectPointer, _ index: Int64) -> RTObjectPointer {
+    func getFromSequenceAtIndex(_ sequencePointer: RTObjectPointer, _ index: Int64) throws -> RTObjectPointer {
         let sequence = fromOpaque(sequencePointer)
         do {
             let item = try sequence.element(rt.type(forUID: TypedTermUID(TypeUID.item)), at: index)
             return toOpaque(retain(item))
         } catch {
-            throwError(message: error.localizedDescription)
+            try throwError(message: error.localizedDescription)
             return toOpaque(RT_Null.null)
         }
     }
@@ -379,12 +379,12 @@ final class Builtin {
         return toOpaque(retain(clone))
     }
     
-    func evaluateSpecifier(_ objectPointer: RTObjectPointer) -> RTObjectPointer {
+    func evaluateSpecifier(_ objectPointer: RTObjectPointer) throws -> RTObjectPointer {
         let specifier = fromOpaque(objectPointer)
         do {
             return toOpaque(retain(try specifier.evaluate()))
         } catch {
-            throwError(message: "error evaluating specifier ‘\(specifier)’: \(error.localizedDescription)")
+            try throwError(message: "error evaluating specifier ‘\(specifier)’: \(error.localizedDescription)")
             return toOpaque(RT_Null.null)
         }
     }
@@ -406,11 +406,11 @@ final class Builtin {
         return toOpaque(retain(function))
     }
     
-    func runCommand(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer, _ targetPointer: RTObjectPointer) -> RTObjectPointer {
+    func runCommand(_ commandPointer: RTObjectPointer, _ argumentsPointer: RTObjectPointer, _ targetPointer: RTObjectPointer) throws -> RTObjectPointer {
         let command = infoFromOpaque(commandPointer) as CommandInfo
         let argumentsRecord = fromOpaque(argumentsPointer) as! RT_Private_ArgumentRecord
         let target = fromOpaque(targetPointer)
-        return run(command: command, arguments: arguments(from: argumentsRecord), target: target)
+        return try run(command: command, arguments: arguments(from: argumentsRecord), target: target)
     }
     
     private func arguments(from record: RT_Private_ArgumentRecord) -> [ParameterInfo : RT_Object] {
@@ -419,7 +419,7 @@ final class Builtin {
         )
     }
     
-    private func run(command: CommandInfo, arguments: [ParameterInfo : RT_Object], target: RT_Object) -> RTObjectPointer {
+    private func run(command: CommandInfo, arguments: [ParameterInfo : RT_Object], target: RT_Object) throws -> RTObjectPointer {
         var argumentsWithoutDirect = arguments
         argumentsWithoutDirect.removeValue(forKey: ParameterInfo(.direct))
         
@@ -429,19 +429,19 @@ final class Builtin {
         }
         let directParameter = arguments[ParameterInfo(.direct)] ?? implicitDirect
         
-        func catchingErrors(do action: () throws -> RT_Object?) -> RT_Object? {
+        func catchingErrors(do action: () throws -> RT_Object?) throws -> RT_Object? {
             do {
                 return try action()
             } catch let error as Unencodable where error.object is CommandInfo || error.object is ParameterInfo {
                 // Tried to send an inapplicable command to a remote object
                 // Ignore it and fall through to the next target
             } catch {
-                throwError(message: "\(error.localizedDescription)")
+                try throwError(message: "\(error.localizedDescription)")
             }
             return nil
         }
         
-        return toOpaque(retain(
+        return try toOpaque(retain(
             catchingErrors {
                 try directParameter?.perform(command: command, arguments: argumentsWithoutDirect, implicitDirect: implicitDirect)
             } ??

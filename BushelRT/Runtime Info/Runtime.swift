@@ -6,6 +6,10 @@ private let log = OSLog(subsystem: logSubsystem, category: "Runtime")
 
 public class Runtime {
     
+    public struct RuntimeError: LocalizedError {
+        public var errorDescription: String?
+    }
+    
     public let termPool = TermPool()
     public let topScript: RT_Script
     public var global: RT_Global!
@@ -170,12 +174,12 @@ public class Runtime {
 
 public extension Runtime {
     
-    func run(_ program: Program) -> RT_Object {
+    func run(_ program: Program) throws -> RT_Object {
         inject(terms: program.terms)
-        return run(program.ast)
+        return try run(program.ast)
     }
     
-    func run(_ expression: Expression) -> RT_Object {
+    func run(_ expression: Expression) throws -> RT_Object {
         let builtin = Builtin()
         builtin.rt = self
 
@@ -188,7 +192,7 @@ public extension Runtime {
                     RT_String(value: "OK")
                 ])
             ], implicitDirect: nil)
-            fatalError(message)
+            throw RuntimeError(errorDescription: message)
         }
         
 //        let module = generateLLVMModule(from: expression, builtin: builtin)
