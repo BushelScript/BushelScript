@@ -3,7 +3,7 @@ import SwiftAutomation
 
 final class Builtin {
     
-    var rt = RTInfo()
+    var rt = Runtime()
     lazy var stack = ProgramStack(rt)
     
     public typealias Pointer = UnsafeMutableRawPointer
@@ -500,7 +500,7 @@ final class Builtin {
 
 extension SwiftAutomation.Specifier {
     
-    func perform(_ rt: RTInfo, command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> RT_Object {
+    func perform(_ rt: Runtime, command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> RT_Object {
         do {
             let wrappedResultDescriptor = try sendEvent(for: command, arguments: arguments)
             guard let resultDescriptor = wrappedResultDescriptor.result else {
@@ -537,12 +537,12 @@ extension SwiftAutomation.Specifier {
 
 public extension RT_Object {
     
-    static func fromAEDescriptor(_ rt: RTInfo, _ appData: AppData, _ descriptor: NSAppleEventDescriptor) throws -> RT_Object {
+    static func fromAEDescriptor(_ rt: Runtime, _ appData: AppData, _ descriptor: NSAppleEventDescriptor) throws -> RT_Object {
         return fromSADecoded(rt, try appData.unpackAsAny(descriptor)) ??
             RT_AEObject(rt, descriptor: descriptor)
     }
     
-    static func fromSADecoded(_ rt: RTInfo, _ object: Any) -> RT_Object? {
+    static func fromSADecoded(_ rt: Runtime, _ object: Any) -> RT_Object? {
         switch object {
         case let bool as Bool:
             return RT_Boolean.withValue(bool)
@@ -609,7 +609,7 @@ public extension RT_Object {
 
 extension SwiftAutomation.Symbol {
     
-    func asRTObject(_ rt: RTInfo) -> RT_Object {
+    func asRTObject(_ rt: Runtime) -> RT_Object {
         switch type {
         case typeType:
             return RT_Class(value: rt.type(for: code))

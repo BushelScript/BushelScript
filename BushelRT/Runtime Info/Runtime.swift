@@ -2,9 +2,9 @@ import Bushel
 import LLVM
 import os
 
-private let log = OSLog(subsystem: logSubsystem, category: "RT info")
+private let log = OSLog(subsystem: logSubsystem, category: "Runtime")
 
-public class RTInfo {
+public class Runtime {
     
     public let termPool = TermPool()
     public let topScript: RT_Script
@@ -168,7 +168,7 @@ public class RTInfo {
     
 }
 
-public extension RTInfo {
+public extension Runtime {
     
     func run(_ program: Program) -> RT_Object {
         inject(terms: program.terms)
@@ -191,33 +191,35 @@ public extension RTInfo {
             fatalError(message)
         }
         
-        let module = generateLLVMModule(from: expression, builtin: builtin)
+//        let module = generateLLVMModule(from: expression, builtin: builtin)
         
         // Let LLVM verify that the module's IR code is well-formed
-        do {
-            try module.verify()
-        } catch {
-            os_log("Module verification error: %@", log: log, type: .error, String(describing: error))
-        }
+//        do {
+//            try module.verify()
+//        } catch {
+//            os_log("Module verification error: %@", log: log, type: .error, String(describing: error))
+//        }
         
-        let pipeliner = PassPipeliner(module: module)
-        pipeliner.addStandardModulePipeline("std_module")
-        pipeliner.addStandardFunctionPipeline("std_fn")
-        pipeliner.execute()
+//        let pipeliner = PassPipeliner(module: module)
+//        pipeliner.addStandardModulePipeline("std_module")
+//        pipeliner.addStandardFunctionPipeline("std_fn")
+//        pipeliner.execute()
         
         // JIT-compile the module's IR for the current machine
-        let jit = try! JIT(machine: TargetMachine())
-        _ = try! jit.addEagerlyCompiledIR(module, { (name) -> JIT.TargetAddress in
-            return JIT.TargetAddress()
-        })
+//        let jit = try! JIT(machine: TargetMachine())
+//        _ = try! jit.addEagerlyCompiledIR(module, { (name) -> JIT.TargetAddress in
+//            return JIT.TargetAddress()
+//        })
         
         // Call the main function in the module and return the result
-        typealias MainPtr = @convention(c) () -> UnsafeMutableRawPointer
-        let address = try! jit.address(of: "main")
-        let main = unsafeBitCast(address, to: MainPtr.self)
-        let resultObject = Unmanaged<RT_Object>.fromOpaque(main()).takeUnretainedValue()
-        os_log("Execution result: %@", log: log, type: .debug, String(describing: resultObject))
-        return resultObject
+//        typealias MainPtr = @convention(c) () -> UnsafeMutableRawPointer
+//        let address = try! jit.address(of: "main")
+//        let main = unsafeBitCast(address, to: MainPtr.self)
+//        let resultObject = Unmanaged<RT_Object>.fromOpaque(main()).takeUnretainedValue()
+//        os_log("Execution result: %@", log: log, type: .debug, String(describing: resultObject))
+//        return resultObject
+        return RT_Null.null
+        
     }
     
 }

@@ -5,7 +5,7 @@ public protocol RT_SASpecifierConvertible: RT_Object, AEEncodable {
     
     func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier?
     
-    var rt: RTInfo { get }
+    var rt: Runtime { get }
     
 }
 

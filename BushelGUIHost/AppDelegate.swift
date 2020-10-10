@@ -93,7 +93,7 @@ extension AppDelegate {
     }
     
     @objc func handleAsk(event: NSAppleEventDescriptor, reply: NSAppleEventDescriptor) {
-        let rt = RTInfo()
+        let rt = Runtime()
         let arguments = getArguments(from: event)
         
         let typeArg = arguments[ParameterInfo(.GUI_ask_dataType)]
@@ -180,7 +180,7 @@ func getArguments(from event: NSAppleEventDescriptor) -> [ParameterInfo : RT_Obj
             continue
         }
         
-        if let value = try? RT_Object.fromAEDescriptor(RTInfo(), AppData(), descriptor) {
+        if let value = try? RT_Object.fromAEDescriptor(Runtime(), AppData(), descriptor) {
             result[ParameterInfo(.ae12(class: eventClass, id: eventID, code: code))] = value
         }
     }

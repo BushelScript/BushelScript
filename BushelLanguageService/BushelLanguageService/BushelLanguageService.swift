@@ -118,7 +118,7 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
         guard let program = programs[program] else {
             return reply(nil)
         }
-        let rt = RTInfo(scriptName: scriptName, currentApplicationBundleID: currentApplicationID)
+        let rt = Runtime(scriptName: scriptName, currentApplicationBundleID: currentApplicationID)
         reply(objects.retain(rt.run(program)))
     }
     

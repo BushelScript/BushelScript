@@ -4,12 +4,12 @@ import SwiftAutomation
 /// A test clause specifier.
 public final class RT_TestSpecifier: RT_Object {
     
-    public let rt: RTInfo
+    public let rt: Runtime
     public var operation: BinaryOperation
     public var lhs: RT_Object
     public var rhs: RT_Object
     
-    public init(_ rt: RTInfo, operation: BinaryOperation, lhs: RT_Object, rhs: RT_Object) {
+    public init(_ rt: Runtime, operation: BinaryOperation, lhs: RT_Object, rhs: RT_Object) {
         self.rt = rt
         self.operation = operation
         

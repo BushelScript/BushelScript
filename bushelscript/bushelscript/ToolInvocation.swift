@@ -21,7 +21,7 @@ private struct InvocationState {
     
     var storedLanguageModule: (module: LanguageModule, language: String)?
     var storedParser: (parser: SourceParser, module: LanguageModule)?
-    var rt = RTInfo(currentApplicationBundleID: "com.justcheesy.BushelGUIHost")
+    var rt = Runtime(currentApplicationBundleID: "com.justcheesy.BushelGUIHost")
     
 }
 
