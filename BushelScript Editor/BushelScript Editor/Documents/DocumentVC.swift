@@ -68,11 +68,13 @@ class DocumentVC: NSViewController {
     var statusStack: [Status] = [] {
         didSet {
             DispatchQueue.main.async {
-                self.document.isRunning = (self.status == .running)
+                let status = self.statusStack.last
                 
-                self.connectionInUse = (self.status != nil)
+                self.document.isRunning = (status == .running)
+                
+                self.connectionInUse = (status != nil)
                 self.isWorking = self.connectionInUse
-                self.statusText = self.status?.localizedDescription ?? ""
+                self.statusText = status?.localizedDescription ?? ""
             }
         }
     }
