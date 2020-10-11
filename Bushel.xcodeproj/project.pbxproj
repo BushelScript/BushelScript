@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3C043071231621A200758339 /* Opaquify.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C0430702316210D00758339 /* Opaquify.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C043074231857CE00758339 /* Program.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C043073231857CE00758339 /* Program.swift */; };
 		3C08E14F230647B900CBA90E /* EntryPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C08E14E230647B900CBA90E /* EntryPoint.swift */; };
 		3C12EF752354E23C0057E0CC /* RT_Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF742354E23C0057E0CC /* RT_Object.swift */; };
@@ -267,7 +266,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3C0430702316210D00758339 /* Opaquify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Opaquify.h; sourceTree = "<group>"; };
 		3C043073231857CE00758339 /* Program.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Program.swift; sourceTree = "<group>"; };
 		3C08E14E230647B900CBA90E /* EntryPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryPoint.swift; sourceTree = "<group>"; };
 		3C12EF742354E23C0057E0CC /* RT_Object.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Object.swift; sourceTree = "<group>"; };
@@ -859,7 +857,6 @@
 		3CC2249F2391F9CE00448D25 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				3C0430702316210D00758339 /* Opaquify.h */,
 				3CCA1C7B235D0C010037058C /* Logging.swift */,
 			);
 			path = Utility;
@@ -1013,7 +1010,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C043071231621A200758339 /* Opaquify.h in Headers */,
 				3CCD8ABF22CC45040049C74F /* BushelRT.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,5 +7,3 @@ FOUNDATION_EXPORT double BushelRTVersionNumber;
 FOUNDATION_EXPORT const unsigned char BushelRTVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <BushelRT/PublicHeader.h>
-
-#import <BushelRT/Opaquify.h>

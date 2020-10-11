@@ -218,7 +218,7 @@ public extension Runtime {
     }
     
     func runFunction(_ functionExpression: Expression, actualArguments: [ParameterInfo : RT_Object]) throws -> RT_Object {
-        guard case let .function(name, parameters, arguments, body) = functionExpression.kind else {
+        guard case let .function(_, parameters, arguments, body) = functionExpression.kind else {
             preconditionFailure("expected function expression but got \(functionExpression)")
         }
         
@@ -251,7 +251,7 @@ public extension Runtime {
                 argumentValue = actualArguments[ParameterInfo(parameter.uid)] ?? RT_Null.null
             }
             
-            builtin.newVariable(toOpaque(argument), toOpaque(argumentValue))
+            builtin.newVariable(argument, argumentValue)
         }
         
         return try runPrimary(body, lastResult: ExprValue(body, RT_Null.null), target: ExprValue(body, global))
@@ -286,7 +286,7 @@ public extension Runtime {
         case let .if_(condition, then, else_): // MARK: .if_
             let conditionValue = try runPrimary(condition, lastResult: lastResult, target: target)
             
-            if builtin.isTruthy(toOpaque(conditionValue)) {
+            if builtin.isTruthy(conditionValue) {
                 return try runPrimary(then, lastResult: lastResult, target: target)
             } else if let else_ = else_ {
                 return try runPrimary(else_, lastResult: lastResult, target: target)
@@ -295,7 +295,7 @@ public extension Runtime {
             }
         case .repeatWhile(let condition, let repeating): // MARK: .repeatWhile
             var repeatResult: RT_Object?
-            while builtin.isTruthy(toOpaque(try runPrimary(condition, lastResult: lastResult, target: target))) {
+            while builtin.isTruthy(try runPrimary(condition, lastResult: lastResult, target: target)) {
                 repeatResult = try runPrimary(repeating, lastResult: lastResult, target: target)
             }
             return try repeatResult ?? evaluate(lastResult, lastResult: lastResult, target: target)
@@ -304,22 +304,21 @@ public extension Runtime {
             
             var repeatResult: RT_Object?
             var count = 0
-            while builtin.isTruthy(builtin.binaryOp(Int64(BinaryOperation.less.rawValue), toOpaque(RT_Integer(value: count)), toOpaque(timesValue))) {
+            while builtin.isTruthy(builtin.binaryOp(.less, RT_Integer(value: count), timesValue)) {
                 repeatResult = try runPrimary(repeating, lastResult: lastResult, target: target)
                 count += 1
             }
             return try repeatResult ?? evaluate(lastResult, lastResult: lastResult, target: target)
         case .repeatFor(let variable, let container, let repeating): // MARK: .repeatFor
             let containerValue = try runPrimary(container, lastResult: lastResult, target: target)
-            let timesValue = try builtin.getSequenceLength(toOpaque(containerValue))
+            let timesValue = try builtin.getSequenceLength(containerValue)
             
             var repeatResult: RT_Object?
-            var count = 0
-            while builtin.isTruthy(builtin.binaryOp(Int64(BinaryOperation.less.rawValue), toOpaque(RT_Integer(value: count)), toOpaque(timesValue))) {
-                let elementValue = try builtin.getFromSequenceAtIndex(toOpaque(containerValue), Int64(count))
-                builtin.newVariable(toOpaque(variable), elementValue)
+            // 1-based indices wheeeeee
+            for count in 1...timesValue {
+                let elementValue = try builtin.getFromSequenceAtIndex(containerValue, Int64(count))
+                builtin.newVariable(variable, elementValue)
                 repeatResult = try runPrimary(repeating, lastResult: lastResult, target: target)
-                count += 1
             }
             return try repeatResult ?? evaluate(lastResult, lastResult: lastResult, target: target)
         case .tell(let newTarget, let to): // MARK: .tell
@@ -327,7 +326,7 @@ public extension Runtime {
             return try runPrimary(to, lastResult: lastResult, target: newTargetValue)
         case .let_(let term, let initialValue): // MARK: .let_
             let initialExprValue = try initialValue.map { try runPrimary($0, lastResult: lastResult, target: target) } ?? RT_Null.null
-            builtin.newVariable(toOpaque(term), toOpaque(initialExprValue))
+            builtin.newVariable(term, initialExprValue)
             return initialExprValue
         case .define(_, as: _): // MARK: .define
             return try evaluate(lastResult, lastResult: lastResult, target: target)
@@ -356,62 +355,59 @@ public extension Runtime {
                         )
                     },
                     uniquingKeysWith: {
-                        builtin.isTruthy(builtin.binaryOp(Int64(BinaryOperation.greater.rawValue), toOpaque($1), toOpaque($0))) ? $1 : $0
+                        builtin.isTruthy(builtin.binaryOp(.greater, $1, $0)) ? $1 : $0
                     }
                 )
             )
         case .prefixOperator(let operation, let operand), .postfixOperator(let operation, let operand): // MARK: .prefixOperator, .postfixOperator
             let operandValue = try runPrimary(operand, lastResult: lastResult, target: target)
-            return fromOpaque(builtin.unaryOp(Int64(operation.rawValue), toOpaque(operandValue))) as! RT_Object
+            return builtin.unaryOp(operation, operandValue)
         case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
             let lhsValue = try runPrimary(lhs, lastResult: lastResult, target: target)
             let rhsValue = try runPrimary(rhs, lastResult: lastResult, target: target)
-            return fromOpaque(builtin.binaryOp(Int64(operation.rawValue), toOpaque(lhsValue), toOpaque(rhsValue))) as! RT_Object
+            return builtin.binaryOp(operation, lhsValue, rhsValue)
         case .variable(let term): // MARK: .variable
-            return fromOpaque(builtin.getVariableValue(toOpaque(term))) as! RT_Object
+            return builtin.getVariableValue(term)
         case .use(let term), // MARK: .use
              .resource(let term): // MARK: .resource
-            return fromOpaque(builtin.getResource(toOpaque(term))) as! RT_Object
+            return builtin.getResource(term)
         case .enumerator(let term as Term): // MARK: .enumerator
-            return fromOpaque(builtin.newConstant(toOpaque(RT_String(value: term.typedUID.normalized)))) as! RT_Object
+            return builtin.newConstant(term.typedUID)
         case .class_(let term as Term): // MARK: .class_
-            return fromOpaque(builtin.newClass(toOpaque(RT_String(value: term.typedUID.normalized)))) as! RT_Object
+            return builtin.newClass(term.typedUID)
         case .set(let expression, to: let newValueExpression): // MARK: .set
             if case .variable(let variableTerm) = expression.kind {
                 let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult, target: target)
-                _ = builtin.setVariableValue(toOpaque(variableTerm), toOpaque(newValueExprValue))
+                _ = builtin.setVariableValue(variableTerm, newValueExprValue)
                 return newValueExprValue
             } else {
-                let directParameterUIDExprValue = RT_String(value: TypedTermUID(ParameterUID.direct).normalized)
-                let setToParameterUIDExprValue = RT_String(value: TypedTermUID(ParameterUID.set_to).normalized)
-                
                 let expressionExprValue = try runPrimary(expression, lastResult: lastResult, target: target, evaluateSpecifiers: false)
                 let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult, target: target)
                 
                 let arguments = builtin.newArgumentRecord()
-                builtin.addToArgumentRecord(arguments, toOpaque(directParameterUIDExprValue), toOpaque(expressionExprValue))
-                builtin.addToArgumentRecord(arguments, toOpaque(setToParameterUIDExprValue), toOpaque(newValueExprValue))
+                builtin.addToArgumentRecord(arguments, TypedTermUID(ParameterUID.direct), expressionExprValue)
+                builtin.addToArgumentRecord(arguments, TypedTermUID(ParameterUID.set_to), newValueExprValue)
                 
                 let command = self.command(forUID: TypedTermUID(CommandUID.set))
                 
-                return fromOpaque(try builtin.runCommand(toOpaque(command), arguments, toOpaque(evaluate(target, lastResult: lastResult, target: target)))) as! RT_Object
+                return try builtin.runCommand(command, arguments, evaluate(target, lastResult: lastResult, target: target))
             }
             
         case .command(let term, let parameters): // MARK: .command
-            let parameterExprValues: [(uid: RT_Object, value: RT_Object)] = try parameters.map { kv in
+            let parameterExprValues: [(typedUID: TypedTermUID, value: RT_Object)] = try parameters.map { kv in
                 let (parameterTerm, parameterValue) = kv
-                let uidExprValue = RT_String(value: parameterTerm.typedUID.normalized)
+                let uidExprValue = parameterTerm.typedUID
                 let valueExprValue = try runPrimary(parameterValue, lastResult: lastResult, target: target)
                 return (uidExprValue, valueExprValue)
             }
             
             let arguments = builtin.newArgumentRecord()
             for parameter in parameterExprValues {
-                builtin.addToArgumentRecord(arguments, toOpaque(parameter.uid), toOpaque(parameter.value))
+                builtin.addToArgumentRecord(arguments, parameter.typedUID, parameter.value)
             }
             
             let command = self.command(forUID: term.typedUID)
-            return fromOpaque(try builtin.runCommand(toOpaque(command), arguments, toOpaque(evaluate(target, lastResult: lastResult, target: target)))) as! RT_Object
+            return try builtin.runCommand(command, arguments, evaluate(target, lastResult: lastResult, target: target))
         case .reference(let expression): // MARK: .reference
             return try runPrimary(expression, lastResult: lastResult, target: target, evaluateSpecifiers: false)
         case .get(let expression): // MARK: .get
@@ -421,23 +417,19 @@ public extension Runtime {
             return evaluateSpecifiers ? try evaluatingSpecifier(specifierExprValue) : specifierExprValue
         case .function(let name, _, _, _): // MARK: .function
             let commandInfo = self.command(forUID: TypedTermUID(.command, name.uid))
-            _ = builtin.newFunction(toOpaque(commandInfo), expression, toOpaque(RT_Null.null))
+            _ = builtin.newFunction(commandInfo, expression, nil)
             return try evaluate(lastResult, lastResult: lastResult, target: target)
         case .multilineString(_, let body): // MARK: .multilineString
             return RT_String(value: body)
         case .weave(let hashbang, let body): // MARK: .weave
-            let hashbangRTString = RT_String(value: hashbang.invocation)
-            let bodyRTString = RT_String(value: body)
-            return fromOpaque(builtin.runWeave(toOpaque(hashbangRTString), toOpaque(bodyRTString), toOpaque(try evaluate(lastResult, lastResult: lastResult, target: target)))) as! RT_Object
+            return builtin.runWeave(hashbang.invocation, body, try evaluate(lastResult, lastResult: lastResult, target: target))
         }
     }
     
     private func runSpecifier(_ specifier: Specifier, lastResult: ExprValue, target: ExprValue) throws -> RT_Object {
-        let uidValue_ = RT_String(value: specifier.idTerm.typedUID.normalized)
-        let uidValue = toOpaque(uidValue_)
+        let uidValue = specifier.idTerm.typedUID
         
-        let parentValue_ = try specifier.parent.map { try runPrimary($0, lastResult: lastResult, target: target, evaluateSpecifiers: false) }
-        let parentValue = parentValue_.map { toOpaque($0) }
+        let parentValue = try specifier.parent.map { try runPrimary($0, lastResult: lastResult, target: target, evaluateSpecifiers: false) }
         
         let dataExpressionValues: [RT_Object]
         if case .test(_, let testComponent) = specifier.kind {
@@ -448,42 +440,42 @@ public extension Runtime {
             }
         }
         
-        func generate() -> Builtin.RTObjectPointer {
+        func generate() -> RT_Specifier {
             switch specifier.kind {
             case .simple:
-                return builtin.newSpecifier1(parentValue, uidValue, UInt32(RT_Specifier.Kind.simple.rawValue), toOpaque(dataExpressionValues[0]))
+                return builtin.newSpecifier1(parentValue, uidValue, .simple, dataExpressionValues[0])
             case .index:
-                return builtin.newSpecifier1(parentValue, uidValue, UInt32(RT_Specifier.Kind.index.rawValue), toOpaque(dataExpressionValues[0]))
+                return builtin.newSpecifier1(parentValue, uidValue, .index, dataExpressionValues[0])
             case .name:
-                return builtin.newSpecifier1(parentValue, uidValue, UInt32(RT_Specifier.Kind.name.rawValue), toOpaque(dataExpressionValues[0]))
+                return builtin.newSpecifier1(parentValue, uidValue, .name, dataExpressionValues[0])
             case .id:
-                return builtin.newSpecifier1(parentValue, uidValue, UInt32(RT_Specifier.Kind.id.rawValue), toOpaque(dataExpressionValues[0]))
+                return builtin.newSpecifier1(parentValue, uidValue, .id, dataExpressionValues[0])
             case .all:
-                return builtin.newSpecifier0(parentValue, uidValue, UInt32(RT_Specifier.Kind.all.rawValue))
+                return builtin.newSpecifier0(parentValue, uidValue, .all)
             case .first:
-                return builtin.newSpecifier0(parentValue, uidValue, UInt32(RT_Specifier.Kind.first.rawValue))
+                return builtin.newSpecifier0(parentValue, uidValue, .first)
             case .middle:
-                return builtin.newSpecifier0(parentValue, uidValue, UInt32(RT_Specifier.Kind.middle.rawValue))
+                return builtin.newSpecifier0(parentValue, uidValue, .middle)
             case .last:
-                return builtin.newSpecifier0(parentValue, uidValue, UInt32(RT_Specifier.Kind.last.rawValue))
+                return builtin.newSpecifier0(parentValue, uidValue, .last)
             case .random:
-                return builtin.newSpecifier0(parentValue, uidValue, UInt32(RT_Specifier.Kind.random.rawValue))
+                return builtin.newSpecifier0(parentValue, uidValue, .random)
             case .previous:
-                return builtin.newSpecifier0(parentValue, uidValue, UInt32(RT_Specifier.Kind.previous.rawValue))
+                return builtin.newSpecifier0(parentValue, uidValue, .previous)
             case .next:
-                return builtin.newSpecifier0(parentValue, uidValue, UInt32(RT_Specifier.Kind.next.rawValue))
+                return builtin.newSpecifier0(parentValue, uidValue, .next)
             case .range:
-                return builtin.newSpecifier2(parentValue, uidValue, UInt32(RT_Specifier.Kind.range.rawValue), toOpaque(dataExpressionValues[0]), toOpaque(dataExpressionValues[1]))
+                return builtin.newSpecifier2(parentValue, uidValue, .range, dataExpressionValues[0], dataExpressionValues[1])
             case .test:
-                return builtin.newSpecifier1(parentValue, uidValue, UInt32(RT_Specifier.Kind.test.rawValue), toOpaque(dataExpressionValues[0]))
+                return builtin.newSpecifier1(parentValue, uidValue, .test, dataExpressionValues[0])
             case .property:
-                return builtin.newSpecifier0(parentValue, uidValue, UInt32(RT_Specifier.Kind.property.rawValue))
+                return builtin.newSpecifier0(parentValue, uidValue, .property)
             }
         }
         
-        let resultValue = fromOpaque(generate()) as! RT_Object
+        let resultValue = generate()
         return (specifier.parent == nil) ?
-            fromOpaque(builtin.qualifySpecifier(toOpaque(resultValue), toOpaque(try evaluate(target, lastResult: lastResult, target: target)))) as! RT_Object :
+            builtin.qualifySpecifier(resultValue, try evaluate(target, lastResult: lastResult, target: target)) :
             resultValue
     }
     
@@ -494,12 +486,12 @@ public extension Runtime {
         case let .predicate(predicate):
             let lhsValue = try runTestComponent(predicate.lhs, lastResult: lastResult, target: target)
             let rhsValue = try runTestComponent(predicate.rhs, lastResult: lastResult, target: target)
-            return fromOpaque(builtin.newTestSpecifier(UInt32(predicate.operation.rawValue), toOpaque(lhsValue), toOpaque(rhsValue))) as! RT_Object
+            return builtin.newTestSpecifier(predicate.operation, lhsValue, rhsValue)
         }
     }
     
     private func evaluatingSpecifier(_ object: RT_Object) throws -> RT_Object {
-        fromOpaque(try builtin.evaluateSpecifier(toOpaque(object))) as! RT_Object
+        try builtin.evaluateSpecifier(object)
     }
     
 }
