@@ -73,8 +73,7 @@ public class RT_List: RT_Object, AEEncodable {
         let filteredContents = self.filteredContents(type)
         let zeroBasedIndex = index - 1
         guard filteredContents.indices.contains(Int(zeroBasedIndex)) else {
-            // FIXME: use the error system
-            fatalError("index out of bounds")
+            throw InFlightRuntimeError(description: "index ‘\(index)’ is out of bounds for ‘\(self)’")
         }
         return filteredContents[Int(zeroBasedIndex)]
     }
@@ -100,24 +99,22 @@ public class RT_List: RT_Object, AEEncodable {
         let filteredContents = self.filteredContents(type)
         
         guard
-            let from = ((from.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (from.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue,
-            let to = ((thru.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (thru.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue
+            let fromNum = ((from.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (from.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue,
+            let thruNum = ((thru.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (thru.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue
         else {
-            // FIXME: use the error system
-            fatalError("range types incorrect")
+            throw InFlightRuntimeError(description: "by-range specifiers require numeric indices, not \(from) and \(thru)")
         }
         
-        let zeroBasedFrom = Int(from - 1)
-        let zeroBasedTo = Int(to - 1)
+        let zeroBasedFrom = Int(fromNum - 1)
+        let zeroBasedThru = Int(thruNum - 1)
         guard
             filteredContents.indices.contains(zeroBasedFrom),
-            filteredContents.indices.contains(zeroBasedTo)
+            filteredContents.indices.contains(zeroBasedThru)
         else {
-            // FIXME: use the error system
-            fatalError("range out of bounds")
+            throw InFlightRuntimeError(description: "range ‘(\(zeroBasedFrom + 1)) thru (\(zeroBasedThru + 1))’ is out of bounds for ’\(self)’")
         }
         
-        return RT_List(contents: Array(filteredContents[zeroBasedFrom...zeroBasedTo]))
+        return RT_List(contents: Array(filteredContents[zeroBasedFrom...zeroBasedThru]))
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {

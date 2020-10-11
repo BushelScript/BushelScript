@@ -25,7 +25,7 @@ final class Builtin {
         if !throwing {
             throwing = true
             defer { throwing = false }
-            try stack.currentErrorHandler(message, rt)
+            try stack.currentErrorHandler(message, rt.currentLocation ?? SourceLocation(at: "".startIndex, source: ""), rt)
         }
         fatalError(message)
     }
@@ -259,6 +259,8 @@ final class Builtin {
     func evaluateSpecifier(_ specifier: RT_Object) throws -> RT_Object {
         do {
             return retain(try specifier.evaluate())
+        } catch let error as InFlightRuntimeError {
+            try throwError(message: "error evaluating specifier ‘\(specifier)’: \(error.description)")
         } catch {
             try throwError(message: "error evaluating specifier ‘\(specifier)’: \(error.localizedDescription)")
         }

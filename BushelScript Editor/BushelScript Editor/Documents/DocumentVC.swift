@@ -268,13 +268,14 @@ class DocumentVC: NSViewController {
                         
                     }
                 }
-            case .failure(let error):
+            case .failure(let errorToken):
                 pushStatus(.fetchingData)
-                service.copyNSError(fromError: error) { error in
+                service.copyNSError(fromError: errorToken) { error in
                     self.popStatus(.fetchingData)
-                    DispatchQueue.main.async {
-                        self.presentError(error)
-                    }
+//                    DispatchQueue.main.async {
+//                        self.presentError(error)
+                        self.displayInlineError(for: errorToken, source: self.modelSourceCode, via: service)
+//                    }
                 }
             }
         }
@@ -283,13 +284,14 @@ class DocumentVC: NSViewController {
             case .success(let program):
                 run(program, service, language, then: runCallback)
             case .failure(let error):
-                pushStatus(.fetchingData)
-                service.copyNSError(fromError: error) { error in
-                    self.popStatus(.fetchingData)
-                    DispatchQueue.main.async {
-                        self.presentError(error)
-                    }
-                }
+//                pushStatus(.fetchingData)
+//                service.copyNSError(fromError: error) { error in
+//                    self.popStatus(.fetchingData)
+//                    DispatchQueue.main.async {
+//                        self.presentError(error)
+//                    }
+                    self.displayInlineError(for: error, source: self.modelSourceCode, via: service)
+//                }
             }
         }
         
@@ -307,13 +309,14 @@ class DocumentVC: NSViewController {
             case .success(_):
                 break
             case .failure(let error):
-                self.pushStatus(.fetchingData)
-                service.copyNSError(fromError: error) { error in
-                    self.popStatus(.fetchingData)
-                    DispatchQueue.main.async {
-                        self.presentError(error)
-                    }
-                }
+//                self.pushStatus(.fetchingData)
+//                service.copyNSError(fromError: error) { error in
+//                    self.popStatus(.fetchingData)
+//                    DispatchQueue.main.async {
+//                        self.presentError(error)
+//                    }
+                self.displayInlineError(for: error, source: self.modelSourceCode, via: service)
+//                }
             }
         }
     }
@@ -526,42 +529,45 @@ extension DocumentVC: NSTextViewDelegate {
                 guard Defaults[.liveErrorsEnabled] else {
                     return
                 }
-                
-                self.pushStatus(.fetchingData)
-                service.copyNSError(fromError: error) { nsError in
-                    service.copySourceCharacterRange(fromError: error, forSource: source) { errorRangeValue in
-                        self.popStatus(.fetchingData)
-                        if let errorRangeValue = errorRangeValue {
-                            let errorNSRange = errorRangeValue.rangeValue
-                            DispatchQueue.main.sync {
-                                guard source == self.textView.string else {
-                                    // Text has changed since this information was generated
-                                    return
-                                }
-                                self.removeErrorDisplay()
-                                self.display(error: nsError, at: errorNSRange)
-                            }
+                self.displayInlineError(for: error, source: source, via: service)
+            }
+        }
+    }
+    
+    private func displayInlineError(for error: ErrorToken, source: String, via service: BushelLanguageServiceProtocol) {
+        pushStatus(.fetchingData)
+        service.copyNSError(fromError: error) { nsError in
+            service.copySourceCharacterRange(fromError: error, forSource: source) { errorRangeValue in
+                self.popStatus(.fetchingData)
+                if let errorRangeValue = errorRangeValue {
+                    let errorNSRange = errorRangeValue.rangeValue
+                    DispatchQueue.main.sync {
+                        guard source == self.textView.string else {
+                            // Text has changed since this information was generated
+                            return
                         }
+                        self.removeErrorDisplay()
+                        self.display(error: nsError, at: errorNSRange)
                     }
-//                    service.getSourceFixes(fromError: error) { fixes in
-//                        self.popStatus(.fetchingData)
-//
-//                        guard !fixes.isEmpty else {
-//                            DispatchQueue.main.sync {
-//                                self.showSuggestionList(with: [ErrorSuggestionListItem(error: nsError)])
-//                            }
-//                            return
-//                        }
-//
-//                        let suggestions =
-//                            [ErrorSuggestionListItem(error: nsError)] +
-//                            fixes.map { AutoFixSuggestionListItem(service: service, fix: $0 as SourceFixToken, source: Substring(source)) } as [SuggestionListItem]
-//                        DispatchQueue.main.sync {
-//                            self.showSuggestionList(with: suggestions)
-//                        }
-//                    }
                 }
             }
+//            service.getSourceFixes(fromError: error) { fixes in
+//                self.popStatus(.fetchingData)
+//
+//                guard !fixes.isEmpty else {
+//                    DispatchQueue.main.sync {
+//                        self.showSuggestionList(with: [ErrorSuggestionListItem(error: nsError)])
+//                    }
+//                    return
+//                }
+//
+//                let suggestions =
+//                    [ErrorSuggestionListItem(error: nsError)] +
+//                    fixes.map { AutoFixSuggestionListItem(service: service, fix: $0 as SourceFixToken, source: Substring(source)) } as [SuggestionListItem]
+//                DispatchQueue.main.sync {
+//                    self.showSuggestionList(with: suggestions)
+//                }
+//            }
         }
     }
     

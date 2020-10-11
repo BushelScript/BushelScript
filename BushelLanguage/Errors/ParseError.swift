@@ -1,7 +1,7 @@
 import Bushel
 
 /// Any parser error.
-public protocol ParseErrorProtocol: Error {
+public protocol ParseErrorProtocol: Error, Located {
     
     /// The source location to which the error applies.
     var location: SourceLocation { get set }

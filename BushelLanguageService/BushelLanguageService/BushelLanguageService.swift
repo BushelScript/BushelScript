@@ -166,7 +166,7 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
         reply(NSValue(range: NSRange(range)))
     }
     func copySourceCharacterRange(fromError error: Any, forSource source: String, reply: @escaping (NSValue?) -> Void) {
-        guard let error = errors[error] as? ParseErrorProtocol else {
+        guard let error = errors[error] as? Located else {
             return reply(nil)
         }
         let range = error.location.range

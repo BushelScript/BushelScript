@@ -13,21 +13,33 @@ public struct CodeGenOptions {
     
 }
 
-public class Runtime {
+public struct RuntimeError: CodableLocalizedError, Error, Located {
     
-    public struct RuntimeError: CodableLocalizedError {
-        
-        /// The error message as formatted during init.
-        public let description: String
-        
-        public var errorDescription: String? {
-            description
-        }
-        
+    /// The error message as formatted during init.
+    public let description: String
+    
+    /// The source location to which the error applies.
+    public let location: SourceLocation
+    
+    public var errorDescription: String? {
+        description
     }
+    
+}
+
+public struct InFlightRuntimeError: Error {
+    
+    /// The error message as formatted during init.
+    public let description: String
+    
+}
+
+public class Runtime {
     
     var options = CodeGenOptions(stackIntrospectability: false)
     var builtin: Builtin!
+    
+    var currentLocation: SourceLocation?
     
     public let termPool = TermPool()
     public let topScript: RT_Script
@@ -202,8 +214,8 @@ public extension Runtime {
         builtin = Builtin()
         builtin.rt = self
 
-        builtin.stack.pushErrorHandler { message, rt in
-            throw RuntimeError(description: message)
+        builtin.stack.pushErrorHandler { message, location, rt in
+            throw RuntimeError(description: message, location: location)
         }
         
         let result: RT_Object
@@ -211,6 +223,8 @@ public extension Runtime {
             result = try runPrimary(expression, lastResult: ExprValue(expression, RT_Null.null), target: ExprValue(expression, global))
         } catch let earlyReturn as EarlyReturn {
             result = earlyReturn.value
+        } catch let inFlightRuntimeError as InFlightRuntimeError {
+            throw RuntimeError(description: inFlightRuntimeError.description, location: currentLocation ?? expression.location)
         }
         
         os_log("Execution result: %@", log: log, type: .debug, String(describing: result))
@@ -268,6 +282,8 @@ public extension Runtime {
     }
     
     private func runPrimary(_ expression: Expression, lastResult: ExprValue, target: ExprValue, evaluateSpecifiers: Bool = true) throws -> RT_Object {
+        currentLocation = expression.location
+        
         switch expression.kind {
         case .empty, .end, .endWeave: // MARK: .empty, .end, .endWeave
             return try evaluate(lastResult, lastResult: lastResult, target: target)

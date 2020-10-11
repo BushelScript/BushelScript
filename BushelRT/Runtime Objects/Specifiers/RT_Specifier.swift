@@ -107,7 +107,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
                 }
                 fallthrough
             case .simple where data[0] is RT_Numeric:
-                return try parent.element(type, at: Int64((data[0] as! RT_Numeric).numericValue.rounded()))
+                return try parent.element(type, at: Int64((data[0] as! RT_Numeric).numericValue.rounded(.down)))
             case .name:
                 guard data[0] is RT_String else {
                     throw InvalidSpecifierDataType(specifierType: .byName, specifierData: data[0])
