@@ -15,8 +15,3 @@ External projects and their licensing terms are as follows:
     Released into public domain by its author (whose pseudonym is ‘has’). See swiftae/README § Etc.
     Modifications have been made to simplify the interface by removing parts that aren't needed in BushelRT.
     I also hereby dedicate any such modifications to the public domain.
-• LLVMSwift (excellent Swift bridge for the LLVM C API):
-    © 2017 Harlan, MIT licensed. See LLVMSwift/LICENSE.txt.
-• LLVM (compiler infrastructure; compiles programs using an “intermediate representation”, or IR):
-    University of Illinois/NCSA Open Source License. Expected to be installed as a system package using
-    `brew`. A copy of the license should be included in the package installation, in the file "LICENSE.TXT".

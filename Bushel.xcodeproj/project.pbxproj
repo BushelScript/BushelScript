@@ -130,7 +130,6 @@
 		3CD8398023DD32F5000F2516 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 3CD8397F23DD32F5000F2516 /* Yams */; };
 		3CD8398923DD3651000F2516 /* Translations in Resources */ = {isa = PBXBuildFile; fileRef = 3CD8398823DD3651000F2516 /* Translations */; };
 		3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */; };
-		3CEF505723529A1B008603E3 /* LLVM in Frameworks */ = {isa = PBXBuildFile; productRef = 3CEF505623529A1B008603E3 /* LLVM */; };
 		3CF7486F23B825AC00A2F981 /* InAnyCase in Frameworks */ = {isa = PBXBuildFile; productRef = 3CF7486E23B825AC00A2F981 /* InAnyCase */; };
 		3CF7487423B88C5500A2F981 /* TermInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF7487323B88C5500A2F981 /* TermInfo.swift */; };
 		3CFA68B223EE2F6B00A3E87E /* RadioChoicesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDED123EDA589007684D1 /* RadioChoicesVC.swift */; };
@@ -506,7 +505,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C9703D8235520D20099AA05 /* SwiftAutomation.framework in Frameworks */,
-				3CEF505723529A1B008603E3 /* LLVM in Frameworks */,
 				3C9703DE235520D50099AA05 /* Bushel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1196,7 +1194,6 @@
 			);
 			name = BushelRT;
 			packageProductDependencies = (
-				3CEF505623529A1B008603E3 /* LLVM */,
 			);
 			productName = BushelRT;
 			productReference = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */;
@@ -1277,7 +1274,6 @@
 			);
 			mainGroup = 3C35A5B122C81DE7002D4582;
 			packageReferences = (
-				3CEF505523529A1B008603E3 /* XCRemoteSwiftPackageReference "LLVMSwift" */,
 				3CF7486D23B825AC00A2F981 /* XCRemoteSwiftPackageReference "InAnyCase" */,
 				3CD8397E23DD32F4000F2516 /* XCRemoteSwiftPackageReference "Yams" */,
 			);
@@ -2741,14 +2737,6 @@
 				minimumVersion = 4.0.0;
 			};
 		};
-		3CEF505523529A1B008603E3 /* XCRemoteSwiftPackageReference "LLVMSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/llvm-swift/LLVMSwift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.7.0;
-			};
-		};
 		3CF7486D23B825AC00A2F981 /* XCRemoteSwiftPackageReference "InAnyCase" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ThatsJustCheesy/InAnyCase.git";
@@ -2764,11 +2752,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3CD8397E23DD32F4000F2516 /* XCRemoteSwiftPackageReference "Yams" */;
 			productName = Yams;
-		};
-		3CEF505623529A1B008603E3 /* LLVM */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3CEF505523529A1B008603E3 /* XCRemoteSwiftPackageReference "LLVMSwift" */;
-			productName = LLVM;
 		};
 		3CF7486E23B825AC00A2F981 /* InAnyCase */ = {
 			isa = XCSwiftPackageProductDependency;

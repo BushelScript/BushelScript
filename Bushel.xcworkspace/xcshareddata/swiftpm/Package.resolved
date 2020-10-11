@@ -2,30 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "Chalk",
-        "repositoryURL": "https://github.com/mxcl/Chalk.git",
-        "state": {
-          "branch": null,
-          "revision": "9aa9f348b86db3cf6702a3e43c081ecec80cf3c7",
-          "version": "0.4.0"
-        }
-      },
-      {
         "package": "Defaults",
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
           "branch": null,
           "revision": "55ffea9487fb9b559406d909ee31dcd955fe77aa",
           "version": "3.1.1"
-        }
-      },
-      {
-        "package": "FileCheck",
-        "repositoryURL": "https://github.com/llvm-swift/FileCheck.git",
-        "state": {
-          "branch": null,
-          "revision": "f25bfb4c69b9e05bf6b8d0862dcedb875c1b0f68",
-          "version": "0.2.4"
         }
       },
       {
@@ -47,15 +29,6 @@
         }
       },
       {
-        "package": "LLVM",
-        "repositoryURL": "https://github.com/llvm-swift/LLVMSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "bc303e09b3100b807d66efe6c98b7e7019a69d70",
-          "version": "0.7.0"
-        }
-      },
-      {
         "package": "Regex",
         "repositoryURL": "https://github.com/sharplet/Regex.git",
         "state": {
@@ -71,15 +44,6 @@
           "branch": "master",
           "revision": "f4a405992900fd7e543e7016d3a6dbd4c1b0fd7f",
           "version": null
-        }
-      },
-      {
-        "package": "swift-tools-support-core",
-        "repositoryURL": "https://github.com/apple/swift-tools-support-core.git",
-        "state": {
-          "branch": null,
-          "revision": "693aba4c4c9dcc4767cc853a0dd38bf90ad8c258",
-          "version": "0.0.1"
         }
       },
       {
