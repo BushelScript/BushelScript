@@ -39,7 +39,16 @@ public class Runtime {
     var options = CodeGenOptions(stackIntrospectability: false)
     var builtin: Builtin!
     
-    var currentLocation: SourceLocation?
+    private var locations: [SourceLocation] = []
+    private func pushLocation(_ location: SourceLocation) {
+        locations.append(location)
+    }
+    private func popLocation() {
+        _ = locations.popLast()
+    }
+    var currentLocation: SourceLocation? {
+        locations.last
+    }
     
     public let termPool = TermPool()
     public let topScript: RT_Script
@@ -282,7 +291,10 @@ public extension Runtime {
     }
     
     private func runPrimary(_ expression: Expression, lastResult: ExprValue, target: ExprValue, evaluateSpecifiers: Bool = true) throws -> RT_Object {
-        currentLocation = expression.location
+        pushLocation(expression.location)
+        defer {
+            popLocation()
+        }
         
         switch expression.kind {
         case .empty, .end, .endWeave: // MARK: .empty, .end, .endWeave
