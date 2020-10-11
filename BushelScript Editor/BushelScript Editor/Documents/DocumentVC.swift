@@ -68,11 +68,13 @@ class DocumentVC: NSViewController {
     var statusStack: [Status] = [] {
         didSet {
             DispatchQueue.main.async {
-                self.document.isRunning = (self.status == .running)
+                let status = self.statusStack.last
                 
-                self.connectionInUse = (self.status != nil)
+                self.document.isRunning = (status == .running)
+                
+                self.connectionInUse = (status != nil)
                 self.isWorking = self.connectionInUse
-                self.statusText = self.status?.localizedDescription ?? ""
+                self.statusText = status?.localizedDescription ?? ""
             }
         }
     }
@@ -250,29 +252,36 @@ class DocumentVC: NSViewController {
     }
     
     @IBAction func runScript(_ sender: Any?) {
-        func compileCallback(service: BushelLanguageServiceProtocol, language: LanguageModuleToken, result: Result<ProgramToken, ErrorToken>) {
+        func runCallback(service: BushelLanguageServiceProtocol, language: LanguageModuleToken, result: Result<RTObjectToken, ErrorToken>) {
             switch result {
-            case .success(let program):
-                pushStatus(.running)
-                service.runProgram(program, scriptName: document.displayName, currentApplicationID: Bundle(for: DocumentVC.self).bundleIdentifier!) { result in
-                    self.popStatus(.running)
+            case .success(let result):
+                DispatchQueue.main.async {
+                    self.resultInspectorPanelWC?.window?.orderOut(nil)
+                    
+                    let resultWC = self.resultInspectorPanelWC ?? ObjectInspectorPanelWC.instantiate(for: NoSelection())
+                    resultWC.window?.title = "Result\(self.document.displayName.map { " – \($0)" } ?? "")"
+                    resultWC.contentViewController?.representedObject = BushelRTObject(service: service, object: result as RTObjectToken)
                     
                     DispatchQueue.main.async {
-                        self.resultInspectorPanelWC?.window?.orderOut(nil)
-                        
-                        let resultWC = self.resultInspectorPanelWC ?? ObjectInspectorPanelWC.instantiate(for: NoSelection())
-                        resultWC.window?.title = "Result\(self.document.displayName.map { " – \($0)" } ?? "")"
-                        resultWC.contentViewController?.representedObject = BushelRTObject(service: service, object: result as RTObjectToken)
-                        
-                        DispatchQueue.main.async {
-                            resultWC.window?.orderFront(nil)
-                            self.resultInspectorPanelWC = resultWC
-                            
-                        }
-                        
+                        resultWC.window?.orderFront(nil)
+                        self.resultInspectorPanelWC = resultWC
                         
                     }
                 }
+            case .failure(let error):
+                pushStatus(.fetchingData)
+                service.copyNSError(fromError: error) { error in
+                    self.popStatus(.fetchingData)
+                    DispatchQueue.main.async {
+                        self.presentError(error)
+                    }
+                }
+            }
+        }
+        func compileCallback(service: BushelLanguageServiceProtocol, language: LanguageModuleToken, result: Result<ProgramToken, ErrorToken>) {
+            switch result {
+            case .success(let program):
+                run(program, service, language, then: runCallback)
             case .failure(let error):
                 pushStatus(.fetchingData)
                 service.copyNSError(fromError: error) { error in
@@ -305,6 +314,18 @@ class DocumentVC: NSViewController {
                         self.presentError(error)
                     }
                 }
+            }
+        }
+    }
+    
+    private func run(_ program: ProgramToken, _ service: BushelLanguageServiceProtocol, _ language: LanguageModuleToken, then: @escaping (_ service: BushelLanguageServiceProtocol, _ language: LanguageModuleToken, _ result: Result<RTObjectToken, ErrorToken>) -> Void) {
+        pushStatus(.running)
+        service.runProgram(program, scriptName: self.document.displayName, currentApplicationID: Bundle(for: DocumentVC.self).bundleIdentifier!) { result, error in
+            self.popStatus(.running)
+            if let error = error as ErrorToken? {
+                then(service, language, .failure(error))
+            } else if let result = result as RTObjectToken? {
+                then(service, language, .success(result))
             }
         }
     }

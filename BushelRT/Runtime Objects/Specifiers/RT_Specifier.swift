@@ -54,7 +54,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         case property
     }
     
-    public let rt: RTInfo
+    public let rt: Runtime
     public var parent: RT_Object
     public var type: TypeInfo?
     public var property: PropertyInfo?
@@ -62,7 +62,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
     public var kind: Kind
     
     // If parent is nil, a root of kind .application is implicitly added
-    public init(_ rt: RTInfo, parent: RT_Object?, type: TypeInfo?, property: PropertyInfo? = nil, data: [RT_Object], kind: Kind) {
+    public init(_ rt: Runtime, parent: RT_Object?, type: TypeInfo?, property: PropertyInfo? = nil, data: [RT_Object], kind: Kind) {
         self.rt = rt
         self.parent = parent ?? RT_RootSpecifier(rt, kind: .application)
         self.type = type
@@ -272,7 +272,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         }
     }
     
-    public convenience init?(_ rt: RTInfo, saSpecifier: SwiftAutomation.ObjectSpecifier) {
+    public convenience init?(_ rt: Runtime, saSpecifier: SwiftAutomation.ObjectSpecifier) {
         let parent: RT_Object?
         if let objectSpecifier = saSpecifier.parentQuery as? SwiftAutomation.ObjectSpecifier {
             parent = RT_Specifier(rt, saSpecifier: objectSpecifier)

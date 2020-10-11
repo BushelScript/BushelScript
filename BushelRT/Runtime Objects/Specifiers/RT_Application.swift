@@ -3,25 +3,25 @@ import SwiftAutomation
 
 public class RT_Application: RT_Object {
     
-    public let rt: RTInfo
+    public let rt: Runtime
     
     public let bundle: Bundle?
     public let target: TargetApplication
     
-    public init(_ rt: RTInfo, bundle: Bundle) {
+    public init(_ rt: Runtime, bundle: Bundle) {
         self.rt = rt
         self.bundle = bundle
         self.target = bundle.bundleIdentifier.map { .bundleIdentifier($0, false) } ??
             .url(bundle.bundleURL)
     }
     
-    public init(_ rt: RTInfo, target: TargetApplication) {
+    public init(_ rt: Runtime, target: TargetApplication) {
         self.rt = rt
         self.bundle = nil
         self.target = target
     }
     
-    public convenience init(_ rt: RTInfo, currentApplication: ()) {
+    public convenience init(_ rt: Runtime, currentApplication: ()) {
         if let bundleID = rt.currentApplicationBundleID {
             self.init(rt, target: .bundleIdentifier(bundleID, false))
         } else {

@@ -3,9 +3,9 @@ import SwiftAutomation
 
 public class RT_Global: RT_Object {
     
-    public let rt: RTInfo
+    public let rt: Runtime
     
-    public init(_ rt: RTInfo) {
+    public init(_ rt: Runtime) {
         self.rt = rt
     }
     

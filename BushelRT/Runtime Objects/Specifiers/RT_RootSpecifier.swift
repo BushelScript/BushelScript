@@ -17,15 +17,15 @@ public final class RT_RootSpecifier: RT_Object, RT_SASpecifierConvertible {
         case specimen
     }
     
-    public let rt: RTInfo
+    public let rt: Runtime
     public var kind: Kind
     
-    public init(_ rt: RTInfo, kind: Kind) {
+    public init(_ rt: Runtime, kind: Kind) {
         self.rt = rt
         self.kind = kind
     }
     
-    public static func fromSARootSpecifier(_ rt: RTInfo, _ specifier: SwiftAutomation.RootSpecifier) throws -> RT_Object {
+    public static func fromSARootSpecifier(_ rt: Runtime, _ specifier: SwiftAutomation.RootSpecifier) throws -> RT_Object {
         switch specifier.kind {
         case .application:
             return RT_RootSpecifier(rt, kind: .application)

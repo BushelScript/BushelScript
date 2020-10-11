@@ -4,11 +4,11 @@ import Carbon.OpenScripting
 
 public class RT_AppleScript: RT_Object {
     
-    public let rt: RTInfo
+    public let rt: Runtime
     public let name: String
     private let value: NSAppleScript
     
-    public init(_ rt: RTInfo, name: String, value: NSAppleScript) {
+    public init(_ rt: Runtime, name: String, value: NSAppleScript) {
         self.rt = rt
         self.name = name
         self.value = value

@@ -3,7 +3,7 @@ import BushelRT
 
 private typealias Constructor = () -> RT_Object
 
-public func ask(_ rt: RTInfo, for type: TypeInfo, prompt: String, title: String, suspension: NSAppleEventManager.SuspensionID) {
+public func ask(_ rt: Runtime, for type: TypeInfo, prompt: String, title: String, suspension: NSAppleEventManager.SuspensionID) {
     
     func makeViewController() -> (NSViewController, Constructor) {
         func uneditableVC() -> (UneditableVC, Constructor) {

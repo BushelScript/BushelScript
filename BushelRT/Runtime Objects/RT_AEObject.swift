@@ -6,10 +6,10 @@ import SwiftAutomation
 /// sent around in other Apple Events.
 public class RT_AEObject: RT_Object, AEEncodable {
     
-    public let rt: RTInfo
+    public let rt: Runtime
     public var descriptor: NSAppleEventDescriptor
     
-    public init(_ rt: RTInfo, descriptor: NSAppleEventDescriptor) {
+    public init(_ rt: Runtime, descriptor: NSAppleEventDescriptor) {
         self.rt = rt
         self.descriptor = descriptor
     }

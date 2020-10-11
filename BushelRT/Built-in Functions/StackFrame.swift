@@ -5,7 +5,7 @@ public struct ProgramStack {
     private var frames = Stack<StackFrame>()
     private var errorHandlers = Stack<ErrorHandler>()
     
-    public init(_ rt: RTInfo) {
+    public init(_ rt: Runtime) {
         frames.push(StackFrame(rt, variables: [:], script: rt.topScript))
     }
     
@@ -85,7 +85,7 @@ extension Stack {
 
 public struct StackFrame {
     
-    public let rt: RTInfo
+    public let rt: Runtime
     public var variables: [Bushel.TermName : RT_Object] = [:]
     public var script: RT_Script
     
@@ -94,7 +94,7 @@ public struct StackFrame {
         self.variables = other.variables
         self.script = other.script
     }
-    init(_ rt: RTInfo, variables: [Bushel.TermName : RT_Object], script: RT_Script) {
+    init(_ rt: Runtime, variables: [Bushel.TermName : RT_Object], script: RT_Script) {
         self.rt = rt
         self.variables = variables
         self.script = script
@@ -102,4 +102,4 @@ public struct StackFrame {
     
 }
 
-public typealias ErrorHandler = (_ message: String, _ rt: RTInfo) -> Void
+public typealias ErrorHandler = (_ message: String, _ rt: Runtime) throws -> Void
