@@ -1,13 +1,16 @@
 import Bushel
 
 public class RT_Function: RT_Object {
-
-    typealias Callable = @convention(c) (Builtin.RTObjectPointer) -> Builtin.RTObjectPointer
     
-    var callable: Callable
+    var rt: Runtime
+    var functionExpression: Expression
     
-    init(callable: @escaping Callable) {
-        self.callable = callable
+    init(_ rt: Runtime, _ functionExpression: Expression) {
+        guard case .function = functionExpression.kind else {
+            preconditionFailure()
+        }
+        self.rt = rt
+        self.functionExpression = functionExpression
     }
     
     private static let typeInfo_ = TypeInfo(.function)
@@ -19,16 +22,11 @@ public class RT_Function: RT_Object {
         "function"
     }
     
-    public func call(arguments: [ParameterInfo : RT_Object]) -> RT_Object {
-        let argumentRecord = RT_Private_ArgumentRecord()
-        argumentRecord.contents = [TypedTermUID : RT_Object](uniqueKeysWithValues:
-            arguments.map { (key: $0.key.typedUID, value: $0.value) }
-        )
-        return Builtin.fromOpaque(callable(Builtin.toOpaque(argumentRecord)))
+    public func call(arguments: [ParameterInfo : RT_Object]) throws -> RT_Object {
+        try rt.runFunction(functionExpression, actualArguments: arguments)
     }
     
 }
-
 
 public class RT_Script: RT_Object {
     

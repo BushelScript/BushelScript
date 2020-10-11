@@ -395,12 +395,11 @@ final class Builtin {
         return toOpaque(retain(RT_Script(name: name)))
     }
     
-    func newFunction(_ commandInfoPointer: InfoPointer, _ valuePointer: UnsafeRawPointer, _ scriptPointer: RTObjectPointer) -> RTObjectPointer {
+    func newFunction(_ commandInfoPointer: InfoPointer, _ functionExpression: Expression, _ scriptPointer: RTObjectPointer) -> RTObjectPointer {
         let commandInfo = infoFromOpaque(commandInfoPointer) as CommandInfo
-        let callable = unsafeBitCast(valuePointer, to: RT_Function.Callable.self)
         let script = fromOpaque(scriptPointer) as? RT_Script ?? rt.topScript
         
-        let function = RT_Function(callable: callable)
+        let function = RT_Function(rt, functionExpression)
         script.dynamicFunctions[commandInfo] = function
         
         return toOpaque(retain(function))

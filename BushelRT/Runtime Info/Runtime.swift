@@ -217,6 +217,46 @@ public extension Runtime {
         
     }
     
+    func runFunction(_ functionExpression: Expression, actualArguments: [ParameterInfo : RT_Object]) throws -> RT_Object {
+        guard case let .function(name, parameters, arguments, body) = functionExpression.kind else {
+            preconditionFailure("expected function expression but got \(functionExpression)")
+        }
+        
+        builtin.pushFrame()
+        defer {
+            builtin.popFrame()
+        }
+        
+        // Create variables for each of the function's parameters.
+        for (index, (parameter, argument)) in zip(parameters, arguments).enumerated() {
+            // This special-cases the first argument to allow it to fall back
+            // on the value of the direct parameter.
+            //
+            // e.g.,
+            //     to cat: l, with r
+            //         l & r
+            //     end
+            //     cat "hello, " with "world"
+            //
+            //  l = "hello" even though it's not explicitly specified.
+            //  Without this special-case, the call would have to be:
+            //     cat l "hello, " with "world"
+            var argumentValue: RT_Object = RT_Null.null
+            if index == 0 {
+                argumentValue =
+                    actualArguments[ParameterInfo(parameter.uid)] ??
+                    actualArguments[ParameterInfo(ParameterUID.direct)] ??
+                    RT_Null.null
+            } else {
+                argumentValue = actualArguments[ParameterInfo(parameter.uid)] ?? RT_Null.null
+            }
+            
+            builtin.newVariable(toOpaque(argument), toOpaque(argumentValue))
+        }
+        
+        return try runPrimary(body, lastResult: ExprValue(body, RT_Null.null), target: ExprValue(body, global))
+    }
+    
     private func runPrimary(_ expression: Expression, lastResult: ExprValue, target: ExprValue, evaluateSpecifiers: Bool = true) throws -> RT_Object {
         switch expression.kind {
         case .empty, .end, .endWeave: // MARK: .empty, .end, .endWeave
@@ -379,50 +419,9 @@ public extension Runtime {
         case .specifier(let specifier): // MARK: .specifier
             let specifierExprValue = try runSpecifier(specifier, lastResult: lastResult, target: target)
             return evaluateSpecifiers ? try evaluatingSpecifier(specifierExprValue) : specifierExprValue
-        case .function(let name, let parameters, let arguments, let body): // MARK: .function
-//            let commandInfo = self.command(forUID: TypedTermUID(.command, name.uid))
-//
-//            let functionLLVMName = llvmify(name.name!)
-//            let argumentsIRTypes = [PointerType.toVoid]
-//
-//            let function = builder.addFunction(functionLLVMName, type: FunctionType(argumentsIRTypes, PointerType.toVoid))
-//            let entry = function.appendBasicBlock(named: "entry")
-//            builder.positionAtEnd(of: entry)
-//
-//            let actualArguments = function.parameter(at: 0)!
-//
-//            for (index, (parameter, argument)) in zip(parameters, arguments).enumerated() {
-//                // This special-cases the first argument to allow it to fall back
-//                // on the value of the direct parameter.
-//                //
-//                // e.g.,
-//                //     to cat: l, with r
-//                //         l & r
-//                //     end
-//                //     cat "hello, " with "world"
-//                //
-//                //  l = "hello" even though it's not explicitly specified.
-//                //  Without this special-case, the call would have to be:
-//                //     cat l "hello, " with "world"
-//                let getFunction: BuiltinFunction = (index == 0) ? .getFromArgumentRecordWithDirectParamFallback : .getFromArgumentRecord
-//
-//                let parameterUIDExprValue = parameter.typedUID.normalizedAsRTString(builder: builder, name: "parameter-uid")
-//                let argumentValueExprValue = builder.buildCall(toExternalFunction: getFunction, args: [bp, actualArguments, parameterUIDExprValue])
-//                let argumentTermExprValue = argument.irPointerValue(builder: builder)
-//                builder.buildCall(toExternalFunctionReturningVoid: .newVariable, args: [bp, argumentTermExprValue, argumentValueExprValue])
-//            }
-//
-//            try returningResult() {
-//                try body.generateLLVMIR(lastResult: builder.rtNull, target: rt.global.irPointerValue(builder: builder))
-//            }
-//
-//            builder.positionAtEnd(of: lastBlock)
-//
-//            let commandInfoIRPointer = commandInfo.irPointerValue(builder: builder)
-//            let functionIRPointer = builder.buildBitCast(function, type: PointerType.toVoid)
-//
-//            _ = builder.buildCall(toExternalFunction: .newFunction, args: [bp, commandInfoIRPointer, functionIRPointer, builder.rtNull])
-//
+        case .function(let name, _, _, _): // MARK: .function
+            let commandInfo = self.command(forUID: TypedTermUID(.command, name.uid))
+            _ = builtin.newFunction(toOpaque(commandInfo), expression, toOpaque(RT_Null.null))
             return try evaluate(lastResult, lastResult: lastResult, target: target)
         case .multilineString(_, let body): // MARK: .multilineString
             return RT_String(value: body)
