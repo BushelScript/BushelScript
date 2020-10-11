@@ -206,7 +206,13 @@ public extension Runtime {
             throw RuntimeError(description: message)
         }
         
-        let result = try runPrimary(expression, lastResult: ExprValue(expression, RT_Null.null), target: ExprValue(expression, global))
+        let result: RT_Object
+        do {
+            result = try runPrimary(expression, lastResult: ExprValue(expression, RT_Null.null), target: ExprValue(expression, global))
+        } catch let earlyReturn as EarlyReturn {
+            result = earlyReturn.value
+        }
+        
         os_log("Execution result: %@", log: log, type: .debug, String(describing: result))
         return result
     }
@@ -254,7 +260,11 @@ public extension Runtime {
             builtin.newVariable(argument, argumentValue)
         }
         
-        return try runPrimary(body, lastResult: ExprValue(body, RT_Null.null), target: ExprValue(body, global))
+        do {
+            return try runPrimary(body, lastResult: ExprValue(body, RT_Null.null), target: ExprValue(body, global))
+        } catch let earlyReturn as EarlyReturn {
+            return earlyReturn.value
+        }
     }
     
     private func runPrimary(_ expression: Expression, lastResult: ExprValue, target: ExprValue, evaluateSpecifiers: Bool = true) throws -> RT_Object {
