@@ -13,7 +13,7 @@ public struct CodeGenOptions {
     
 }
 
-public struct RuntimeError: CodableLocalizedError, Error, Located {
+public struct RuntimeError: CodableLocalizedError, Located {
     
     /// The error message as formatted during init.
     public let description: String
@@ -23,6 +23,21 @@ public struct RuntimeError: CodableLocalizedError, Error, Located {
     
     public var errorDescription: String? {
         description
+    }
+    
+}
+
+/// The error thrown by `raise` in user code.
+public struct RaisedObjectError: CodableLocalizedError, Located {
+    
+    /// The object given to `raise`.
+    public let error: RT_Object
+    
+    /// The source location of the `raise` expression.
+    public let location: SourceLocation
+    
+    public var errorDescription: String? {
+        "\(error)"
     }
     
 }
@@ -222,10 +237,6 @@ public extension Runtime {
     func run(_ expression: Expression) throws -> RT_Object {
         builtin = Builtin()
         builtin.rt = self
-
-        builtin.stack.pushErrorHandler { message, location, rt in
-            throw RuntimeError(description: message, location: location)
-        }
         
         let result: RT_Object
         do {

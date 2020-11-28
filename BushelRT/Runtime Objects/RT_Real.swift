@@ -76,11 +76,13 @@ public class RT_Real: RT_Object, AEEncodable {
             let cubed = squared * self.value
             return RT_Real(value: cubed)
         case .Math_pow:
-            guard let exponent = arguments[ParameterInfo(.Math_pow_exponent)] as? RT_Numeric else {
-                // FIXME: Throw error
-                return RT_Null.null
+            guard let exponentObj = arguments[ParameterInfo(.Math_pow_exponent)] else {
+                throw MissingParameter(command: command, parameter: ParameterInfo(.Math_pow_exponent))
             }
-            return RT_Real(value: pow(self.value, exponent.numericValue))
+            guard let exponent = exponentObj.coerce(to: RT_Real.self) else {
+                throw WrongParameterType(command: command, parameter: ParameterInfo(.Math_pow_exponent), expected: TypeInfo(.number), actual: exponentObj.dynamicTypeInfo)
+            }
+            return RT_Real(value: pow(self.value, exponent.value))
         default:
             return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }

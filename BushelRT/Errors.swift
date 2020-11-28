@@ -27,7 +27,7 @@ public struct RemoteCommandError : LocalizedError {
     public let error: Error
     
     public var errorDescription: String? {
-        "\(remoteObject) got an error while performing \(command): \(error)"
+        "Remote object \(remoteObject) got an error performing \(command): \(error)"
     }
     
 }
@@ -81,7 +81,7 @@ public struct NonPropertyIsNotWritable: LocalizedError {
     public let specifier: RT_Specifier
     
     public var errorDescription: String? {
-        "‘\(specifier)’ cannot be written to because it not refer to a property"
+        "Specifier ‘\(specifier)’ cannot be written to because it does not refer to a property"
     }
     
 }
@@ -104,6 +104,19 @@ public struct MissingParameter: LocalizedError {
     
     public var errorDescription: String? {
         "The required \(ParameterUID(parameter.uid) == .direct ? "direct object parameter" : "parameter \(parameter)") is missing from a call to \(command)"
+    }
+    
+}
+
+public struct WrongParameterType: LocalizedError {
+    
+    public let command: CommandInfo
+    public let parameter: ParameterInfo
+    public let expected: TypeInfo
+    public let actual: TypeInfo
+    
+    public var errorDescription: String? {
+        "The \(ParameterUID(parameter.uid) == .direct ? "direct object parameter" : "parameter \(parameter)") for a call to \(command) expects \("\(expected)".startsWithVowel ? "an" : "a") \(expected) but received \("\(actual)".startsWithVowel ? "an" : "a") \(actual)"
     }
     
 }

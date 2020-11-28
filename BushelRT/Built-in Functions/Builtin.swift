@@ -20,14 +20,9 @@ final class Builtin {
         rt.release(object)
     }
     
-    var throwing: Bool = false
     func throwError(message: String) throws -> Never {
-        if !throwing {
-            throwing = true
-            defer { throwing = false }
-            try stack.currentErrorHandler(message, rt.currentLocation ?? SourceLocation(at: "".startIndex, source: ""), rt)
-        }
-        fatalError(message)
+        let location = rt.currentLocation ?? SourceLocation(at: "".startIndex, source: "")
+        throw RuntimeError(description: message, location: location)
     }
     
     func pushFrame() {

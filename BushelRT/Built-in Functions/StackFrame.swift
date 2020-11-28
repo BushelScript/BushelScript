@@ -3,7 +3,6 @@ import Bushel
 public struct ProgramStack {
     
     private var frames = Stack<StackFrame>()
-    private var errorHandlers = Stack<ErrorHandler>()
     
     public init(_ rt: Runtime) {
         frames.push(StackFrame(rt, variables: [:], script: rt.topScript))
@@ -27,22 +26,11 @@ public struct ProgramStack {
         }
     }
     
-    public var currentErrorHandler: ErrorHandler {
-        errorHandlers.top!
-    }
-    
     public mutating func pushFrame() {
         frames.push(StackFrame(inheritingFrom: currentFrame))
     }
     public mutating func popFrame() {
         frames.popIfNotLast()
-    }
-    
-    public mutating func pushErrorHandler(_ errorHandler: @escaping ErrorHandler) {
-        errorHandlers.push(errorHandler)
-    }
-    public mutating func popErrorHandler() {
-        errorHandlers.popIfNotLast()
     }
     
 }
@@ -101,5 +89,3 @@ public struct StackFrame {
     }
     
 }
-
-public typealias ErrorHandler = (_ message: String, _ location: SourceLocation, _ rt: Runtime) throws -> Void

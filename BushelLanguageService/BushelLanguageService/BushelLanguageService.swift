@@ -152,14 +152,14 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
     }
     
     func copyLineRange(fromError error: Any, forSource source: String, reply: @escaping (NSValue?) -> Void) {
-        guard let error = errors[error] as? ParseErrorProtocol else {
+        guard let error = errors[error] as? Located else {
             return reply(nil)
         }
         let range = error.location.lines(in: source)
         reply(NSValue(range: NSRange(range)))
     }
     func copyColumnRange(fromError error: Any, forSource source: String, reply: @escaping (NSValue?) -> Void) {
-        guard let error = errors[error] as? ParseErrorProtocol else {
+        guard let error = errors[error] as? Located else {
             return reply(nil)
         }
         let range = error.location.columns(in: source)

@@ -1,7 +1,7 @@
 import Bushel
 
 /// Base type for all runtime objects.
-@objc public class RT_Object: NSObject {
+@objc public class RT_Object: NSObject, RTTyped {
     
     private static let typeInfo_ = TypeInfo(.item, [.root])
     
@@ -575,19 +575,29 @@ extension RT_Object: Comparable {
 // MARK: Coercion utility functions
 extension RT_Object {
     
-    /// Attempts to coerce this object to another runtime type,
-    /// according to the specified static result type.
+    /// Attempts to coerce this object to the runtime type specified
+    /// by Swift type `to`.
     ///
-    /// e.g., `RT_Integer(value: 42).coerce(to: RT_Real.self)
+    /// e.g., `RT_Integer(value: 42).coerce(to: RT_Real.self)`
     ///
-    /// The runtime type to which coercion is attempted is `To.typeInfo`, and
-    /// `To?` is `coerce()`'s result type. If this coercion fails or results
-    /// in something that is not a `To`, `nil` is returned.
-    public func coerce<To: RT_Object>(to _: To.Type) -> To? {
+    /// - Returns: This instance coerced to `To.typeInfo` via `coerce(to:)`, or
+    ///            `nil` if the coercion returns `nil` or something other than
+    ///            a `To`.
+    public func coerce<To: RTTyped>(to _: To.Type) -> To? {
         coerce(to: To.typeInfo) as? To
     }
-    
-    public func coerceOrThrow<To: RT_Object>() throws -> To {
+
+    /// Forcibly coerces this object to the runtime type specified
+    /// by Swift type `to`.
+    ///
+    /// e.g., `try RT_Integer(value: 42).coerceOrThrow(to: RT_Real.self)`
+    ///
+    /// - Returns: This instance coerced to `To.typeInfo` via `coerce(to:)`.
+    ///
+    /// - Throws:
+    ///     - `Uncoercible` if the coercion returns `nil` or something other
+    ///       than a `To`.
+    public func coerceOrThrow<To: RTTyped>(to _: To.Type) throws -> To {
         guard let coerced = coerce(to: To.self) else {
             throw Uncoercible(expectedType: To.typeInfo, object: self)
         }
@@ -622,5 +632,12 @@ extension AnyKeyPath {
         (self as? PartialKeyPath<Object>)
             .flatMap { object[keyPath: $0] as? RT_Object }
     }
+    
+}
+
+public protocol RTTyped {
+    
+    /// The BushelScript Runtime type that this Swift type implements.
+    static var typeInfo: TypeInfo { get }
     
 }
