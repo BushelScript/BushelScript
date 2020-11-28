@@ -175,11 +175,11 @@ public enum TargetApplication: CustomStringConvertible {
         case .current:
             return "current application"
         case .name(let name):
-            return name
+            return "application ‘\(name)’"
         case .url(let url):
-            return url.absoluteString
+            return "application at ‘\(url.absoluteString)’"
         case .bundleIdentifier(let identifier, _):
-            return identifier
+            return "application id ‘\(identifier)’"
         case .processIdentifier(let pid):
             return NSRunningApplication(processIdentifier: pid)?.localizedName.map { $0 + " (by PID)" } ?? "dead PID \(pid)"
         case .Descriptor(let descriptor):
