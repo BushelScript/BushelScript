@@ -332,6 +332,12 @@ public extension Runtime {
             return try runPrimary(expression, lastResult: lastResult, target: target)
         case .parentheses(let expression): // MARK: .parentheses
             return try runPrimary(expression, lastResult: lastResult, target: target)
+        case let .try_(body, handle): // MARK: .try_
+            do {
+                return try runPrimary(body, lastResult: lastResult, target: target)
+            } catch {
+                return try runPrimary(handle, lastResult: lastResult, target: ExprValue(Expression(.empty, at: SourceLocation(at: handle.location)), RT_Error(error)))
+            }
         case let .if_(condition, then, else_): // MARK: .if_
             let conditionValue = try runPrimary(condition, lastResult: lastResult, target: target)
             
@@ -384,6 +390,13 @@ public extension Runtime {
         case .return_(let returnValue): // MARK: .return_
             let returnExprValue = try returnValue.map { try runPrimary($0, lastResult: lastResult, target: target) } ?? RT_Null.null
             throw EarlyReturn(value: returnExprValue)
+        case .raise(let error): // MARK: .raise
+            let errorValue = try runPrimary(error, lastResult: lastResult, target: target)
+            if let errorValue = errorValue as? RT_Error {
+                throw errorValue.error
+            } else {
+                throw RaisedObjectError(error: errorValue, location: expression.location)
+            }
         case .integer(let value): // MARK: .integer
             return RT_Integer(value: value)
         case .double(let value): // MARK: .double

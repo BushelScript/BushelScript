@@ -18,25 +18,49 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             return format(expression, level: level)
         case .parentheses(let expression):
             return "(\(format(expression, level: level)))"
+        case let .try_(body, handle):
+            var formatted = "try"
+            if case .sequence = body.kind {
+                formatted += "\n"
+            } else {
+                formatted += " "
+            }
+            formatted += format(body, level: level)
+            
+            formatted += "handle"
+            var needsEnd: Bool = true
+            if case .sequence = handle.kind {
+                formatted += "\n"
+                needsEnd = true
+            } else {
+                formatted += " "
+                needsEnd = false
+            }
+            formatted += format(handle, level: level)
+            
+            if needsEnd {
+                formatted += "end try"
+            }
+            return formatted
         case let .if_(condition, then, else_):
             var needsEnd: Bool = true
             var formatted = "if \(format(condition, level: level))"
             if case .sequence = then.kind {
                 formatted += "\n"
             } else {
-                needsEnd = false
                 formatted += " then "
+                needsEnd = false
             }
             formatted += format(then, level: level)
             
             if let `else` = else_ {
                 formatted += "else"
                 if case .sequence = `else`.kind {
-                    needsEnd = true
                     formatted += "\n"
+                    needsEnd = true
                 } else {
-                    needsEnd = false
                     formatted += " "
+                    needsEnd = false
                 }
                 formatted += format(`else`, level: level)
             }
@@ -82,6 +106,8 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                 formatted += " \(format(returnValue, level: level))"
             }
             return formatted
+        case .raise(let error):
+            return "raise \(format(error, level: level))"
         case .use(let resourceTerm):
             return "use \(resourceTerm.formattedForUseStatement)"
         case .resource(let resource):

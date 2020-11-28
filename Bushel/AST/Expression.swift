@@ -12,6 +12,7 @@ public struct Expression {
         case scoped(Expression)
         case parentheses(Expression)
         case function(name: VariableTerm, parameters: [ParameterTerm], arguments: [VariableTerm], body: Expression)
+        case try_(body: Expression, handle: Expression)
         case if_(condition: Expression, then: Expression, else: Expression?)
         case repeatWhile(condition: Expression, repeating: Expression)
         case repeatTimes(times: Expression, repeating: Expression)
@@ -21,6 +22,7 @@ public struct Expression {
         case define(Term, as: Term?)
         case defining(Term, as: Term?, body: Expression)
         case return_(Expression?)
+        case raise(Expression)
         case use(resource: ResourceTerm)
         case resource(ResourceTerm)
         case integer(Int64)
@@ -103,6 +105,8 @@ extension Expression.Kind {
             return ("Parenthesized expression", "Contains an expression to allow for grouping.")
         case .function:
             return ("Function definition", "Defines a custom, reusable function.")
+        case .try_:
+            return ("Try expression", "Executes the contained block. If an error is raised during that execution, executes its “handle” block.")
         case .if_:
             return ("Conditional expression", "Evaluates its condition. When the result is truthy, executes its “then” block. Otherwise, executes its ”else” block, if any.")
         case .repeatWhile:
@@ -121,6 +125,8 @@ extension Expression.Kind {
             return ("Defining expression", "Defines a new term in the current dictionary, and elaborates on its contents by opening a block where it is the new current dictionary (i.e., is pushed onto the lexicon).")
         case .return_:
             return ("Return expression", "Immediately transfers control out of the current function. The result of the function is that of the specified expression, or “null” if absent.")
+        case .raise:
+            return ("Raise expresssion", "Immediately transfers control to the nearest applicable ‘handle’-block. The error object is specified here.")
         case .use:
             return ("Use expression", "Acquires the specified resource and binds it to an exporting term of the same name. Produces a compile-time error if the resource cannot be found.")
         case .resource:

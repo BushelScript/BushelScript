@@ -84,6 +84,8 @@ public func ask(_ rt: Runtime, for type: TypeInfo, prompt: String, title: String
             return uneditableVC()
         case .system:
             return uneditableVC()
+        case .error:
+            return uneditableVC()
         case nil:
             // TODO: Implement for custom types
             fatalError("unimplemented")

@@ -167,6 +167,21 @@ extension SourceParser {
         }
     }
     
+    public func handleRaise(_ keyword: TermName) -> () throws -> Expression.Kind? {
+        { [weak self] in
+            try self?.handleRaise(keyword)
+        }
+    }
+    
+    public func handleRaise(_ keyword: TermName) throws -> Expression.Kind? {
+        eatCommentsAndWhitespace()
+        
+        guard let error = try parsePrimary() else {
+            throw ParseError(ParseError.Error.missing(ParseError.Error.SourceElement.expressionAfterKeyword(keyword: keyword)), at: currentLocation)
+        }
+        return .raise(error)
+    }
+    
     public func handleThat() throws -> Expression.Kind? {
         .that
     }

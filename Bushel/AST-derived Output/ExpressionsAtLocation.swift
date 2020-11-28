@@ -30,6 +30,8 @@ extension Expression {
             return [expression]
         case let .function(name: _, parameters: _, arguments: _, body):
             return [body]
+        case let .try_(body, handle):
+            return [body, handle]
         case let .if_(condition, then, `else`):
             return `else`.map { [condition, then, $0] } ?? [condition, then]
         case let .repeatWhile(condition, repeating):
@@ -48,6 +50,8 @@ extension Expression {
             return [body]
         case let .return_(expression):
             return expression.map { [$0] } ?? []
+        case let .raise(expression):
+            return [expression]
         case .use(resource: _):
             return []
         case .resource(_):

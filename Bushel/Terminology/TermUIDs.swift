@@ -150,6 +150,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
     case script
     case function
     case system
+    case error
     
     public var kind: TypedTermUID.Kind {
         .type
@@ -199,7 +200,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
             return typeType
         case .null:
             return try! FourCharCode(fourByteString: "msng")
-        case .global, .script, .function, .system:
+        case .global, .script, .function, .system, .error:
             return nil
         }
     }

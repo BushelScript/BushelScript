@@ -140,6 +140,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("end"): handleEnd,
         TermName("on"): handleFunctionStart,
         TermName("to"): handleFunctionStart,
+        TermName("try"): handleTry,
         TermName("if"): handleIf,
         TermName("repeat"): handleRepeat(TermName("repeat")),
         TermName("repeating"): handleRepeat(TermName("repeating")),
@@ -148,6 +149,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("define"): handleDefine,
         TermName("defining"): handleDefining,
         TermName("return"): handleReturn,
+        TermName("raise"): handleRaise(TermName("raise")),
         TermName("use"): handleUse,
         TermName("that"): handleThat,
         TermName("it"): handleIt,
@@ -222,6 +224,39 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
         
         return .function(name: functionNameTerm, parameters: parameters, arguments: arguments, body: body)
+    }
+    
+    private func handleTry() throws -> Expression.Kind? {
+        func parseBody() throws -> Expression {
+            let foundNewline = tryEating(prefix: "\n")
+            if foundNewline {
+                return try parseSequence(TermName("try"), stoppingAt: ["handle"])
+            } else {
+                guard let bodyExpression = try parsePrimary() else {
+                    throw AdHocParseError("expected expression or line break after ‘try’", at: expressionLocation)
+                }
+                return bodyExpression
+            }
+        }
+        
+        func parseHandle() throws -> Expression {
+            eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
+            guard tryEating(prefix: "handle") else {
+                throw AdHocParseError("expected ‘handle’ after ‘try’-block body to begin ‘handle’-block", at: currentLocation)
+            }
+            
+            if tryEating(prefix: "\n") {
+                return try parseSequence(TermName("try"))
+            } else {
+                guard let handleExpression = try parsePrimary() else {
+                    throw AdHocParseError("expected expression or line break after ‘handle’", at: currentLocation)
+                }
+                eatCommentsAndWhitespace()
+                return handleExpression
+            }
+        }
+        
+        return .try_(body: try parseBody(), handle: try parseHandle())
     }
     
     private func handleIf() throws -> Expression.Kind? {
