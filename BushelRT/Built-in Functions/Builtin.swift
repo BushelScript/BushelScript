@@ -300,8 +300,6 @@ final class Builtin {
             } catch let error as Unencodable where error.object is CommandInfo || error.object is ParameterInfo {
                 // Tried to send an inapplicable command to a remote object
                 // Ignore it and fall through to the next target
-            } catch {
-                try throwError(message: "\(error.localizedDescription)")
             }
             return nil
         }
