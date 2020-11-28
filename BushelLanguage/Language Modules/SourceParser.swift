@@ -864,7 +864,7 @@ extension SourceParser {
             guard
                 delimiter.isEmpty || (
                     tryEating(prefix: "(", spacing: .none) &&
-                    tryEating(prefix: delimiter, .weave, spacing: .none) &&
+                    tryEating(prefix: delimiter, .weave) &&
                     tryEating(prefix: ")", spacing: .right)
                 )
             else {
@@ -875,13 +875,21 @@ extension SourceParser {
         var delimiter = delimiter
         if
             delimiter == nil,
-            tryEating(prefix: "(", spacing: .left)
+            tryEating(prefix: "(", spacing: .none)
         {
-            guard let match = tryEating(Regex(".*?(.(?=\\)))"), .weave) else {
+            source.removeLeadingWhitespace()
+            
+            let line = source[..<(source.firstIndex(of: "\n") ?? source.endIndex)]
+            
+            guard let endDelimiterIndex = line.firstIndex(of: ")") else {
                 throw ParseError(.missing(.weaveDelimiter), at: currentLocation)
             }
-            
-            delimiter = match.matchedString
+            let newDelimiter = String(line[..<endDelimiterIndex].dropLast(while: { $0.isWhitespace }))
+            delimiter = newDelimiter
+            if newDelimiter.isEmpty {
+                throw ParseError(.missing(.weaveDelimiter), at: currentLocation)
+            }
+            assume(tryEating(prefix: newDelimiter, .weave))
             
             guard tryEating(prefix: ")", spacing: .right) else {
                 throw ParseError(.missing(.weaveDelimiterEndMarker), at: currentLocation)
