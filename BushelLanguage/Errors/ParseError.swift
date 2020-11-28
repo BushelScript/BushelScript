@@ -66,6 +66,8 @@ public struct ParseError: ParseErrorProtocol {
             case listItemOrRecordKey
             case termUIDAndRawFormEndMarker
             case termUID
+            case weaveDelimiter
+            case weaveDelimiterEndMarker
             
         }
         

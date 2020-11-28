@@ -50,9 +50,13 @@ public final class EnglishMessageFormatter: BushelLanguage.MessageFormatter {
                 case .listItemOrRecordKey:
                     return "list item or record key"
                 case .termUIDAndRawFormEndMarker:
-                    return "expected term UID followed by ‘»’"
+                    return "term UID followed by ‘»’"
                 case .termUID:
-                    return "expected term UID"
+                    return "term UID"
+                case .weaveDelimiter:
+                    return "weave delimiter"
+                case .weaveDelimiterEndMarker:
+                    return "‘)’ to end weave delimiter"
                 }
             }()
         case let .unmetResourceRequirement(requirement):

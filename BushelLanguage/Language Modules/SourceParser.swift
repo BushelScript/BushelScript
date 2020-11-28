@@ -177,7 +177,7 @@ extension SourceParser {
         eatCommentsAndWhitespace()
         
         guard let error = try parsePrimary() else {
-            throw ParseError(ParseError.Error.missing(ParseError.Error.SourceElement.expressionAfterKeyword(keyword: keyword)), at: currentLocation)
+            throw ParseError(.missing(.expressionAfterKeyword(keyword: keyword)), at: currentLocation)
         }
         return .raise(error)
     }
@@ -420,17 +420,21 @@ extension SourceParser {
             expressionStartIndices.removeLast()
         }
         
-        if let bihash = eatBihash() {
+        if let bihash = try eatBihash() {
             var body = ""
             
             while !source.isEmpty {
                 addingElement(.string, spacing: .none) {
-                    _ = source.removeFirst() // Eat leading newline
+                    source.removeLeadingWhitespace()
+                    // Remove leading newline
+                    if source.first?.isNewline ?? false {
+                        _ = source.removeFirst()
+                    }
                 }
                 
                 let rollbackSource = source // Preserve leading whitespace
                 let rollbackElements = elements
-                if let _ = eatBihash(delimiter: bihash.delimiter) {
+                if let _ = try eatBihash(delimiter: bihash.delimiter) {
                     break
                 } else {
                     source = rollbackSource
@@ -852,13 +856,39 @@ extension SourceParser {
         }
     }
     
-    private func eatBihash(delimiter: String? = nil) -> Bihash? {
-        guard tryEating(prefix: "##", spacing: .left) else {
+    private func eatBihash(delimiter: String? = nil) throws -> Bihash? {
+        guard tryEating(prefix: "##") else {
             return nil
         }
-        // FIXME: Parse delimiters and deal with parameter delimiter
-        _ = delimiter
-        return Bihash(delimiter: "")
+        if let delimiter = delimiter {
+            guard
+                delimiter.isEmpty || (
+                    tryEating(prefix: "(", spacing: .none) &&
+                    tryEating(prefix: delimiter, .weave, spacing: .none) &&
+                    tryEating(prefix: ")", spacing: .right)
+                )
+            else {
+                return nil
+            }
+        }
+        
+        var delimiter = delimiter
+        if
+            delimiter == nil,
+            tryEating(prefix: "(", spacing: .left)
+        {
+            guard let match = tryEating(Regex(".*?(.(?=\\)))"), .weave) else {
+                throw ParseError(.missing(.weaveDelimiter), at: currentLocation)
+            }
+            
+            delimiter = match.matchedString
+            
+            guard tryEating(prefix: ")", spacing: .right) else {
+                throw ParseError(.missing(.weaveDelimiterEndMarker), at: currentLocation)
+            }
+        }
+        
+        return Bihash(delimiter: delimiter ?? "")
     }
     
     private func eatHashbang() -> Hashbang? {
