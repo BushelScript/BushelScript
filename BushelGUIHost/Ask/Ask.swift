@@ -36,14 +36,6 @@ public func ask(_ rt: Runtime, for type: TypeInfo, prompt: String, title: String
         }
         
         switch TypeUID(type.uid) {
-        case .item:
-            return uneditableVC()
-        case .list:
-            return uneditableVC()
-        case .record:
-            return uneditableVC()
-        case .constant:
-            return uneditableVC()
         case .boolean:
             return checkboxVC { RT_Boolean.withValue($0.value) }
         case .string:
@@ -56,39 +48,11 @@ public func ask(_ rt: Runtime, for type: TypeInfo, prompt: String, title: String
             return numberFieldVC(integersOnly: true) { RT_Integer(value: $0.value.int64Value) }
         case .real:
             return numberFieldVC() { RT_Real(value: $0.value.doubleValue) }
-        case .date:
-            return uneditableVC()
-        case .window:
-            return uneditableVC()
-        case .document:
-            return uneditableVC()
         case .file, .alias:
             return fileChooserVC() { RT_File(value: $0.location) }
-        case .application:
-            return uneditableVC()
-        case .specifier:
-            return uneditableVC()
-        case .comparisonTestSpecifier:
-            return uneditableVC()
-        case .logicalTestSpecifier:
-            return uneditableVC()
-        case .`class`:
-            return uneditableVC()
-        case .null:
-            return uneditableVC()
-        case .global:
-            return uneditableVC()
-        case .script:
-            return uneditableVC()
-        case .function:
-            return uneditableVC()
-        case .system:
-            return uneditableVC()
-        case .error:
-            return uneditableVC()
-        case nil:
+        default:
             // TODO: Implement for custom types
-            fatalError("unimplemented")
+            return uneditableVC()
         }
     }
     

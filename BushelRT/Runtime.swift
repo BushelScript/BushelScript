@@ -77,7 +77,7 @@ public class Runtime {
         self.topScript = RT_Script(name: scriptName)
         self.currentApplicationBundleID = currentApplicationBundleID
         self.global = nil
-        self.global = RT_Global(self)
+        self.global = RT_Global()
     }
     
     public func inject(terms: TermPool) {

@@ -151,6 +151,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
     case function
     case system
     case error
+    case environmentVariable
     
     public var kind: TypedTermUID.Kind {
         .type
@@ -200,7 +201,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
             return typeType
         case .null:
             return try! FourCharCode(fourByteString: "msng")
-        case .global, .script, .function, .system, .error:
+        case .global, .script, .function, .system, .error, .environmentVariable:
             return nil
         }
     }
@@ -291,6 +292,8 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
     case Math_pi
     case Math_e
     
+    case environmentVariable_value
+    
     case buttonReturned
     
     public var kind: TypedTermUID.Kind {
@@ -315,6 +318,8 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
             return try! FourCharCode(fourByteString: "rvse")
         case .Sequence_tail:
             return try! FourCharCode(fourByteString: "rest")
+        case .environmentVariable_value:
+            return try! FourCharCode(fourByteString: "valL")
         case .buttonReturned:
             return try! FourCharCode(fourByteString: "bhit")
         default:
@@ -342,6 +347,8 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
                 self = .Sequence_reverse
             case try! FourCharCode(fourByteString: "rest"):
                 self = .Sequence_tail
+            case try! FourCharCode(fourByteString: "valL"):
+                self = .environmentVariable_value
             default:
                 return nil
             }

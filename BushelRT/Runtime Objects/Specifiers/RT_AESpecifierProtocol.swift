@@ -5,8 +5,6 @@ public protocol RT_SASpecifierConvertible: RT_Object, AEEncodable {
     
     func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier?
     
-    var rt: Runtime { get }
-    
 }
 
 extension RT_SASpecifierConvertible {
@@ -30,7 +28,7 @@ extension RT_SASpecifierConvertible where Self: RT_Object {
         guard let saSpecifier = self.saSpecifier(appData: appData) else {
             throw Unencodable(object: self)
         }
-        return try saSpecifier.perform(rt, command: command, arguments: encodedArguments)
+        return try saSpecifier.perform(command: command, arguments: encodedArguments)
     }
     
 }

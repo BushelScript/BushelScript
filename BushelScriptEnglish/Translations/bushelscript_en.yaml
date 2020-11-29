@@ -47,6 +47,11 @@ translation:
                 global: builtin
                 script: script
                 function: function
+                environment variable:
+                    - environment variable
+                    - environment var
+                    - env variable
+                    - env var
         property:
             ae4:
                 pALL: properties
@@ -58,6 +63,9 @@ translation:
                 rvse: reverse
                 rest: tail
                 bhit: button returned
+                # Apparently defined by System Events or something.
+                # This would be id:environment variable:value
+                valL: value
             id:
                 top script: top script
                 current date: current date

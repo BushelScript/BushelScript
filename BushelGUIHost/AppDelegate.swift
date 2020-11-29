@@ -180,7 +180,7 @@ func getArguments(from event: NSAppleEventDescriptor) -> [ParameterInfo : RT_Obj
             continue
         }
         
-        if let value = try? RT_Object.fromAEDescriptor(Runtime(), AppData(), descriptor) {
+        if let value = try? RT_Object.fromAEDescriptor(AppData(), descriptor) {
             result[ParameterInfo(.ae12(class: eventClass, id: eventID, code: code))] = value
         }
     }

@@ -6,11 +6,9 @@ import SwiftAutomation
 /// sent around in other Apple Events.
 public class RT_AEObject: RT_Object, AEEncodable {
     
-    public let rt: Runtime
     public var descriptor: NSAppleEventDescriptor
     
-    public init(_ rt: Runtime, descriptor: NSAppleEventDescriptor) {
-        self.rt = rt
+    public init(descriptor: NSAppleEventDescriptor) {
         self.descriptor = descriptor
     }
     
@@ -33,7 +31,7 @@ public class RT_AEObject: RT_Object, AEEncodable {
         else {
             return nil
         }
-        return try? RT_Object.fromAEDescriptor(rt, AppData(), coercedDescriptor)
+        return try? RT_Object.fromAEDescriptor(AppData(), coercedDescriptor)
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {

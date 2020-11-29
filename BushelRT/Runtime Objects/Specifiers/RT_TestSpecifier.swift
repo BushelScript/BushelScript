@@ -4,16 +4,14 @@ import SwiftAutomation
 /// A test clause specifier.
 public final class RT_TestSpecifier: RT_Object {
     
-    public let rt: Runtime
     public var operation: BinaryOperation
     public var lhs: RT_Object
     public var rhs: RT_Object
     
-    public init(_ rt: Runtime, operation: BinaryOperation, lhs: RT_Object, rhs: RT_Object) {
-        self.rt = rt
+    public init(operation: BinaryOperation, lhs: RT_Object, rhs: RT_Object) {
         self.operation = operation
         
-        let specimenRoot = RT_RootSpecifier(rt, kind: .specimen)
+        let specimenRoot = RT_RootSpecifier(kind: .specimen)
         if let lhs = lhs as? RT_HierarchicalSpecifier {
             lhs.setRootAncestor(specimenRoot)
         }

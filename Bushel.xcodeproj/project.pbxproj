@@ -89,6 +89,7 @@
 		3C94571123E9066300D59C2C /* BushelLanguageTestingTools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C94570223E8FBC200D59C2C /* BushelLanguageTestingTools.framework */; };
 		3C94571623E9168300D59C2C /* Formatter Test Cases in Resources */ = {isa = PBXBuildFile; fileRef = 3C94571523E9168300D59C2C /* Formatter Test Cases */; };
 		3C950EA92572086900B7E094 /* RT_Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C950EA82572086800B7E094 /* RT_Error.swift */; };
+		3C950EB72572ADCE00B7E094 /* RT_EnvVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C950EB62572ADCE00B7E094 /* RT_EnvVar.swift */; };
 		3C9703D8235520D20099AA05 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3C9703DE235520D50099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C9703E5235520DF0099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
@@ -372,6 +373,7 @@
 		3C94571023E8FF2100D59C2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3C94571523E9168300D59C2C /* Formatter Test Cases */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Formatter Test Cases"; sourceTree = "<group>"; };
 		3C950EA82572086800B7E094 /* RT_Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Error.swift; sourceTree = "<group>"; };
+		3C950EB62572ADCE00B7E094 /* RT_EnvVar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_EnvVar.swift; sourceTree = "<group>"; };
 		3CA2698F23F9F09F009E1944 /* RT_System.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_System.swift; sourceTree = "<group>"; };
 		3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermDictionary.swift; sourceTree = "<group>"; };
 		3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lexicon.swift; sourceTree = "<group>"; };
@@ -528,6 +530,7 @@
 			isa = PBXGroup;
 			children = (
 				3CA2698F23F9F09F009E1944 /* RT_System.swift */,
+				3C950EB62572ADCE00B7E094 /* RT_EnvVar.swift */,
 				3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */,
 				3C12EF822354E30C0057E0CC /* RT_Record.swift */,
 				3C12EF802354E2F20057E0CC /* RT_List.swift */,
@@ -1625,6 +1628,7 @@
 				3C2DD4A823A06E90002FAE57 /* ParameterInfo.swift in Sources */,
 				3C12EF982354E5720057E0CC /* RT_Date.swift in Sources */,
 				3C12EF792354E2860057E0CC /* RT_Real.swift in Sources */,
+				3C950EB72572ADCE00B7E094 /* RT_EnvVar.swift in Sources */,
 				3CB528ED23809DDD0051460B /* Runtime.swift in Sources */,
 				3C12EF772354E2660057E0CC /* RT_Numeric.swift in Sources */,
 				3C12EF9C2354E5D10057E0CC /* RT_AEObject.swift in Sources */,

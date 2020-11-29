@@ -54,7 +54,6 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         case property
     }
     
-    public let rt: Runtime
     public var parent: RT_Object
     public var type: TypeInfo?
     public var property: PropertyInfo?
@@ -62,9 +61,8 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
     public var kind: Kind
     
     // If parent is nil, a root of kind .application is implicitly added
-    public init(_ rt: Runtime, parent: RT_Object?, type: TypeInfo?, property: PropertyInfo? = nil, data: [RT_Object], kind: Kind) {
-        self.rt = rt
-        self.parent = parent ?? RT_RootSpecifier(rt, kind: .application)
+    public init(parent: RT_Object?, type: TypeInfo?, property: PropertyInfo? = nil, data: [RT_Object], kind: Kind) {
+        self.parent = parent ?? RT_RootSpecifier(kind: .application)
         self.type = type
         self.property = property
         self.data = data
@@ -76,26 +74,13 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         if let specifier = parent as? RT_Specifier {
             parent = specifier.clone()
         }
-        return RT_Specifier(rt, parent: parent, type: type, property: property, data: data, kind: kind)
+        return RT_Specifier(parent: parent, type: type, property: property, data: data, kind: kind)
     }
     
     public func evaluateLocally(on evaluatedParent: RT_Object) throws -> RT_Object {
         func evaluate(on parent: RT_Object) throws -> RT_Object {
-            func evaluate(property: PropertyInfo) throws -> RT_Object {
-                let property = self.property!
-                
-                do {
-                    return try parent.property(property)
-                } catch let noProperty as NoPropertyExists {
-                    guard let value = RT_Global(rt).property(property) else {
-                        throw noProperty
-                    }
-                    return value
-                }
-            }
-            
             if case .property = kind {
-                return try evaluate(property: property!)
+                return try parent.property(property!)
             }
             
             let type = self.type!
@@ -149,7 +134,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
             return try evaluate(on: evaluatedParent)
         } catch let origError where origError is NoPropertyExists || origError is NoElementExists {
             do {
-                return try evaluate(on: RT_Global(rt))
+                return try evaluate(on: RT_Global())
             } catch {
                 throw origError
             }
@@ -272,10 +257,10 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         }
     }
     
-    public convenience init?(_ rt: Runtime, saSpecifier: SwiftAutomation.ObjectSpecifier) {
+    public convenience init?(saSpecifier: SwiftAutomation.ObjectSpecifier) {
         let parent: RT_Object?
         if let objectSpecifier = saSpecifier.parentQuery as? SwiftAutomation.ObjectSpecifier {
-            parent = RT_Specifier(rt, saSpecifier: objectSpecifier)
+            parent = RT_Specifier(saSpecifier: objectSpecifier)
         } else if let rootSpecifier = saSpecifier.parentQuery as? SwiftAutomation.RootSpecifier {
             if rootSpecifier === AEApp {
                 guard
@@ -284,9 +269,9 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
                 else {
                     return nil
                 }
-                parent = RT_Application(rt, bundle: bundle)
+                parent = RT_Application(bundle: bundle)
             } else {
-                guard let root = try? RT_RootSpecifier.fromSARootSpecifier(rt, rootSpecifier) else {
+                guard let root = try? RT_RootSpecifier.fromSARootSpecifier(rootSpecifier) else {
                     return nil
                 }
                 parent = root
@@ -299,7 +284,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         }
         
         let typeCode = saSpecifier.wantType.typeCodeValue
-        let type = rt.type(for: typeCode)
+        let type = TypeInfo(.ae4(code: typeCode))
         
         let kind: Kind
         // See AppData.unpackAsObjectSpecifier(_:)
@@ -311,8 +296,8 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
             else {
                 return nil
             }
-            let property = rt.property(for: code)
-            self.init(rt, parent: parent!, type: nil, property: property, data: [], kind: .property)
+            let property = PropertyInfo(.ae4(code: code))
+            self.init(parent: parent!, type: nil, property: property, data: [], kind: .property)
             return
         case 0x75737270: // _formUserPropertyID:
             fatalError()
@@ -373,10 +358,10 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
         case .all, .first, .middle, .last, .random, .previous, .next:
             data = []
         case .index, .name, .id:
-            data = [RT_Object.fromSADecoded(rt, saSpecifier.selectorData)]
+            data = [RT_Object.fromSADecoded(saSpecifier.selectorData)]
         case .range:
             let rangeSelector = saSpecifier.selectorData as! SwiftAutomation.RangeSelector
-            data = [RT_Object.fromSADecoded(rt, rangeSelector.start), RT_Object.fromSADecoded(rt, rangeSelector.stop)]
+            data = [RT_Object.fromSADecoded(rangeSelector.start), RT_Object.fromSADecoded(rangeSelector.stop)]
         case .test:
             fatalError("unimplemented")
         case .property:
@@ -386,7 +371,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpeci
             return nil
         }
         
-        self.init(rt, parent: parent!, type: type, data: nonNilData, kind: kind)
+        self.init(parent: parent!, type: type, data: nonNilData, kind: kind)
     }
     
     public override var description: String {

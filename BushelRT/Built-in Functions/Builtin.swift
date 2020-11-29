@@ -195,17 +195,17 @@ final class Builtin {
         return retain({
             switch term.resource {
             case .bushelscript:
-                return RT_Global(rt)
+                return RT_Global()
             case .system(_):
-                return RT_System(rt)
+                return RT_System()
             case .applicationByName(let bundle),
                  .applicationByID(let bundle):
-                return RT_Application(rt, bundle: bundle)
+                return RT_Application(bundle: bundle)
             case .scriptingAdditionByName(_):
-                return RT_Global(rt)
+                return RT_Global()
             case .applescriptLibraryByName(_, _, let script),
                  .applescriptAtPath(_, let script):
-                return RT_AppleScript(rt, name: term.name!.normalized, value: script)
+                return RT_AppleScript(name: term.name!.normalized, value: script)
             }
         }() as RT_Object)
     }
@@ -213,36 +213,36 @@ final class Builtin {
     func newSpecifier0(_ parent: RT_Object?, _ typedUID: TypedTermUID, _ kind: RT_Specifier.Kind) -> RT_Specifier {
         let newSpecifier: RT_Specifier
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [], kind: .property)
+            newSpecifier = RT_Specifier(parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [], kind: .property)
         } else {
             let type = rt.type(forUID: typedUID)
-            newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [], kind: kind)
+            newSpecifier = RT_Specifier(parent: parent, type: type, data: [], kind: kind)
         }
         return retain(newSpecifier)
     }
     func newSpecifier1(_ parent: RT_Object?, _ typedUID: TypedTermUID, _ kind: RT_Specifier.Kind, _ data1: RT_Object) -> RT_Specifier {
         let newSpecifier: RT_Specifier
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [data1], kind: .property)
+            newSpecifier = RT_Specifier(parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [data1], kind: .property)
         } else {
             let type = rt.type(forUID: typedUID)
-            newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [data1], kind: kind)
+            newSpecifier = RT_Specifier(parent: parent, type: type, data: [data1], kind: kind)
         }
         return retain(newSpecifier)
     }
     func newSpecifier2(_ parent: RT_Object?, _ typedUID: TypedTermUID, _ kind: RT_Specifier.Kind, _ data1: RT_Object, _ data2: RT_Object) -> RT_Specifier {
         let newSpecifier: RT_Specifier
         if kind == .property {
-            newSpecifier = RT_Specifier(rt, parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [data1, data2], kind: .property)
+            newSpecifier = RT_Specifier(parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [data1, data2], kind: .property)
         } else {
             let type = rt.type(forUID: typedUID)
-            newSpecifier = RT_Specifier(rt, parent: parent, type: type, data: [data1, data2], kind: kind)
+            newSpecifier = RT_Specifier(parent: parent, type: type, data: [data1, data2], kind: kind)
         }
         return retain(newSpecifier)
     }
     
     func newTestSpecifier(_ operation: BinaryOperation, _ lhs: RT_Object, _ rhs: RT_Object) -> RT_Object {
-        return retain(RT_TestSpecifier(rt, operation: operation, lhs: lhs, rhs: rhs))
+        return retain(RT_TestSpecifier(operation: operation, lhs: lhs, rhs: rhs))
     }
     
     func qualifySpecifier(_ specifier: RT_Specifier, _ target: RT_Object) -> RT_Specifier {
@@ -317,7 +317,7 @@ final class Builtin {
                 try rt.topScript.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             } ??
             catchingErrors {
-                try RT_Global(rt).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+                try RT_Global().perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             } ?? RT_Null.null
         )
     }
@@ -360,7 +360,7 @@ final class Builtin {
 
 extension SwiftAutomation.Specifier {
     
-    func perform(_ rt: Runtime, command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> RT_Object {
+    func perform(command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> RT_Object {
         do {
             let wrappedResultDescriptor = try sendEvent(for: command, arguments: arguments)
             guard let resultDescriptor = wrappedResultDescriptor.result else {
@@ -372,7 +372,7 @@ extension SwiftAutomation.Specifier {
                 return RT_Null.null
             }
             
-            return try RT_Object.fromAEDescriptor(rt, appData, resultDescriptor)
+            return try RT_Object.fromAEDescriptor(appData, resultDescriptor)
         } catch let error as CommandError {
             throw RemoteCommandError(remoteObject: appData.target, command: command, error: error)
         } catch let error as AutomationError {
@@ -397,12 +397,12 @@ extension SwiftAutomation.Specifier {
 
 public extension RT_Object {
     
-    static func fromAEDescriptor(_ rt: Runtime, _ appData: AppData, _ descriptor: NSAppleEventDescriptor) throws -> RT_Object {
-        return fromSADecoded(rt, try appData.unpackAsAny(descriptor)) ??
-            RT_AEObject(rt, descriptor: descriptor)
+    static func fromAEDescriptor(_ appData: AppData, _ descriptor: NSAppleEventDescriptor) throws -> RT_Object {
+        return fromSADecoded( try appData.unpackAsAny(descriptor)) ??
+            RT_AEObject(descriptor: descriptor)
     }
     
-    static func fromSADecoded(_ rt: Runtime, _ object: Any) -> RT_Object? {
+    static func fromSADecoded(_ object: Any) -> RT_Object? {
         switch object {
         case let bool as Bool:
             return RT_Boolean.withValue(bool)
@@ -427,15 +427,15 @@ public extension RT_Object {
         case let date as Date:
             return RT_Date(value: date)
         case let array as [Any]:
-            guard let contents = array.map({ fromSADecoded(rt, $0) }) as? [RT_Object] else {
+            guard let contents = array.map({ fromSADecoded($0) }) as? [RT_Object] else {
                 return nil
             }
             return RT_List(contents: contents.map { $0 })
         case let dictionary as [SwiftAutomation.Symbol : Any]:
-            guard let values = dictionary.values.map({ fromSADecoded(rt, $0) }) as? [RT_Object] else {
+            guard let values = dictionary.values.map({ fromSADecoded($0) }) as? [RT_Object] else {
                 return nil
             }
-            let keysAndValues = zip(dictionary.keys, values).map { ($0.0.asRTObject(rt), $0.1) }
+            let keysAndValues = zip(dictionary.keys, values).map { ($0.0.asRTObject(), $0.1) }
             let convertedDictionary = [RT_Object : RT_Object](uniqueKeysWithValues: keysAndValues)
             return RT_Record(contents: convertedDictionary)
         case let url as URL:
@@ -443,7 +443,7 @@ public extension RT_Object {
         case is MissingValueType:
             return RT_Null.null // Intentional
         case let symbol as Symbol:
-            return symbol.asRTObject(rt)
+            return symbol.asRTObject()
         case let specifier as SwiftAutomation.Specifier:
             if let root = specifier as? SwiftAutomation.RootSpecifier {
                 guard
@@ -452,9 +452,9 @@ public extension RT_Object {
                 else {
                     return nil
                 }
-                return RT_Application(rt, bundle: bundle)
+                return RT_Application(bundle: bundle)
             } else if let objectSpecifier = specifier as? SwiftAutomation.ObjectSpecifier {
-                return RT_Specifier(rt, saSpecifier: objectSpecifier)
+                return RT_Specifier(saSpecifier: objectSpecifier)
             } else {
                 // TODO: insertion specifiers
                 return RT_String(value: "\(specifier)")
@@ -469,12 +469,12 @@ public extension RT_Object {
 
 extension SwiftAutomation.Symbol {
     
-    func asRTObject(_ rt: Runtime) -> RT_Object {
+    func asRTObject() -> RT_Object {
         switch type {
         case typeType:
-            return RT_Class(value: rt.type(for: code))
+            return RT_Class(value: TypeInfo(.ae4(code: code)))
         case typeEnumerated, typeKeyword, typeProperty:
-            return RT_Constant(value: rt.constant(for: code))
+            return RT_Constant(value: ConstantInfo(.ae4(code: code)))
         default:
             fatalError("invalid descriptor type for Symbol")
         }
@@ -515,7 +515,7 @@ extension RT_HierarchicalSpecifier {
             }
             var root = rootAncestor()
             if root is RT_RootSpecifier {
-                root = RT_Global(rt)
+                root = RT_Global()
             }
             return try evaluateLocalSpecifier(self, from: root)
         }

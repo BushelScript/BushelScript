@@ -3,30 +3,36 @@ import SwiftAutomation
 
 public class RT_Application: RT_Object {
     
-    public let rt: Runtime
-    
     public let bundle: Bundle?
     public let target: TargetApplication
     
-    public init(_ rt: Runtime, bundle: Bundle) {
-        self.rt = rt
+    public init(bundle: Bundle) {
         self.bundle = bundle
         self.target = bundle.bundleIdentifier.map { .bundleIdentifier($0, false) } ??
             .url(bundle.bundleURL)
     }
     
-    public init(_ rt: Runtime, target: TargetApplication) {
-        self.rt = rt
+    public init(target: TargetApplication) {
         self.bundle = nil
         self.target = target
     }
     
     public convenience init(_ rt: Runtime, currentApplication: ()) {
         if let bundleID = rt.currentApplicationBundleID {
-            self.init(rt, target: .bundleIdentifier(bundleID, false))
+            self.init(target: .bundleIdentifier(bundleID, false))
         } else {
-            self.init(rt, target: .current)
+            self.init(target: .current)
         }
+    }
+    
+    public convenience init?(named name: String) {
+        guard
+            let appBundleID = TargetApplication.name(name).bundleIdentifier,
+            let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
+        else {
+            return nil
+        }
+        self.init(bundle: appBundle)
     }
     
     public override var description: String {
@@ -76,7 +82,7 @@ extension RT_Application: RT_SASpecifierConvertible {
 extension RT_Application: RT_SpecifierRemoteRoot {
     
     public func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        return try specifier.performByAppleEvent(command: rt.command(forUID: TypedTermUID(CommandUID.get)), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, target: saSpecifier())
+        return try specifier.performByAppleEvent(command: CommandInfo(CommandUID.get), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, target: saSpecifier())
     }
     
     public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, for specifier: RT_HierarchicalSpecifier) throws -> RT_Object {

@@ -3,12 +3,6 @@ import SwiftAutomation
 
 public class RT_Global: RT_Object {
     
-    public let rt: Runtime
-    
-    public init(_ rt: Runtime) {
-        self.rt = rt
-    }
-    
     private static let typeInfo_ = TypeInfo(.global)
     public override class var typeInfo: TypeInfo {
         typeInfo_
@@ -16,68 +10,6 @@ public class RT_Global: RT_Object {
     
     public override var description: String {
         "builtin"
-    }
-    
-    public func property(_ property: PropertyInfo) -> RT_Object? {
-        switch PropertyUID(property.uid) {
-        case .topScript:
-            return rt.topScript
-        case .currentDate:
-            return RT_Date(value: Date())
-        case .Math_pi:
-            return RT_Real(value: Double.pi)
-        case .Math_e:
-            return RT_Real(value: exp(1))
-        default:
-            return nil
-        }
-    }
-    
-    public override func property(_ property: PropertyInfo) throws -> RT_Object {
-        guard let value = self.property(property) else {
-            throw NoPropertyExists(type: dynamicTypeInfo, property: property)
-        }
-        return value
-    }
-    
-    public func element(_ type: TypeInfo, named name: String, originalObject: RT_Object) throws -> RT_Object {
-        switch TypeUID(type.uid) {
-        case .application:
-            guard
-                let appBundleID = TargetApplication.name(name).bundleIdentifier,
-                let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
-            else {
-                return RT_Null.null
-            }
-            return RT_Application(rt, bundle: appBundle)
-        case .file:
-            return RT_File(value: URL(fileURLWithPath: (name as NSString).expandingTildeInPath))
-        default:
-            throw UnsupportedIndexForm(indexForm: .name, class: originalObject.dynamicTypeInfo)
-        }
-    }
-    
-    public override func element(_ type: TypeInfo, named name: String) throws -> RT_Object {
-        try element(type, named: name, originalObject: self)
-    }
-    
-    public func element(_ type: TypeInfo, id: RT_Object, originalObject: RT_Object) throws -> RT_Object {
-        switch TypeUID(type.uid) {
-        case .application:
-            guard
-                let appBundleID = id.coerce(to: RT_String.self)?.value,
-                let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
-            else {
-                return RT_Null.null
-            }
-            return RT_Application(rt, bundle: appBundle)
-        default:
-            throw UnsupportedIndexForm(indexForm: .id, class: originalObject.dynamicTypeInfo)
-        }
-    }
-    
-    public override func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object {
-        try element(type, id: id, originalObject: self)
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
@@ -93,17 +25,18 @@ public class RT_Global: RT_Object {
             var arguments = arguments
             if
                 arguments.first(where: { $0.key.uid.ae4Code == ParameterUID.GUI_ask_title.ae12Code!.code }) == nil,
-                let scriptName = rt.topScript.name
+                let scriptName = Optional("")//rt.topScript.name
+            // FIXME: fix
             {
                 arguments[ParameterInfo(.GUI_ask_title)] = RT_String(value: scriptName)
             }
             
-            return try RT_Application(rt, bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+            return try RT_Application(bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
         
         switch CommandUID(command.typedUID) {
         case .delay:
-            let delaySeconds = (arguments[ParameterInfo(.direct)]?.coerce(to: rt.type(forUID: TypedTermUID(TypeUID.real))) as? RT_Numeric)?.numericValue ?? 1.0
+            let delaySeconds = arguments[ParameterInfo(.direct)]?.coerce(to: RT_Real.self)?.value ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)
             return RT_Null.null
         case .CLI_log:

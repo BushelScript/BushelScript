@@ -4,12 +4,10 @@ import Carbon.OpenScripting
 
 public class RT_AppleScript: RT_Object {
     
-    public let rt: Runtime
     public let name: String
     private let value: NSAppleScript
     
-    public init(_ rt: Runtime, name: String, value: NSAppleScript) {
-        self.rt = rt
+    public init(name: String, value: NSAppleScript) {
         self.name = name
         self.value = value
     }
@@ -62,7 +60,7 @@ public class RT_AppleScript: RT_Object {
             throw AppleScriptError(number: errorInfo[NSAppleScript.errorNumber as NSString] as? OSStatus, message: errorInfo[NSAppleScript.errorMessage as NSString] as? String)
         }
         
-        return try RT_Object.fromAEDescriptor(rt, AppData(), resultDescriptor)
+        return try RT_Object.fromAEDescriptor(AppData(), resultDescriptor)
     }
     
 }

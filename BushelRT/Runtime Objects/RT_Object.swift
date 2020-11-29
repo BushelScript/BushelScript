@@ -89,6 +89,14 @@ import Bushel
     /// `propertyKeyPaths` and `evaluateStaticProperty(_:)` pair is preferable.
     public func property(_ property: PropertyInfo) throws -> RT_Object {
         switch PropertyUID(property.typedUID) {
+        // GLOBAL PROPERTIES
+        case .currentDate:
+            return RT_Date(value: Date())
+        case .Math_pi:
+            return RT_Real(value: Double.pi)
+        case .Math_e:
+            return RT_Real(value: exp(1))
+        // END GLOBAL PROPERTIES
         case .properties:
             return RT_Record(contents:
                 [RT_Object : RT_Object](uniqueKeysWithValues:
@@ -430,9 +438,22 @@ import Bushel
     ///     - `UnsupportedIndexForm` if named access is unsupported by
     ///       the receiver.
     public func element(_ type: TypeInfo, named name: String) throws -> RT_Object {
-        // FIXME: fix
-        fatalError("FIXME fix")
-//        return try RT_Global(Builtin.rt).element(type, named: name, originalObject: self)
+        func element() -> RT_Object? {
+            switch TypeUID(type.uid) {
+            case .application:
+                return RT_Application(named: name)
+            case .file:
+                return RT_File(value: URL(fileURLWithPath: (name as NSString).expandingTildeInPath))
+            case .environmentVariable:
+                return RT_EnvVar(name: name)
+            default:
+                return nil
+            }
+        }
+        guard let elem = element() else {
+            throw UnsupportedIndexForm(indexForm: .name, class: dynamicTypeInfo)
+        }
+        return elem
     }
     
     /// The element of the given type with the given unique ID, if one exists.
@@ -448,9 +469,24 @@ import Bushel
     ///     - `UnsupportedIndexForm` if by-ID access is unsupported by
     ///       the receiver.
     public func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object {
-        // FIXME: fix
-        fatalError("FIXME fix")
-//        return try RT_Global(Builtin.rt).element(type, id: id, originalObject: self)
+        func element() -> RT_Object? {
+            switch TypeUID(type.uid) {
+            case .application:
+                guard
+                    let appBundleID = id.coerce(to: RT_String.self)?.value,
+                    let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
+                else {
+                    return nil
+                }
+                return RT_Application(bundle: appBundle)
+            default:
+                return nil
+            }
+        }
+        guard let elem = element() else {
+            throw UnsupportedIndexForm(indexForm: .id, class: dynamicTypeInfo)
+        }
+        return elem
     }
     
     /// The element, if one exists, of the given type positioned relative to
@@ -506,7 +542,12 @@ import Bushel
     ///     - `UnsupportedIndexForm` if all-element access is unsupported by
     ///       the receiver.
     public func elements(_ type: TypeInfo) throws -> RT_Object {
-        throw UnsupportedIndexForm(indexForm: .all, class: dynamicTypeInfo)
+        switch TypeUID(type.uid) {
+        case .environmentVariable:
+            return RT_List(contents: ProcessInfo.processInfo.environment.keys.map { RT_EnvVar(name: $0) })
+        default:
+            throw UnsupportedIndexForm(indexForm: .all, class: dynamicTypeInfo)
+        }
     }
     
     /// The elements, if any exist, of the given type within the specified
