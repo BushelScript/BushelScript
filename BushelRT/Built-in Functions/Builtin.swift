@@ -143,37 +143,6 @@ final class Builtin {
         }() as RT_Object
     }
     
-    func newSpecifier0(_ parent: RT_Object?, _ typedUID: TypedTermUID, _ kind: RT_Specifier.Kind) -> RT_Specifier {
-        let newSpecifier: RT_Specifier
-        if kind == .property {
-            newSpecifier = RT_Specifier(parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [], kind: .property)
-        } else {
-            let type = rt.type(forUID: typedUID)
-            newSpecifier = RT_Specifier(parent: parent, type: type, data: [], kind: kind)
-        }
-        return newSpecifier
-    }
-    func newSpecifier1(_ parent: RT_Object?, _ typedUID: TypedTermUID, _ kind: RT_Specifier.Kind, _ data1: RT_Object) -> RT_Specifier {
-        let newSpecifier: RT_Specifier
-        if kind == .property {
-            newSpecifier = RT_Specifier(parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [data1], kind: .property)
-        } else {
-            let type = rt.type(forUID: typedUID)
-            newSpecifier = RT_Specifier(parent: parent, type: type, data: [data1], kind: kind)
-        }
-        return newSpecifier
-    }
-    func newSpecifier2(_ parent: RT_Object?, _ typedUID: TypedTermUID, _ kind: RT_Specifier.Kind, _ data1: RT_Object, _ data2: RT_Object) -> RT_Specifier {
-        let newSpecifier: RT_Specifier
-        if kind == .property {
-            newSpecifier = RT_Specifier(parent: parent, type: nil, property: rt.property(forUID: typedUID), data: [data1, data2], kind: .property)
-        } else {
-            let type = rt.type(forUID: typedUID)
-            newSpecifier = RT_Specifier(parent: parent, type: type, data: [data1, data2], kind: kind)
-        }
-        return newSpecifier
-    }
-    
     func newTestSpecifier(_ operation: BinaryOperation, _ lhs: RT_Object, _ rhs: RT_Object) -> RT_Object {
         return RT_TestSpecifier(operation: operation, lhs: lhs, rhs: rhs)
     }
@@ -192,19 +161,6 @@ final class Builtin {
         } catch {
             try throwError(message: "error evaluating specifier ‘\(specifier)’: \(error.localizedDescription)")
         }
-    }
-    
-    func newScript(_ name: String) -> RT_Object {
-        return RT_Script(name: name)
-    }
-    
-    func newFunction(_ commandInfo: CommandInfo, _ functionExpression: Expression, _ script: RT_Script?) -> RT_Object {
-        let script = script ?? rt.topScript
-        
-        let function = RT_Function(rt, functionExpression)
-        script.dynamicFunctions[commandInfo] = function
-        
-        return function
     }
     
     func run(command: CommandInfo, arguments: [ParameterInfo : RT_Object], target: RT_Object) throws -> RT_Object {

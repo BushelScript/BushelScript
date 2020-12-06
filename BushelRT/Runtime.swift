@@ -462,7 +462,10 @@ public extension Runtime {
             return RT_InsertionSpecifier(parent: parentValue, kind: insertionSpecifier.kind)
         case .function(let name, _, _, _): // MARK: .function
             let commandInfo = self.command(forUID: TypedTermUID(.command, name.uid))
-            _ = builtin.newFunction(commandInfo, expression, nil)
+            
+            let function = RT_Function(self, expression)
+            topScript.dynamicFunctions[commandInfo] = function
+                
             return try evaluate(lastResult, lastResult: lastResult, target: target)
         case .multilineString(_, let body): // MARK: .multilineString
             return RT_String(value: body)
@@ -472,50 +475,57 @@ public extension Runtime {
     }
     
     private func buildSpecifier(_ specifier: Specifier, lastResult: ExprValue, target: ExprValue) throws -> RT_Object {
-        let uidValue = specifier.idTerm.typedUID
+        let typedUID = specifier.idTerm.typedUID
         
-        let parentValue = try specifier.parent.map { try runPrimary($0, lastResult: lastResult, target: target, evaluateSpecifiers: false) }
+        let parent = try specifier.parent.map { try runPrimary($0, lastResult: lastResult, target: target, evaluateSpecifiers: false) }
         
-        let dataExpressionValues: [RT_Object]
+        let data: [RT_Object]
         if case .test(_, let testComponent) = specifier.kind {
-            dataExpressionValues = [try runTestComponent(testComponent, lastResult: lastResult, target: target)]
+            data = [try runTestComponent(testComponent, lastResult: lastResult, target: target)]
         } else {
-            dataExpressionValues = try specifier.allDataExpressions().map { dataExpression in
+            data = try specifier.allDataExpressions().map { dataExpression in
                 try runPrimary(dataExpression, lastResult: lastResult, target: target)
             }
         }
         
         func generate() -> RT_Specifier {
-            switch specifier.kind {
-            case .simple:
-                return builtin.newSpecifier1(parentValue, uidValue, .simple, dataExpressionValues[0])
-            case .index:
-                return builtin.newSpecifier1(parentValue, uidValue, .index, dataExpressionValues[0])
-            case .name:
-                return builtin.newSpecifier1(parentValue, uidValue, .name, dataExpressionValues[0])
-            case .id:
-                return builtin.newSpecifier1(parentValue, uidValue, .id, dataExpressionValues[0])
-            case .all:
-                return builtin.newSpecifier0(parentValue, uidValue, .all)
-            case .first:
-                return builtin.newSpecifier0(parentValue, uidValue, .first)
-            case .middle:
-                return builtin.newSpecifier0(parentValue, uidValue, .middle)
-            case .last:
-                return builtin.newSpecifier0(parentValue, uidValue, .last)
-            case .random:
-                return builtin.newSpecifier0(parentValue, uidValue, .random)
-            case .previous:
-                return builtin.newSpecifier0(parentValue, uidValue, .previous)
-            case .next:
-                return builtin.newSpecifier0(parentValue, uidValue, .next)
-            case .range:
-                return builtin.newSpecifier2(parentValue, uidValue, .range, dataExpressionValues[0], dataExpressionValues[1])
-            case .test:
-                return builtin.newSpecifier1(parentValue, uidValue, .test, dataExpressionValues[0])
-            case .property:
-                return builtin.newSpecifier0(parentValue, uidValue, .property)
+            if case .property = specifier.kind {
+                return RT_Specifier(parent: parent, type: nil, property: property(forUID: typedUID), data: [], kind: .property)
             }
+            
+            let kind: RT_Specifier.Kind = {
+                switch specifier.kind {
+                case .simple:
+                    return .simple
+                case .index:
+                    return .index
+                case .name:
+                    return .name
+                case .id:
+                    return .id
+                case .all:
+                    return .all
+                case .first:
+                    return .first
+                case .middle:
+                    return .middle
+                case .last:
+                    return .last
+                case .random:
+                    return .random
+                case .previous:
+                    return .previous
+                case .next:
+                    return .next
+                case .range:
+                    return .range
+                case .test:
+                    return .test
+                case .property:
+                    fatalError("unreachable")
+                }
+            }()
+            return RT_Specifier(parent: parent, type: type(forUID: typedUID), data: data, kind: kind)
         }
         
         let resultValue = generate()
