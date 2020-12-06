@@ -163,12 +163,22 @@ public class InsertionSpecifier: Specifier {
         super.init(appData: appData)
     }
     
-    func encodeAEDescriptor() throws -> NSAppleEventDescriptor {
+    public override func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         let desc = NSAppleEventDescriptor.record().coerce(toDescriptorType: typeInsertionLoc)!
         desc.setDescriptor(try parentQuery.encodeAEDescriptor(appData), forKeyword: keyAEObject)
         desc.setDescriptor(insertionLocation, forKeyword: keyAEPosition)
         return desc
     }
+    
+    public enum Kind: OSType {
+        case beginning = 0x62676E67, end = 0x656E6420
+        case before = 0x6265666F, after = 0x61667465
+    }
+    
+    public var kind: Kind? {
+        return Kind(rawValue: insertionLocation.enumCodeValue)
+    }
+    
 }
 
 /******************************************************************************/

@@ -475,8 +475,17 @@ public extension Runtime {
         case .get(let expression): // MARK: .get
             return try evaluatingSpecifier(runPrimary(expression, lastResult: lastResult, target: target))
         case .specifier(let specifier): // MARK: .specifier
-            let specifierExprValue = try runSpecifier(specifier, lastResult: lastResult, target: target)
-            return evaluateSpecifiers ? try evaluatingSpecifier(specifierExprValue) : specifierExprValue
+            let specifierValue = try buildSpecifier(specifier, lastResult: lastResult, target: target)
+            return evaluateSpecifiers ? try evaluatingSpecifier(specifierValue) : specifierValue
+        case .insertionSpecifier(let insertionSpecifier): // MARK: .insertionSpecifier
+            let parentValue: RT_Object = try {
+                if let parent = insertionSpecifier.parent {
+                    return try runPrimary(parent, lastResult: lastResult, target: target)
+                } else {
+                    return try evaluate(target, lastResult: lastResult, target: target)
+                }
+            }()
+            return RT_InsertionSpecifier(parent: parentValue, kind: insertionSpecifier.kind)
         case .function(let name, _, _, _): // MARK: .function
             let commandInfo = self.command(forUID: TypedTermUID(.command, name.uid))
             _ = builtin.newFunction(commandInfo, expression, nil)
@@ -488,7 +497,7 @@ public extension Runtime {
         }
     }
     
-    private func runSpecifier(_ specifier: Specifier, lastResult: ExprValue, target: ExprValue) throws -> RT_Object {
+    private func buildSpecifier(_ specifier: Specifier, lastResult: ExprValue, target: ExprValue) throws -> RT_Object {
         let uidValue = specifier.idTerm.typedUID
         
         let parentValue = try specifier.parent.map { try runPrimary($0, lastResult: lastResult, target: target, evaluateSpecifiers: false) }

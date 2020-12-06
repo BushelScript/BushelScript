@@ -55,13 +55,13 @@ public class RT_String: RT_Object, AEEncodable {
     public override func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object {
         switch positioning {
         case .first:
-            return try element(type, at: 0)
+            return try element(type, at: 1)
         case .middle:
-            return try element(type, at: Int64(value.count / 2))
+            return try element(type, at: Int64(value.count / 2) + 1)
         case .last:
-            return try element(type, at: Int64(value.count - 1))
+            return try element(type, at: Int64(value.count))
         case .random:
-            return try element(type, at: Int64(arc4random_uniform(UInt32(value.count))))
+            return try element(type, at: Int64(arc4random_uniform(UInt32(value.count))) + 1)
         }
     }
     

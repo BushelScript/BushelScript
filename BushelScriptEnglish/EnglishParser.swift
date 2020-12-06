@@ -162,6 +162,14 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         TermName("last"): handleQuantifier(.last),
         TermName("back"): handleQuantifier(.last),
         TermName("some"): handleQuantifier(.random),
+        TermName("at beginning of"): handleInsertionLocation(.beginning),
+        TermName("at beginning"): handleInsertionLocation(.beginning),
+        TermName("at start of"): handleInsertionLocation(.beginning),
+        TermName("at start"): handleInsertionLocation(.beginning),
+        TermName("at end of"): handleInsertionLocation(.end),
+        TermName("at end"): handleInsertionLocation(.end),
+        TermName("before"): handleInsertionLocation(.before),
+        TermName("after"): handleInsertionLocation(.after),
         TermName("ref"): handleRef(TermName("ref")),
         TermName("get"): handleGet(TermName("get")),
         TermName("set"): handleSet,
@@ -556,7 +564,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     private func handleQuantifier(_ kind: Specifier.Kind) -> () throws -> Expression.Kind? {
         {
-            try self.parseSpecifierAfterQuantifier(kind: kind, startIndex: self.expressionStartIndex)
+            try self.parseSpecifierAfterQuantifier(kind: kind)
+        }
+    }
+    
+    private func handleInsertionLocation(_ kind: InsertionSpecifier.Kind) -> () throws -> Expression.Kind? {
+        {
+            try self.parseInsertionSpecifierAfterInsertionLocation(kind: kind)
         }
     }
     
@@ -721,12 +735,16 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
     }
     
-    public func parseSpecifierAfterQuantifier(kind: Specifier.Kind, startIndex: Substring.Index) throws -> Expression.Kind? {
+    public func parseSpecifierAfterQuantifier(kind: Specifier.Kind) throws -> Expression.Kind? {
         guard let type = try parseTypeTerm() else {
             throw AdHocParseError("expected type name", at: currentLocation)
         }
         let specifier = Specifier(class: type, kind: kind)
         return .specifier(specifier)
+    }
+    
+    public func parseInsertionSpecifierAfterInsertionLocation(kind: InsertionSpecifier.Kind) throws -> Expression.Kind? {
+        .insertionSpecifier(InsertionSpecifier(kind: kind, parent: try parsePrimary()))
     }
     
     public func tryParseSpecifierPhrase(chainingTo chainTo: Expression) throws -> Expression.Kind? {

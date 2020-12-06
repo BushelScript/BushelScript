@@ -37,6 +37,7 @@ public struct Expression {
         case enumerator(EnumeratorTerm)
         case class_(ClassTerm)
         case specifier(Specifier)
+        case insertionSpecifier(InsertionSpecifier)
         case reference(to: Expression)
         case get(Expression)
         case set(Expression, to: Expression)
@@ -155,6 +156,8 @@ extension Expression.Kind {
             return ("Type reference", "A BushelScript type value.")
         case .specifier:
             return ("Specifier", "Refers to one or more object(s). Can be evaluated with a “get” command or passed around as a reference. Automatically evaluated in most contexts; use a reference expression to prevent this.")
+        case .insertionSpecifier:
+            return ("Insertion specifier", "Refers to a position in an ordered collection at which an object could be inserted.")
         case .reference:
             return ("Reference expression", "Prevents the automatic evaluation of a specifier, producing an unevaluated reference as an object.")
         case .get:

@@ -29,6 +29,8 @@
 		3C12EF9A2354E5AC0057E0CC /* RT_Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF992354E5AC0057E0CC /* RT_Application.swift */; };
 		3C12EF9C2354E5D10057E0CC /* RT_AEObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF9B2354E5D10057E0CC /* RT_AEObject.swift */; };
 		3C12EF9E2354E6010057E0CC /* RT_Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF9D2354E6010057E0CC /* RT_Global.swift */; };
+		3C187D51257C69F200481DA9 /* RT_InsertionSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C187D50257C69F200481DA9 /* RT_InsertionSpecifier.swift */; };
+		3C187D68257C73E700481DA9 /* InsertionSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C187D67257C73E700481DA9 /* InsertionSpecifier.swift */; };
 		3C2DD4A823A06E90002FAE57 /* ParameterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */; };
 		3C3065B1230B7ABB00833CE8 /* TermName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B0230B7ABB00833CE8 /* TermName.swift */; };
 		3C3065B3230B7E2000833CE8 /* TerminologySource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B2230B7E2000833CE8 /* TerminologySource.swift */; };
@@ -290,6 +292,8 @@
 		3C12EF992354E5AC0057E0CC /* RT_Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Application.swift; sourceTree = "<group>"; };
 		3C12EF9B2354E5D10057E0CC /* RT_AEObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_AEObject.swift; sourceTree = "<group>"; };
 		3C12EF9D2354E6010057E0CC /* RT_Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Global.swift; sourceTree = "<group>"; };
+		3C187D50257C69F200481DA9 /* RT_InsertionSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_InsertionSpecifier.swift; sourceTree = "<group>"; };
+		3C187D67257C73E700481DA9 /* InsertionSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsertionSpecifier.swift; sourceTree = "<group>"; };
 		3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterInfo.swift; sourceTree = "<group>"; };
 		3C3065B0230B7ABB00833CE8 /* TermName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermName.swift; sourceTree = "<group>"; };
 		3C3065B2230B7E2000833CE8 /* TerminologySource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminologySource.swift; sourceTree = "<group>"; };
@@ -558,6 +562,7 @@
 		3C12EF942354E51C0057E0CC /* Specifiers */ = {
 			isa = PBXGroup;
 			children = (
+				3C187D50257C69F200481DA9 /* RT_InsertionSpecifier.swift */,
 				3C70A6A323C5898C00CD5F73 /* RT_TestSpecifier.swift */,
 				3C12EF902354E4AA0057E0CC /* RT_Specifier.swift */,
 				3C12EF922354E50B0057E0CC /* RT_RootSpecifier.swift */,
@@ -927,6 +932,7 @@
 			children = (
 				3C35A5D722C81E60002D4582 /* Expression.swift */,
 				3C57DD4B2352C55A00F9F2A0 /* Weave.swift */,
+				3C187D67257C73E700481DA9 /* InsertionSpecifier.swift */,
 				3C35A5D822C81E60002D4582 /* Specifier.swift */,
 				3C68D2442353BA300059FD3E /* BinaryOperation.swift */,
 				3C68743B2394164E004144AC /* UnaryOperation.swift */,
@@ -1508,6 +1514,7 @@
 				3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */,
 				3C3F06DC23C14165005BC0F2 /* ExpressionsAtLocation.swift in Sources */,
 				3C3065B1230B7ABB00833CE8 /* TermName.swift in Sources */,
+				3C187D68257C73E700481DA9 /* InsertionSpecifier.swift in Sources */,
 				3CD113DB22FC6E9300329583 /* Logging.swift in Sources */,
 				3CB7FEC623B7CA22003191AC /* TermUID.swift in Sources */,
 				3CC224982391E08800448D25 /* TermUIDs.swift in Sources */,
@@ -1619,6 +1626,7 @@
 				3C12EF8D2354E3870057E0CC /* RT_Class.swift in Sources */,
 				3C12EF932354E50B0057E0CC /* RT_RootSpecifier.swift in Sources */,
 				3CCA1C7E235D0C010037058C /* Logging.swift in Sources */,
+				3C187D51257C69F200481DA9 /* RT_InsertionSpecifier.swift in Sources */,
 				3C12EF892354E3590057E0CC /* RT_Constant.swift in Sources */,
 				3C8FEEF322DE2B8300C1F1CF /* Builtin.swift in Sources */,
 				3CB528EB237FAF8A0051460B /* TypeInfo.swift in Sources */,

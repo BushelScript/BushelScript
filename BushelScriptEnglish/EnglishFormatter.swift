@@ -252,6 +252,31 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             }
             
             return formatted
+        case .insertionSpecifier(let insertionSpecifier):
+            var formatted: String
+            
+            var useOf: Bool = false
+            switch insertionSpecifier.kind {
+            case .beginning:
+                formatted = "at beginning"
+                useOf = true
+            case .end:
+                formatted = "at end"
+                useOf = true
+            case .before:
+                formatted = "before"
+            case .after:
+                formatted = "after"
+            }
+            
+            if let parent = insertionSpecifier.parent {
+                if useOf {
+                    formatted += " of"
+                }
+                formatted += " \(format(parent, level: level))"
+            }
+            
+            return formatted
         case .function(let name, let parameters, let arguments, let body):
             var formatted = "on \(name)"
             

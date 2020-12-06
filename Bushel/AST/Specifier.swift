@@ -26,7 +26,7 @@ public class Specifier {
     }
     
     public func allDataExpressions() -> [Expression] {
-        return kind.allDataExpressions()
+        kind.allDataExpressions()
     }
     
     public enum Kind {

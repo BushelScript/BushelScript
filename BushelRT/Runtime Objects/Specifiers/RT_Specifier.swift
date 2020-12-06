@@ -43,9 +43,9 @@ extension RT_HierarchicalSpecifier {
 }
 
 /// An unevaluated object specifier.
-public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_SASpecifierConvertible {
+public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
     
-    public enum Kind: UInt32 {
+    public enum Kind {
         case simple, index, name, id
         case all, first, middle, last, random
         case previous, next

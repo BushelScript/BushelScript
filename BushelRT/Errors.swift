@@ -173,6 +173,16 @@ public struct InvalidSpecifierDataType: LocalizedError {
     
 }
 
+public struct InsertionSpecifierEvaluated: LocalizedError {
+    
+    public let insertionSpecifier: RT_InsertionSpecifier
+    
+    public var errorDescription: String? {
+        "Insertion specifiers cannot be evaluated: \(insertionSpecifier)"
+    }
+    
+}
+
 public struct AppleScriptError: LocalizedError {
     
     public let number: OSStatus?

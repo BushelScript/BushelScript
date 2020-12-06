@@ -80,6 +80,8 @@ extension Expression {
             return []
         case let .specifier(specifier):
             return specifier.allDataExpressionsFromSelfAndAncestors()
+        case let .insertionSpecifier(insertionSpecifier):
+            return insertionSpecifier.parent?.subexpressions() ?? []
         case let .reference(to: expression):
             return [expression]
         case let .get(expression):
