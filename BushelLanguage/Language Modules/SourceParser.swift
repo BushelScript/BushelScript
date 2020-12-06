@@ -648,14 +648,14 @@ extension SourceParser {
                 }
                 return Expression(.record(items), at: expressionLocation)
             }
-        } else if let term = try eatTerm() {
-            if let kind = try handle(term: term) {
+        } else if let termName = eatKeyword() {
+            if let kind = try keywords[termName]!() {
                 return Expression(kind, at: expressionLocation)
             } else {
                 return nil
             }
-        } else if let termName = eatKeyword() {
-            if let kind = try keywords[termName]!() {
+        } else if let term = try eatTerm() {
+            if let kind = try handle(term: term) {
                 return Expression(kind, at: expressionLocation)
             } else {
                 return nil
