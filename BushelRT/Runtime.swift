@@ -320,7 +320,7 @@ public extension Runtime {
         case let .if_(condition, then, else_): // MARK: .if_
             let conditionValue = try runPrimary(condition, lastResult: lastResult, target: target)
             
-            if builtin.isTruthy(conditionValue) {
+            if conditionValue.truthy {
                 return try runPrimary(then, lastResult: lastResult, target: target)
             } else if let else_ = else_ {
                 return try runPrimary(else_, lastResult: lastResult, target: target)
@@ -329,7 +329,7 @@ public extension Runtime {
             }
         case .repeatWhile(let condition, let repeating): // MARK: .repeatWhile
             var repeatResult: RT_Object?
-            while builtin.isTruthy(try runPrimary(condition, lastResult: lastResult, target: target)) {
+            while try runPrimary(condition, lastResult: lastResult, target: target).truthy {
                 repeatResult = try runPrimary(repeating, lastResult: lastResult, target: target)
             }
             return try repeatResult ?? evaluate(lastResult, lastResult: lastResult, target: target)
@@ -338,7 +338,7 @@ public extension Runtime {
             
             var repeatResult: RT_Object?
             var count = 0
-            while builtin.isTruthy(builtin.binaryOp(.less, RT_Integer(value: count), timesValue)) {
+            while builtin.binaryOp(.less, RT_Integer(value: count), timesValue).truthy {
                 repeatResult = try runPrimary(repeating, lastResult: lastResult, target: target)
                 count += 1
             }
@@ -396,7 +396,7 @@ public extension Runtime {
                         )
                     },
                     uniquingKeysWith: {
-                        builtin.isTruthy(builtin.binaryOp(.greater, $1, $0)) ? $1 : $0
+                        builtin.binaryOp(.greater, $1, $0).truthy ? $1 : $0
                     }
                 )
             )
@@ -415,7 +415,7 @@ public extension Runtime {
         case .enumerator(let term as Term): // MARK: .enumerator
             return builtin.newConstant(term.typedUID)
         case .class_(let term as Term): // MARK: .class_
-            return builtin.newClass(term.typedUID)
+            return RT_Class(value: type(forUID: term.typedUID))
         case .set(let expression, to: let newValueExpression): // MARK: .set
             if case .variable(let variableTerm) = expression.kind {
                 let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult, target: target)

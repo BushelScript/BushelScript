@@ -32,32 +32,12 @@ final class Builtin {
         return newValue
     }
     
-    func isTruthy(_ object: RT_Object) -> Bool {
-        object.truthy
-    }
-    
-    func newReal(_ value: Double) -> RT_Object {
-        return RT_Real(value: value)
-    }
-    
-    func newInteger(_ value: Int64) -> RT_Object {
-        return RT_Integer(value: value)
-    }
-    
-    func newBoolean(_ value: Bool) -> RT_Object {
-        return RT_Boolean.withValue(value)
-    }
-    
-    func newString(_ cString: UnsafePointer<CChar>) -> RT_Object {
-        return RT_String(value: String(cString: cString))
-    }
-    
     func newConstant(_ typedUID: TypedTermUID) -> RT_Object {
         switch ConstantUID(typedUID) {
         case .true:
-            return newBoolean(true)
+            return RT_Boolean.withValue(true)
         case .false:
-            return newBoolean(false)
+            return RT_Boolean.withValue(false)
         default:
             return RT_Constant(value: rt.constant(forUID: typedUID))
         }
@@ -464,12 +444,6 @@ extension SwiftAutomation.Symbol {
             fatalError("invalid descriptor type for Symbol")
         }
     }
-    
-}
-
-internal class RT_Private_ArgumentRecord: RT_Object {
-    
-    var contents: [TypedTermUID : RT_Object] = [:]
     
 }
 
