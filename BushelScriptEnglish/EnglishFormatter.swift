@@ -258,15 +258,15 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             var useOf: Bool = false
             switch insertionSpecifier.kind {
             case .beginning:
-                formatted = "at beginning"
+                formatted = "first position"
                 useOf = true
             case .end:
-                formatted = "at end"
+                formatted = "last position"
                 useOf = true
             case .before:
-                formatted = "before"
+                formatted = "position before"
             case .after:
-                formatted = "after"
+                formatted = "position after"
             }
             
             if let parent = insertionSpecifier.parent {
