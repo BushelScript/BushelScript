@@ -386,12 +386,14 @@ import Bushel
     ///
     /// Cannot be overridden.
     /// `coerce(to:)` should be overridden to define coercions.
-    public final func coercing(to other: RT_Object) -> RT_Object? {
+    public final func coercing(to other: RT_Object) throws -> RT_Object {
         guard let type = (other as? RT_Class)?.value else {
-            // TODO: Throw here
-            return nil
+            throw TypeObjectRequired(object: other)
         }
-        return coerce(to: type)
+        guard let coerced = coerce(to: type) else {
+            throw Uncoercible(expectedType: type, object: self)
+        }
+        return coerced
     }
     
     /// Asks this object to perform the specified command.

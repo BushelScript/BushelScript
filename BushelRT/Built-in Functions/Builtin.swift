@@ -71,8 +71,8 @@ final class Builtin {
         }() ?? RT_Null.null
     }
     
-    func binaryOp(_ operation: BinaryOperation, _ lhs: RT_Object, _ rhs: RT_Object) -> RT_Object {
-        return { () -> RT_Object? in
+    func binaryOp(_ operation: BinaryOperation, _ lhs: RT_Object, _ rhs: RT_Object) throws -> RT_Object {
+        return try { () -> RT_Object? in
             switch operation {
             case .or:
                 return lhs.or(rhs)
@@ -119,14 +119,9 @@ final class Builtin {
             case .concatenate:
                 return lhs.concatenating(rhs) ?? rhs.concatenated(to: lhs)
             case .coerce:
-                return lhs.coercing(to: rhs)
+                return try lhs.coercing(to: rhs)
             }
         }() ?? RT_Null.null
-    }
-    
-    func coerce(_ object: RT_Object, to type: TypeInfo) -> RT_Object {
-        // TODO: Should throw error when not coercible
-        return object.coerce(to: type) ?? RT_Null.null
     }
     
     func getResource(_ term: ResourceTerm) -> RT_Object {

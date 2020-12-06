@@ -338,7 +338,7 @@ public extension Runtime {
             
             var repeatResult: RT_Object?
             var count = 0
-            while builtin.binaryOp(.less, RT_Integer(value: count), timesValue).truthy {
+            while try builtin.binaryOp(.less, RT_Integer(value: count), timesValue).truthy {
                 repeatResult = try runPrimary(repeating, lastResult: lastResult, target: target)
                 count += 1
             }
@@ -387,7 +387,7 @@ public extension Runtime {
                 expressions.map { try runPrimary($0, lastResult: lastResult, target: target) }
             )
         case .record(let keyValues): // MARK: .record
-            return RT_Record(contents:
+            return try RT_Record(contents:
                 [RT_Object : RT_Object](
                     try keyValues.map {
                         try (
@@ -396,7 +396,7 @@ public extension Runtime {
                         )
                     },
                     uniquingKeysWith: {
-                        builtin.binaryOp(.greater, $1, $0).truthy ? $1 : $0
+                        try builtin.binaryOp(.greater, $1, $0).truthy ? $1 : $0
                     }
                 )
             )
@@ -406,7 +406,7 @@ public extension Runtime {
         case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
             let lhsValue = try runPrimary(lhs, lastResult: lastResult, target: target)
             let rhsValue = try runPrimary(rhs, lastResult: lastResult, target: target)
-            return builtin.binaryOp(operation, lhsValue, rhsValue)
+            return try builtin.binaryOp(operation, lhsValue, rhsValue)
         case .variable(let term): // MARK: .variable
             return builtin.getVariableValue(term)
         case .use(let term), // MARK: .use
@@ -432,7 +432,6 @@ public extension Runtime {
                 let command = self.command(forUID: TypedTermUID(CommandUID.set))
                 return try builtin.run(command: command, arguments: arguments, target: evaluate(target, lastResult: lastResult, target: target))
             }
-            
         case .command(let term, let parameters): // MARK: .command
             let parameterExprValues: [(key: ParameterInfo, value: RT_Object)] = try parameters.map { kv in
                 let (parameterTerm, parameterValue) = kv

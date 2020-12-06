@@ -97,6 +97,16 @@ public struct Uncoercible: LocalizedError {
     
 }
 
+public struct TypeObjectRequired: LocalizedError {
+    
+    public let object: RT_Object
+    
+    public var errorDescription: String? {
+        "A type object is required, but \(object) was provided"
+    }
+    
+}
+
 public struct MissingParameter: LocalizedError {
     
     public let command: CommandInfo
