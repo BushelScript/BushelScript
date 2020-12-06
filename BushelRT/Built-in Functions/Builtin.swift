@@ -6,11 +6,6 @@ final class Builtin {
     var rt = Runtime()
     lazy var stack = ProgramStack(rt)
     
-    public typealias Pointer = UnsafeMutableRawPointer
-    public typealias RTObjectPointer = UnsafeMutableRawPointer
-    public typealias TermPointer = UnsafeMutableRawPointer
-    public typealias InfoPointer = UnsafeMutableRawPointer
-    
     func throwError(message: String) throws -> Never {
         let location = rt.currentLocation ?? SourceLocation(at: "".startIndex, source: "")
         throw RuntimeError(description: message, location: location)
