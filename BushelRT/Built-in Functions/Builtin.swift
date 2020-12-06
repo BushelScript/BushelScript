@@ -11,15 +11,6 @@ final class Builtin {
     public typealias TermPointer = UnsafeMutableRawPointer
     public typealias InfoPointer = UnsafeMutableRawPointer
     
-    func retain<Object: RT_Object>(_ object: Object) -> Object {
-        rt.retain(object)
-        return object
-    }
-    
-    func release(_ object: RT_Object) {
-        rt.release(object)
-    }
-    
     func throwError(message: String) throws -> Never {
         let location = rt.currentLocation ?? SourceLocation(at: "".startIndex, source: "")
         throw RuntimeError(description: message, location: location)
@@ -51,11 +42,11 @@ final class Builtin {
     }
     
     func newReal(_ value: Double) -> RT_Object {
-        return retain(RT_Real(value: value))
+        return RT_Real(value: value)
     }
     
     func newInteger(_ value: Int64) -> RT_Object {
-        return retain(RT_Integer(value: value))
+        return RT_Integer(value: value)
     }
     
     func newBoolean(_ value: Bool) -> RT_Object {
@@ -63,7 +54,7 @@ final class Builtin {
     }
     
     func newString(_ cString: UnsafePointer<CChar>) -> RT_Object {
-        return retain(RT_String(value: String(cString: cString)))
+        return RT_String(value: String(cString: cString))
     }
     
     func newConstant(_ typedUID: TypedTermUID) -> RT_Object {
@@ -73,24 +64,24 @@ final class Builtin {
         case .false:
             return newBoolean(false)
         default:
-            return retain(RT_Constant(value: rt.constant(forUID: typedUID)))
+            return RT_Constant(value: rt.constant(forUID: typedUID))
         }
     }
     
     func newClass(_ typedUID: TypedTermUID) -> RT_Object {
-        return retain(RT_Class(value: rt.type(forUID: typedUID)))
+        return RT_Class(value: rt.type(forUID: typedUID))
     }
     
     func newList() -> RT_Object {
-        return retain(RT_List(contents: []))
+        return RT_List(contents: [])
     }
     
     func newRecord() -> RT_Object {
-        return retain(RT_Record(contents: [:]))
+        return RT_Record(contents: [:])
     }
     
     func newArgumentRecord() -> RT_Private_ArgumentRecord {
-        return retain(RT_Private_ArgumentRecord())
+        return RT_Private_ArgumentRecord()
     }
     
     func addToList(_ list: RT_List, _ value: RT_Object) {
@@ -118,23 +109,23 @@ final class Builtin {
     func getFromSequenceAtIndex(_ sequence: RT_Object, _ index: Int64) throws -> RT_Object {
         do {
             let item = try sequence.element(rt.type(forUID: TypedTermUID(TypeUID.item)), at: index)
-            return retain(item)
+            return item
         } catch {
             try throwError(message: error.localizedDescription)
         }
     }
     
     func unaryOp(_ operation: UnaryOperation, _ operand: RT_Object) -> RT_Object {
-        return retain({ () -> RT_Object? in
+        return { () -> RT_Object? in
             switch operation {
             case .not:
                 return operand.not()
             }
-        }() ?? RT_Null.null)
+        }() ?? RT_Null.null
     }
     
     func binaryOp(_ operation: BinaryOperation, _ lhs: RT_Object, _ rhs: RT_Object) -> RT_Object {
-        return retain({ () -> RT_Object? in
+        return { () -> RT_Object? in
             switch operation {
             case .or:
                 return lhs.or(rhs)
@@ -183,16 +174,16 @@ final class Builtin {
             case .coerce:
                 return lhs.coercing(to: rhs)
             }
-        }() ?? RT_Null.null)
+        }() ?? RT_Null.null
     }
     
     func coerce(_ object: RT_Object, to type: TypeInfo) -> RT_Object {
         // TODO: Should throw error when not coercible
-        return retain(object.coerce(to: type) ?? RT_Null.null)
+        return object.coerce(to: type) ?? RT_Null.null
     }
     
     func getResource(_ term: ResourceTerm) -> RT_Object {
-        return retain({
+        return {
             switch term.resource {
             case .bushelscript:
                 return RT_Global()
@@ -207,7 +198,7 @@ final class Builtin {
                  .applescriptAtPath(_, let script):
                 return RT_AppleScript(name: term.name!.normalized, value: script)
             }
-        }() as RT_Object)
+        }() as RT_Object
     }
     
     func newSpecifier0(_ parent: RT_Object?, _ typedUID: TypedTermUID, _ kind: RT_Specifier.Kind) -> RT_Specifier {
@@ -218,7 +209,7 @@ final class Builtin {
             let type = rt.type(forUID: typedUID)
             newSpecifier = RT_Specifier(parent: parent, type: type, data: [], kind: kind)
         }
-        return retain(newSpecifier)
+        return newSpecifier
     }
     func newSpecifier1(_ parent: RT_Object?, _ typedUID: TypedTermUID, _ kind: RT_Specifier.Kind, _ data1: RT_Object) -> RT_Specifier {
         let newSpecifier: RT_Specifier
@@ -228,7 +219,7 @@ final class Builtin {
             let type = rt.type(forUID: typedUID)
             newSpecifier = RT_Specifier(parent: parent, type: type, data: [data1], kind: kind)
         }
-        return retain(newSpecifier)
+        return newSpecifier
     }
     func newSpecifier2(_ parent: RT_Object?, _ typedUID: TypedTermUID, _ kind: RT_Specifier.Kind, _ data1: RT_Object, _ data2: RT_Object) -> RT_Specifier {
         let newSpecifier: RT_Specifier
@@ -238,22 +229,22 @@ final class Builtin {
             let type = rt.type(forUID: typedUID)
             newSpecifier = RT_Specifier(parent: parent, type: type, data: [data1, data2], kind: kind)
         }
-        return retain(newSpecifier)
+        return newSpecifier
     }
     
     func newTestSpecifier(_ operation: BinaryOperation, _ lhs: RT_Object, _ rhs: RT_Object) -> RT_Object {
-        return retain(RT_TestSpecifier(operation: operation, lhs: lhs, rhs: rhs))
+        return RT_TestSpecifier(operation: operation, lhs: lhs, rhs: rhs)
     }
     
     func qualifySpecifier(_ specifier: RT_Specifier, _ target: RT_Object) -> RT_Specifier {
         let clone = specifier.clone()
         clone.setRootAncestor(target)
-        return retain(clone)
+        return clone
     }
     
     func evaluateSpecifier(_ specifier: RT_Object) throws -> RT_Object {
         do {
-            return retain(try specifier.evaluate())
+            return try specifier.evaluate()
         } catch let error as InFlightRuntimeError {
             try throwError(message: "error evaluating specifier ‘\(specifier)’: \(error.description)")
         } catch {
@@ -262,7 +253,7 @@ final class Builtin {
     }
     
     func newScript(_ name: String) -> RT_Object {
-        return retain(RT_Script(name: name))
+        return RT_Script(name: name)
     }
     
     func newFunction(_ commandInfo: CommandInfo, _ functionExpression: Expression, _ script: RT_Script?) -> RT_Object {
@@ -271,7 +262,7 @@ final class Builtin {
         let function = RT_Function(rt, functionExpression)
         script.dynamicFunctions[commandInfo] = function
         
-        return retain(function)
+        return function
     }
     
     func runCommand(_ command: CommandInfo, _ arguments: RT_Private_ArgumentRecord, _ target: RT_Object) throws -> RT_Object {
@@ -304,7 +295,7 @@ final class Builtin {
             return nil
         }
         
-        return try retain(
+        return try
             catchingErrors {
                 try directParameter?.perform(command: command, arguments: argumentsWithoutDirect, implicitDirect: implicitDirect)
             } ??
@@ -319,7 +310,6 @@ final class Builtin {
             catchingErrors {
                 try RT_Global().perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             } ?? RT_Null.null
-        )
     }
     
     func runWeave(_ hashbang: String, _ body: String, _ inputObject: RT_Object) -> RT_Object {
@@ -353,7 +343,7 @@ final class Builtin {
         process.waitUntilExit()
         
         // TODO: readDataToEndOfFile caused problems in defaults-edit, apply the solution used there instead
-        return retain(RT_String(value: String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!))
+        return RT_String(value: String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!)
     }
     
 }

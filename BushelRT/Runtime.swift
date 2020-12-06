@@ -69,8 +69,6 @@ public class Runtime {
     public let topScript: RT_Script
     public var global: RT_Global!
     
-    private let objectPool = NSMapTable<RT_Object, NSNumber>(keyOptions: [.strongMemory, .objectPointerPersonality], valueOptions: .copyIn)
-    
     public var currentApplicationBundleID: String?
     
     public init(scriptName: String? = nil, currentApplicationBundleID: String? = nil) {
@@ -204,25 +202,6 @@ public class Runtime {
     
     public func command(forUID uid: TypedTermUID) -> CommandInfo {
         commandsByUID[uid] ?? add(forCommandUID: uid.uid)
-    }
-    
-    public func retain(_ object: RT_Object) {
-        var retainCount = objectPool.object(forKey: object)?.intValue ?? 0
-        retainCount += 1
-        objectPool.setObject(retainCount as NSNumber, forKey: object)
-    }
-    
-    public func release(_ object: RT_Object) {
-        guard var retainCount = objectPool.object(forKey: object)?.intValue else {
-            os_log("Warning: runtime object overreleased", log: log)
-            return
-        }
-        retainCount -= 1
-        if retainCount > 0 {
-            objectPool.setObject(retainCount as NSNumber, forKey: object)
-        } else {
-            objectPool.removeObject(forKey: object)
-        }
     }
     
 }
