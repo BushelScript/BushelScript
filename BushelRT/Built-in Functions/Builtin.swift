@@ -43,34 +43,6 @@ final class Builtin {
         }
     }
     
-    func newClass(_ typedUID: TypedTermUID) -> RT_Object {
-        return RT_Class(value: rt.type(forUID: typedUID))
-    }
-    
-    func newList() -> RT_Object {
-        return RT_List(contents: [])
-    }
-    
-    func newRecord() -> RT_Object {
-        return RT_Record(contents: [:])
-    }
-    
-    func newArgumentRecord() -> RT_Private_ArgumentRecord {
-        return RT_Private_ArgumentRecord()
-    }
-    
-    func addToList(_ list: RT_List, _ value: RT_Object) {
-        list.add(value)
-    }
-    
-    func addToRecord(_ record: RT_Record, _ key: RT_Object, _ value: RT_Object) {
-        record.add(key: key, value: value)
-    }
-    
-    func addToArgumentRecord(_ record: RT_Private_ArgumentRecord, _ typedUID: TypedTermUID, _ value: RT_Object) {
-        record.contents[typedUID] = value
-    }
-    
     func getSequenceLength(_ sequence: RT_Object) throws -> Int64 {
         do {
             let length = try sequence.property(rt.property(forUID: TypedTermUID(PropertyUID.Sequence_length))) as? RT_Numeric
@@ -240,17 +212,7 @@ final class Builtin {
         return function
     }
     
-    func runCommand(_ command: CommandInfo, _ arguments: RT_Private_ArgumentRecord, _ target: RT_Object) throws -> RT_Object {
-        return try run(command: command, arguments: self.arguments(from: arguments), target: target)
-    }
-    
-    private func arguments(from record: RT_Private_ArgumentRecord) -> [ParameterInfo : RT_Object] {
-        [ParameterInfo : RT_Object](uniqueKeysWithValues:
-            record.contents.map { (key: ParameterInfo($0.key.uid), value: $0.value) }
-        )
-    }
-    
-    private func run(command: CommandInfo, arguments: [ParameterInfo : RT_Object], target: RT_Object) throws -> RT_Object {
+    func run(command: CommandInfo, arguments: [ParameterInfo : RT_Object], target: RT_Object) throws -> RT_Object {
         var argumentsWithoutDirect = arguments
         argumentsWithoutDirect.removeValue(forKey: ParameterInfo(.direct))
         

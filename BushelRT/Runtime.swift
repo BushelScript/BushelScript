@@ -425,30 +425,26 @@ public extension Runtime {
                 let expressionExprValue = try runPrimary(expression, lastResult: lastResult, target: target, evaluateSpecifiers: false)
                 let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult, target: target)
                 
-                let arguments = builtin.newArgumentRecord()
-                builtin.addToArgumentRecord(arguments, TypedTermUID(ParameterUID.direct), expressionExprValue)
-                builtin.addToArgumentRecord(arguments, TypedTermUID(ParameterUID.set_to), newValueExprValue)
-                
+                let arguments: [ParameterInfo : RT_Object] = [
+                    ParameterInfo(.direct): expressionExprValue,
+                    ParameterInfo(.set_to): newValueExprValue
+                ]
                 let command = self.command(forUID: TypedTermUID(CommandUID.set))
-                
-                return try builtin.runCommand(command, arguments, evaluate(target, lastResult: lastResult, target: target))
+                return try builtin.run(command: command, arguments: arguments, target: evaluate(target, lastResult: lastResult, target: target))
             }
             
         case .command(let term, let parameters): // MARK: .command
-            let parameterExprValues: [(typedUID: TypedTermUID, value: RT_Object)] = try parameters.map { kv in
+            let parameterExprValues: [(key: ParameterInfo, value: RT_Object)] = try parameters.map { kv in
                 let (parameterTerm, parameterValue) = kv
-                let uidExprValue = parameterTerm.typedUID
-                let valueExprValue = try runPrimary(parameterValue, lastResult: lastResult, target: target)
-                return (uidExprValue, valueExprValue)
+                let parameterInfo = ParameterInfo(parameterTerm.uid)
+                let value = try runPrimary(parameterValue, lastResult: lastResult, target: target)
+                return (parameterInfo, value)
             }
-            
-            let arguments = builtin.newArgumentRecord()
-            for parameter in parameterExprValues {
-                builtin.addToArgumentRecord(arguments, parameter.typedUID, parameter.value)
-            }
-            
+            let arguments = [ParameterInfo : RT_Object](uniqueKeysWithValues:
+                parameterExprValues
+            )
             let command = self.command(forUID: term.typedUID)
-            return try builtin.runCommand(command, arguments, evaluate(target, lastResult: lastResult, target: target))
+            return try builtin.run(command: command, arguments: arguments, target: evaluate(target, lastResult: lastResult, target: target))
         case .reference(let expression): // MARK: .reference
             return try runPrimary(expression, lastResult: lastResult, target: target, evaluateSpecifiers: false)
         case .get(let expression): // MARK: .get
