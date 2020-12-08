@@ -913,25 +913,25 @@ extension SourceParser {
     }
     
     private func eatLineCommentMarker() -> Bool {
-        let result = lineCommentMarkers.findTermName(in: source)
+        let result = lineCommentMarkers.findSimpleTermName(in: source)
         source.removeFirst(result.termString.count)
         return result.termName != nil
     }
     
     private func eatBlockCommentBeginMarker() -> Bool {
-        let result = blockCommentMarkers.map { $0.begin }.findTermName(in: source)
+        let result = blockCommentMarkers.map { $0.begin }.findSimpleTermName(in: source)
         source.removeFirst(result.termString.count)
         return result.termName != nil
     }
     
     private func eatBlockCommentEndMarker() -> Bool {
-        let result = blockCommentMarkers.map { $0.end }.findTermName(in: source)
+        let result = blockCommentMarkers.map { $0.end }.findSimpleTermName(in: source)
         source.removeFirst(result.termString.count)
         return result.termName != nil
     }
     
     private func eatKeyword() -> TermName? {
-        let result = Array(keywords.keys).findTermName(in: source)
+        let result = Array(keywords.keys).findComplexTermName(in: source)
         guard let termName = result.termName else {
             return nil
         }
@@ -942,14 +942,14 @@ extension SourceParser {
     }
     
     private func findPrefixOperator() -> (termName: TermName, operator: UnaryOperation)? {
-        let result = Array(prefixOperators.keys).findTermName(in: source)
+        let result = Array(prefixOperators.keys).findSimpleTermName(in: source)
         return result.termName.map { name in
             (termName: name, operator: prefixOperators[name]!)
         }
     }
     
     private func eatPrefixOperator() {
-        let result = Array(prefixOperators.keys).findTermName(in: source)
+        let result = Array(prefixOperators.keys).findSimpleTermName(in: source)
         guard result.termName != nil else {
             return
         }
@@ -959,14 +959,14 @@ extension SourceParser {
     }
     
     private func findPostfixOperator() -> (termName: TermName, operator: UnaryOperation)? {
-        let result = Array(postfixOperators.keys).findTermName(in: source)
+        let result = Array(postfixOperators.keys).findSimpleTermName(in: source)
         return result.termName.map { name in
             (termName: name, operator: postfixOperators[name]!)
         }
     }
     
     private func eatPostfixOperator() {
-        let result = Array(postfixOperators.keys).findTermName(in: source)
+        let result = Array(postfixOperators.keys).findSimpleTermName(in: source)
         guard result.termName != nil else {
             return
         }
@@ -976,14 +976,14 @@ extension SourceParser {
     }
     
     private func findBinaryOperator() -> (termName: TermName, operator: BinaryOperation)? {
-        let result = Array(binaryOperators.keys).findTermName(in: source)
+        let result = Array(binaryOperators.keys).findSimpleTermName(in: source)
         return result.termName.map { name in
             (termName: name, operator: binaryOperators[name]!)
         }
     }
     
     private func eatBinaryOperator() {
-        let result = Array(binaryOperators.keys).findTermName(in: source)
+        let result = Array(binaryOperators.keys).findSimpleTermName(in: source)
         guard result.termName != nil else {
             return
         }
@@ -994,7 +994,7 @@ extension SourceParser {
     }
     
     private func eatStringBeginMarker() -> (begin: TermName, end: TermName)? {
-        let result = stringMarkers.map { $0.begin }.findTermName(in: source)
+        let result = stringMarkers.map { $0.begin }.findSimpleTermName(in: source)
         guard let termName = result.termName else {
             return nil
         }
@@ -1005,7 +1005,7 @@ extension SourceParser {
     }
     
     private func eatExpressionGroupingBeginMarker() -> (begin: TermName, end: TermName)? {
-        let result = expressionGroupingMarkers.map { $0.begin }.findTermName(in: source)
+        let result = expressionGroupingMarkers.map { $0.begin }.findSimpleTermName(in: source)
         guard let termName = result.termName else {
             return nil
         }
@@ -1014,7 +1014,7 @@ extension SourceParser {
     }
     
     private func eatListBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName])? {
-        let result = listMarkers.map { $0.begin }.findTermName(in: source)
+        let result = listMarkers.map { $0.begin }.findSimpleTermName(in: source)
         guard let termName = result.termName else {
             return nil
         }
@@ -1023,7 +1023,7 @@ extension SourceParser {
     }
     
     private func eatRecordBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])? {
-        let result = recordMarkers.map { $0.begin }.findTermName(in: source)
+        let result = recordMarkers.map { $0.begin }.findSimpleTermName(in: source)
         guard let termName = result.termName else {
             return nil
         }
@@ -1032,7 +1032,7 @@ extension SourceParser {
     }
     
     private func eatListAndRecordBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])? {
-        let result = listAndRecordMarkers.map { $0.begin }.findTermName(in: source)
+        let result = listAndRecordMarkers.map { $0.begin }.findSimpleTermName(in: source)
         guard let termName = result.termName else {
             return nil
         }
@@ -1041,7 +1041,7 @@ extension SourceParser {
     }
     
     private func findExpressionEndKeyword() -> Bool {
-        if case (_, _?)? = awaitingExpressionEndKeywords.last.map({ Array($0) })?.findTermName(in: source) ?? nil {
+        if case (_, _?)? = awaitingExpressionEndKeywords.last.map({ Array($0) })?.findComplexTermName(in: source) ?? nil {
             return true
         }
         return false
