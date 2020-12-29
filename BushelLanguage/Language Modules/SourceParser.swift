@@ -24,6 +24,11 @@ public protocol SourceParser: AnyObject {
     var awaitingExpressionEndKeywords: [Set<TermName>] { get set }
     var sequenceEndTags: [TermName] { get set }
     
+    var keywordsTraversalTable: TermNameTraversalTable { get set }
+    var prefixOperatorsTraversalTable: TermNameTraversalTable { get set }
+    var postfixOperatorsTraversalTable: TermNameTraversalTable { get set }
+    var binaryOperatorsTraversalTable: TermNameTraversalTable { get set }
+    
     var keywords: [TermName : KeywordHandler] { get }
     var resourceTypes: [TermName : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] { get }
     var prefixOperators: [TermName : UnaryOperation] { get }
@@ -85,6 +90,8 @@ extension SourceParser {
             return Program(Expression.empty(at: currentLocation), [], source: entireSource, terms: TermPool())
         }
         
+        buildTraversalTables()
+        
         lexicon.pushDictionaryTerm(forUID: .id("script"))
         defer { lexicon.pop() }
         do {
@@ -103,6 +110,13 @@ extension SourceParser {
         eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
         
         return sequence
+    }
+    
+    private func buildTraversalTables() {
+        keywordsTraversalTable = buildTraversalTable(for: keywords.keys)
+        prefixOperatorsTraversalTable = buildTraversalTable(for: prefixOperators.keys)
+        postfixOperatorsTraversalTable = buildTraversalTable(for: postfixOperators.keys)
+        binaryOperatorsTraversalTable = buildTraversalTable(for: binaryOperators.keys)
     }
     
 }
@@ -931,7 +945,7 @@ extension SourceParser {
     }
     
     private func eatKeyword() -> TermName? {
-        let result = Array(keywords.keys).findComplexTermName(in: source)
+        let result = findComplexTermName(from: keywordsTraversalTable, in: source)
         guard let termName = result.termName else {
             return nil
         }
@@ -942,14 +956,14 @@ extension SourceParser {
     }
     
     private func findPrefixOperator() -> (termName: TermName, operator: UnaryOperation)? {
-        let result = Array(prefixOperators.keys).findSimpleTermName(in: source)
+        let result = findComplexTermName(from: prefixOperatorsTraversalTable, in: source)
         return result.termName.map { name in
             (termName: name, operator: prefixOperators[name]!)
         }
     }
     
     private func eatPrefixOperator() {
-        let result = Array(prefixOperators.keys).findSimpleTermName(in: source)
+        let result = findComplexTermName(from: prefixOperatorsTraversalTable, in: source)
         guard result.termName != nil else {
             return
         }
@@ -959,14 +973,14 @@ extension SourceParser {
     }
     
     private func findPostfixOperator() -> (termName: TermName, operator: UnaryOperation)? {
-        let result = Array(postfixOperators.keys).findSimpleTermName(in: source)
+        let result = findComplexTermName(from: postfixOperatorsTraversalTable, in: source)
         return result.termName.map { name in
             (termName: name, operator: postfixOperators[name]!)
         }
     }
     
     private func eatPostfixOperator() {
-        let result = Array(postfixOperators.keys).findSimpleTermName(in: source)
+        let result = findComplexTermName(from: postfixOperatorsTraversalTable, in: source)
         guard result.termName != nil else {
             return
         }
@@ -976,14 +990,14 @@ extension SourceParser {
     }
     
     private func findBinaryOperator() -> (termName: TermName, operator: BinaryOperation)? {
-        let result = Array(binaryOperators.keys).findSimpleTermName(in: source)
+        let result = findComplexTermName(from: binaryOperatorsTraversalTable, in: source)
         return result.termName.map { name in
             (termName: name, operator: binaryOperators[name]!)
         }
     }
     
     private func eatBinaryOperator() {
-        let result = Array(binaryOperators.keys).findSimpleTermName(in: source)
+        let result = findComplexTermName(from: postfixOperatorsTraversalTable, in: source)
         guard result.termName != nil else {
             return
         }
@@ -1041,7 +1055,7 @@ extension SourceParser {
     }
     
     private func findExpressionEndKeyword() -> Bool {
-        if case (_, _?)? = awaitingExpressionEndKeywords.last.map({ Array($0) })?.findComplexTermName(in: source) ?? nil {
+        if case (_, _?)? = awaitingExpressionEndKeywords.last.map({ Array($0) })?.findSimpleTermName(in: source) ?? nil {
             return true
         }
         return false

@@ -25,17 +25,20 @@ class TermNameSearchingTests: XCTestCase {
     }
     
     func test_complexSearch_matchesSingleWordAtBeginning() {
-        let (termString, termName) = termNames(["one", "two"]).findComplexTermName(in: source)
+        let table = buildTraversalTable(for: termNames(["one", "two"]))
+        let (termString, termName) = findComplexTermName(from: table, in: source)
         XCTAssertEqual(termString, "one")
         XCTAssertEqual(termName, TermName("one"))
     }
     func test_complexSearch_doesNotMatchSingleWordBeyondFirst() {
-        let (termString, termName) = termNames(["two", "three"]).findComplexTermName(in: source)
+        let table = buildTraversalTable(for: termNames(["two", "three"]))
+        let (termString, termName) = findComplexTermName(from: table, in: source)
         XCTAssertEqual(termString, "")
         XCTAssertEqual(termName, nil)
     }
     func test_complexSearch_matchesMultiWordAtBeginning() {
-        let (termString, termName) = termNames(["one two three", "two", "three", "a"]).findComplexTermName(in: source)
+        let table = buildTraversalTable(for: termNames(["one two three", "two", "three", "a"]))
+        let (termString, termName) = findComplexTermName(from: table, in: source)
         XCTAssertEqual(termString, "one two three")
         XCTAssertEqual(termName, TermName("one two three"))
     }
