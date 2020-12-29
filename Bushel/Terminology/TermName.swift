@@ -27,7 +27,26 @@ public struct TermName: Hashable, Codable, CustomStringConvertible {
     }
     
     public static func words<S: StringProtocol>(in string: S) -> [String] where S.SubSequence == Substring {
-        string.split { $0.isWhitespace }.flatMap { brokenByPunctuation($0) }
+        var words = string.reduce(into: []) { (result: inout [String], c: Character) in
+            if c.isWhitespace {
+                if result.last != "" {
+                    result.append("")
+                }
+            } else {
+                let breaking = c.isWordBreakingPunctuation
+                if breaking && result.last != "" || result.isEmpty {
+                    result.append("")
+                }
+                result[result.index(before: result.endIndex)].append(c)
+                if breaking {
+                    result.append("")
+                }
+            }
+        }
+        if words.last == "" {
+            words.removeLast()
+        }
+        return words
     }
     
     public static func nextWord<S: StringProtocol>(in string: S) -> String? where S.SubSequence == Substring {
@@ -36,38 +55,25 @@ public struct TermName: Hashable, Codable, CustomStringConvertible {
     
 }
 
-private func brokenByPunctuation(_ word: Substring) -> [String] {
-    return word.reduce(into: []) { (result: inout [String], c: Character) in
-        if c.isWordBreaking {
-            result.append(String(c))
-        } else {
-            if result.isEmpty {
-                result.append("")
-            }
-            if
-                let lastLetter = result.last!.last,
-                lastLetter.isWordBreaking
-            {
-                result.append("")
-            }
-            result[result.index(before: result.endIndex)].append(c)
-        }
-    }
-}
-
 extension Character {
     
     public var isWordBreaking: Bool {
-        return unicodeScalars.allSatisfy(wordBreakingCharacters.contains(_:))
+        unicodeScalars.allSatisfy(wordBreakingCharacters.contains(_:))
+    }
+    
+    public var isWordBreakingPunctuation: Bool {
+        unicodeScalars.allSatisfy(wordBreakingPunctuationCharacters.contains(_:))
     }
     
 }
 
-private let wordBreakingCharacters: CharacterSet =
-    CharacterSet.whitespacesAndNewlines
-    .union(.punctuationCharacters)
+private let wordBreakingPunctuationCharacters: CharacterSet =
+    CharacterSet.punctuationCharacters
     .union(.symbols)
     .subtracting(CharacterSet(charactersIn: "_.-/'’"))
+private let wordBreakingCharacters: CharacterSet =
+    CharacterSet.whitespacesAndNewlines
+    .union(wordBreakingPunctuationCharacters)
 
 extension TermName: Comparable {
     

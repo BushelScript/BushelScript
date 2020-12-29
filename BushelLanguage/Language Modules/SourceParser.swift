@@ -997,7 +997,7 @@ extension SourceParser {
     }
     
     private func eatBinaryOperator() {
-        let result = findComplexTermName(from: postfixOperatorsTraversalTable, in: source)
+        let result = findComplexTermName(from: binaryOperatorsTraversalTable, in: source)
         guard result.termName != nil else {
             return
         }
