@@ -10,7 +10,7 @@ open class FormatterTestCase: XCTestCase {
             do {
                 program = try languageModule.parser().parse(source: source)
             } catch {
-                return XCTFail("Initial parsing should succeed for \(name)")
+                return XCTFail("Initial parsing should succeed for \(name); error: \(error)")
             }
             let formattedSource = languageModule.formatter().format(program.ast)
             
@@ -33,7 +33,7 @@ open class FormatterTestCase: XCTestCase {
             do {
                 program = try languageModule.parser().parse(source: source)
             } catch {
-                return XCTFail("Initial parsing should succeed for \(name)")
+                return XCTFail("Initial parsing should succeed for \(name); error: \(error)")
             }
             let formattedSource = languageModule.formatter().format(program.ast)
             

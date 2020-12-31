@@ -72,16 +72,6 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3C0566BD23135675004CDB1A"
-               BuildableName = "BushelScript EditorTests.xctest"
-               BlueprintName = "BushelScript EditorTests"
-               ReferencedContainer = "container:BushelScript Editor.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "3C0566C823135675004CDB1A"
                BuildableName = "BushelScript EditorUITests.xctest"
                BlueprintName = "BushelScript EditorUITests"

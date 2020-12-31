@@ -19,6 +19,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     public var awaitingExpressionEndKeywords: [Set<TermName>] = []
     public var sequenceEndTags: [TermName] = []
     
+    public var keywordsTraversalTable: TermNameTraversalTable = [:]
+    public var prefixOperatorsTraversalTable: TermNameTraversalTable = [:]
+    public var postfixOperatorsTraversalTable: TermNameTraversalTable = [:]
+    public var binaryOperatorsTraversalTable: TermNameTraversalTable = [:]
+    
     public init() {
     }
     
