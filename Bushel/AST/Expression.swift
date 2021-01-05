@@ -64,6 +64,22 @@ public struct Expression {
     
 }
 
+extension Expression {
+    
+    public var hasSideEffects: Bool {
+        switch kind {
+        case .empty, .end, .that, .it, .null, .resource, .integer, .double, .string, .variable, .enumerator, .class_, .multilineString, .endWeave:
+            assert(subexpressions().isEmpty)
+            return false
+        case .sequence, .scoped, .parentheses, .function, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
+            return subexpressions().contains(where: { $0.hasSideEffects })
+        case .use, .prefixOperator, .postfixOperator, .infixOperator, .set, .command, .weave:
+            return true
+        }
+    }
+    
+}
+
 public extension Expression {
     
     var kindName: String {
