@@ -2,13 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>BushelLanguageModuleProtocolVersion</key>
-	<dict>
-		<key>Major</key>
-		<string>0</string>
-		<key>Minor</key>
-		<string>2</string>
-	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -18,16 +11,14 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>$(LANGUAGE_MODULE_NAME)</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
-	<string>????</string>
+	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(MARKETING_VERSION)</string>
+	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>2</string>
-	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2019–2020 Ian A. Gregory. All rights reserved.</string>
+	<string>1</string>
 	<key>NSPrincipalClass</key>
-	<string>BushelScriptEnglishEntryPoint</string>
+	<string>BushelScriptLinearEn</string>
 </dict>
 </plist>

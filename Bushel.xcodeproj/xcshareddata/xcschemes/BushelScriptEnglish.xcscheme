@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3C6B75972305B5980006C354"
                BuildableName = "bushelscript_en.bundle"
-               BlueprintName = "BushelScriptEnglish"
+               BlueprintName = "bushelscript_en"
                ReferencedContainer = "container:Bushel.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,7 +32,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3C6B75972305B5980006C354"
             BuildableName = "bushelscript_en.bundle"
-            BlueprintName = "BushelScriptEnglish"
+            BlueprintName = "bushelscript_en"
             ReferencedContainer = "container:Bushel.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -42,8 +42,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3C6B759F2305B5990006C354"
-               BuildableName = "BushelScriptEnglishTests.xctest"
-               BlueprintName = "BushelScriptEnglishTests"
+               BuildableName = "bushelscript_en Tests.xctest"
+               BlueprintName = "bushelscript_en Tests"
                ReferencedContainer = "container:Bushel.xcodeproj">
             </BuildableReference>
             <SkippedTests>
@@ -89,7 +89,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3C6B75972305B5980006C354"
             BuildableName = "bushelscript_en.bundle"
-            BlueprintName = "BushelScriptEnglish"
+            BlueprintName = "bushelscript_en"
             ReferencedContainer = "container:Bushel.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -105,7 +105,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3C6B75972305B5980006C354"
             BuildableName = "bushelscript_en.bundle"
-            BlueprintName = "BushelScriptEnglish"
+            BlueprintName = "bushelscript_en"
             ReferencedContainer = "container:Bushel.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

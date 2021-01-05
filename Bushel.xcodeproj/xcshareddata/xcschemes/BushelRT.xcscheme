@@ -76,8 +76,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3C6B759F2305B5990006C354"
-               BuildableName = "BushelScriptEnglishTests.xctest"
-               BlueprintName = "BushelScriptEnglishTests"
+               BuildableName = "bushelscript_en Tests.xctest"
+               BlueprintName = "bushelscript_en Tests"
                ReferencedContainer = "container:Bushel.xcodeproj">
             </BuildableReference>
          </TestableReference>

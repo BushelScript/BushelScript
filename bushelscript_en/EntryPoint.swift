@@ -1,8 +1,8 @@
 import Foundation
 import BushelLanguage
 
-@objc(BushelScriptEnglishEntryPoint)
-public class BushelScriptEnglishEntryPoint: NSObject, LanguageModuleEntryPoint {
+@objc(BushelScriptEnEntryPoint)
+public class BushelScriptEnEntryPoint: NSObject, LanguageModuleEntryPoint {
     
     @objc public static var moduleTypes: [String : Any] {
         return [
