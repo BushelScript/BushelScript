@@ -47,7 +47,7 @@
          location = "group:BuildScripts"
          name = "BuildScripts">
          <FileRef
-            location = "group:/Users/ian/Documents/Bushel/BuildScripts/copy-spm-licenses-into-product.rb">
+            location = "group:copy-spm-licenses-into-product.rb">
          </FileRef>
       </Group>
       <Group
