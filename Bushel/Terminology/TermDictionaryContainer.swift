@@ -14,7 +14,7 @@ public extension TermDictionaryContainer {
         if let terminology = storedDictionary {
             return terminology
         }
-        storedDictionary = TermDictionary(pool: pool, uid: uid, name: name, exports: exportsTerminology)
+        storedDictionary = TermDictionary(pool: pool, exports: exportsTerminology)
         return storedDictionary!
     }
     

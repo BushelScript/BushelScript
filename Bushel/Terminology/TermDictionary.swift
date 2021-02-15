@@ -5,7 +5,6 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
     
     private(set) public var pool: TermPool
     
-    public var uid: TermUID
     public var name: TermName?
     public let exports: Bool
     
@@ -15,10 +14,8 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
     private(set) public var dictionaryContainers: [TermUID : TermDictionaryContainer] = [:]
     private(set) public var exportingDictionaryContainers: [TermUID : TermDictionaryContainer] = [:]
     
-    public init(pool: TermPool, uid: TermUID, name: TermName?, exports: Bool, contents: [Term] = []) {
+    public init(pool: TermPool, exports: Bool, contents: [Term] = []) {
         self.pool = pool
-        self.uid = uid
-        self.name = name
         self.exports = exports
         self.contentsByUID = Dictionary(uniqueKeysWithValues: contents.map { (key: $0.typedUID, value: $0) })
         self.contentsByName = Dictionary(uniqueKeysWithValues:
@@ -33,8 +30,6 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
     
     public init(merging new: TermDictionary, into old: TermDictionary) {
         self.pool = new.pool
-        self.uid = new.uid
-        self.name = new.name
         self.exports = new.exports
         self.contentsByUID = new.contentsByUID.merging(old.contentsByUID, uniquingKeysWith: TermDictionary.whichTermWins)
         self.contentsByName = new.contentsByName.merging(old.contentsByName, uniquingKeysWith: TermDictionary.whichTermWins)
@@ -137,12 +132,11 @@ public class ParameterTermDictionary: TerminologySource {
 extension TermDictionary: Hashable {
     
     public static func == (lhs: TermDictionary, rhs: TermDictionary) -> Bool {
-        return lhs.name == rhs.name && lhs.contentsByName == rhs.contentsByName
+        return lhs.contentsByUID == rhs.contentsByUID
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(name)
-        hasher.combine(contentsByName)
+        hasher.combine(contentsByUID)
     }
     
 }

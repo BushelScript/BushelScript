@@ -62,7 +62,7 @@ public struct Lexicon: TerminologySource {
     
     @discardableResult
     public mutating func pushUnnamedDictionary(exports: Bool = false) -> TermDictionary {
-        push(dictionary: TermDictionary(pool: pool, uid: makeAnonymousUUID(), name: nil, exports: false))
+        push(dictionary: TermDictionary(pool: pool, exports: false))
     }
     
     @discardableResult
@@ -79,8 +79,7 @@ public struct Lexicon: TerminologySource {
     }
     
     private mutating func pushRoot() {
-        let rootUID = TermUID(ResourceUID.bushelscript)
-        push(dictionary: TermDictionary(pool: pool, uid: rootUID, name: nil, exports: false))
+        push(dictionary: TermDictionary(pool: pool, exports: false))
     }
     
     public mutating func pop() {
