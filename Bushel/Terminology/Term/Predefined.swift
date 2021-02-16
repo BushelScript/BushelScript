@@ -1,19 +1,27 @@
 import Foundation
 import InAnyCase
 
-public protocol TermUIDPredefinedValue {
+// MARK: Definition
+extension Term {
     
-    var kind: TypedTermUID.Kind { get }
-    var ae4Code: OSType? { get }
-    var ae8Code: (class: AEEventClass, id: AEEventID)? { get }
-    var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? { get }
-    var idName: String? { get }
-    
-    init?(_ uid: TermUID)
+    public typealias PredefinedID = Term_PredefinedID
     
 }
 
-public extension TermUIDPredefinedValue {
+public protocol Term_PredefinedID {
+    
+    var role: Term.SyntacticRole { get }
+    var ae4Code: OSType? { get }
+    var ae8Code: (class: AEEventClass, id: AEEventID)? { get }
+    var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? { get }
+    var pathname: Term.SemanticURI.Pathname? { get }
+    var resourceName: String? { get }
+    
+    init?(_ uid: Term.SemanticURI)
+    
+}
+
+public extension Term.PredefinedID {
     
     var ae4Code: OSType? {
         nil
@@ -27,78 +35,93 @@ public extension TermUIDPredefinedValue {
         nil
     }
     
-}
-
-extension TermUIDPredefinedValue where Self: RawRepresentable, RawValue == String {
-    
-    public var idName: String? {
-        makeIDName(from: rawValue)
-    }
-    
-    internal init?(idName: String) {
-        self.init(rawValue: makeRawValue(from: idName))
+    var resourceName: String? {
+        nil
     }
     
 }
 
-private func makeIDName(from rawValue: String) -> String {
-    rawValue
-        .split(separator: "_")
-        .map { String($0).transformed(from: .camel, to: .space, case: $0.first!.isUppercase ? .preserve : .lower) }
-        .joined(separator: ":")
+extension Term.PredefinedID where Self: RawRepresentable, RawValue == String {
+    
+    public var pathname: Term.SemanticURI.Pathname? {
+        makePathname(from: rawValue)
+    }
+    
+    internal init?(pathname: Term.SemanticURI.Pathname) {
+        self.init(rawValue: makeRawValue(from: pathname))
+    }
+    
+    public var resourceName: String {
+        rawValue
+    }
+    
+    internal init?(resourceName: String) {
+        self.init(rawValue: resourceName)
+    }
+    
 }
 
-private func makeRawValue(from idName: String) -> String {
-    idName
-        .split(separator: ":")
+private func makePathname(from rawValue: String) -> Term.SemanticURI.Pathname {
+    Term.SemanticURI.Pathname(
+        rawValue
+            .split(separator: "_")
+            .map { String($0).transformed(from: .camel, to: .space, case: $0.first!.isUppercase ? .preserve : .lower) }
+    )
+}
+
+private func makeRawValue(from pathname: Term.SemanticURI.Pathname) -> String {
+    pathname
+        .components
         .map { String($0).transformed(from: .space, to: .camel, case: $0.first!.isUppercase ? .preserve : .lowerUpper ) }
         .joined(separator: "_")
 }
 
-public extension TermUIDPredefinedValue {
+public extension Term.PredefinedID {
     
-    init?(_ uid: TypedTermUID) {
-        self.init(uid.uid)
+    init?(_ id: Term.ID) {
+        self.init(id.uri)
     }
     
 }
 
-public extension TermUID {
+public extension Term.SemanticURI {
     
-    init(_ predefined: TermUIDPredefinedValue) {
+    init(_ predefined: Term.PredefinedID) {
         guard
-            let uid: TermUID = {
+            let uid: Term.SemanticURI = {
                 if let aeCode = predefined.ae4Code {
                     return .ae4(code: aeCode)
                 } else if let (aeClassCode, aeIDCode) = predefined.ae8Code {
                     return .ae8(class: aeClassCode, id: aeIDCode)
                 } else if let (aeClassCode, aeIDCode, aeCode) = predefined.ae12Code {
                     return .ae12(class: aeClassCode, id: aeIDCode, code: aeCode)
-                } else if let idName = predefined.idName {
-                    return (predefined.kind == .resource) ?
-                        .res(idName) :
-                        .id(idName)
+                } else if predefined.role == .resource, let resourceName = predefined.resourceName {
+                    return .res(resourceName)
+                } else if let pathname = predefined.pathname {
+                    return .id(pathname)
                 } else {
                     return nil
                 }
             }()
         else {
-            preconditionFailure("Predefined term UID \(predefined) has no identification method")
+            preconditionFailure("Predefined term URI \(predefined) has no valid identification method")
         }
         self = uid
     }
     
 }
 
-public extension TypedTermUID {
+public extension Term.ID {
     
-    init(_ predefined: TermUIDPredefinedValue) {
-        self.init(predefined.kind, TermUID(predefined))
+    init(_ predefined: Term.PredefinedID) {
+        self.init(predefined.role, Term.SemanticURI(predefined))
     }
     
 }
 
-public enum DictionaryUID: String, TermUIDPredefinedValue {
+public enum Dictionaries: String, Term.PredefinedID {
+    
+    case root
     
     case function
     
@@ -108,14 +131,14 @@ public enum DictionaryUID: String, TermUIDPredefinedValue {
     case GUI
     case CLI
     
-    public var kind: TypedTermUID.Kind {
-        .property
+    public var role: Term.SyntacticRole {
+        .dictionary
     }
     
-    public init?(_ uid: TermUID) {
-        switch uid {
-        case .id(let name):
-            self.init(idName: name)
+    public init?(_ uri: Term.SemanticURI) {
+        switch uri {
+        case .id(let pathname):
+            self.init(pathname: pathname)
         default:
             return nil
         }
@@ -123,7 +146,7 @@ public enum DictionaryUID: String, TermUIDPredefinedValue {
     
 }
 
-public enum TypeUID: String, TermUIDPredefinedValue {
+public enum Types: String, Term.PredefinedID {
     
     case item
     case list
@@ -153,7 +176,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
     case error
     case environmentVariable
     
-    public var kind: TypedTermUID.Kind {
+    public var role: Term.SyntacticRole {
         .type
     }
     
@@ -206,8 +229,8 @@ public enum TypeUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uid: TermUID) {
-        switch uid {
+    public init?(_ uri: Term.SemanticURI) {
+        switch uri {
         case .ae4(let aeCode):
             switch aeCode {
             case cObject:
@@ -255,8 +278,8 @@ public enum TypeUID: String, TermUIDPredefinedValue {
             default:
                 return nil
             }
-        case .id(let name):
-            self.init(idName: name)
+        case .id(let pathname):
+            self.init(pathname: pathname)
         default:
             return nil
         }
@@ -264,7 +287,7 @@ public enum TypeUID: String, TermUIDPredefinedValue {
     
 }
 
-public enum PropertyUID: String, TermUIDPredefinedValue {
+public enum Properties: String, Term.PredefinedID {
     
     case properties
     case type
@@ -296,7 +319,7 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
     
     case buttonReturned
     
-    public var kind: TypedTermUID.Kind {
+    public var role: Term.SyntacticRole {
         .property
     }
     
@@ -327,7 +350,7 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uid: TermUID) {
+    public init?(_ uid: Term.SemanticURI) {
         switch uid {
         case .ae4(let aeCode):
             switch aeCode {
@@ -352,8 +375,8 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
             default:
                 return nil
             }
-        case .id(let name):
-            self.init(idName: name)
+        case .id(let pathname):
+            self.init(pathname: pathname)
         default:
             return nil
         }
@@ -361,12 +384,12 @@ public enum PropertyUID: String, TermUIDPredefinedValue {
     
 }
 
-public enum ConstantUID: String, TermUIDPredefinedValue {
+public enum ConstantUID: String, Term.PredefinedID {
     
     case `true`
     case `false`
     
-    public var kind: TypedTermUID.Kind {
+    public var role: Term.SyntacticRole {
         .constant
     }
     
@@ -379,7 +402,7 @@ public enum ConstantUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uid: TermUID) {
+    public init?(_ uid: Term.SemanticURI) {
         switch uid {
         case .ae4(let aeCode):
             switch aeCode {
@@ -390,8 +413,8 @@ public enum ConstantUID: String, TermUIDPredefinedValue {
             default:
                 return nil
             }
-        case .id(let name):
-            self.init(idName: name)
+        case .id(let pathname):
+            self.init(pathname: pathname)
         default:
             return nil
         }
@@ -399,7 +422,7 @@ public enum ConstantUID: String, TermUIDPredefinedValue {
     
 }
 
-public enum CommandUID: String, TermUIDPredefinedValue {
+public enum CommandURI: String, Term.PredefinedID {
     
     case get
     case set
@@ -430,7 +453,7 @@ public enum CommandUID: String, TermUIDPredefinedValue {
     
     case CLI_log
     
-    public var kind: TypedTermUID.Kind {
+    public var role: Term.SyntacticRole {
         .command
     }
     
@@ -463,7 +486,7 @@ public enum CommandUID: String, TermUIDPredefinedValue {
         }
     }
     
-    public init?(_ uid: TermUID) {
+    public init?(_ uid: Term.SemanticURI) {
         switch uid {
         case .ae8(let `class`, let id):
             switch (`class`, id) {
@@ -492,8 +515,8 @@ public enum CommandUID: String, TermUIDPredefinedValue {
             default:
                 return nil
             }
-        case .id(let name):
-            self.init(idName: name)
+        case .id(let pathname):
+            self.init(pathname: pathname)
         default:
             return nil
         }
@@ -501,9 +524,9 @@ public enum CommandUID: String, TermUIDPredefinedValue {
     
 }
 
-public enum ParameterUID: String, TermUIDPredefinedValue {
+public enum Parameters: String, Term.PredefinedID {
     
-    case direct = "/direct"
+    case direct = ".direct"
     case set_to
     case open_searchText
     
@@ -533,13 +556,13 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
     case GUI_ask_dataType
     case GUI_ask_title
     
-    public var kind: TypedTermUID.Kind {
+    public var role: Term.SyntacticRole {
         .parameter
     }
     
     public var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {
         guard
-            let commandAndCode: (command: CommandUID, code: AEKeyword) = {
+            let commandAndCode: (command: CommandURI, code: AEKeyword) = {
                 switch self {
                 case .set_to:
                     return (.set, keyAEData)
@@ -594,7 +617,7 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
         return (class: `class`, id: id, code: commandAndCode.code)
     }
     
-    public init?(_ uid: TermUID) {
+    public init?(_ uid: Term.SemanticURI) {
         switch uid {
         case .ae4(let aeCode):
             switch aeCode {
@@ -608,7 +631,7 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
                 self = .direct
                 return
             }
-            switch (CommandUID(.ae8(class: `class`, id: id)), code) {
+            switch (CommandURI(.ae8(class: `class`, id: id)), code) {
             case (.set, keyAEData):
                 self = .set_to
             case (.open, keyAESearchText):
@@ -654,8 +677,8 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
             default:
                 return nil
             }
-        case .id(let name):
-            self.init(idName: name)
+        case .id(let pathname):
+            self.init(pathname: pathname)
         default:
             return nil
         }
@@ -663,19 +686,19 @@ public enum ParameterUID: String, TermUIDPredefinedValue {
     
 }
 
-public enum ResourceUID: String, TermUIDPredefinedValue {
+public enum Resources: String, Term.PredefinedID {
     
     case bushelscript
     case system
     
-    public var kind: TypedTermUID.Kind {
+    public var role: Term.SyntacticRole {
         .resource
     }
     
-    public init?(_ uid: TermUID) {
+    public init?(_ uid: Term.SemanticURI) {
         switch uid {
-        case .res(let name):
-            self.init(idName: name)
+        case .res(let resourceName):
+            self.init(resourceName: resourceName)
         default:
             return nil
         }

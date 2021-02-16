@@ -55,18 +55,18 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[TypedTermUID(.type, .ae4(code: try! FourCharCode(fourByteString: "cobj")))],
-            TermName("item"),
+            translation[Term.ID(.type, .ae4(code: try! FourCharCode(fourByteString: "cobj")))],
+            Term.Name("item"),
             "ae4 type should have supplied name"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.property, .ae4(code: try! FourCharCode(fourByteString: "pALL")))],
-            TermName("properties"),
+            translation[Term.ID(.property, .ae4(code: try! FourCharCode(fourByteString: "pALL")))],
+            Term.Name("properties"),
             "ae4 property should have supplied name"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.constant, .ae4(code: try! FourCharCode(fourByteString: "true")))],
-            TermName("true"),
+            translation[Term.ID(.constant, .ae4(code: try! FourCharCode(fourByteString: "true")))],
+            Term.Name("true"),
             "ae4 constant should have supplied name"
         )
     }
@@ -84,8 +84,8 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[TypedTermUID(.command, .ae8(class: try! FourCharCode(fourByteString: "core"), id: try! FourCharCode(fourByteString: "setd")))],
-            TermName("set"),
+            translation[Term.ID(.command, .ae8(class: try! FourCharCode(fourByteString: "core"), id: try! FourCharCode(fourByteString: "setd")))],
+            Term.Name("set"),
             "ae8 command should have supplied name"
         )
     }
@@ -103,8 +103,8 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[TypedTermUID(.parameter, .ae12(class: try! FourCharCode(fourByteString: "core"), id: try! FourCharCode(fourByteString: "setd"), code: try! FourCharCode(fourByteString: "data")))],
-            TermName("to"),
+            translation[Term.ID(.parameter, .ae12(class: try! FourCharCode(fourByteString: "core"), id: try! FourCharCode(fourByteString: "setd"), code: try! FourCharCode(fourByteString: "data")))],
+            Term.Name("to"),
             "ae12 parameter should have supplied name"
         )
     }
@@ -128,18 +128,18 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[TypedTermUID(.type, .id("global"))],
-            TermName("BushelScript"),
+            translation[Term.ID(.type, .id("global"))],
+            Term.Name("BushelScript"),
             "id type should have supplied name"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.property, .id("current date"))],
-            TermName("current date"),
+            translation[Term.ID(.property, .id("current date"))],
+            Term.Name("current date"),
             "id property should have supplied name"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.command, .id("delay"))],
-            TermName("delay"),
+            translation[Term.ID(.command, .id("delay"))],
+            Term.Name("delay"),
             "id command should have supplied name"
         )
     }
@@ -163,34 +163,34 @@ translation:
             id:
                 Math:
                     pow:
-                        /direct: of
+                        .direct: of
                         exponent: to the
 """
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[TypedTermUID(.property, .id("Math:pi"))],
-            TermName("pi"),
+            translation[Term.ID(.property, .id("Math:pi"))],
+            Term.Name("pi"),
             "Nested id property should have supplied name"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.command, .id("Math:abs"))],
-            TermName("absolute value"),
+            translation[Term.ID(.command, .id("Math:abs"))],
+            Term.Name("absolute value"),
             "Nested id command should have supplied name"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.command, .id("Math:sqrt"))],
-            TermName("√"),
+            translation[Term.ID(.command, .id("Math:sqrt"))],
+            Term.Name("√"),
             "Nested id command should have supplied name"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.parameter, .id("Math:pow:/direct"))],
-            TermName("of"),
+            translation[Term.ID(.parameter, .id("Math:pow:.direct"))],
+            Term.Name("of"),
             "Nested id parameter should have supplied name"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.parameter, .id("Math:pow:exponent"))],
-            TermName("to the"),
+            translation[Term.ID(.parameter, .id("Math:pow:exponent"))],
+            Term.Name("to the"),
             "Nested id parameter should have supplied name"
         )
     }
@@ -210,8 +210,8 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[TypedTermUID(.type, .ae4(code: try! FourCharCode(fourByteString: "capp")))],
-            [TermName("application"), TermName("app")],
+            translation[Term.ID(.type, .ae4(code: try! FourCharCode(fourByteString: "capp")))],
+            [Term.Name("application"), Term.Name("app")],
             "ae4 type should have supplied synonymous names"
         )
     }
@@ -231,8 +231,8 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[TypedTermUID(.command, .id("delay"))],
-            [TermName("delay"), TermName("wait")],
+            translation[Term.ID(.command, .id("delay"))],
+            [Term.Name("delay"), Term.Name("wait")],
             "id command should have supplied synonymous names"
         )
     }
@@ -252,13 +252,13 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[TypedTermUID(.type, .ae4(code: try! FourCharCode(fourByteString: "alis")))],
-            [TermName("alias")],
+            translation[Term.ID(.type, .ae4(code: try! FourCharCode(fourByteString: "alis")))],
+            [Term.Name("alias")],
             "ae4 type should have variant name"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.type, .variant(.plural, .ae4(code: try! FourCharCode(fourByteString: "alis"))))],
-            [TermName("aliases")],
+            translation[Term.ID(.type, .variant(.plural, .ae4(code: try! FourCharCode(fourByteString: "alis"))))],
+            [Term.Name("aliases")],
             "ae4 type should have variant name"
         )
     }
@@ -290,23 +290,23 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[TypedTermUID(.type, .ae4(code: try! FourCharCode(fourByteString: "utxt")))],
-            [TermName("string"), TermName("text")],
+            translation[Term.ID(.type, .ae4(code: try! FourCharCode(fourByteString: "utxt")))],
+            [Term.Name("string"), Term.Name("text")],
             "ae4 type should have supplied synonymous variant names"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.type, .variant(.plural, .ae4(code: try! FourCharCode(fourByteString: "utxt"))))],
-            [TermName("strings"), TermName("text")],
+            translation[Term.ID(.type, .variant(.plural, .ae4(code: try! FourCharCode(fourByteString: "utxt"))))],
+            [Term.Name("strings"), Term.Name("text")],
             "ae4 type should have supplied synonymous variant names"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.type, .ae4(code: try! FourCharCode(fourByteString: "utf8")))],
-            [TermName("UTF-8 string"), TermName("UTF-8 text")],
+            translation[Term.ID(.type, .ae4(code: try! FourCharCode(fourByteString: "utf8")))],
+            [Term.Name("UTF-8 string"), Term.Name("UTF-8 text")],
             "ae4 type should have supplied synonymous variant names"
         )
         XCTAssertEqual(
-            translation[TypedTermUID(.type, .variant(.plural, .ae4(code: try! FourCharCode(fourByteString: "utf8"))))],
-            [TermName("UTF-8 strings"), TermName("UTF-8 text")],
+            translation[Term.ID(.type, .variant(.plural, .ae4(code: try! FourCharCode(fourByteString: "utf8"))))],
+            [Term.Name("UTF-8 strings"), Term.Name("UTF-8 text")],
             "ae4 type should have supplied synonymous variant names"
         )
     }

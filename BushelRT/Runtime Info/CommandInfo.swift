@@ -5,25 +5,25 @@ public class CommandInfo: TermInfo, Hashable {
     public enum Tag {
         
         /// The command's user-facing name.
-        case name(TermName)
+        case name(Term.Name)
         
     }
     
-    public var uid: TermUID
+    public var uid: Term.SemanticURI
     public var tags: Set<Tag> = []
     
-    public var kind: TypedTermUID.Kind {
+    public var kind: Term.SyntacticRole {
         .command
     }
     
-    public var name: TermName? {
+    public var name: Term.Name? {
         for case .name(let name) in tags {
             return name
         }
         return nil
     }
     
-    public func addName(_ name: TermName) {
+    public func addName(_ name: Term.Name) {
         if self.name == nil {
             tags.insert(.name(name))
         }
@@ -37,11 +37,11 @@ public class CommandInfo: TermInfo, Hashable {
         hasher.combine(uid)
     }
     
-    public convenience init(_ predefined: CommandUID, _ tags: Set<Tag> = []) {
-        self.init(TermUID(predefined), tags)
+    public convenience init(_ predefined: CommandURI, _ tags: Set<Tag> = []) {
+        self.init(Term.SemanticURI(predefined), tags)
     }
     
-    public init(_ uid: TermUID, _ tags: Set<Tag> = []) {
+    public init(_ uid: Term.SemanticURI, _ tags: Set<Tag> = []) {
         self.uid = uid
         self.tags = tags
     }

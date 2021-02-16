@@ -32,7 +32,7 @@ public class RT_Record: RT_Object, AEEncodable {
     }
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
-        [PropertyInfo(PropertyUID.Sequence_length): \RT_Record.length]
+        [PropertyInfo(Properties.Sequence_length): \RT_Record.length]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
         keyPath.evaluate(on: self)

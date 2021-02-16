@@ -205,7 +205,7 @@ public class PrependingFix: SourceFix {
     }
     
     public func contextualDescription(in source: Substring) -> String {
-        return "\(simpleDescription(in: source)) before ‘\(TermName.nextWord(in: source[location.range.lowerBound...]) ?? String(location.snippet(in: source, leaning: .forward)))’"
+        return "\(simpleDescription(in: source)) before ‘\(Term.Name.nextWord(in: source[location.range.lowerBound...]) ?? String(location.snippet(in: source, leaning: .forward)))’"
     }
     public func simpleDescription(in source: Substring) -> String {
         return "add ‘\(stringToPrepend)’"
@@ -237,7 +237,7 @@ public class AppendingFix: SourceFix {
     }
     
     public func contextualDescription(in source: Substring) -> String {
-        return "\(simpleDescription(in: source)) after ‘\(TermName.nextWord(in: source[location.range.lowerBound...]) ?? String(location.snippet(in: source, leaning: .backward)))’"
+        return "\(simpleDescription(in: source)) after ‘\(Term.Name.nextWord(in: source[location.range.lowerBound...]) ?? String(location.snippet(in: source, leaning: .backward)))’"
     }
     public func simpleDescription(in source: Substring) -> String {
         return "add ‘\(stringToAppend)’"

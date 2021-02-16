@@ -162,9 +162,9 @@ extension Expression {
         case .specifier(let childSpecifier):
             return childSpecifier
         case .class_(let `class`):
-            return Specifier(class: PropertyTerm(`class`.uid, name: `class`.name), kind: .property)
+            return Specifier(class: Term(.property, `class`.uri, name: `class`.name), kind: .property)
         case .enumerator(let enumerator):
-            return Specifier(class: PropertyTerm(enumerator.uid, name: enumerator.name), kind: .property)
+            return Specifier(class: Term(.property, enumerator.uri, name: enumerator.name), kind: .property)
         default:
             return nil
         }

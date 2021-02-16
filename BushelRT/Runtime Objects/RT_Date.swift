@@ -36,10 +36,10 @@ public class RT_Date: RT_Object {
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
         [
-            PropertyInfo(PropertyUID.date_seconds): \RT_Date.seconds,
-            PropertyInfo(PropertyUID.date_minutes): \RT_Date.minutes,
-            PropertyInfo(PropertyUID.date_hours): \RT_Date.hours,
-            PropertyInfo(PropertyUID.date_secondsSinceMidnight): \RT_Date.secondsSinceMidnight
+            PropertyInfo(Properties.date_seconds): \RT_Date.seconds,
+            PropertyInfo(Properties.date_minutes): \RT_Date.minutes,
+            PropertyInfo(Properties.date_hours): \RT_Date.hours,
+            PropertyInfo(Properties.date_secondsSinceMidnight): \RT_Date.secondsSinceMidnight
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {

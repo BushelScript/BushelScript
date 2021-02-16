@@ -1,9 +1,9 @@
 import Bushel
 
-public extension Collection where Element == TermName {
+public extension Collection where Element == Term.Name {
     
-    func findSimpleTermName(in source: Substring) -> (termString: Substring, termName: TermName?) {
-        func noMatch() -> (termString: Substring, termName: TermName?) {
+    func findSimpleTermName(in source: Substring) -> (termString: Substring, termName: Term.Name?) {
+        func noMatch() -> (termString: Substring, termName: Term.Name?) {
             (source[..<source.startIndex], nil)
         }
         if source.isEmpty {
@@ -13,7 +13,7 @@ public extension Collection where Element == TermName {
         if word.isEmpty {
             word = source[...source.startIndex]
         }
-        let termName = TermName(word)
+        let termName = Term.Name(word)
         if self.contains(termName) {
             return (word, termName)
         } else {
@@ -23,9 +23,9 @@ public extension Collection where Element == TermName {
     
 }
 
-public typealias TermNameTraversalTable = [TermName : [TermName]]
+public typealias TermNameTraversalTable = [Term.Name : [Term.Name]]
 
-public func findComplexTermName(from dictionary: TermNameTraversalTable, in source: Substring) -> (termString: Substring, termName: TermName?) {
+public func findComplexTermName(from dictionary: TermNameTraversalTable, in source: Substring) -> (termString: Substring, termName: Term.Name?) {
     let line = source
         .removingLeadingWhitespace()
         .prefix(while: { !$0.isNewline })
@@ -36,9 +36,9 @@ public func findComplexTermName(from dictionary: TermNameTraversalTable, in sour
     var endIndex = line.startIndex
     var largestMatchEndIndex = endIndex
     while true {
-        func largestMatch() -> (termString: Substring, termName: TermName?) {
+        func largestMatch() -> (termString: Substring, termName: Term.Name?) {
             let matchedSource = line[..<largestMatchEndIndex]
-            return (matchedSource, matchedSource.isEmpty ? nil : TermName(matchedSource))
+            return (matchedSource, matchedSource.isEmpty ? nil : Term.Name(matchedSource))
         }
         
         endIndex =
@@ -47,12 +47,12 @@ public func findComplexTermName(from dictionary: TermNameTraversalTable, in sour
             .drop(while: { !$0.isWhitespace })
             .startIndex
         
-        guard let subsequentWords = dictionary[TermName(line[..<endIndex])] else {
+        guard let subsequentWords = dictionary[Term.Name(line[..<endIndex])] else {
             // There are no possible larger matches than whatever we've already matched.
             return largestMatch()
         }
         
-        if subsequentWords.contains(TermName([])) {
+        if subsequentWords.contains(Term.Name([])) {
             // Can match this iteration.
             largestMatchEndIndex = endIndex
             
@@ -78,13 +78,13 @@ public func findComplexTermName(from dictionary: TermNameTraversalTable, in sour
 public func buildTraversalTable<TermNames: Collection>(
     for termNames: TermNames
 ) -> TermNameTraversalTable
-where TermNames.Element == TermName
+where TermNames.Element == Term.Name
 {
     var traversalTable: TermNameTraversalTable = [:]
     for termName in termNames {
         for wordIndex in termName.words.indices {
-            let currentWords = TermName(Array(termName.words[...wordIndex]))
-            let subsequentWords = TermName(Array(termName.words[(wordIndex + 1)...]))
+            let currentWords = Term.Name(Array(termName.words[...wordIndex]))
+            let subsequentWords = Term.Name(Array(termName.words[(wordIndex + 1)...]))
             if traversalTable.keys.contains(currentWords) {
                 traversalTable[currentWords]!.append(subsequentWords)
             } else {

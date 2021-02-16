@@ -5,25 +5,25 @@ public class ConstantInfo: TermInfo, Hashable {
     public enum Tag {
         
         /// The constant's user-facing name.
-        case name(TermName)
+        case name(Term.Name)
         
     }
     
-    public var uid: TermUID
+    public var uid: Term.SemanticURI
     public var tags: Set<Tag> = []
     
-    public var kind: TypedTermUID.Kind {
+    public var kind: Term.SyntacticRole {
         .constant
     }
     
-    public var name: TermName? {
+    public var name: Term.Name? {
         for case .name(let name) in tags {
             return name
         }
         return nil
     }
     
-    public func addName(_ name: TermName) {
+    public func addName(_ name: Term.Name) {
         if self.name == nil {
             tags.insert(.name(name))
         }
@@ -38,10 +38,10 @@ public class ConstantInfo: TermInfo, Hashable {
     }
     
     public convenience init(_ predefined: ConstantUID, _ tags: Set<Tag> = []) {
-        self.init(TermUID(predefined), tags)
+        self.init(Term.SemanticURI(predefined), tags)
     }
     
-    public init(_ uid: TermUID, _ tags: Set<Tag> = []) {
+    public init(_ uid: Term.SemanticURI, _ tags: Set<Tag> = []) {
         self.uid = uid
         self.tags = tags
     }

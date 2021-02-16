@@ -87,7 +87,7 @@ public class LanguageModule {
                         let translationContents = try String(contentsOf: translationFileURL)
                         return try Translation(source: translationContents)
                     } catch {
-                        os_log("Could not load translation file \"%@\" in language module \"%{public}@\": %@", log: log, error.localizedDescription)
+                        os_log("Could not load translation file \"%@\" in language module \"%{public}@\" (identifier \"%{public}@\"): %@", log: log, translationFileURL.absoluteString, name, identifier, error.localizedDescription)
                         return nil
                     }
                 }

@@ -32,7 +32,7 @@ final class Builtin {
         return newValue
     }
     
-    func newConstant(_ typedUID: TypedTermUID) -> RT_Object {
+    func newConstant(_ typedUID: Term.ID) -> RT_Object {
         switch ConstantUID(typedUID) {
         case .true:
             return RT_Boolean.withValue(true)
@@ -45,7 +45,7 @@ final class Builtin {
     
     func getSequenceLength(_ sequence: RT_Object) throws -> Int64 {
         do {
-            let length = try sequence.property(rt.property(forUID: TypedTermUID(PropertyUID.Sequence_length))) as? RT_Numeric
+            let length = try sequence.property(rt.property(forUID: Term.ID(Properties.Sequence_length))) as? RT_Numeric
             // TODO: Throw error for non-numeric length
             return Int64(length?.numericValue ?? 0)
         } catch {
@@ -55,7 +55,7 @@ final class Builtin {
     
     func getFromSequenceAtIndex(_ sequence: RT_Object, _ index: Int64) throws -> RT_Object {
         do {
-            let item = try sequence.element(rt.type(forUID: TypedTermUID(TypeUID.item)), at: index)
+            let item = try sequence.element(rt.type(forUID: Term.ID(Types.item)), at: index)
             return item
         } catch {
             try throwError(message: error.localizedDescription)
@@ -124,7 +124,7 @@ final class Builtin {
         }() ?? RT_Null.null
     }
     
-    func getResource(_ term: ResourceTerm) -> RT_Object {
+    func getResource(_ term: Term) -> RT_Object {
         return {
             switch term.resource {
             case .bushelscript:
@@ -139,6 +139,8 @@ final class Builtin {
             case .applescriptLibraryByName(_, _, let script),
                  .applescriptAtPath(_, let script):
                 return RT_AppleScript(name: term.name!.normalized, value: script)
+            case nil:
+                return RT_Null.null
             }
         }() as RT_Object
     }
@@ -224,7 +226,7 @@ final class Builtin {
         process.standardError = error
         
         let inputWriteFileHandle = input.fileHandleForWriting
-        inputWriteFileHandle.write(((inputObject.coerce(to: rt.type(forUID: TypedTermUID(TypeUID.string))) as? RT_String)?.value ?? String(describing: inputObject)).data(using: .utf8)!)
+        inputWriteFileHandle.write(((inputObject.coerce(to: rt.type(forUID: Term.ID(Types.string))) as? RT_String)?.value ?? String(describing: inputObject)).data(using: .utf8)!)
         inputWriteFileHandle.closeFile()
         
         try! process.run()

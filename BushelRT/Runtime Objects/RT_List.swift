@@ -56,9 +56,9 @@ public class RT_List: RT_Object, AEEncodable {
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
         [
-            PropertyInfo(PropertyUID.Sequence_length): \RT_List.length,
-            PropertyInfo(PropertyUID.Sequence_reverse): \RT_List.reverse,
-            PropertyInfo(PropertyUID.Sequence_tail): \RT_List.tail
+            PropertyInfo(Properties.Sequence_length): \RT_List.length,
+            PropertyInfo(Properties.Sequence_reverse): \RT_List.reverse,
+            PropertyInfo(Properties.Sequence_tail): \RT_List.tail
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
@@ -129,7 +129,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        switch CommandUID(command.typedUID) {
+        switch CommandURI(command.typedUID) {
         case .Sequence_join:
             guard let separator = arguments[ParameterInfo(.Sequence_join_with)]?.coerce(to: RT_String.self) else {
                 // TODO: Throw error

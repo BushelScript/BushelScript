@@ -56,7 +56,7 @@ import Bushel
     /// Does not include any properties that are not known to exist until
     /// until runtime, e.g., record keys.
     public var staticProperties: [PropertyInfo : RT_Object] {
-        [PropertyInfo(PropertyUID.type): RT_Object.type(dynamicTypeInfo)].merging(
+        [PropertyInfo(Properties.type): RT_Object.type(dynamicTypeInfo)].merging(
             RT_Object.propertyKeyPaths.compactMapValues { evaluateStaticProperty($0) },
             uniquingKeysWith: { old, new in new }
         )
@@ -88,7 +88,7 @@ import Bushel
     /// For properties that are statically known to exist, an overridden
     /// `propertyKeyPaths` and `evaluateStaticProperty(_:)` pair is preferable.
     public func property(_ property: PropertyInfo) throws -> RT_Object {
-        switch PropertyUID(property.typedUID) {
+        switch Properties(property.typedUID) {
         // GLOBAL PROPERTIES
         case .currentDate:
             return RT_Date(value: Date())
@@ -146,7 +146,7 @@ import Bushel
         if dynamicTypeInfo.isA(type) {
             return self
         } else {
-            switch TypeUID(type.typedUID) {
+            switch Types(type.typedUID) {
             case .boolean:
                 return RT_Boolean.withValue(self.truthy)
             case .string:
@@ -441,7 +441,7 @@ import Bushel
     ///       the receiver.
     public func element(_ type: TypeInfo, named name: String) throws -> RT_Object {
         func element() -> RT_Object? {
-            switch TypeUID(type.uid) {
+            switch Types(type.uid) {
             case .application:
                 return RT_Application(named: name)
             case .file:
@@ -472,7 +472,7 @@ import Bushel
     ///       the receiver.
     public func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object {
         func element() -> RT_Object? {
-            switch TypeUID(type.uid) {
+            switch Types(type.uid) {
             case .application:
                 guard
                     let appBundleID = id.coerce(to: RT_String.self)?.value,
@@ -544,7 +544,7 @@ import Bushel
     ///     - `UnsupportedIndexForm` if all-element access is unsupported by
     ///       the receiver.
     public func elements(_ type: TypeInfo) throws -> RT_Object {
-        switch TypeUID(type.uid) {
+        switch Types(type.uid) {
         case .environmentVariable:
             return RT_List(contents: ProcessInfo.processInfo.environment.keys.map { RT_EnvVar(name: $0) })
         default:

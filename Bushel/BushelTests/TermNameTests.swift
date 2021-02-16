@@ -15,7 +15,7 @@ class TermNameSingleWordTests: XCTestCase {
         "com.example.My-App",
         "a_really_really_really_long_snake_case_name"
     ]
-    lazy var names = nameStrings.map { TermName($0) }
+    lazy var names = nameStrings.map { Term.Name($0) }
 
     func test_noChangeOnNormalize() {
         XCTAssertEqual(names.map { $0.normalized }, nameStrings)
@@ -35,7 +35,7 @@ class TermNameSingleWordWithWhitespaceTests: XCTestCase {
         "   com.example.My-App ",
         "            \t\n\r\na_really_really_really_long_snake_case_name    \r\n\t"
     ]
-    lazy var names = nameStrings.map { TermName($0) }
+    lazy var names = nameStrings.map { Term.Name($0) }
     
     func test_whitespaceRemovedOnNormalize() {
         XCTAssertEqual(names.map { $0.normalized }, [
@@ -63,7 +63,7 @@ class TermNameMultiWordTests: XCTestCase {
         "This hyphen is all alone , forming a separate word -",
         "Fun fact. A single underscore like the following is a valid C identifier. _"
     ]
-    lazy var names = nameStrings.map { TermName($0) }
+    lazy var names = nameStrings.map { Term.Name($0) }
     
     func test_noChangeOnNormalize() {
         XCTAssertEqual(names.map { $0.normalized }, nameStrings)
@@ -82,7 +82,7 @@ class TermNameMultiWordWithWhitespaceTests: XCTestCase {
         "     This  hyphen is   all alone,  forming a separate word \t  -",
         "Fun fact.  A single underscore like the following\r is a  valid \r\nC   identifier. _"
     ]
-    lazy var names = nameStrings.map { TermName($0) }
+    lazy var names = nameStrings.map { Term.Name($0) }
     
     func test_properlySeparatedOnNormalize() {
         XCTAssertEqual(names.map { $0.normalized }, [

@@ -49,10 +49,10 @@ public final class EnglishMessageFormatter: BushelLanguage.MessageFormatter {
                     return "record key"
                 case .listItemOrRecordKey:
                     return "list item or record key"
-                case .termUIDAndRawFormEndMarker:
-                    return "term UID followed by ‘»’"
-                case .termUID:
-                    return "term UID"
+                case .termURIAndRawFormEndMarker:
+                    return "term URI followed by ‘»’"
+                case .termURI:
+                    return "term URI"
                 case .weaveDelimiter:
                     return "weave delimiter"
                 case .weaveDelimiterEndMarker:

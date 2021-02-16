@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		3C043074231857CE00758339 /* Program.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C043073231857CE00758339 /* Program.swift */; };
+		3C065B6725DB1F9300C86E5C /* SyntacticRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C065B6625DB1F9300C86E5C /* SyntacticRole.swift */; };
+		3C065B7525DB1FD700C86E5C /* SemanticURI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C065B7425DB1FD700C86E5C /* SemanticURI.swift */; };
+		3C065B8925DB212700C86E5C /* Pathname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C065B8825DB212700C86E5C /* Pathname.swift */; };
+		3C065BB625DB2F7D00C86E5C /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C065BB525DB2F7D00C86E5C /* Resource.swift */; };
+		3C065BE125DB975500C86E5C /* SDEF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C065BE025DB975500C86E5C /* SDEF.swift */; };
 		3C08E14F230647B900CBA90E /* EntryPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C08E14E230647B900CBA90E /* EntryPoint.swift */; };
 		3C12EF752354E23C0057E0CC /* RT_Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF742354E23C0057E0CC /* RT_Object.swift */; };
 		3C12EF772354E2660057E0CC /* RT_Numeric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF762354E2660057E0CC /* RT_Numeric.swift */; };
@@ -32,13 +37,13 @@
 		3C187D51257C69F200481DA9 /* RT_InsertionSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C187D50257C69F200481DA9 /* RT_InsertionSpecifier.swift */; };
 		3C187D68257C73E700481DA9 /* InsertionSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C187D67257C73E700481DA9 /* InsertionSpecifier.swift */; };
 		3C2DD4A823A06E90002FAE57 /* ParameterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */; };
-		3C3065B1230B7ABB00833CE8 /* TermName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B0230B7ABB00833CE8 /* TermName.swift */; };
+		3C3065B1230B7ABB00833CE8 /* Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B0230B7ABB00833CE8 /* Name.swift */; };
 		3C3065B3230B7E2000833CE8 /* TerminologySource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B2230B7E2000833CE8 /* TerminologySource.swift */; };
 		3C3065B5230B83B500833CE8 /* MessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B4230B83B500833CE8 /* MessageFormatter.swift */; };
 		3C35A5C522C81DE7002D4582 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C35A5CC22C81DE7002D4582 /* Bushel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C35A5BE22C81DE7002D4582 /* Bushel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C35A5DB22C81E60002D4582 /* SourceLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C35A5D522C81E60002D4582 /* SourceLocation.swift */; };
-		3C35A5DC22C81E60002D4582 /* Terms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C35A5D622C81E60002D4582 /* Terms.swift */; };
+		3C35A5DC22C81E60002D4582 /* Term.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C35A5D622C81E60002D4582 /* Term.swift */; };
 		3C35A5DD22C81E60002D4582 /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C35A5D722C81E60002D4582 /* Expression.swift */; };
 		3C35A5DE22C81E60002D4582 /* Specifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C35A5D822C81E60002D4582 /* Specifier.swift */; };
 		3C3F06DC23C14165005BC0F2 /* ExpressionsAtLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3F06DB23C14165005BC0F2 /* ExpressionsAtLocation.swift */; };
@@ -77,7 +82,6 @@
 		3C6B75C62305D6ED0006C354 /* SourceFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C52305D6ED0006C354 /* SourceFormatter.swift */; };
 		3C6B75C82305D8EA0006C354 /* EnglishFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */; };
 		3C6B75CF2305F95A0006C354 /* LanguageModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75CE2305F95A0006C354 /* LanguageModule.swift */; };
-		3C6FB1E423E2A2530009315B /* TermDictionaryContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6FB1E323E2A2530009315B /* TermDictionaryContainer.swift */; };
 		3C70A6A423C5898C00CD5F73 /* RT_TestSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C70A6A323C5898C00CD5F73 /* RT_TestSpecifier.swift */; };
 		3C75066523A1A3BF006E7591 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3C75067223A1A4EF006E7591 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
@@ -106,14 +110,14 @@
 		3CB328FA23EDBA8A003BF646 /* Ask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDECB23EDA388007684D1 /* Ask.swift */; };
 		3CB528EB237FAF8A0051460B /* TypeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C327261232DBAE2001A527C /* TypeInfo.swift */; };
 		3CB528ED23809DDD0051460B /* Runtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB528EC23809DDD0051460B /* Runtime.swift */; };
-		3CB7FEC623B7CA22003191AC /* TermUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB7FEC523B7CA22003191AC /* TermUID.swift */; };
+		3CB7FEC623B7CA22003191AC /* ID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB7FEC523B7CA22003191AC /* ID.swift */; };
 		3CBD4BE123F5DCD200C09DC5 /* NumberFieldVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CBD4BE023F5DCD200C09DC5 /* NumberFieldVC.swift */; };
 		3CBD4BE323F5DCDC00C09DC5 /* NumberFieldVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CBD4BE223F5DCDC00C09DC5 /* NumberFieldVC.xib */; };
 		3CBD4BE623F5E63300C09DC5 /* InvalidDataMarker.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CBD4BE423F5E63200C09DC5 /* InvalidDataMarker.xib */; };
 		3CBD4BE723F5E63300C09DC5 /* InvalidDataMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CBD4BE523F5E63200C09DC5 /* InvalidDataMarker.swift */; };
 		3CC224892391CFF300448D25 /* PropertyInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224882391CFF300448D25 /* PropertyInfo.swift */; };
 		3CC224942391D9D500448D25 /* CommandInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224932391D9D500448D25 /* CommandInfo.swift */; };
-		3CC224982391E08800448D25 /* TermUIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224972391E08800448D25 /* TermUIDs.swift */; };
+		3CC224982391E08800448D25 /* Predefined.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224972391E08800448D25 /* Predefined.swift */; };
 		3CC774812414270E00EC1E3B /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC774802414270E00EC1E3B /* Formatting.swift */; };
 		3CCA1C7E235D0C010037058C /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCA1C7B235D0C010037058C /* Logging.swift */; };
 		3CCB8A75244B91C7003EBCD2 /* EnglishMessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCB8A74244B91C7003EBCD2 /* EnglishMessageFormatter.swift */; };
@@ -271,6 +275,11 @@
 
 /* Begin PBXFileReference section */
 		3C043073231857CE00758339 /* Program.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Program.swift; sourceTree = "<group>"; };
+		3C065B6625DB1F9300C86E5C /* SyntacticRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntacticRole.swift; sourceTree = "<group>"; };
+		3C065B7425DB1FD700C86E5C /* SemanticURI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticURI.swift; sourceTree = "<group>"; };
+		3C065B8825DB212700C86E5C /* Pathname.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pathname.swift; sourceTree = "<group>"; };
+		3C065BB525DB2F7D00C86E5C /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
+		3C065BE025DB975500C86E5C /* SDEF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDEF.swift; sourceTree = "<group>"; };
 		3C08E14E230647B900CBA90E /* EntryPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryPoint.swift; sourceTree = "<group>"; };
 		3C12EF742354E23C0057E0CC /* RT_Object.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Object.swift; sourceTree = "<group>"; };
 		3C12EF762354E2660057E0CC /* RT_Numeric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Numeric.swift; sourceTree = "<group>"; };
@@ -295,7 +304,7 @@
 		3C187D50257C69F200481DA9 /* RT_InsertionSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_InsertionSpecifier.swift; sourceTree = "<group>"; };
 		3C187D67257C73E700481DA9 /* InsertionSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsertionSpecifier.swift; sourceTree = "<group>"; };
 		3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterInfo.swift; sourceTree = "<group>"; };
-		3C3065B0230B7ABB00833CE8 /* TermName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermName.swift; sourceTree = "<group>"; };
+		3C3065B0230B7ABB00833CE8 /* Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Name.swift; sourceTree = "<group>"; };
 		3C3065B2230B7E2000833CE8 /* TerminologySource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminologySource.swift; sourceTree = "<group>"; };
 		3C3065B4230B83B500833CE8 /* MessageFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFormatter.swift; sourceTree = "<group>"; };
 		3C327261232DBAE2001A527C /* TypeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeInfo.swift; sourceTree = "<group>"; };
@@ -305,7 +314,7 @@
 		3C35A5C422C81DE7002D4582 /* BushelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BushelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C35A5CB22C81DE7002D4582 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C35A5D522C81E60002D4582 /* SourceLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SourceLocation.swift; sourceTree = "<group>"; };
-		3C35A5D622C81E60002D4582 /* Terms.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Terms.swift; sourceTree = "<group>"; };
+		3C35A5D622C81E60002D4582 /* Term.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Term.swift; sourceTree = "<group>"; };
 		3C35A5D722C81E60002D4582 /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		3C35A5D822C81E60002D4582 /* Specifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Specifier.swift; sourceTree = "<group>"; };
 		3C3F06DB23C14165005BC0F2 /* ExpressionsAtLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionsAtLocation.swift; sourceTree = "<group>"; };
@@ -347,7 +356,6 @@
 		3C6B75C52305D6ED0006C354 /* SourceFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceFormatter.swift; sourceTree = "<group>"; };
 		3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnglishFormatter.swift; sourceTree = "<group>"; };
 		3C6B75CE2305F95A0006C354 /* LanguageModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageModule.swift; sourceTree = "<group>"; };
-		3C6FB1E323E2A2530009315B /* TermDictionaryContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermDictionaryContainer.swift; sourceTree = "<group>"; };
 		3C70A6A323C5898C00CD5F73 /* RT_TestSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_TestSpecifier.swift; sourceTree = "<group>"; };
 		3C72CEBD22E1023200A98EC7 /* TypeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeExtensions.swift; sourceTree = "<group>"; };
 		3C72CEBF22E1023200A98EC7 /* AEApplicationGlue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AEApplicationGlue.swift; sourceTree = "<group>"; };
@@ -393,14 +401,14 @@
 		3CB328F623EDB675003BF646 /* CheckboxVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CheckboxVC.xib; sourceTree = "<group>"; };
 		3CB328F823EDB6CF003BF646 /* CheckboxVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckboxVC.swift; sourceTree = "<group>"; };
 		3CB528EC23809DDD0051460B /* Runtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Runtime.swift; sourceTree = "<group>"; };
-		3CB7FEC523B7CA22003191AC /* TermUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermUID.swift; sourceTree = "<group>"; };
+		3CB7FEC523B7CA22003191AC /* ID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ID.swift; sourceTree = "<group>"; };
 		3CBD4BE023F5DCD200C09DC5 /* NumberFieldVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumberFieldVC.swift; sourceTree = "<group>"; };
 		3CBD4BE223F5DCDC00C09DC5 /* NumberFieldVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NumberFieldVC.xib; sourceTree = "<group>"; };
 		3CBD4BE423F5E63200C09DC5 /* InvalidDataMarker.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InvalidDataMarker.xib; sourceTree = "<group>"; };
 		3CBD4BE523F5E63200C09DC5 /* InvalidDataMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InvalidDataMarker.swift; sourceTree = "<group>"; };
 		3CC224882391CFF300448D25 /* PropertyInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyInfo.swift; sourceTree = "<group>"; };
 		3CC224932391D9D500448D25 /* CommandInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandInfo.swift; sourceTree = "<group>"; };
-		3CC224972391E08800448D25 /* TermUIDs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermUIDs.swift; sourceTree = "<group>"; };
+		3CC224972391E08800448D25 /* Predefined.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Predefined.swift; sourceTree = "<group>"; };
 		3CC224992391F3C400448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC2249D2391F6A100448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC224A02391FA2A00448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -530,6 +538,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3C065B9325DB29E800C86E5C /* Term */ = {
+			isa = PBXGroup;
+			children = (
+				3C35A5D622C81E60002D4582 /* Term.swift */,
+				3C3065B0230B7ABB00833CE8 /* Name.swift */,
+				3CC224972391E08800448D25 /* Predefined.swift */,
+				3CB7FEC523B7CA22003191AC /* ID.swift */,
+				3C065B6625DB1F9300C86E5C /* SyntacticRole.swift */,
+				3C065B7425DB1FD700C86E5C /* SemanticURI.swift */,
+				3C065B8825DB212700C86E5C /* Pathname.swift */,
+			);
+			path = Term;
+			sourceTree = "<group>";
+		};
+		3C065BC425DB313500C86E5C /* Grouping */ = {
+			isa = PBXGroup;
+			children = (
+				3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */,
+				3C065BE025DB975500C86E5C /* SDEF.swift */,
+				3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */,
+				3C6B75272304B1360006C354 /* TermPool.swift */,
+				3C3065B2230B7E2000833CE8 /* TerminologySource.swift */,
+			);
+			path = Grouping;
+			sourceTree = "<group>";
+		};
 		3C12EF702354E1E50057E0CC /* Runtime Objects */ = {
 			isa = PBXGroup;
 			children = (
@@ -743,15 +777,9 @@
 		3C906F20231DD9D50099B139 /* Terminology */ = {
 			isa = PBXGroup;
 			children = (
-				3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */,
-				3C6FB1E323E2A2530009315B /* TermDictionaryContainer.swift */,
-				3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */,
-				3C6B75272304B1360006C354 /* TermPool.swift */,
-				3C3065B2230B7E2000833CE8 /* TerminologySource.swift */,
-				3C35A5D622C81E60002D4582 /* Terms.swift */,
-				3C3065B0230B7ABB00833CE8 /* TermName.swift */,
-				3CC224972391E08800448D25 /* TermUIDs.swift */,
-				3CB7FEC523B7CA22003191AC /* TermUID.swift */,
+				3C065BC425DB313500C86E5C /* Grouping */,
+				3C065B9325DB29E800C86E5C /* Term */,
+				3C065BB525DB2F7D00C86E5C /* Resource.swift */,
 			);
 			path = Terminology;
 			sourceTree = "<group>";
@@ -1505,19 +1533,23 @@
 				3C906F00231CD30A0099B139 /* Ordering.swift in Sources */,
 				3C6B75282304B1360006C354 /* TermPool.swift in Sources */,
 				3C043074231857CE00758339 /* Program.swift in Sources */,
+				3C065BB625DB2F7D00C86E5C /* Resource.swift in Sources */,
 				3CC774812414270E00EC1E3B /* Formatting.swift in Sources */,
 				3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */,
 				3C3F06E123C14B15005BC0F2 /* Ranges.swift in Sources */,
-				3C6FB1E423E2A2530009315B /* TermDictionaryContainer.swift in Sources */,
+				3C065B6725DB1F9300C86E5C /* SyntacticRole.swift in Sources */,
 				3C9CA8392532620C0098708F /* CodableErrors.swift in Sources */,
-				3C35A5DC22C81E60002D4582 /* Terms.swift in Sources */,
+				3C35A5DC22C81E60002D4582 /* Term.swift in Sources */,
 				3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */,
+				3C065B7525DB1FD700C86E5C /* SemanticURI.swift in Sources */,
+				3C065B8925DB212700C86E5C /* Pathname.swift in Sources */,
 				3C3F06DC23C14165005BC0F2 /* ExpressionsAtLocation.swift in Sources */,
-				3C3065B1230B7ABB00833CE8 /* TermName.swift in Sources */,
+				3C3065B1230B7ABB00833CE8 /* Name.swift in Sources */,
 				3C187D68257C73E700481DA9 /* InsertionSpecifier.swift in Sources */,
 				3CD113DB22FC6E9300329583 /* Logging.swift in Sources */,
-				3CB7FEC623B7CA22003191AC /* TermUID.swift in Sources */,
-				3CC224982391E08800448D25 /* TermUIDs.swift in Sources */,
+				3CB7FEC623B7CA22003191AC /* ID.swift in Sources */,
+				3C065BE125DB975500C86E5C /* SDEF.swift in Sources */,
+				3CC224982391E08800448D25 /* Predefined.swift in Sources */,
 				3CD113D422FB700000329583 /* ResourceLocation.swift in Sources */,
 				3C68D2452353BA300059FD3E /* BinaryOperation.swift in Sources */,
 				3CCD8BA522CFA6020049C74F /* PrettyPrinting.swift in Sources */,

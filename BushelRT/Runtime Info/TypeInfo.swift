@@ -11,7 +11,7 @@ public class TypeInfo: TermInfo, Hashable {
         /// type implicitly derives from "item".
         case supertype(TypeInfo)
         /// The type's user-facing name.
-        case name(TermName)
+        case name(Term.Name)
         /// Indicates that ID and supertype information cannot be statically
         /// determined and should instead be looked up at runtime. This ID info
         /// is reported by RT_AEObject.
@@ -21,10 +21,10 @@ public class TypeInfo: TermInfo, Hashable {
         
     }
     
-    public var uid: TermUID
+    public var uid: Term.SemanticURI
     public var tags: Set<Tag> = []
     
-    public var kind: TypedTermUID.Kind {
+    public var kind: Term.SyntacticRole {
         .type
     }
     
@@ -37,14 +37,14 @@ public class TypeInfo: TermInfo, Hashable {
         }
         return TypeInfo(.item, [.root])
     }
-    public var name: TermName? {
+    public var name: Term.Name? {
         for case .name(let name) in tags {
             return name
         }
         return nil
     }
     
-    public func addName(_ name: TermName) {
+    public func addName(_ name: Term.Name) {
         if self.name == nil {
             tags.insert(.name(name))
         }
@@ -58,11 +58,11 @@ public class TypeInfo: TermInfo, Hashable {
         hasher.combine(uid)
     }
     
-    public convenience init(_ predefined: TypeUID, _ tags: Set<Tag> = []) {
-        self.init(TermUID(predefined), tags)
+    public convenience init(_ predefined: Types, _ tags: Set<Tag> = []) {
+        self.init(Term.SemanticURI(predefined), tags)
     }
     
-    public init(_ uid: TermUID, _ tags: Set<Tag> = []) {
+    public init(_ uid: Term.SemanticURI, _ tags: Set<Tag> = []) {
         self.uid = uid
         self.tags = tags
     }

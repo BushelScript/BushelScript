@@ -188,15 +188,15 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             }()
             
             return "\(format(lhs, level: level)) \(formattedOperator) \(formattedRhs)"
-        case .variable(let term as NamedTerm),
-             .enumerator(let term as NamedTerm),
-             .class_(let term as NamedTerm):
+        case .variable(let term),
+             .enumerator(let term),
+             .class_(let term):
             return "\(term)"
         case .command(let term, var parameters):
             var formatted = "\(term)"
             
             // Do direct parameter first
-            if parameters.first?.key.uid == TermUID(ParameterUID.direct) {
+            if parameters.first?.key.uri == Term.SemanticURI(Parameters.direct) {
                 formatted += " \(format(parameters.removeFirst().value, level: level))"
             }
             
@@ -315,7 +315,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
     
 }
 
-extension ResourceTerm {
+extension Term {
     
     public var formattedForUseStatement: String {
         let name = self.name!
@@ -335,6 +335,8 @@ extension ResourceTerm {
         case .applescriptAtPath(let path, _):
             // TODO: Escape path when spitting back out
             return "AppleScript \(name) at \"\(path)\""
+        case nil:
+            return ""
         }
     }
     

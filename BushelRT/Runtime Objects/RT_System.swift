@@ -12,7 +12,7 @@ public final class RT_System: RT_Application {
         "system"
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.system, [.supertype(TypeInfo(TypeUID.application))])
+    private static let typeInfo_ = TypeInfo(.system, [.supertype(TypeInfo(.application))])
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }

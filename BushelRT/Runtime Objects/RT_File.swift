@@ -31,9 +31,9 @@ public class RT_File: RT_Object {
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
         [
-            PropertyInfo(PropertyUID.file_basename): \RT_File.basename,
-            PropertyInfo(PropertyUID.file_extname): \RT_File.extname,
-            PropertyInfo(PropertyUID.file_dirname): \RT_File.dirname,
+            PropertyInfo(Properties.file_basename): \RT_File.basename,
+            PropertyInfo(Properties.file_extname): \RT_File.extname,
+            PropertyInfo(Properties.file_dirname): \RT_File.dirname,
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {

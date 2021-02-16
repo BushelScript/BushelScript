@@ -30,14 +30,14 @@ public class RT_EnvVar: RT_Object {
     }
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
-        [PropertyInfo(PropertyUID.environmentVariable_value): \RT_EnvVar.value]
+        [PropertyInfo(Properties.environmentVariable_value): \RT_EnvVar.value]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
         keyPath.evaluate(on: self)
     }
     
     public override func setProperty(_ property: PropertyInfo, to newValue: RT_Object) throws {
-        switch PropertyUID(property.uid) {
+        switch Properties(property.uid) {
         case .environmentVariable_value:
             self.value = newValue
         default:

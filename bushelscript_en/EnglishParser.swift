@@ -16,8 +16,8 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     public var lexicon: Lexicon = Lexicon()
     public var sequenceNestingLevel: Int = 0
     public var elements: Set<SourceElement> = []
-    public var awaitingExpressionEndKeywords: [Set<TermName>] = []
-    public var sequenceEndTags: [TermName] = []
+    public var awaitingExpressionEndKeywords: [Set<Term.Name>] = []
+    public var sequenceEndTags: [Term.Name] = []
     
     public var keywordsTraversalTable: TermNameTraversalTable = [:]
     public var prefixOperatorsTraversalTable: TermNameTraversalTable = [:]
@@ -27,194 +27,194 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     public init() {
     }
     
-    public let prefixOperators: [TermName : UnaryOperation] = [
-        TermName("not"): .not
+    public let prefixOperators: [Term.Name : UnaryOperation] = [
+        Term.Name("not"): .not
     ]
     
-    public let postfixOperators: [TermName : UnaryOperation] = [:]
+    public let postfixOperators: [Term.Name : UnaryOperation] = [:]
     
-    public let binaryOperators: [TermName : BinaryOperation] = [
-        TermName("or"): .or,
-        TermName("xor"): .xor,
-        TermName("and"): .and,
-        TermName("is a"): .isA,
-        TermName("is an"): .isA,
-        TermName("is not a"): .isNotA,
-        TermName("is not an"): .isNotA,
-        TermName("isn't a"): .isNotA,
-        TermName("isn’t a"): .isNotA,
-        TermName("isn't an"): .isNotA,
-        TermName("isn’t an"): .isNotA,
-        TermName("equals"): .equal,
-        TermName("equal to"): .equal,
-        TermName("equals to"): .equal,
-        TermName("is equal to"): .equal,
-        TermName("is"): .equal,
-        TermName("="): .equal,
-        TermName("=="): .equal,
-        TermName("not equal to"): .notEqual,
-        TermName("is not equal to"): .notEqual,
-        TermName("isn't equal to"): .notEqual,
-        TermName("isn’t equal to"): .notEqual,
-        TermName("unequal to"): .notEqual,
-        TermName("is unequal to"): .notEqual,
-        TermName("is not"): .notEqual,
-        TermName("isn't"): .notEqual,
-        TermName("isn’t"): .notEqual,
-        TermName("not ="): .notEqual,
-        TermName("!="): .notEqual,
-        TermName("≠"): .notEqual,
-        TermName("less than"): .less,
-        TermName("is less than"): .less,
-        TermName("<"): .less,
-        TermName("less than equal to"): .lessEqual,
-        TermName("less than or equals"): .lessEqual,
-        TermName("less than or equal to"): .lessEqual,
-        TermName("is less than equal to"): .lessEqual,
-        TermName("is less than or equals"): .lessEqual,
-        TermName("is less than or equal to"): .lessEqual,
-        TermName("<="): .lessEqual,
-        TermName("≤"): .lessEqual,
-        TermName("greater than"): .greater,
-        TermName("is greater than"): .greater,
-        TermName(">"): .greater,
-        TermName("greater than equal to"): .greaterEqual,
-        TermName("greater than or equals"): .greaterEqual,
-        TermName("greater than or equal to"): .greaterEqual,
-        TermName("is greater than equal to"): .greaterEqual,
-        TermName("is greater than or equals"): .greaterEqual,
-        TermName("is greater than or equal to"): .greaterEqual,
-        TermName(">="): .greaterEqual,
-        TermName("≥"): .greaterEqual,
-        TermName("starts with"): .startsWith,
-        TermName("begins with"): .startsWith,
-        TermName("ends with"): .endsWith,
-        TermName("contains"): .contains,
-        TermName("has"): .contains,
-        TermName("does not contain"): .notContains,
-        TermName("doesn't contain"): .notContains,
-        TermName("doesn’t contain"): .notContains,
-        TermName("does not have"): .notContains,
-        TermName("doesn't have"): .notContains,
-        TermName("doesn’t have"): .notContains,
-        TermName("is in"): .containedBy,
-        TermName("is contained by"): .containedBy,
-        TermName("is not in"): .notContainedBy,
-        TermName("isn't in"): .notContainedBy,
-        TermName("isn’t in"): .notContainedBy,
-        TermName("is not contained by"): .notContainedBy,
-        TermName("isn't contained by"): .notContainedBy,
-        TermName("isn’t contained by"): .notContainedBy,
-        TermName("&"): .concatenate,
-        TermName("+"): .add,
-        TermName("-"): .subtract,
-        TermName("−"): .subtract,
-        TermName("*"): .multiply,
-        TermName("×"): .multiply,
-        TermName("/"): .divide,
-        TermName("÷"): .divide,
-        TermName("as"): .coerce,
+    public let binaryOperators: [Term.Name : BinaryOperation] = [
+        Term.Name("or"): .or,
+        Term.Name("xor"): .xor,
+        Term.Name("and"): .and,
+        Term.Name("is a"): .isA,
+        Term.Name("is an"): .isA,
+        Term.Name("is not a"): .isNotA,
+        Term.Name("is not an"): .isNotA,
+        Term.Name("isn't a"): .isNotA,
+        Term.Name("isn’t a"): .isNotA,
+        Term.Name("isn't an"): .isNotA,
+        Term.Name("isn’t an"): .isNotA,
+        Term.Name("equals"): .equal,
+        Term.Name("equal to"): .equal,
+        Term.Name("equals to"): .equal,
+        Term.Name("is equal to"): .equal,
+        Term.Name("is"): .equal,
+        Term.Name("="): .equal,
+        Term.Name("=="): .equal,
+        Term.Name("not equal to"): .notEqual,
+        Term.Name("is not equal to"): .notEqual,
+        Term.Name("isn't equal to"): .notEqual,
+        Term.Name("isn’t equal to"): .notEqual,
+        Term.Name("unequal to"): .notEqual,
+        Term.Name("is unequal to"): .notEqual,
+        Term.Name("is not"): .notEqual,
+        Term.Name("isn't"): .notEqual,
+        Term.Name("isn’t"): .notEqual,
+        Term.Name("not ="): .notEqual,
+        Term.Name("!="): .notEqual,
+        Term.Name("≠"): .notEqual,
+        Term.Name("less than"): .less,
+        Term.Name("is less than"): .less,
+        Term.Name("<"): .less,
+        Term.Name("less than equal to"): .lessEqual,
+        Term.Name("less than or equals"): .lessEqual,
+        Term.Name("less than or equal to"): .lessEqual,
+        Term.Name("is less than equal to"): .lessEqual,
+        Term.Name("is less than or equals"): .lessEqual,
+        Term.Name("is less than or equal to"): .lessEqual,
+        Term.Name("<="): .lessEqual,
+        Term.Name("≤"): .lessEqual,
+        Term.Name("greater than"): .greater,
+        Term.Name("is greater than"): .greater,
+        Term.Name(">"): .greater,
+        Term.Name("greater than equal to"): .greaterEqual,
+        Term.Name("greater than or equals"): .greaterEqual,
+        Term.Name("greater than or equal to"): .greaterEqual,
+        Term.Name("is greater than equal to"): .greaterEqual,
+        Term.Name("is greater than or equals"): .greaterEqual,
+        Term.Name("is greater than or equal to"): .greaterEqual,
+        Term.Name(">="): .greaterEqual,
+        Term.Name("≥"): .greaterEqual,
+        Term.Name("starts with"): .startsWith,
+        Term.Name("begins with"): .startsWith,
+        Term.Name("ends with"): .endsWith,
+        Term.Name("contains"): .contains,
+        Term.Name("has"): .contains,
+        Term.Name("does not contain"): .notContains,
+        Term.Name("doesn't contain"): .notContains,
+        Term.Name("doesn’t contain"): .notContains,
+        Term.Name("does not have"): .notContains,
+        Term.Name("doesn't have"): .notContains,
+        Term.Name("doesn’t have"): .notContains,
+        Term.Name("is in"): .containedBy,
+        Term.Name("is contained by"): .containedBy,
+        Term.Name("is not in"): .notContainedBy,
+        Term.Name("isn't in"): .notContainedBy,
+        Term.Name("isn’t in"): .notContainedBy,
+        Term.Name("is not contained by"): .notContainedBy,
+        Term.Name("isn't contained by"): .notContainedBy,
+        Term.Name("isn’t contained by"): .notContainedBy,
+        Term.Name("&"): .concatenate,
+        Term.Name("+"): .add,
+        Term.Name("-"): .subtract,
+        Term.Name("−"): .subtract,
+        Term.Name("*"): .multiply,
+        Term.Name("×"): .multiply,
+        Term.Name("/"): .divide,
+        Term.Name("÷"): .divide,
+        Term.Name("as"): .coerce,
     ]
     
-    public let stringMarkers: [(begin: TermName, end: TermName)] = [
-        (begin: TermName("\""), end: TermName("\"")),
-        (begin: TermName("“"), end: TermName("”"))
+    public let stringMarkers: [(begin: Term.Name, end: Term.Name)] = [
+        (begin: Term.Name("\""), end: Term.Name("\"")),
+        (begin: Term.Name("“"), end: Term.Name("”"))
     ]
     
-    public let expressionGroupingMarkers: [(begin: TermName, end: TermName)] = [
-        (begin: TermName("("), end: TermName(")"))
+    public let expressionGroupingMarkers: [(begin: Term.Name, end: Term.Name)] = [
+        (begin: Term.Name("("), end: Term.Name(")"))
     ]
     
-    public let listMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName])] = []
+    public let listMarkers: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name])] = []
     
-    public let recordMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])] = []
+    public let recordMarkers: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])] = []
     
-    public let listAndRecordMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])] = [
-        (begin: TermName("{"), end: TermName("}"), itemSeparators: [TermName(",")], keyValueSeparators: [TermName(":")])
+    public let listAndRecordMarkers: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])] = [
+        (begin: Term.Name("{"), end: Term.Name("}"), itemSeparators: [Term.Name(",")], keyValueSeparators: [Term.Name(":")])
     ]
     
-    public let lineCommentMarkers: [TermName] = [
-        TermName("--")
+    public let lineCommentMarkers: [Term.Name] = [
+        Term.Name("--")
     ]
     
-    public let blockCommentMarkers: [(begin: TermName, end: TermName)] = [
-        (begin: TermName("--("), end: TermName(")--"))
+    public let blockCommentMarkers: [(begin: Term.Name, end: Term.Name)] = [
+        (begin: Term.Name("--("), end: Term.Name(")--"))
     ]
     
-    public lazy var keywords: [TermName : KeywordHandler] = [
-        TermName("end"): handleEnd,
-        TermName("on"): handleFunctionStart,
-        TermName("to"): handleFunctionStart,
-        TermName("try"): handleTry,
-        TermName("if"): handleIf,
-        TermName("repeat"): handleRepeat(TermName("repeat")),
-        TermName("repeating"): handleRepeat(TermName("repeating")),
-        TermName("tell"): handleTell,
-        TermName("let"): handleLet,
-        TermName("define"): handleDefine,
-        TermName("defining"): handleDefining,
-        TermName("return"): handleReturn,
-        TermName("raise"): handleRaise(TermName("raise")),
-        TermName("use"): handleUse,
-        TermName("that"): handleThat,
-        TermName("it"): handleIt,
-        TermName("null"): handleNull,
-        TermName("every"): handleQuantifier(.all),
-        TermName("all"): handleQuantifier(.all),
-        TermName("first"): handleQuantifier(.first),
-        TermName("front"): handleQuantifier(.first),
-        TermName("middle"): handleQuantifier(.middle),
-        TermName("last"): handleQuantifier(.last),
-        TermName("back"): handleQuantifier(.last),
-        TermName("some"): handleQuantifier(.random),
-        TermName("first position of"): handleInsertionLocation(.beginning),
-        TermName("first position"): handleInsertionLocation(.beginning),
-        TermName("last position of"): handleInsertionLocation(.end),
-        TermName("last position"): handleInsertionLocation(.end),
-        TermName("position before"): handleInsertionLocation(.before),
-        TermName("position after"): handleInsertionLocation(.after),
-        TermName("ref"): handleRef(TermName("ref")),
-        TermName("get"): handleGet(TermName("get")),
-        TermName("set"): handleSet,
+    public lazy var keywords: [Term.Name : KeywordHandler] = [
+        Term.Name("end"): handleEnd,
+        Term.Name("on"): handleFunctionStart,
+        Term.Name("to"): handleFunctionStart,
+        Term.Name("try"): handleTry,
+        Term.Name("if"): handleIf,
+        Term.Name("repeat"): handleRepeat(Term.Name("repeat")),
+        Term.Name("repeating"): handleRepeat(Term.Name("repeating")),
+        Term.Name("tell"): handleTell,
+        Term.Name("let"): handleLet,
+        Term.Name("define"): handleDefine,
+        Term.Name("defining"): handleDefining,
+        Term.Name("return"): handleReturn,
+        Term.Name("raise"): handleRaise(Term.Name("raise")),
+        Term.Name("use"): handleUse,
+        Term.Name("that"): handleThat,
+        Term.Name("it"): handleIt,
+        Term.Name("null"): handleNull,
+        Term.Name("every"): handleQuantifier(.all),
+        Term.Name("all"): handleQuantifier(.all),
+        Term.Name("first"): handleQuantifier(.first),
+        Term.Name("front"): handleQuantifier(.first),
+        Term.Name("middle"): handleQuantifier(.middle),
+        Term.Name("last"): handleQuantifier(.last),
+        Term.Name("back"): handleQuantifier(.last),
+        Term.Name("some"): handleQuantifier(.random),
+        Term.Name("first position of"): handleInsertionLocation(.beginning),
+        Term.Name("first position"): handleInsertionLocation(.beginning),
+        Term.Name("last position of"): handleInsertionLocation(.end),
+        Term.Name("last position"): handleInsertionLocation(.end),
+        Term.Name("position before"): handleInsertionLocation(.before),
+        Term.Name("position after"): handleInsertionLocation(.after),
+        Term.Name("ref"): handleRef(Term.Name("ref")),
+        Term.Name("get"): handleGet(Term.Name("get")),
+        Term.Name("set"): handleSet,
     ]
     
-    public lazy var resourceTypes: [TermName : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] = [
-        TermName("system"): (false, [], handleUseSystem),
-        TermName("operating system"): (false, [], handleUseSystem),
-        TermName("OS"): (false, [], handleUseSystem),
-        TermName("macOS"): (false, [], handleUseSystem),
-        TermName("OS X"): (false, [], handleUseSystem),
-        TermName("MacOS"): (false, [], handleUseSystem),
-        TermName("Mac OS"): (false, [], handleUseSystem),
-        TermName("Mac OS X"): (false, [], handleUseSystem),
+    public lazy var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] = [
+        Term.Name("system"): (false, [], handleUseSystem),
+        Term.Name("operating system"): (false, [], handleUseSystem),
+        Term.Name("OS"): (false, [], handleUseSystem),
+        Term.Name("macOS"): (false, [], handleUseSystem),
+        Term.Name("OS X"): (false, [], handleUseSystem),
+        Term.Name("MacOS"): (false, [], handleUseSystem),
+        Term.Name("Mac OS"): (false, [], handleUseSystem),
+        Term.Name("Mac OS X"): (false, [], handleUseSystem),
         
-        TermName("application"): (true, [], handleUseApplicationName),
-        TermName("app"): (true, [], handleUseApplicationName),
-        TermName("application id"): (true, [], handleUseApplicationID),
-        TermName("app id"): (true, [], handleUseApplicationID),
+        Term.Name("application"): (true, [], handleUseApplicationName),
+        Term.Name("app"): (true, [], handleUseApplicationName),
+        Term.Name("application id"): (true, [], handleUseApplicationID),
+        Term.Name("app id"): (true, [], handleUseApplicationID),
         
-        TermName("AppleScript library"): (true, [], handleUseAppleScriptLibrary),
+        Term.Name("AppleScript library"): (true, [], handleUseAppleScriptLibrary),
         
-        TermName("AppleScript"): (true, ["at"], handleUseAppleScript),
+        Term.Name("AppleScript"): (true, ["at"], handleUseAppleScript),
     ]
     
     private func handleFunctionStart() throws -> Expression.Kind? {
         guard let termName = try parseTermNameEagerly(stoppingAt: [":"]) else {
             throw AdHocParseError("expected function name", at: SourceLocation(source.range, source: entireSource))
         }
-        let functionNameTerm = VariableTerm(.id(termName.normalized), name: termName)
+        let functionNameTerm = Term(.variable, lexicon.makeURI(forName: termName), name: termName)
         
-        var parameters: [ParameterTerm] = []
-        var arguments: [VariableTerm] = []
+        var parameters: [Term] = []
+        var arguments: [Term] = []
         if tryEating(prefix: ":", spacing: .right) {
             while let parameterTermName = try parseTermNameLazily() {
-                parameters.append(ParameterTerm(.id(parameterTermName.normalized), name: parameterTermName))
+                parameters.append(Term(.parameter, .id(Term.SemanticURI.Pathname([parameterTermName.normalized])), name: parameterTermName))
                 
                 var argumentName = try parseTermNameEagerly(stoppingAt: [","]) ?? parameterTermName
                 if argumentName.words.isEmpty {
                     argumentName = parameterTermName
                 }
-                arguments.append(VariableTerm(.id(argumentName.normalized), name: argumentName))
+                arguments.append(Term(.variable, .id(Term.SemanticURI.Pathname([argumentName.normalized])), name: argumentName))
                 
                 if !tryEating(prefix: ",", spacing: .right) {
                     break
@@ -222,7 +222,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
         }
         
-        let commandTerm = CommandTerm(.id(termName.normalized), name: termName, parameters: ParameterTermDictionary(contents: parameters))
+        let commandTerm = Term(.command, lexicon.makeURI(forName: termName), name: termName, parameters: ParameterTermDictionary(contents: parameters))
         lexicon.add(commandTerm)
         
         guard tryEating(prefix: "\n") else {
@@ -230,7 +230,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
         let body = try withScope {
             lexicon.add(Set(arguments))
-            lexicon.add(DictionaryTerm(TermUID(DictionaryUID.function), name: TermName("function"), terminology: lexicon.dictionaryStack.last!))
+            lexicon.add(Term(Term.ID(Dictionaries.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.makeDictionary(under: lexicon.pool)))
             return try parseSequence(functionNameTerm.name!)
         }
         
@@ -241,7 +241,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         func parseBody() throws -> Expression {
             let foundNewline = tryEating(prefix: "\n")
             if foundNewline {
-                return try parseSequence(TermName("try"), stoppingAt: ["handle"])
+                return try parseSequence(Term.Name("try"), stoppingAt: ["handle"])
             } else {
                 guard let bodyExpression = try parsePrimary() else {
                     throw AdHocParseError("expected expression or line break after ‘try’", at: expressionLocation)
@@ -257,7 +257,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
             
             if tryEating(prefix: "\n") {
-                return try parseSequence(TermName("try"))
+                return try parseSequence(Term.Name("try"))
             } else {
                 guard let handleExpression = try parsePrimary() else {
                     throw AdHocParseError("expected expression or line break after ‘handle’", at: currentLocation)
@@ -284,7 +284,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
             
             if foundNewline {
-                return try parseSequence(TermName("if"), stoppingAt: ["else"])
+                return try parseSequence(Term.Name("if"), stoppingAt: ["else"])
             } else {
                 guard let thenExpression = try parsePrimary() else {
                     let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
@@ -307,7 +307,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
             
             if tryEating(prefix: "\n") {
-                return try parseSequence(TermName("if"))
+                return try parseSequence(Term.Name("if"))
             } else {
                 guard let elseExpr = try parsePrimary() else {
                     let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
@@ -323,13 +323,13 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return .if_(condition: condition, then: try parseThen(), else: try parseElse())
     }
     
-    private func handleRepeat(_ keyword: TermName) -> () throws -> Expression.Kind? {
+    private func handleRepeat(_ keyword: Term.Name) -> () throws -> Expression.Kind? {
         { [weak self] in
             try self?.handleRepeat(keyword)
         }
     }
     
-    private func handleRepeat(_ keyword: TermName) throws -> Expression.Kind? {
+    private func handleRepeat(_ keyword: Term.Name) throws -> Expression.Kind? {
         func parseRepeatBlock() throws -> Expression {
             guard tryEating(prefix: "\n") else {
                 throw AdHocParseError("expected line break to begin repeat block", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
@@ -387,7 +387,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return try withTerminology(of: target) {
             let toExpr: Expression
             if foundNewline {
-                toExpr = try parseSequence(TermName("tell"))
+                toExpr = try parseSequence(Term.Name("tell"))
             } else {
                 guard let toExpression = try parsePrimary() else {
                     let toLocation = SourceLocation(toStartIndex..<currentIndex, source: entireSource)
@@ -419,11 +419,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     private func parseDefineLine() throws -> (term: Term, existingTerm: Term?) {
-        guard let termType = parseTermTypeName() else {
+        guard let role = parseTermTypeName() else {
             throw AdHocParseError("expected term type", at: currentLocation)
         }
         
-        guard let termName = try parseTermNameEagerly(stoppingAt: ["as"], styling: styling(for: termType)) else {
+        guard let termName = try parseTermNameEagerly(stoppingAt: ["as"], styling: styling(for: role)) else {
             throw AdHocParseError("expected term name", at: currentLocation)
         }
         
@@ -437,15 +437,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             return existingTerm
         }()
         
-        guard
-            let term = Term.make(
-                for: TypedTermUID(termType, existingTerm?.uid ?? lexicon.makeUID(forName: termName)),
-                name: termName
-            )
-        else {
-            throw AdHocParseError("this term type cannot have this definition; \(existingTerm == nil ? "try providing a valid one with 'as'" : "try a different definition or try removing 'as'")", at: currentLocation)
-        }
-        
+        let term = Term(role, existingTerm?.uri ?? lexicon.makeURI(forName: termName), name: termName)
         lexicon.add(term)
         
         return (term: term, existingTerm: existingTerm)
@@ -459,12 +451,12 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     private func handleDefining() throws -> Expression.Kind? {
         let (term: term, existingTerm: existingTerm) = try parseDefineLine()
         let body = try withTerminology(of: term) {
-            try parseSequence(TermName("defining"))
+            try parseSequence(Term.Name("defining"))
         }
         return .defining(term, as: existingTerm, body: body)
     }
     
-    private func handleUseSystem(name: TermName) throws -> ResourceTerm {
+    private func handleUseSystem(name: Term.Name) throws -> Term {
         var system = Resource.System()
         if tryEating(prefix: "version") {
             eatCommentsAndWhitespace()
@@ -485,19 +477,19 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             system = resolved
         }
         
-        let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: system.enumerated())
+        let term = Term(.resource, .res("system"), name: name, resource: system.enumerated())
         
         // Terminology should be defined in translation files
         
         return term
     }
     
-    private func handleUseApplicationName(name: TermName) throws -> ResourceTerm {
+    private func handleUseApplicationName(name: Term.Name) throws -> Term {
         guard let application = Resource.ApplicationByName(name: name.normalized) else {
             throw ParseError(.unmetResourceRequirement(.applicationByName(name: name.normalized)), at: termNameLocation)
         }
         
-        let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: application.enumerated())
+        let term = Term(.resource, .res("app:\(name)"), name: name, resource: application.enumerated())
         
         try term.loadResourceTerminology(under: lexicon.pool)
         lexicon.add(term)
@@ -505,11 +497,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return term
     }
     
-    private func handleUseApplicationID(name: TermName) throws -> ResourceTerm {
+    private func handleUseApplicationID(name: Term.Name) throws -> Term {
         guard let application = Resource.ApplicationByID(id: name.normalized) else {
             throw ParseError(.unmetResourceRequirement(.applicationByBundleID(bundleID: name.normalized)), at: termNameLocation)
         }
-        let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: application.enumerated())
+        let term = Term(.resource, .res("appid:\(name)"), name: name, resource: application.enumerated())
         
         try term.loadResourceTerminology(under: lexicon.pool)
         lexicon.add(term)
@@ -517,11 +509,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return term
     }
     
-    private func handleUseAppleScriptLibrary(name: TermName) throws -> ResourceTerm {
+    private func handleUseAppleScriptLibrary(name: Term.Name) throws -> Term {
         guard let applescript = Resource.AppleScriptLibraryByName(name: name.normalized) else {
             throw ParseError(.unmetResourceRequirement(.applescriptLibraryByName(name: name.normalized)), at: termNameLocation)
         }
-        let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: applescript.enumerated())
+        let term = Term(.resource, .res("aslib:\(name)"), name: name, resource: applescript.enumerated())
         
         try? term.loadResourceTerminology(under: lexicon.pool)
         lexicon.add(term)
@@ -529,7 +521,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return term
     }
     
-    private func handleUseAppleScript(name: TermName) throws -> ResourceTerm {
+    private func handleUseAppleScript(name: Term.Name) throws -> Term {
         guard tryEating(prefix: "at") else {
             throw AdHocParseError("expected ‘at’ followed by path string", at: currentLocation)
         }
@@ -544,7 +536,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         guard let applescript = Resource.AppleScriptAtPath(path: path) else {
             throw ParseError(.unmetResourceRequirement(.applescriptAtPath(path: path)), at: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
         }
-        let term = ResourceTerm(lexicon.makeUID(forName: name), name: name, resource: applescript.enumerated())
+        let term = Term(.resource, .res("as:\(path)"), name: name, resource: applescript.enumerated())
         
         try? term.loadResourceTerminology(under: lexicon.pool)
         lexicon.add(term)
@@ -578,14 +570,14 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     }
     
     public func handle(term: Term) throws -> Expression.Kind? {
-        switch term.enumerated {
-        case .enumerator(let term): // MARK: .enumerator
+        switch term.role {
+        case .constant: // MARK: .constant
             return .enumerator(term)
-        case .dictionary(_): // MARK: .dictionary
+        case .dictionary: // MARK: .dictionary
             // TODO: Such purely organizational dictionaries should probably
             // have a runtime reflection type.
             return .null
-        case .class_(let term): // MARK: .class_
+        case .type: // MARK: .type
             if let specifierKind = try parseSpecifierAfterClassName() {
                 return .specifier(Specifier(class: term, kind: specifierKind))
             } else if let specifier = try parseRelativeSpecifierAfterClassName(term) {
@@ -594,27 +586,24 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                 // Just the class name
                 return .class_(term)
             }
-        case .pluralClass(let term): // MARK: .pluralClass
-            if let specifierKind = try parseSpecifierAfterClassName() {
-                return .specifier(Specifier(class: term, kind: specifierKind))
-            } else {
-                // Just the plural class name
-                // Equivalent to an "all" specifier
-                return .specifier(Specifier(class: term, kind: .all))
-            }
-        case .property(let term): // MARK: .property
+        case .property: // MARK: .property
             let specifier = Specifier(class: term, kind: .property)
             return .specifier(specifier)
-        case .command(let term): // MARK: .command
-            var parameters: [(ParameterTerm, Expression)] = []
+        case .command: // MARK: .command
+            var parameters: [(Term, Expression)] = []
             func parseParameter() throws -> Bool {
-                guard let parameterTerm = try eatTerm(terminology: term.parameters) as? ParameterTerm else {
+                guard
+                    let parameterDict = term.parameters,
+                    let parameterTerm = try eatTerm(terminology: parameterDict),
+                    parameterTerm.role == .parameter
+                else {
                     return false
                 }
                 
                 guard let parameterValue = try parsePrimary() else {
                     throw AdHocParseError("expected expression after parameter name, but found end of script", at: currentLocation)
                 }
+                
                 parameters.append((parameterTerm, parameterValue))
                 return true
             }
@@ -638,7 +627,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
                         }
                         directParameterValue = dpValue
                     }
-                    parameters.append((lexicon.pool.term(forUID: TypedTermUID(ParameterUID.direct)) as! ParameterTerm, directParameterValue))
+                    parameters.append((Term(Term.ID(Parameters.direct)), directParameterValue))
                 }
             }
             
@@ -649,9 +638,9 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             return result()
         case .parameter: // MARK: .parameter
             throw AdHocParseError("parameter term outside of a command invocation", at: expressionLocation)
-        case .variable(let term): // MARK: .variable
+        case .variable: // MARK: .variable
             return .variable(term)
-        case .resource(let term): // MARK: .resource
+        case .resource: // MARK: .resource
             return .resource(term)
         }
     }
@@ -662,7 +651,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     public func parseSpecifierAfterClassName() throws -> Specifier.Kind? {
         eatCommentsAndWhitespace()
-        guard let firstWord = TermName.nextWord(in: source) else {
+        guard let firstWord = Term.Name.nextWord(in: source) else {
             return nil
         }
         
@@ -704,7 +693,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
             
             eatCommentsAndWhitespace()
-            let midWord = TermName.nextWord(in: source)
+            let midWord = Term.Name.nextWord(in: source)
             
             switch midWord {
             case "thru", "through":
@@ -720,19 +709,19 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
     }
     
-    public func parseRelativeSpecifierAfterClassName(_ term: ClassTerm) throws -> Specifier? {
+    public func parseRelativeSpecifierAfterClassName(_ classTerm: Term) throws -> Specifier? {
         if tryEating(prefix: "before") {
             guard let parentExpression = try parsePrimary() else {
                 // e.g., window before
                 throw AdHocParseError("expected expression after ‘before’", at: currentLocation)
             }
-            return Specifier(class: term, kind: .previous, parent: parentExpression)
+            return Specifier(class: classTerm, kind: .previous, parent: parentExpression)
         } else if tryEating(prefix: "after") {
             guard let parentExpression = try parsePrimary() else {
                 // e.g., window before
                 throw AdHocParseError("expected expression after ‘after’", at: currentLocation)
             }
-            return Specifier(class: term, kind: .next, parent: parentExpression)
+            return Specifier(class: classTerm, kind: .next, parent: parentExpression)
         } else {
             return nil
         }

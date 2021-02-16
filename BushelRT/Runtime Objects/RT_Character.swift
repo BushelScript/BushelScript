@@ -25,7 +25,7 @@ public class RT_Character: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch TypeUID(type.uid) {
+        switch Types(type.uid) {
         case .string:
             return RT_String(value: String(value))
         default:

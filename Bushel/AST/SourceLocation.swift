@@ -89,7 +89,7 @@ extension SourceLocation {
         var words: [String] = []
         var remainingSource = source[range]
         remainingSource.removeLeadingWhitespace()
-        while let word = TermName.nextWord(in: remainingSource) {
+        while let word = Term.Name.nextWord(in: remainingSource) {
             words.append(word)
             remainingSource.removeLeadingWhitespace(removingNewlines: true)
             remainingSource.removeFirst(word.count)

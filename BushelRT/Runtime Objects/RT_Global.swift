@@ -24,7 +24,7 @@ public class RT_Global: RT_Object {
             
             var arguments = arguments
             if
-                arguments.first(where: { $0.key.uid.ae4Code == ParameterUID.GUI_ask_title.ae12Code!.code }) == nil,
+                arguments.first(where: { $0.key.uid.ae4Code == Parameters.GUI_ask_title.ae12Code!.code }) == nil,
                 let scriptName = Optional("")//rt.topScript.name
             // FIXME: fix
             {
@@ -34,7 +34,7 @@ public class RT_Global: RT_Object {
             return try RT_Application(bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
         
-        switch CommandUID(command.typedUID) {
+        switch CommandURI(command.typedUID) {
         case .delay:
             let delaySeconds = arguments[ParameterInfo(.direct)]?.coerce(to: RT_Real.self)?.value ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)

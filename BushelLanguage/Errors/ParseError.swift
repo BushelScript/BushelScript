@@ -32,7 +32,7 @@ public struct ParseError: ParseErrorProtocol {
         
         case missing(SourceElement)
         case unmetResourceRequirement(ResourceRequirement)
-        case invalidResourceType(validTypes: [TermName])
+        case invalidResourceType(validTypes: [Term.Name])
         case terminologyImportFailure(error: Swift.Error)
         case quotedResourceTerm
         case invalidString
@@ -46,26 +46,26 @@ public struct ParseError: ParseErrorProtocol {
         public enum SourceElement {
             
             case resourceName
-            case endTagOrLineBreak(endTag: TermName)
-            case expressionAfterKeyword(keyword: TermName)
+            case endTagOrLineBreak(endTag: Term.Name)
+            case expressionAfterKeyword(keyword: Term.Name)
             case lineBreakAfterSequencedExpression
             case expressionAfterBinaryOperator
             case expressionAfterPrefixOperator
             case expressionAfterPostfixOperator
-            case groupedExpressionAfterBeginMarker(beginMarker: TermName)
-            case groupedExpressionEndMarker(endMarker: TermName)
-            case recordKeyBeforeKeyValueSeparatorOrEndMarkerAfter(keyValueSeparator: TermName, endMarker: TermName)
-            case listItemSeparatorOrEndMarker(itemSeparator: TermName, endMarker: TermName)
-            case recordKeyValueSeparatorAfterKey(keyValueSeparator: TermName)
-            case listAndRecordItemSeparatorOrKeyValueSeparatorOrEndMarker(itemSeparator: TermName, keyValueSeparator: TermName, endMarker: TermName)
-            case recordItemSeparatorOrEndMarker(itemSeparator: TermName, endMarker: TermName)
+            case groupedExpressionAfterBeginMarker(beginMarker: Term.Name)
+            case groupedExpressionEndMarker(endMarker: Term.Name)
+            case recordKeyBeforeKeyValueSeparatorOrEndMarkerAfter(keyValueSeparator: Term.Name, endMarker: Term.Name)
+            case listItemSeparatorOrEndMarker(itemSeparator: Term.Name, endMarker: Term.Name)
+            case recordKeyValueSeparatorAfterKey(keyValueSeparator: Term.Name)
+            case listAndRecordItemSeparatorOrKeyValueSeparatorOrEndMarker(itemSeparator: Term.Name, keyValueSeparator: Term.Name, endMarker: Term.Name)
+            case recordItemSeparatorOrEndMarker(itemSeparator: Term.Name, endMarker: Term.Name)
             case type
             case listItem
             case recordItem
             case recordKey
             case listItemOrRecordKey
-            case termUIDAndRawFormEndMarker
-            case termUID
+            case termURIAndRawFormEndMarker
+            case termURI
             case weaveDelimiter
             case weaveDelimiterEndMarker
             

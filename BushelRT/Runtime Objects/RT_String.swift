@@ -36,7 +36,7 @@ public class RT_String: RT_Object, AEEncodable {
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
         [
-            PropertyInfo(PropertyUID.Sequence_length): \RT_String.length
+            PropertyInfo(Properties.Sequence_length): \RT_String.length
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
@@ -74,7 +74,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch TypeUID(type.typedUID) {
+        switch Types(type.typedUID) {
         case .character:
             guard value.count == 1 else {
                 return nil
@@ -112,7 +112,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        switch CommandUID(command.typedUID) {
+        switch CommandURI(command.typedUID) {
         case .String_split:
             guard let separator = arguments[ParameterInfo(.String_split_by)]?.coerce(to: RT_String.self) else {
                 // TODO: Throw error

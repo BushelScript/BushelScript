@@ -79,16 +79,13 @@ public class Runtime {
     }
     
     public func inject(terms: TermPool) {
-        func add(classTerm term: Bushel.ClassTerm) {
-            func typeInfo(for classTerm: Bushel.ClassTerm) -> TypeInfo {
+        func add(classTerm term: Term) {
+            func typeInfo(for classTerm: Term) -> TypeInfo {
                 var tags: Set<TypeInfo.Tag> = []
                 if let name = classTerm.name {
                     tags.insert(.name(name))
                 }
-                if let supertype = classTerm.parentClass.map({ typeInfo(for: $0) }) {
-                    tags.insert(.supertype(supertype))
-                }
-                return TypeInfo(classTerm.uid, tags)
+                return TypeInfo(classTerm.uri, tags)
             }
             
             let type = typeInfo(for: term)
@@ -106,102 +103,100 @@ public class Runtime {
         
         termPool.add(terms)
         
-        for term in terms.byTypedUID.values {
-            switch term.enumerated {
-            case .dictionary(_):
+        for term in terms.byID.values {
+            switch term.role {
+            case .dictionary:
                 break
-            case .class_(let term):
+            case .type:
                 add(classTerm: term)
-            case .pluralClass(let term):
-                add(classTerm: term)
-            case .property(let term):
+            case .property:
                 let tags: [PropertyInfo.Tag] = term.name.map { [.name($0)] } ?? []
-                let property = PropertyInfo(term.uid, Set(tags))
+                let property = PropertyInfo(term.uri, Set(tags))
                 propertiesByUID[property.typedUID] = property
-            case .enumerator(let term):
+            case .constant:
                 let tags: [ConstantInfo.Tag] = term.name.map { [.name($0)] } ?? []
-                let constant = ConstantInfo(term.uid, Set(tags))
+                let constant = ConstantInfo(term.uri, Set(tags))
                 constantsByUID[constant.typedUID] = constant
-            case .command(let term):
+            case .command:
                 let tags: [CommandInfo.Tag] = term.name.map { [.name($0)] } ?? []
-                let command = CommandInfo(term.uid, Set(tags))
+                let command = CommandInfo(term.uri, Set(tags))
                 commandsByUID[command.typedUID] = command
-            case .parameter(_):
+            case .parameter:
                 break
-            case .variable(_):
+            case .variable:
                 break
-            case .resource(_):
+            case .resource:
                 break
             }
         }
     }
     
-    private var typesByUID: [TypedTermUID : TypeInfo] = [:]
+    private var typesByUID: [Term.ID : TypeInfo] = [:]
     private var typesBySupertype: [TypeInfo : [TypeInfo]] = [:]
-    private var typesByName: [TermName : TypeInfo] = [:]
+    private var typesByName: [Term.Name : TypeInfo] = [:]
     
-    private func add(forTypeUID uid: TermUID) -> TypeInfo {
+    private func add(forTypeUID uid: Term.SemanticURI) -> TypeInfo {
         let info = TypeInfo(uid)
-        typesByUID[TypedTermUID(.type, uid)] = info
+        typesByUID[Term.ID(.type, uid)] = info
         return info
     }
     
-    public func type(forUID uid: TypedTermUID) -> TypeInfo {
-        typesByUID[uid] ?? TypeInfo(uid.uid)
+    public func type(forUID uid: Term.ID) -> TypeInfo {
+        typesByUID[uid] ?? TypeInfo(uid.uri)
     }
     public func subtypes(of type: TypeInfo) -> [TypeInfo] {
         typesBySupertype[type] ?? []
     }
-    public func type(for name: TermName) -> TypeInfo? {
+    public func type(for name: Term.Name) -> TypeInfo? {
         typesByName[name]
     }
     public func type(for code: OSType) -> TypeInfo {
-        type(forUID: TypedTermUID(.type, .ae4(code: code)))
+        type(forUID: Term.ID(.type, .ae4(code: code)))
     }
     
-    private var propertiesByUID: [TypedTermUID : PropertyInfo] = [:]
+    private var propertiesByUID: [Term.ID : PropertyInfo] = [:]
     
-    private func add(forPropertyUID uid: TermUID) -> PropertyInfo {
+    private func add(forPropertyUID uid: Term.SemanticURI) -> PropertyInfo {
         let info = PropertyInfo(uid)
-        propertiesByUID[TypedTermUID(.property, uid)] = info
+        propertiesByUID[Term.ID(.property, uid)] = info
         return info
     }
     
-    public func property(forUID uid: TypedTermUID) -> PropertyInfo {
-        propertiesByUID[uid] ?? add(forPropertyUID: uid.uid)
+    public func property(forUID uid: Term.ID) -> PropertyInfo {
+        propertiesByUID[uid] ?? add(forPropertyUID: uid.uri)
     }
     public func property(for code: OSType) -> PropertyInfo {
-        property(forUID: TypedTermUID(.property, .ae4(code: code)))
+        property(forUID: Term.ID(.property, .ae4(code: code)))
     }
     
-    private var constantsByUID: [TypedTermUID : ConstantInfo] = [:]
+    private var constantsByUID: [Term.ID : ConstantInfo] = [:]
     
-    private func add(forConstantUID uid: TermUID) -> ConstantInfo {
+    private func add(forConstantUID uid: Term.SemanticURI) -> ConstantInfo {
         let info = ConstantInfo(uid)
-        constantsByUID[TypedTermUID(.constant, uid)] = info
+        constantsByUID[Term.ID(.constant, uid)] = info
         return info
     }
     
-    public func constant(forUID uid: TypedTermUID) -> ConstantInfo {
+    public func constant(forUID uid: Term.ID) -> ConstantInfo {
         constantsByUID[uid] ??
-            propertiesByUID[TypedTermUID(.property, uid.uid)].map { ConstantInfo(property: $0) } ??
-            typesByUID[TypedTermUID(.type, uid.uid)].map { ConstantInfo(type: $0) } ??
-            add(forConstantUID: uid.uid)
+            propertiesByUID[Term.ID(.property, uid.uri)].map { ConstantInfo(property: $0) } ??
+            typesByUID[Term.ID(.type, uid.uri)].map { ConstantInfo(type: $0) } ??
+            add(forConstantUID: uid.uri)
     }
     public func constant(for code: OSType) -> ConstantInfo {
-        constant(forUID: TypedTermUID(.constant, .ae4(code: code)))
+        constant(forUID: Term.ID(.constant, .ae4(code: code)))
     }
     
-    private var commandsByUID: [TypedTermUID : CommandInfo] = [:]
+    private var commandsByUID: [Term.ID : CommandInfo] = [:]
     
-    private func add(forCommandUID uid: TermUID) -> CommandInfo {
+    private func add(forCommandUID uid: Term.SemanticURI) -> CommandInfo {
         let info = CommandInfo(uid)
-        commandsByUID[TypedTermUID(.command, uid)] = info
+        commandsByUID[Term.ID(.command, uid)] = info
         return info
     }
     
-    public func command(forUID uid: TypedTermUID) -> CommandInfo {
-        commandsByUID[uid] ?? add(forCommandUID: uid.uid)
+    public func command(forUID uid: Term.ID) -> CommandInfo {
+        commandsByUID[uid] ?? add(forCommandUID: uid.uri)
     }
     
 }
@@ -263,11 +258,11 @@ public extension Runtime {
             var argumentValue: RT_Object = RT_Null.null
             if index == 0 {
                 argumentValue =
-                    actualArguments[ParameterInfo(parameter.uid)] ??
-                    actualArguments[ParameterInfo(ParameterUID.direct)] ??
+                    actualArguments[ParameterInfo(parameter.uri)] ??
+                    actualArguments[ParameterInfo(Parameters.direct)] ??
                     RT_Null.null
             } else {
-                argumentValue = actualArguments[ParameterInfo(parameter.uid)] ?? RT_Null.null
+                argumentValue = actualArguments[ParameterInfo(parameter.uri)] ?? RT_Null.null
             }
             
             builtin.newVariable(argument, argumentValue)
@@ -412,10 +407,10 @@ public extension Runtime {
         case .use(let term), // MARK: .use
              .resource(let term): // MARK: .resource
             return builtin.getResource(term)
-        case .enumerator(let term as Term): // MARK: .enumerator
-            return builtin.newConstant(term.typedUID)
-        case .class_(let term as Term): // MARK: .class_
-            return RT_Class(value: type(forUID: term.typedUID))
+        case .enumerator(let term): // MARK: .constant
+            return builtin.newConstant(term.id)
+        case .class_(let term): // MARK: .class_
+            return RT_Class(value: type(forUID: term.id))
         case .set(let expression, to: let newValueExpression): // MARK: .set
             if case .variable(let variableTerm) = expression.kind {
                 let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult, target: target)
@@ -429,20 +424,20 @@ public extension Runtime {
                     ParameterInfo(.direct): expressionExprValue,
                     ParameterInfo(.set_to): newValueExprValue
                 ]
-                let command = self.command(forUID: TypedTermUID(CommandUID.set))
+                let command = self.command(forUID: Term.ID(CommandURI.set))
                 return try builtin.run(command: command, arguments: arguments, target: evaluate(target, lastResult: lastResult, target: target))
             }
         case .command(let term, let parameters): // MARK: .command
             let parameterExprValues: [(key: ParameterInfo, value: RT_Object)] = try parameters.map { kv in
                 let (parameterTerm, parameterValue) = kv
-                let parameterInfo = ParameterInfo(parameterTerm.uid)
+                let parameterInfo = ParameterInfo(parameterTerm.uri)
                 let value = try runPrimary(parameterValue, lastResult: lastResult, target: target)
                 return (parameterInfo, value)
             }
             let arguments = [ParameterInfo : RT_Object](uniqueKeysWithValues:
                 parameterExprValues
             )
-            let command = self.command(forUID: term.typedUID)
+            let command = self.command(forUID: term.id)
             return try builtin.run(command: command, arguments: arguments, target: evaluate(target, lastResult: lastResult, target: target))
         case .reference(let expression): // MARK: .reference
             return try runPrimary(expression, lastResult: lastResult, target: target, evaluateSpecifiers: false)
@@ -461,7 +456,7 @@ public extension Runtime {
             }()
             return RT_InsertionSpecifier(parent: parentValue, kind: insertionSpecifier.kind)
         case .function(let name, _, _, _): // MARK: .function
-            let commandInfo = self.command(forUID: TypedTermUID(.command, name.uid))
+            let commandInfo = self.command(forUID: Term.ID(.command, name.uri))
             
             let function = RT_Function(self, expression)
             topScript.dynamicFunctions[commandInfo] = function
@@ -475,7 +470,7 @@ public extension Runtime {
     }
     
     private func buildSpecifier(_ specifier: Specifier, lastResult: ExprValue, target: ExprValue) throws -> RT_Object {
-        let typedUID = specifier.idTerm.typedUID
+        let id = specifier.idTerm.id
         
         let parent = try specifier.parent.map { try runPrimary($0, lastResult: lastResult, target: target, evaluateSpecifiers: false) }
         
@@ -490,7 +485,7 @@ public extension Runtime {
         
         func generate() -> RT_Specifier {
             if case .property = specifier.kind {
-                return RT_Specifier(parent: parent, type: nil, property: property(forUID: typedUID), data: [], kind: .property)
+                return RT_Specifier(parent: parent, type: nil, property: property(forUID: id), data: [], kind: .property)
             }
             
             let kind: RT_Specifier.Kind = {
@@ -525,7 +520,7 @@ public extension Runtime {
                     fatalError("unreachable")
                 }
             }()
-            return RT_Specifier(parent: parent, type: type(forUID: typedUID), data: data, kind: kind)
+            return RT_Specifier(parent: parent, type: type(forUID: id), data: data, kind: kind)
         }
         
         let resultValue = generate()

@@ -54,7 +54,7 @@ public class RT_Application: RT_Object {
         }
     }
     
-    private static let typeInfo_ = TypeInfo(TypeUID.application)
+    private static let typeInfo_ = TypeInfo(.application)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }
@@ -82,7 +82,7 @@ extension RT_Application: RT_SASpecifierConvertible {
 extension RT_Application: RT_SpecifierRemoteRoot {
     
     public func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        return try specifier.performByAppleEvent(command: CommandInfo(CommandUID.get), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, target: saSpecifier())
+        return try specifier.performByAppleEvent(command: CommandInfo(CommandURI.get), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, target: saSpecifier())
     }
     
     public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, for specifier: RT_HierarchicalSpecifier) throws -> RT_Object {

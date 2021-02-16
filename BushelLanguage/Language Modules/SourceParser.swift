@@ -6,7 +6,7 @@ import Regex
 private let log = OSLog(subsystem: logSubsystem, category: "Source parser")
 
 public typealias KeywordHandler = () throws -> Expression.Kind?
-public typealias ResourceTypeHandler = (_ name: TermName) throws -> ResourceTerm
+public typealias ResourceTypeHandler = (_ name: Term.Name) throws -> Term
 
 /// Parses source code into an AST.
 public protocol SourceParser: AnyObject {
@@ -21,26 +21,26 @@ public protocol SourceParser: AnyObject {
     var lexicon: Lexicon { get set }
     var sequenceNestingLevel: Int { get set }
     var elements: Set<SourceElement> { get set }
-    var awaitingExpressionEndKeywords: [Set<TermName>] { get set }
-    var sequenceEndTags: [TermName] { get set }
+    var awaitingExpressionEndKeywords: [Set<Term.Name>] { get set }
+    var sequenceEndTags: [Term.Name] { get set }
     
     var keywordsTraversalTable: TermNameTraversalTable { get set }
     var prefixOperatorsTraversalTable: TermNameTraversalTable { get set }
     var postfixOperatorsTraversalTable: TermNameTraversalTable { get set }
     var binaryOperatorsTraversalTable: TermNameTraversalTable { get set }
     
-    var keywords: [TermName : KeywordHandler] { get }
-    var resourceTypes: [TermName : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] { get }
-    var prefixOperators: [TermName : UnaryOperation] { get }
-    var postfixOperators: [TermName : UnaryOperation] { get }
-    var binaryOperators: [TermName : BinaryOperation] { get }
-    var stringMarkers: [(begin: TermName, end: TermName)] { get }
-    var expressionGroupingMarkers: [(begin: TermName, end: TermName)] { get }
-    var listMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName])] { get }
-    var recordMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])] { get }
-    var listAndRecordMarkers: [(begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])] { get }
-    var lineCommentMarkers: [TermName] { get }
-    var blockCommentMarkers: [(begin: TermName, end: TermName)] { get }
+    var keywords: [Term.Name : KeywordHandler] { get }
+    var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] { get }
+    var prefixOperators: [Term.Name : UnaryOperation] { get }
+    var postfixOperators: [Term.Name : UnaryOperation] { get }
+    var binaryOperators: [Term.Name : BinaryOperation] { get }
+    var stringMarkers: [(begin: Term.Name, end: Term.Name)] { get }
+    var expressionGroupingMarkers: [(begin: Term.Name, end: Term.Name)] { get }
+    var listMarkers: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name])] { get }
+    var recordMarkers: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])] { get }
+    var listAndRecordMarkers: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])] { get }
+    var lineCommentMarkers: [Term.Name] { get }
+    var blockCommentMarkers: [(begin: Term.Name, end: Term.Name)] { get }
     
     init()
     
@@ -64,15 +64,11 @@ extension SourceParser {
         for translation in translations {
             lexicon.add(translation.makeTerms(under: lexicon.pool))
         }
-        lexicon.add(ParameterTerm(TermUID(ParameterUID.direct), name: nil))
+        lexicon.add(Term(Term.ID(Parameters.direct)))
         
         // Assign the builtins dictionary to the 'BushelScript' resource term.
-        if
-            let bushelscript = lexicon.term(forUID:
-                TypedTermUID(.resource, TermUID(ResourceUID.bushelscript))
-            ) as? ResourceTerm
-        {
-            bushelscript.storedDictionary = lexicon.dictionaryStack.last!
+        if let bushelscript = lexicon.term(id: Term.ID(Resources.bushelscript)) {
+            bushelscript.dictionary = lexicon.stack.last!.dictionary
         }
     }
     
@@ -92,7 +88,7 @@ extension SourceParser {
         
         buildTraversalTables()
         
-        lexicon.pushDictionaryTerm(forUID: .id("script"))
+        lexicon.pushDictionaryTerm(uri: .id(Term.SemanticURI.Pathname(["script"])))
         defer { lexicon.pop() }
         do {
             return Program(try parseDocument(), elements, source: entireSource, terms: lexicon.pool)
@@ -105,7 +101,7 @@ extension SourceParser {
     }
     
     private func parseDocument() throws -> Expression {
-        let sequence = try parseSequence(TermName(""))
+        let sequence = try parseSequence(Term.Name(""))
         
         eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
         
@@ -146,7 +142,7 @@ extension SourceParser {
         
         eatCommentsAndWhitespace()
         
-        var name = TermName("")
+        var name = Term.Name("")
         if hasName {
             guard let name_ = try parseTermNameEagerly(stoppingAt: stoppingAt) else {
                 throw ParseError(.missing(.resourceName), at: currentLocation)
@@ -181,13 +177,13 @@ extension SourceParser {
         }
     }
     
-    public func handleRaise(_ keyword: TermName) -> () throws -> Expression.Kind? {
+    public func handleRaise(_ keyword: Term.Name) -> () throws -> Expression.Kind? {
         { [weak self] in
             try self?.handleRaise(keyword)
         }
     }
     
-    public func handleRaise(_ keyword: TermName) throws -> Expression.Kind? {
+    public func handleRaise(_ keyword: Term.Name) throws -> Expression.Kind? {
         eatCommentsAndWhitespace()
         
         guard let error = try parsePrimary() else {
@@ -208,26 +204,26 @@ extension SourceParser {
         .null
     }
     
-    public func handleRef(_ keyword: TermName) -> () throws -> Expression.Kind? {
+    public func handleRef(_ keyword: Term.Name) -> () throws -> Expression.Kind? {
         { [weak self] in
             try self?.handleRef(keyword)
         }
     }
     
-    public func handleRef(_ keyword: TermName) throws -> Expression.Kind? {
+    public func handleRef(_ keyword: Term.Name) throws -> Expression.Kind? {
         guard let expression = try parsePrimary() else {
             throw ParseError(.missing(.expressionAfterKeyword(keyword: keyword)), at: currentLocation)
         }
         return .reference(to: expression)
     }
     
-    public func handleGet(_ keyword: TermName) -> () throws -> Expression.Kind? {
+    public func handleGet(_ keyword: Term.Name) -> () throws -> Expression.Kind? {
         { [weak self] in
             try self?.handleGet(keyword)
         }
     }
     
-    public func handleGet(_ keyword: TermName) throws -> Expression.Kind? {
+    public func handleGet(_ keyword: Term.Name) throws -> Expression.Kind? {
         guard let expression = try self.parsePrimary() else {
             throw ParseError(.missing(.expressionAfterKeyword(keyword: keyword)), at: currentLocation)
         }
@@ -239,7 +235,7 @@ extension SourceParser {
 // MARK: Primary and sequence parsing
 extension SourceParser {
     
-    public func parseSequence(_ endTag: TermName, stoppingAt stopKeywords: [String] = []) throws -> Expression {
+    public func parseSequence(_ endTag: Term.Name, stoppingAt stopKeywords: [String] = []) throws -> Expression {
         sequenceEndTags.append(endTag)
         defer {
             sequenceEndTags.removeLast()
@@ -719,20 +715,20 @@ extension SourceParser {
 // MARK: Parse helpers
 extension SourceParser {
     
-    public func parseVariableTerm(stoppingAt: [String] = []) throws -> VariableTerm? {
+    public func parseVariableTerm(stoppingAt: [String] = []) throws -> Term? {
         guard
             let termName = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .variable),
             !termName.words.isEmpty
         else {
             return nil
         }
-        return VariableTerm(lexicon.makeUID(forName: termName), name: termName)
+        return Term(.variable, lexicon.makeURI(forName: termName), name: termName)
     }
     
-    public func parseTermNameEagerly(stoppingAt: [String] = [], styling: Styling = .keyword) throws -> TermName? {
+    public func parseTermNameEagerly(stoppingAt: [String] = [], styling: Styling = .keyword) throws -> Term.Name? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
-        let allWords = TermName.words(in: restOfLine)
+        let allWords = Term.Name.words(in: restOfLine)
         
         guard !allWords.isEmpty else {
             return nil
@@ -756,18 +752,17 @@ extension SourceParser {
         
         eatFromSource(words, styling: styling)
         termNameStartIndex = startIndex
-        return TermName(words)
+        return Term.Name(words)
     }
     
-    public func parseTypeTerm() throws -> Bushel.ClassTerm? {
-        switch try eatTerm()?.enumerated {
-        case .class_(let typeTerm),
-             .pluralClass(let typeTerm as Bushel.ClassTerm):
-            return typeTerm
+    public func parseTypeTerm() throws -> Term? {
+        let term = try eatTerm()
+        switch term?.role {
+        case .type:
+            return term
         default:
-            throw AdHocParseError("expected type name", at: currentLocation)
+            throw ParseError(.missing(.type), at: currentLocation)
         }
-        
     }
     
     public func parseString() throws -> (expression: Expression, value: String)? {
@@ -782,10 +777,10 @@ extension SourceParser {
         }
     }
     
-    public func parseTermNameLazily(styling: Styling = .keyword) throws -> TermName? {
+    public func parseTermNameLazily(styling: Styling = .keyword) throws -> Term.Name? {
         let restOfLine = source.prefix { !$0.isNewline }
         let startIndex = restOfLine.startIndex
-        let words = TermName.words(in: restOfLine)
+        let words = Term.Name.words(in: restOfLine)
         
         guard let firstWord = words.first else {
             return nil
@@ -798,29 +793,29 @@ extension SourceParser {
                     let wordsWithoutPipes = Array(words[1..<wordIndex])
                     eatFromSource(wordsWithoutPipes + ["|"], styling: styling)
                     termNameStartIndex = startIndex
-                    return TermName(wordsWithoutPipes)
+                    return Term.Name(wordsWithoutPipes)
                 }
             }
             throw AdHocParseError("mismatched ‘|’", at: SourceLocation(termNameStartIndex..<source.startIndex, source: entireSource))
         } else {
             termNameStartIndex = startIndex
-            return TermName(firstWord)
+            return Term.Name(firstWord)
         }
     }
     
-    public func parseTermTypeName() -> TypedTermUID.Kind? {
+    public func parseTermTypeName() -> Term.SyntacticRole? {
         addingElement {
-            eatTermTypeName()
+            eatTermRoleName()
         }
     }
     
-    private func eatTermTypeName() -> TypedTermUID.Kind? {
-        guard let kindString = TermName.nextWord(in: source) else {
+    private func eatTermRoleName() -> Term.SyntacticRole? {
+        guard let kindString = Term.Name.nextWord(in: source) else {
             return nil
         }
         source.removeLeadingWhitespace()
         source.removeFirst(kindString.count)
-        return TypedTermUID.Kind(rawValue: String(kindString))
+        return Term.SyntacticRole(rawValue: String(kindString))
     }
     
     private func eatFromSource(_ words: [String], styling: Styling = .keyword) {
@@ -944,7 +939,7 @@ extension SourceParser {
         return result.termName != nil
     }
     
-    private func eatKeyword() -> TermName? {
+    private func eatKeyword() -> Term.Name? {
         let result = findComplexTermName(from: keywordsTraversalTable, in: source)
         guard let termName = result.termName else {
             return nil
@@ -955,7 +950,7 @@ extension SourceParser {
         return termName
     }
     
-    private func findPrefixOperator() -> (termName: TermName, operator: UnaryOperation)? {
+    private func findPrefixOperator() -> (termName: Term.Name, operator: UnaryOperation)? {
         let result = findComplexTermName(from: prefixOperatorsTraversalTable, in: source)
         return result.termName.map { name in
             (termName: name, operator: prefixOperators[name]!)
@@ -972,7 +967,7 @@ extension SourceParser {
         }
     }
     
-    private func findPostfixOperator() -> (termName: TermName, operator: UnaryOperation)? {
+    private func findPostfixOperator() -> (termName: Term.Name, operator: UnaryOperation)? {
         let result = findComplexTermName(from: postfixOperatorsTraversalTable, in: source)
         return result.termName.map { name in
             (termName: name, operator: postfixOperators[name]!)
@@ -989,7 +984,7 @@ extension SourceParser {
         }
     }
     
-    private func findBinaryOperator() -> (termName: TermName, operator: BinaryOperation)? {
+    private func findBinaryOperator() -> (termName: Term.Name, operator: BinaryOperation)? {
         let result = findComplexTermName(from: binaryOperatorsTraversalTable, in: source)
         return result.termName.map { name in
             (termName: name, operator: binaryOperators[name]!)
@@ -1007,7 +1002,7 @@ extension SourceParser {
         eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
     }
     
-    private func eatStringBeginMarker() -> (begin: TermName, end: TermName)? {
+    private func eatStringBeginMarker() -> (begin: Term.Name, end: Term.Name)? {
         let result = stringMarkers.map { $0.begin }.findSimpleTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -1018,7 +1013,7 @@ extension SourceParser {
         return stringMarkers.first { $0.begin == termName }
     }
     
-    private func eatExpressionGroupingBeginMarker() -> (begin: TermName, end: TermName)? {
+    private func eatExpressionGroupingBeginMarker() -> (begin: Term.Name, end: Term.Name)? {
         let result = expressionGroupingMarkers.map { $0.begin }.findSimpleTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -1027,7 +1022,7 @@ extension SourceParser {
         return expressionGroupingMarkers.first { $0.begin == termName }
     }
     
-    private func eatListBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName])? {
+    private func eatListBeginMarker() -> (begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name])? {
         let result = listMarkers.map { $0.begin }.findSimpleTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -1036,7 +1031,7 @@ extension SourceParser {
         return listMarkers.first { $0.begin == termName }
     }
     
-    private func eatRecordBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])? {
+    private func eatRecordBeginMarker() -> (begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])? {
         let result = recordMarkers.map { $0.begin }.findSimpleTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -1045,7 +1040,7 @@ extension SourceParser {
         return recordMarkers.first { $0.begin == termName }
     }
     
-    private func eatListAndRecordBeginMarker() -> (begin: TermName, end: TermName, itemSeparators: [TermName], keyValueSeparators: [TermName])? {
+    private func eatListAndRecordBeginMarker() -> (begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])? {
         let result = listAndRecordMarkers.map { $0.begin }.findSimpleTermName(in: source)
         guard let termName = result.termName else {
             return nil
@@ -1066,7 +1061,7 @@ extension SourceParser {
 // MARK: Parse primitives
 extension SourceParser {
     
-    public func tryEating(_ termName: TermName, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
+    public func tryEating(_ termName: Term.Name, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
         let rollbackSource = source
         for word in termName.words {
             guard tryEating(prefix: word, styling, spacing: spacing) else {
@@ -1077,7 +1072,7 @@ extension SourceParser {
         return true
     }
     
-    public func tryEating(oneOf termNames: [TermName], _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> TermName? {
+    public func tryEating(oneOf termNames: [Term.Name], _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Term.Name? {
         termNames.first { tryEating($0, styling, spacing: spacing) }
     }
     
@@ -1114,7 +1109,7 @@ extension SourceParser {
         return match
     }
     
-    public func awaiting<Result>(endMarkers: Set<TermName>, perform action: () throws -> Result) rethrows -> Result {
+    public func awaiting<Result>(endMarkers: Set<Term.Name>, perform action: () throws -> Result) rethrows -> Result {
         awaitingExpressionEndKeywords.append(endMarkers)
         defer {
             awaitingExpressionEndKeywords.removeLast()
@@ -1122,7 +1117,7 @@ extension SourceParser {
         return try action()
     }
     
-    public func awaiting<Result>(endMarker: TermName, perform action: () throws -> Result) rethrows -> Result {
+    public func awaiting<Result>(endMarker: Term.Name, perform action: () throws -> Result) rethrows -> Result {
         try awaiting(endMarkers: [endMarker], perform: action)
     }
     
@@ -1133,11 +1128,7 @@ extension SourceParser {
     }
     
     public func withTerminology<Result>(of term: Term, parse: () throws -> Result) throws -> Result {
-        guard let term = term as? TermDictionaryContainer else {
-            return try parse()
-        }
-        
-        lexicon.push(for: term)
+        lexicon.push(term)
         defer {
             lexicon.pop()
         }
@@ -1157,7 +1148,7 @@ extension SourceParser {
             let appBundle: Bundle
             switch expression.kind {
             case .specifier(let specifier):
-                guard specifier.idTerm.uid == TermUID(TypeUID.application) else {
+                guard specifier.idTerm.id == Term.ID(Types.application) else {
                     break noTerminology
                 }
                 
@@ -1182,12 +1173,12 @@ extension SourceParser {
                     break noTerminology
                 }
                 
-                let dictionary = lexicon.pushUnnamedDictionary()
+                lexicon.pushUnnamedDictionary()
                 terminologyPushed = true
-                try dictionary.loadTerminology(at: appBundle.bundleURL)
+                try lexicon.stack.last!.load(from: appBundle.bundleURL, under: lexicon.pool)
             case .use(let term),
                  .resource(let term):
-                lexicon.push(for: term)
+                lexicon.push(term)
                 terminologyPushed = true
             default:
                 break noTerminology
@@ -1245,7 +1236,7 @@ extension SourceParser {
                 var termString = source.prefix { !$0.isNewline }.prefix { !$0.isWordBreaking || $0.isWhitespace || $0 == ":" }
                 while let lastNonBreakingIndex = termString.lastIndex(where: { !$0.isWordBreaking }) {
                     termString = termString[...lastNonBreakingIndex]
-                    let termName = TermName(String(termString))
+                    let termName = Term.Name(String(termString))
                     if let term = dictionary.term(named: termName) {
                         return (termString, term)
                     } else {
@@ -1271,7 +1262,7 @@ extension SourceParser {
                 //  a) Lhs contains a dictionary, *and*
                 //  b) rhs is a term defined by that dictionary.
                 guard
-                    let dictionary = (term as? TermDictionaryContainer)?.storedDictionary,
+                    let dictionary = term.dictionary,
                     let result = findTerm(in: dictionary)
                 else {
                     // Restore the colon. It may have come from some other construct,
@@ -1303,34 +1294,27 @@ extension SourceParser {
                 
                 eatCommentsAndWhitespace()
                 
-                guard let kind = eatTermTypeName() else {
+                guard let role = eatTermRoleName() else {
                     throw ParseError(.invalidTermType, at: currentLocation)
                 }
                 
                 eatCommentsAndWhitespace()
                 
                 guard let closeBracketRange = source.range(of: "»") else {
-                    throw ParseError(.missing(.termUIDAndRawFormEndMarker), at: currentLocation)
+                    throw ParseError(.missing(.termURIAndRawFormEndMarker), at: currentLocation)
                 }
                 let uidString = source[..<closeBracketRange.lowerBound]
                 source = source[closeBracketRange.upperBound...]
-                guard let uid = TermUID(normalized: String(uidString)) else {
-                    throw ParseError(.missing(.termUID), at: currentLocation)
+                guard let uid = Term.SemanticURI(normalized: String(uidString)) else {
+                    throw ParseError(.missing(.termURI), at: currentLocation)
                 }
                 
-                var maybeTerm = lexicon.term(forUID: TypedTermUID(kind, uid))
-                if maybeTerm == nil {
-                    let termType = kind.termType
-                    maybeTerm = termType.init(uid, name: TermName(""))
-                    guard maybeTerm != nil else {
-                        throw ParseError(.rawFormTermNotConstructible, at: currentLocation)
-                    }
-                    lexicon.pool.add(maybeTerm!)
-                }
-                
-                guard let term = maybeTerm as? Terminology.Term else {
-                    throw ParseError(.wrongTermTypeForContext, at: currentLocation)
-                }
+                let term = lexicon.term(id: Term.ID(role, uid)) ??
+                    {
+                        let term = Term(role, uid)
+                        lexicon.pool.add(term)
+                        return term
+                    }()
                 
                 addElement(from: startIndex, styling: styling(for: term), spacing: .leftRight)
                 
@@ -1421,11 +1405,11 @@ extension SourceParser {
     }
     
     public func styling(for term: Term) -> Styling {
-        styling(for: term.typedUID.kind)
+        styling(for: term.role)
     }
     
-    public func styling(for termKind: TypedTermUID.Kind) -> Styling {
-        switch termKind {
+    public func styling(for role: Term.SyntacticRole) -> Styling {
+        switch role {
         case .dictionary:
             return .dictionary
         case .type:
@@ -1451,31 +1435,6 @@ extension StringProtocol {
     
     public var range: Range<Index> {
         return startIndex..<endIndex
-    }
-    
-}
-
-extension TypedTermUID.Kind {
-    
-    public var termType: Term.Type {
-        switch self {
-        case .constant:
-            return EnumeratorTerm.self
-        case .dictionary:
-            return DictionaryTerm.self
-        case .type:
-            return ClassTerm.self
-        case .property:
-            return PropertyTerm.self
-        case .command:
-            return CommandTerm.self
-        case .parameter:
-            return ParameterTerm.self
-        case .variable:
-            return VariableTerm.self
-        case .resource:
-            return ResourceTerm.self
-        }
     }
     
 }

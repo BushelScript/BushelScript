@@ -146,13 +146,13 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
         case let root as RT_SpecifierRemoteRoot:
             return try root.perform(command: command, arguments: arguments, implicitDirect: implicitDirect, for: self)
         default:
-            switch CommandUID(command.uid) {
+            switch CommandURI(command.uid) {
             case .set:
                 guard let property = property else {
                     throw NonPropertyIsNotWritable(specifier: self)
                 }
                 
-                let setTo = ParameterInfo(ParameterUID.set_to)
+                let setTo = ParameterInfo(Parameters.set_to)
                 guard let newValue = arguments[setTo] else {
                     throw MissingParameter(command: command, parameter: setTo)
                 }

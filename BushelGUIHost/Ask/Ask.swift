@@ -35,7 +35,7 @@ public func ask(_ rt: Runtime, for type: TypeInfo, prompt: String, title: String
             return (vc, { constructor(vc) })
         }
         
-        switch TypeUID(type.uid) {
+        switch Types(type.uid) {
         case .boolean:
             return checkboxVC { RT_Boolean.withValue($0.value) }
         case .string:

@@ -17,9 +17,7 @@ translation:
             ae4:
                 cobj: item
                 cwin: window
-                utf8:
-                    /standard: UTF-8 text
-                    /plural: UTF-8 text
+                utf8: UTF-8 text
                 list: list
                 reco: record
                 enum: constant
@@ -33,9 +31,7 @@ translation:
                 cwin: window
                 docu: document
                 file: file
-                alis:
-                    /standard: alias    # type/ae4:alis/standard
-                    /plural: aliases
+                alis: alias
                 capp:
                     - application
                     - app
@@ -81,7 +77,7 @@ translation:
                         - dirname
                         - directory name
                 date:
-                    seconds: seconds    # property/id:date:seconds
+                    seconds: seconds    # property id:date/seconds
                     minutes: minutes
                     hours: hours
                     seconds since midnight: seconds since midnight
@@ -169,17 +165,17 @@ translation:
             id:
                 Math:
                     abs:
-                        /direct: of
+                        .direct: of
                     sqrt:
-                        /direct: of
+                        .direct: of
                     cbrt:
-                        /direct: of
+                        .direct: of
                     square:
-                        /direct: of
+                        .direct: of
                     cube:
-                        /direct: of
+                        .direct: of
                     pow:
-                        /direct: of
+                        .direct: of
                         exponent: to the
                 Sequence:
                     join:
@@ -191,4 +187,4 @@ translation:
                         by: by
                 CLI:
                     log:
-                        /direct: message
+                        .direct: message
