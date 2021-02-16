@@ -15,6 +15,10 @@ public struct Hashbang {
     public let invocation: String
     public let location: SourceLocation
     
+    public var isEmpty: Bool {
+        invocation.isEmpty
+    }
+    
     public init?(_ invocation: String, at location: SourceLocation) {
         var invocation = invocation
         if invocation.starts(with: "#!") {

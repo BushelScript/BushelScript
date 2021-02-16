@@ -464,7 +464,11 @@ public extension Runtime {
         case .multilineString(_, let body): // MARK: .multilineString
             return RT_String(value: body)
         case .weave(let hashbang, let body): // MARK: .weave
-            return builtin.runWeave(hashbang.invocation, body, try evaluate(lastResult, lastResult: lastResult, target: target))
+            if hashbang.isEmpty {
+                return try evaluate(lastResult, lastResult: lastResult, target: target)
+            } else {
+                return builtin.runWeave(hashbang.invocation, body, try evaluate(lastResult, lastResult: lastResult, target: target))
+            }
         }
     }
     
