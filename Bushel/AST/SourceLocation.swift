@@ -97,46 +97,8 @@ extension SourceLocation {
         return words.joined(separator: " ")
     }
     
-    public init(between first: SourceLocation, and second: SourceLocation) {
-        self.init(first.range.upperBound..<second.range.lowerBound, source: first.source)
-    }
-    
     public init(at other: SourceLocation) {
         self.init(at: other.range.lowerBound, source: other.source)
-    }
-    
-    public init(after other: SourceLocation) {
-        self.init(at: other.range.upperBound, source: other.source)
-    }
-    
-}
-
-infix operator >|< : AdditionPrecedence
-prefix operator >|
-postfix operator |<
-
-public func >|< (lhs: SourceLocation, rhs: SourceLocation) -> SourceLocation {
-    return SourceLocation(between: lhs, and: rhs)
-}
-public prefix func >| (operand: SourceLocation) -> SourceLocation {
-    return SourceLocation(at: operand)
-}
-public postfix func |< (operand: SourceLocation) -> SourceLocation {
-    return SourceLocation(after: operand)
-}
-
-public extension String {
-    
-    mutating func trimLineEndings() {
-        self = String(
-            (split { $0.isNewline } as [Substring])
-            .map { (line: Substring) -> Substring in
-                var line = line
-                line.removeTrailingWhitespace()
-                return line
-            }
-            .joined()
-        )
     }
     
 }
