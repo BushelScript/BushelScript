@@ -10,8 +10,6 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
         switch expression.kind {
         case .empty:
             return ""
-        case .end:
-            return ""
         case .sequence(_):
             fatalError("unreachable")
         case .scoped(let expression):
@@ -308,8 +306,6 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
                 "##\(bihash.delimiter.isEmpty ? "" : "(\(bihash.delimiter))")\n\(body)\n##"
         case .weave(let hashbang, let body):
             return "#!\(hashbang.invocation)\n\(body.removingTrailingWhitespace(removingNewlines: true))"
-        case .endWeave:
-            return "#!"
         }
     }
     

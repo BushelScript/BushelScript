@@ -4,7 +4,6 @@ public struct Expression {
     
     public indirect enum Kind {
         case empty
-        case end
         case that
         case it
         case null
@@ -44,7 +43,6 @@ public struct Expression {
         case command(Term, parameters: [(key: Term, value: Expression)])
         case multilineString(bihash: Bihash, body: String)
         case weave(hashbang: Hashbang, body: String)
-        case endWeave
     }
     
     public let kind: Kind
@@ -68,7 +66,7 @@ extension Expression {
     
     public var hasSideEffects: Bool {
         switch kind {
-        case .empty, .end, .that, .it, .null, .resource, .integer, .double, .string, .variable, .enumerator, .class_, .multilineString, .endWeave:
+        case .empty, .that, .it, .null, .resource, .integer, .double, .string, .variable, .enumerator, .class_, .multilineString:
             assert(subexpressions().isEmpty)
             return false
         case .sequence, .scoped, .parentheses, .function, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
@@ -106,8 +104,6 @@ extension Expression.Kind {
         switch self {
         case .empty:
             return ("Empty expression", "No effect.")
-        case .end:
-            return ("End of block", "Ends the last opened block. Pops its dictionary, if any, off the lexicon.")
         case .that:
             return ("Previous result specifier", "Specifies the result of the last expression executed in sequence.")
         case .it:
@@ -186,8 +182,6 @@ extension Expression.Kind {
             return ("Multiline string", "A string representing the specified multiline text; a heredoc.\n\nMultiline strings are an experimental feature and are likely to change with time.")
         case .weave:
             return ("Weave expression", "Calls out to an external shell program using the given hashbang line.\n\nInput and output: The result of the previous expression is coerced to a string and written to standard input; the weave expression’s result is a string containing whatever the program writes to standard output.\n\nHashbangs: If the hashbang line begins with a ‘/’, e.g., “#!/bin/sh”, it is used verbatim. Otherwise, the line is fed as input into ‘env’, e.g., “#!ruby” is transformed to “#!/usr/bin/env ruby”.\n\nEnding a weave: To end the weave, either write a new hashbang line with a different shell program, or write “#!” to return to the previous BushelScript context.\n\nWeaves are an experimental feature and are likely to change with time.")
-        case .endWeave:
-            return ("End of weave expression", "Ends a weave expression and returns to the BushelScript context.")
         }
     }
     

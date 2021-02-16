@@ -14,8 +14,6 @@ extension Expression {
         switch kind {
         case .empty:
             return []
-        case .end:
-            return []
         case .that:
             return []
         case .it:
@@ -93,8 +91,6 @@ extension Expression {
         case .multilineString(_, _):
             return []
         case .weave(_, _):
-            return []
-        case .endWeave:
             return []
         }
     }

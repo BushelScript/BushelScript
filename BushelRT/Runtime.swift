@@ -282,7 +282,7 @@ public extension Runtime {
         }
         
         switch expression.kind {
-        case .empty, .end, .endWeave: // MARK: .empty, .end, .endWeave
+        case .empty: // MARK: .empty
             return try evaluate(lastResult, lastResult: lastResult, target: target)
         case .that: // MARK: .that
             return try
@@ -298,7 +298,6 @@ public extension Runtime {
             return RT_Null.null
         case .sequence(let expressions): // MARK: .sequence
             return try evaluate(expressions
-                .filter { if case .end = $0.kind { return false } else { return true } }
                 .reduce(lastResult, { (lastResult, expression) in
                     return try mapEval(ExprValue(expression), lastResult: lastResult, target: target)
                 }), lastResult: lastResult, target: target)

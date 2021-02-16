@@ -17,7 +17,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     public var sequenceNestingLevel: Int = 0
     public var elements: Set<SourceElement> = []
     public var awaitingExpressionEndKeywords: [Set<Term.Name>] = []
-    public var sequenceEndTags: [Term.Name] = []
+    public var endExpression: Bool = false
     
     public var keywordsTraversalTable: TermNameTraversalTable = [:]
     public var prefixOperatorsTraversalTable: TermNameTraversalTable = [:]
@@ -231,7 +231,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         let body = try withScope {
             lexicon.add(Set(arguments))
             lexicon.add(Term(Term.ID(Dictionaries.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.makeDictionary(under: lexicon.pool)))
-            return try parseSequence(functionNameTerm.name!)
+            return try parseSequence()
         }
         
         return .function(name: functionNameTerm, parameters: parameters, arguments: arguments, body: body)
@@ -241,7 +241,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         func parseBody() throws -> Expression {
             let foundNewline = tryEating(prefix: "\n")
             if foundNewline {
-                return try parseSequence(Term.Name("try"), stoppingAt: ["handle"])
+                return try parseSequence(stoppingAt: ["handle"])
             } else {
                 guard let bodyExpression = try parsePrimary() else {
                     throw AdHocParseError("expected expression or line break after ‘try’", at: expressionLocation)
@@ -257,7 +257,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
             
             if tryEating(prefix: "\n") {
-                return try parseSequence(Term.Name("try"))
+                return try parseSequence()
             } else {
                 guard let handleExpression = try parsePrimary() else {
                     throw AdHocParseError("expected expression or line break after ‘handle’", at: currentLocation)
@@ -284,7 +284,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
             
             if foundNewline {
-                return try parseSequence(Term.Name("if"), stoppingAt: ["else"])
+                return try parseSequence(stoppingAt: ["else"])
             } else {
                 guard let thenExpression = try parsePrimary() else {
                     let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
@@ -307,7 +307,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             }
             
             if tryEating(prefix: "\n") {
-                return try parseSequence(Term.Name("if"))
+                return try parseSequence()
             } else {
                 guard let elseExpr = try parsePrimary() else {
                     let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
@@ -334,7 +334,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             guard tryEating(prefix: "\n") else {
                 throw AdHocParseError("expected line break to begin repeat block", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
             }
-            return try parseSequence(keyword)
+            return try parseSequence()
         }
         
         if tryEating(prefix: "while") {
@@ -387,7 +387,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return try withTerminology(of: target) {
             let toExpr: Expression
             if foundNewline {
-                toExpr = try parseSequence(Term.Name("tell"))
+                toExpr = try parseSequence()
             } else {
                 guard let toExpression = try parsePrimary() else {
                     let toLocation = SourceLocation(toStartIndex..<currentIndex, source: entireSource)
@@ -451,7 +451,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     private func handleDefining() throws -> Expression.Kind? {
         let (term: term, existingTerm: existingTerm) = try parseDefineLine()
         let body = try withTerminology(of: term) {
-            try parseSequence(Term.Name("defining"))
+            try parseSequence()
         }
         return .defining(term, as: existingTerm, body: body)
     }

@@ -18,17 +18,11 @@ public extension SourceFormatter {
     
     func format(_ expression: Expression, level: Int) -> String {
         if case .sequence(let expressions) = expression.kind {
-            guard
-                !expressions.isEmpty,
-                !expressions.allSatisfy({ $0.kind.omit })
-            else {
+            guard !expressions.isEmpty else {
                 return "\(indentation(for: level))"
             }
             return expressions
-                .compactMap {
-                    guard !$0.kind.omit else {
-                        return nil
-                    }
+                .map {
                     let formatted = format($0, level: level + 1)
                     return indentation(for: $0.kind.deindent ? level : level + 1) + formatted
                 }
@@ -47,18 +41,9 @@ public extension SourceFormatter {
 
 private extension Expression.Kind {
     
-    var omit: Bool {
-        switch self {
-        case .end:
-            return true
-        default:
-            return false
-        }
-    }
-    
     var deindent: Bool {
         switch self {
-        case .weave, .endWeave:
+        case .weave:
             return true
         default:
             return false

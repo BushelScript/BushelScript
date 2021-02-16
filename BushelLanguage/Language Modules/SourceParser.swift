@@ -22,7 +22,7 @@ public protocol SourceParser: AnyObject {
     var sequenceNestingLevel: Int { get set }
     var elements: Set<SourceElement> { get set }
     var awaitingExpressionEndKeywords: [Set<Term.Name>] { get set }
-    var sequenceEndTags: [Term.Name] { get set }
+    var endExpression: Bool { get set }
     
     var keywordsTraversalTable: TermNameTraversalTable { get set }
     var prefixOperatorsTraversalTable: TermNameTraversalTable { get set }
@@ -101,7 +101,7 @@ extension SourceParser {
     }
     
     private func parseDocument() throws -> Expression {
-        let sequence = try parseSequence(Term.Name(""))
+        let sequence = try parseSequence()
         
         eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
         
@@ -157,14 +157,8 @@ extension SourceParser {
     }
     
     public func handleEnd() throws -> Expression.Kind? {
-        if findExpressionEndKeyword() || source.hasPrefix("\n") || source.isEmpty {
-            return .end
-        }
-        let endTag = sequenceEndTags.last!
-        guard tryEating(endTag) else {
-            throw ParseError(.missing(.endTagOrLineBreak(endTag: endTag)), at: currentLocation, fixes: [SequencingFix(fixes: [DeletingFix(at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource)), AppendingFix(appending: "\(endTag)", at: currentLocation)]), AppendingFix(appending: "\(endTag)\n", at: currentLocation)])
-        }
-        return .end
+        endExpression = true
+        return nil
     }
     
     public func handleReturn() throws -> Expression.Kind? {
@@ -235,13 +229,8 @@ extension SourceParser {
 // MARK: Primary and sequence parsing
 extension SourceParser {
     
-    public func parseSequence(_ endTag: Term.Name, stoppingAt stopKeywords: [String] = []) throws -> Expression {
-        sequenceEndTags.append(endTag)
-        defer {
-            sequenceEndTags.removeLast()
-        }
-        
-        // Matched by .end check below
+    public func parseSequence(stoppingAt stopKeywords: [String] = []) throws -> Expression {
+        // Matched by endExpression check below
         sequenceNestingLevel += 1
         
         var expressions: [Expression] = []
@@ -265,14 +254,15 @@ extension SourceParser {
             
             if let primary = try parsePrimary() {
                 expressions.append(primary)
-                if case Expression.Kind.end = primary.kind {
-                    sequenceNestingLevel -= 1
-                    
-                    elements.remove(indentation)
-                    elements.insert(SourceElement(Indentation(level: sequenceNestingLevel, location: indentation.location)))
-                    
-                    break
-                }
+            }
+            if endExpression {
+                endExpression = false
+                sequenceNestingLevel -= 1
+                
+                elements.remove(indentation)
+                elements.insert(SourceElement(Indentation(level: sequenceNestingLevel, location: indentation.location)))
+                
+                break
             }
             
             eatCommentsAndWhitespace()
@@ -497,7 +487,7 @@ extension SourceParser {
                     return Expression(.weave(hashbang: hashbang, body: body), at: SourceLocation(hashbang.location.range.lowerBound..<nextHashbang.location.range.lowerBound, source: entireSource))
                 } else if let endLocation = endHashbangLocation {
                     // Program continues after an empty #! at endLocation
-                    return Expression(.endWeave, at: endLocation)
+                    return Expression(.weave(hashbang: hashbang, body: body), at: endLocation)
                 } else {
                     // Program ends in a weave
                     return Expression(.weave(hashbang: hashbang, body: body), at: SourceLocation(hashbang.location.range.lowerBound..<currentIndex, source: entireSource))
@@ -671,10 +661,6 @@ extension SourceParser {
                 return nil
             }
         } else {
-            if findExpressionEndKeyword() {
-                return nil
-            }
-            
             guard let c = source.first else {
                 return nil
             }
@@ -1047,13 +1033,6 @@ extension SourceParser {
         }
         assume(tryEating(termName, spacing: .left))
         return listAndRecordMarkers.first { $0.begin == termName }
-    }
-    
-    private func findExpressionEndKeyword() -> Bool {
-        if case (_, _?)? = awaitingExpressionEndKeywords.last.map({ Array($0) })?.findSimpleTermName(in: source) ?? nil {
-            return true
-        }
-        return false
     }
     
 }
