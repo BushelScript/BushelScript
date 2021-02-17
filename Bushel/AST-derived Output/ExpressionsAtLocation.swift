@@ -74,7 +74,7 @@ extension Expression {
             return []
         case .enumerator(_):
             return []
-        case .class_(_):
+        case .type(_):
             return []
         case let .specifier(specifier):
             return specifier.allDataExpressionsFromSelfAndAncestors()

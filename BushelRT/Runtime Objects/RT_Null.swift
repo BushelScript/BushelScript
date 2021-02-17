@@ -26,8 +26,8 @@ public class RT_Null: RT_Object, AEEncodable {
         switch Types(type.uid) {
         case .string:
             return RT_String(value: "null")
-        case .class:
-            return RT_Class(value: RT_Null.typeInfo)
+        case .type:
+            return RT_Type(value: RT_Null.typeInfo)
         default:
             return super.coerce(to: type)
         }

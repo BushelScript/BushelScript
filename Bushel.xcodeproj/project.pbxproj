@@ -25,7 +25,7 @@
 		3C12EF852354E32C0057E0CC /* RT_String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF842354E32C0057E0CC /* RT_String.swift */; };
 		3C12EF872354E3470057E0CC /* RT_Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF862354E3470057E0CC /* RT_Character.swift */; };
 		3C12EF892354E3590057E0CC /* RT_Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF882354E3590057E0CC /* RT_Constant.swift */; };
-		3C12EF8D2354E3870057E0CC /* RT_Class.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF8C2354E3870057E0CC /* RT_Class.swift */; };
+		3C12EF8D2354E3870057E0CC /* RT_Type.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF8C2354E3870057E0CC /* RT_Type.swift */; };
 		3C12EF8F2354E4130057E0CC /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF8E2354E4130057E0CC /* Errors.swift */; };
 		3C12EF912354E4AA0057E0CC /* RT_Specifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF902354E4AA0057E0CC /* RT_Specifier.swift */; };
 		3C12EF932354E50B0057E0CC /* RT_RootSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF922354E50B0057E0CC /* RT_RootSpecifier.swift */; };
@@ -292,7 +292,7 @@
 		3C12EF842354E32C0057E0CC /* RT_String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_String.swift; sourceTree = "<group>"; };
 		3C12EF862354E3470057E0CC /* RT_Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Character.swift; sourceTree = "<group>"; };
 		3C12EF882354E3590057E0CC /* RT_Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Constant.swift; sourceTree = "<group>"; };
-		3C12EF8C2354E3870057E0CC /* RT_Class.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Class.swift; sourceTree = "<group>"; };
+		3C12EF8C2354E3870057E0CC /* RT_Type.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Type.swift; sourceTree = "<group>"; };
 		3C12EF8E2354E4130057E0CC /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3C12EF902354E4AA0057E0CC /* RT_Specifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Specifier.swift; sourceTree = "<group>"; };
 		3C12EF922354E50B0057E0CC /* RT_RootSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_RootSpecifier.swift; sourceTree = "<group>"; };
@@ -581,7 +581,7 @@
 				3C12EF7A2354E29B0057E0CC /* RT_Integer.swift */,
 				3C12EF782354E2860057E0CC /* RT_Real.swift */,
 				3C12EF762354E2660057E0CC /* RT_Numeric.swift */,
-				3C12EF8C2354E3870057E0CC /* RT_Class.swift */,
+				3C12EF8C2354E3870057E0CC /* RT_Type.swift */,
 				3C12EF9B2354E5D10057E0CC /* RT_AEObject.swift */,
 				3C950EA82572086800B7E094 /* RT_Error.swift */,
 				3C12EF942354E51C0057E0CC /* Specifiers */,
@@ -1655,7 +1655,7 @@
 				3CA2699023F9F09F009E1944 /* RT_System.swift in Sources */,
 				3CC224892391CFF300448D25 /* PropertyInfo.swift in Sources */,
 				3C950EA92572086900B7E094 /* RT_Error.swift in Sources */,
-				3C12EF8D2354E3870057E0CC /* RT_Class.swift in Sources */,
+				3C12EF8D2354E3870057E0CC /* RT_Type.swift in Sources */,
 				3C12EF932354E50B0057E0CC /* RT_RootSpecifier.swift in Sources */,
 				3CCA1C7E235D0C010037058C /* Logging.swift in Sources */,
 				3C187D51257C69F200481DA9 /* RT_InsertionSpecifier.swift in Sources */,

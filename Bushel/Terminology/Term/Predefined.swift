@@ -167,7 +167,7 @@ public enum Types: String, Term.PredefinedID {
     case specifier
     case comparisonTestSpecifier
     case logicalTestSpecifier
-    case `class`
+    case type
     case null
     case global
     case script
@@ -220,8 +220,10 @@ public enum Types: String, Term.PredefinedID {
             return typeCompDescriptor
         case .logicalTestSpecifier:
             return typeLogicalDescriptor
-        case .class:
-            return typeType
+        case .type:
+            // AppleScript uses this as a type.
+            // AppleScript is weird.
+            return pClass
         case .null:
             return try! FourCharCode(fourByteString: "msng")
         case .global, .script, .function, .system, .error, .environmentVariable:
@@ -272,7 +274,7 @@ public enum Types: String, Term.PredefinedID {
             case typeLogicalDescriptor:
                 self = .logicalTestSpecifier
             case typeType:
-                self = .class
+                self = .type
             case try! FourCharCode(fourByteString: "msng"):
                 self = .null
             default:

@@ -97,7 +97,7 @@ extension AppDelegate {
         let arguments = getArguments(from: event)
         
         let typeArg = arguments[ParameterInfo(.GUI_ask_dataType)]
-        let type = typeArg?.coerce(to: RT_Class.self)?.value ??
+        let type = typeArg?.coerce(to: RT_Type.self)?.value ??
             rt.type(forUID: Term.ID(Types.string))
         
         let promptArg = arguments[ParameterInfo(.direct)]

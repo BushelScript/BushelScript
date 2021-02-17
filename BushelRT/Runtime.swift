@@ -79,13 +79,13 @@ public class Runtime {
     }
     
     public func inject(terms: TermPool) {
-        func add(classTerm term: Term) {
-            func typeInfo(for classTerm: Term) -> TypeInfo {
+        func add(typeTerm term: Term) {
+            func typeInfo(for typeTerm: Term) -> TypeInfo {
                 var tags: Set<TypeInfo.Tag> = []
-                if let name = classTerm.name {
+                if let name = typeTerm.name {
                     tags.insert(.name(name))
                 }
-                return TypeInfo(classTerm.uri, tags)
+                return TypeInfo(typeTerm.uri, tags)
             }
             
             let type = typeInfo(for: term)
@@ -108,7 +108,7 @@ public class Runtime {
             case .dictionary:
                 break
             case .type:
-                add(classTerm: term)
+                add(typeTerm: term)
             case .property:
                 let tags: [PropertyInfo.Tag] = term.name.map { [.name($0)] } ?? []
                 let property = PropertyInfo(term.uri, Set(tags))
@@ -409,8 +409,8 @@ public extension Runtime {
             return builtin.getResource(term)
         case .enumerator(let term): // MARK: .constant
             return builtin.newConstant(term.id)
-        case .class_(let term): // MARK: .class_
-            return RT_Class(value: type(forUID: term.id))
+        case .type(let term): // MARK: .class_
+            return RT_Type(value: type(forUID: term.id))
         case .set(let expression, to: let newValueExpression): // MARK: .set
             if case .variable(let variableTerm) = expression.kind {
                 let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult, target: target)
@@ -474,7 +474,7 @@ public extension Runtime {
     }
     
     private func buildSpecifier(_ specifier: Specifier, lastResult: ExprValue, target: ExprValue) throws -> RT_Object {
-        let id = specifier.idTerm.id
+        let id = specifier.term.id
         
         let parent = try specifier.parent.map { try runPrimary($0, lastResult: lastResult, target: target, evaluateSpecifiers: false) }
         

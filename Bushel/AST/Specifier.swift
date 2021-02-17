@@ -13,14 +13,14 @@ public class Specifier {
     /// Here, `Safari` is parent to `window 1`.
     public var parent: Expression?
     
-    /// The class of data specified.
+    /// The type of data specified.
     /// Eventually encoded as `keyAEDesiredClass`.
-    public var idTerm: Term
+    public var term: Term
     
     public var kind: Kind
     
-    public init(class: Term, kind: Kind, parent: Expression? = nil) {
-        self.idTerm = `class`
+    public init(term: Term, kind: Kind, parent: Expression? = nil) {
+        self.term = term
         self.kind = kind
         self.parent = parent
     }
@@ -161,10 +161,10 @@ extension Expression {
             return subexpression.asSpecifier()
         case .specifier(let childSpecifier):
             return childSpecifier
-        case .class_(let `class`):
-            return Specifier(class: Term(.property, `class`.uri, name: `class`.name), kind: .property)
+        case .type(let type):
+            return Specifier(term: Term(.property, type.uri, name: type.name), kind: .property)
         case .enumerator(let enumerator):
-            return Specifier(class: Term(.property, enumerator.uri, name: enumerator.name), kind: .property)
+            return Specifier(term: Term(.property, enumerator.uri, name: enumerator.name), kind: .property)
         default:
             return nil
         }

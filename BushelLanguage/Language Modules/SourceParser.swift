@@ -1122,7 +1122,7 @@ extension SourceParser {
             let appBundle: Bundle
             switch expression.kind {
             case .specifier(let specifier):
-                guard specifier.idTerm.id == Term.ID(Types.application) else {
+                guard specifier.term.id == Term.ID(Types.application) else {
                     break noTerminology
                 }
                 

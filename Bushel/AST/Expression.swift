@@ -58,8 +58,8 @@ public struct Expression {
         case variable(Term)
         /// Yields a constant object reflecting its constituent term.
         case enumerator(Term)
-        /// Yields a class object reflecting its constituent term.
-        case class_(Term)
+        /// Yields a type object reflecting its constituent term.
+        case type(Term)
         /// Builds a specifier object from its constituent specifier, evaluting
         /// all of its expressions in order.
         /// If the current context evaluates specifiers, evaluates the specifier
@@ -222,7 +222,7 @@ extension Expression {
     /// usually due to some uncontrolled external interaction (like `.command`).
     public var hasSideEffects: Bool {
         switch kind {
-        case .empty, .that, .it, .null, .resource, .integer, .double, .string, .variable, .enumerator, .class_, .multilineString:
+        case .empty, .that, .it, .null, .resource, .integer, .double, .string, .variable, .enumerator, .type, .multilineString:
             assert(subexpressions().isEmpty)
             return false
         case .sequence, .scoped, .parentheses, .function, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
@@ -320,7 +320,7 @@ extension Expression.Kind {
             return ("Variable reference", "A previously defined variable.")
         case .enumerator:
             return ("Constant reference", "An enumerated, symbolic constant whose semantics depend on the context of use.")
-        case .class_:
+        case .type:
             return ("Type reference", "A BushelScript type value.")
         case .specifier:
             return ("Specifier", "Refers to one or more object(s). Can be evaluated with a “get” command or passed around as a reference. Automatically evaluated in most contexts; use a reference expression to prevent this.")

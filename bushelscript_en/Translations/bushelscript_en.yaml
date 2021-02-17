@@ -38,7 +38,7 @@ translation:
                 'obj ': specifier
                 cmpd: comparison test specifier
                 logi: logical test specifier
-                type: type
+                pcls: type
             id:
                 global: builtin
                 script: script
@@ -51,7 +51,6 @@ translation:
         property:
             ae4:
                 pALL: properties
-                pcls: type
                 pnam: name
                 'ID  ': id
                 pidx: index

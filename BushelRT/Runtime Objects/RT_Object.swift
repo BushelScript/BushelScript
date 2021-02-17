@@ -104,7 +104,7 @@ import Bushel
                 )
             )
         case .type:
-            return RT_Class(value: self.dynamicTypeInfo)
+            return RT_Type(value: self.dynamicTypeInfo)
         default:
             // Prefer to avoid evaluating all properties if we can.
             if
@@ -387,7 +387,7 @@ import Bushel
     /// Cannot be overridden.
     /// `coerce(to:)` should be overridden to define coercions.
     public final func coercing(to other: RT_Object) throws -> RT_Object {
-        guard let type = (other as? RT_Class)?.value else {
+        guard let type = (other as? RT_Type)?.value else {
             throw TypeObjectRequired(object: other)
         }
         guard let coerced = coerce(to: type) else {
@@ -664,7 +664,7 @@ extension RT_Object {
     
     /// The reflective runtime object representation of the given type.
     public static func type(_ type: TypeInfo) -> RT_Object {
-        RT_Class(value: type)
+        RT_Type(value: type)
     }
     
 }

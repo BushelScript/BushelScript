@@ -81,9 +81,9 @@ final class Builtin {
             case .and:
                 return lhs.and(rhs)
             case .isA:
-                return rhs.coerce(to: RT_Class.self).map { RT_Boolean.withValue(lhs.dynamicTypeInfo.isA($0.value)) }
+                return rhs.coerce(to: RT_Type.self).map { RT_Boolean.withValue(lhs.dynamicTypeInfo.isA($0.value)) }
             case .isNotA:
-                return rhs.coerce(to: RT_Class.self).map { RT_Boolean.withValue(!lhs.dynamicTypeInfo.isA($0.value)) }
+                return rhs.coerce(to: RT_Type.self).map { RT_Boolean.withValue(!lhs.dynamicTypeInfo.isA($0.value)) }
             case .equal:
                 return lhs.equal(to: rhs)
             case .notEqual:
@@ -352,7 +352,7 @@ extension SwiftAutomation.Symbol {
     func asRTObject() -> RT_Object {
         switch type {
         case typeType:
-            return RT_Class(value: TypeInfo(.ae4(code: code)))
+            return RT_Type(value: TypeInfo(.ae4(code: code)))
         case typeEnumerated, typeKeyword, typeProperty:
             return RT_Constant(value: ConstantInfo(.ae4(code: code)))
         default:

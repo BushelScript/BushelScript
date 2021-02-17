@@ -578,16 +578,16 @@ public final class EnglishParser: BushelLanguage.SourceParser {
             // have a runtime reflection type.
             return .null
         case .type: // MARK: .type
-            if let specifierKind = try parseSpecifierAfterClassName() {
-                return .specifier(Specifier(class: term, kind: specifierKind))
-            } else if let specifier = try parseRelativeSpecifierAfterClassName(term) {
+            if let specifierKind = try parseSpecifierAfterTypeName() {
+                return .specifier(Specifier(term: term, kind: specifierKind))
+            } else if let specifier = try parseRelativeSpecifierAfterTypeName(term) {
                 return .specifier(specifier)
             } else {
-                // Just the class name
-                return .class_(term)
+                // Just the type name
+                return .type(term)
             }
         case .property: // MARK: .property
-            let specifier = Specifier(class: term, kind: .property)
+            let specifier = Specifier(term: term, kind: .property)
             return .specifier(specifier)
         case .command: // MARK: .command
             var parameters: [(Term, Expression)] = []
@@ -649,7 +649,7 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         return try tryParseSpecifierPhrase(chainingTo: primary)
     }
     
-    public func parseSpecifierAfterClassName() throws -> Specifier.Kind? {
+    public func parseSpecifierAfterTypeName() throws -> Specifier.Kind? {
         eatCommentsAndWhitespace()
         guard let firstWord = Term.Name.nextWord(in: source) else {
             return nil
@@ -709,19 +709,19 @@ public final class EnglishParser: BushelLanguage.SourceParser {
         }
     }
     
-    public func parseRelativeSpecifierAfterClassName(_ classTerm: Term) throws -> Specifier? {
+    public func parseRelativeSpecifierAfterTypeName(_ typeTerm: Term) throws -> Specifier? {
         if tryEating(prefix: "before") {
             guard let parentExpression = try parsePrimary() else {
                 // e.g., window before
                 throw AdHocParseError("expected expression after ‘before’", at: currentLocation)
             }
-            return Specifier(class: classTerm, kind: .previous, parent: parentExpression)
+            return Specifier(term: typeTerm, kind: .previous, parent: parentExpression)
         } else if tryEating(prefix: "after") {
             guard let parentExpression = try parsePrimary() else {
                 // e.g., window before
                 throw AdHocParseError("expected expression after ‘after’", at: currentLocation)
             }
-            return Specifier(class: classTerm, kind: .next, parent: parentExpression)
+            return Specifier(term: typeTerm, kind: .next, parent: parentExpression)
         } else {
             return nil
         }
@@ -729,9 +729,9 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     public func parseSpecifierAfterQuantifier(kind: Specifier.Kind) throws -> Expression.Kind? {
         guard let type = try parseTypeTerm() else {
-            throw AdHocParseError("expected type name", at: currentLocation)
+            throw ParseError(.missing(.type), at: currentLocation)
         }
-        let specifier = Specifier(class: type, kind: kind)
+        let specifier = Specifier(term: type, kind: kind)
         return .specifier(specifier)
     }
     

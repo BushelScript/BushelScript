@@ -74,7 +74,7 @@ public class RT_Record: RT_Object, AEEncodable {
                         } else {
                             return key.type?.uid.ae4Code
                         }
-                    } else if let key = key as? RT_Class {
+                    } else if let key = key as? RT_Type {
                         return key.value.uid.ae4Code
                     } else {
                         return nil

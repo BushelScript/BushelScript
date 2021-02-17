@@ -1,8 +1,8 @@
 import Bushel
 import SwiftAutomation
 
-/// A runtime class reflected as a dynamic object.
-public class RT_Class: RT_Object, AEEncodable {
+/// A runtime type reflected as a dynamic object.
+public class RT_Type: RT_Object, AEEncodable {
     
     public var value: TypeInfo
     
@@ -10,7 +10,7 @@ public class RT_Class: RT_Object, AEEncodable {
         self.value = value
     }
     
-    private static let typeInfo_ = TypeInfo(.class)
+    private static let typeInfo_ = TypeInfo(.type)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }
@@ -20,7 +20,7 @@ public class RT_Class: RT_Object, AEEncodable {
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {
-        value == (other as? RT_Class)?.value
+        value == (other as? RT_Type)?.value
     }
     
     public override var hash: Int {
@@ -36,7 +36,7 @@ public class RT_Class: RT_Object, AEEncodable {
     
 }
 
-extension RT_Class {
+extension RT_Type {
     
     public override var debugDescription: String {
         super.description + "[value: \(value)]"

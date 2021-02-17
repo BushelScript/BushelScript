@@ -188,7 +188,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             return "\(format(lhs, level: level)) \(formattedOperator) \(formattedRhs)"
         case .variable(let term),
              .enumerator(let term),
-             .class_(let term):
+             .type(let term):
             return "\(term)"
         case .command(let term, var parameters):
             var formatted = "\(term)"
@@ -213,36 +213,36 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
         case .specifier(let specifier):
             var formatted: String
             
-            let className = "\(specifier.idTerm)"
+            let term = "\(specifier.term)"
             switch specifier.kind {
             case .simple(let dataExpression):
-                formatted = "\(className) \(format(dataExpression, level: level))"
+                formatted = "\(term) \(format(dataExpression, level: level))"
             case .index(let dataExpression):
-                formatted = "\(className) index \(format(dataExpression, level: level))"
+                formatted = "\(term) index \(format(dataExpression, level: level))"
             case .name(let dataExpression):
-                formatted = "\(className) named \(format(dataExpression, level: level))"
+                formatted = "\(term) named \(format(dataExpression, level: level))"
             case .id(let dataExpression):
-                formatted = "\(className) id \(format(dataExpression, level: level))"
+                formatted = "\(term) id \(format(dataExpression, level: level))"
             case .all:
-                formatted = "every \(className)"
+                formatted = "every \(term)"
             case .first:
-                formatted = "first \(className)"
+                formatted = "first \(term)"
             case .middle:
-                formatted = "middle \(className)"
+                formatted = "middle \(term)"
             case .last:
-                formatted = "last \(className)"
+                formatted = "last \(term)"
             case .random:
-                formatted = "some \(className)"
+                formatted = "some \(term)"
             case .previous:
-                formatted = "\(className)\(specifier.parent.map { " before\(format($0, level: level))" } ?? "")"
+                formatted = "\(term)\(specifier.parent.map { " before\(format($0, level: level))" } ?? "")"
             case .next:
-                formatted = "\(className)\(specifier.parent.map { " after\(format($0, level: level))" } ?? "")"
+                formatted = "\(term)\(specifier.parent.map { " after\(format($0, level: level))" } ?? "")"
             case .range(let from, let to):
-                formatted = "\(className) \(format(from, level: level)) thru \(format(to, level: level))"
+                formatted = "\(term) \(format(from, level: level)) thru \(format(to, level: level))"
             case .test(let predicate, _):
-                formatted = "\(className) where \(format(predicate, level: level))"
+                formatted = "\(term) where \(format(predicate, level: level))"
             case .property:
-                formatted = "\(className)"
+                formatted = "\(term)"
             }
             
             if let parent = specifier.parent {
