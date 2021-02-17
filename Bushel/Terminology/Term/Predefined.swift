@@ -384,7 +384,7 @@ public enum Properties: String, Term.PredefinedID {
     
 }
 
-public enum ConstantUID: String, Term.PredefinedID {
+public enum Constants: String, Term.PredefinedID {
     
     case `true`
     case `false`
@@ -422,7 +422,7 @@ public enum ConstantUID: String, Term.PredefinedID {
     
 }
 
-public enum CommandURI: String, Term.PredefinedID {
+public enum Commands: String, Term.PredefinedID {
     
     case get
     case set
@@ -562,7 +562,7 @@ public enum Parameters: String, Term.PredefinedID {
     
     public var ae12Code: (class: AEEventClass, id: AEEventID, code: AEKeyword)? {
         guard
-            let commandAndCode: (command: CommandURI, code: AEKeyword) = {
+            let commandAndCode: (command: Commands, code: AEKeyword) = {
                 switch self {
                 case .set_to:
                     return (.set, keyAEData)
@@ -631,7 +631,7 @@ public enum Parameters: String, Term.PredefinedID {
                 self = .direct
                 return
             }
-            switch (CommandURI(.ae8(class: `class`, id: id)), code) {
+            switch (Commands(.ae8(class: `class`, id: id)), code) {
             case (.set, keyAEData):
                 self = .set_to
             case (.open, keyAESearchText):

@@ -40,7 +40,7 @@ extension TermDictionary {
         terms.removeAll { term in
             // Don't import terms that shadow the "set" and "get"
             // builtin special-case commands
-            [CommandURI.get, CommandURI.set]
+            [Commands.get, Commands.set]
                 .map { Term.ID($0) }
                 .contains(term.id)
         }

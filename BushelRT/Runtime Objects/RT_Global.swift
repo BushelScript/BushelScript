@@ -34,7 +34,7 @@ public class RT_Global: RT_Object {
             return try RT_Application(bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
         
-        switch CommandURI(command.typedUID) {
+        switch Commands(command.typedUID) {
         case .delay:
             let delaySeconds = arguments[ParameterInfo(.direct)]?.coerce(to: RT_Real.self)?.value ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)

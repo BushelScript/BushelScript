@@ -83,7 +83,7 @@ extension SourceParser {
         self.elements = []
         
         guard !source.isEmpty else {
-            return Program(Expression.empty(at: currentLocation), [], source: entireSource, terms: TermPool())
+            return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, terms: TermPool())
         }
         
         buildTraversalTables()
@@ -163,12 +163,7 @@ extension SourceParser {
     
     public func handleReturn() throws -> Expression.Kind? {
         eatCommentsAndWhitespace()
-        
-        if source.first?.isNewline ?? true {
-            return .return_(Expression.empty(at: currentLocation))
-        } else {
-            return .return_(try parsePrimary())
-        }
+        return .return_(source.first?.isNewline ?? true ? nil : try parsePrimary())
     }
     
     public func handleRaise(_ keyword: Term.Name) -> () throws -> Expression.Kind? {

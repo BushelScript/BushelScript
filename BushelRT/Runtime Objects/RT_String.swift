@@ -112,7 +112,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        switch CommandURI(command.typedUID) {
+        switch Commands(command.typedUID) {
         case .String_split:
             guard let separator = arguments[ParameterInfo(.String_split_by)]?.coerce(to: RT_String.self) else {
                 // TODO: Throw error

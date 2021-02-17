@@ -33,7 +33,7 @@ final class Builtin {
     }
     
     func newConstant(_ typedUID: Term.ID) -> RT_Object {
-        switch ConstantUID(typedUID) {
+        switch Constants(typedUID) {
         case .true:
             return RT_Boolean.withValue(true)
         case .false:

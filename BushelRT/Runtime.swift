@@ -361,7 +361,8 @@ public extension Runtime {
         case .defining(_, as: _, body: let body): // MARK: .defining
             return try runPrimary(body, lastResult: lastResult, target: target)
         case .return_(let returnValue): // MARK: .return_
-            let returnExprValue = try returnValue.map { try runPrimary($0, lastResult: lastResult, target: target) } ?? RT_Null.null
+            let returnExprValue = try returnValue.map { try runPrimary($0, lastResult: lastResult, target: target) } ??
+                evaluate(lastResult, lastResult: lastResult, target: target)
             throw EarlyReturn(value: returnExprValue)
         case .raise(let error): // MARK: .raise
             let errorValue = try runPrimary(error, lastResult: lastResult, target: target)
@@ -423,7 +424,7 @@ public extension Runtime {
                     ParameterInfo(.direct): expressionExprValue,
                     ParameterInfo(.set_to): newValueExprValue
                 ]
-                let command = self.command(forUID: Term.ID(CommandURI.set))
+                let command = self.command(forUID: Term.ID(Commands.set))
                 return try builtin.run(command: command, arguments: arguments, target: evaluate(target, lastResult: lastResult, target: target))
             }
         case .command(let term, let parameters): // MARK: .command

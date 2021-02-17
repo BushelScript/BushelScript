@@ -58,7 +58,7 @@ public class RT_Real: RT_Object, AEEncodable {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        switch CommandURI(command.typedUID) {
+        switch Commands(command.typedUID) {
         case .Math_abs:
             return RT_Real(value: abs(self.value))
         case .Math_sqrt:

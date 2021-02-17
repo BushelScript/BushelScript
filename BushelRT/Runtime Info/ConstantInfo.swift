@@ -37,7 +37,7 @@ public class ConstantInfo: TermInfo, Hashable {
         hasher.combine(uid)
     }
     
-    public convenience init(_ predefined: ConstantUID, _ tags: Set<Tag> = []) {
+    public convenience init(_ predefined: Constants, _ tags: Set<Tag> = []) {
         self.init(Term.SemanticURI(predefined), tags)
     }
     
