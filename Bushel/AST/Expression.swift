@@ -1,60 +1,205 @@
 import Foundation
 
+/// An Abstract Syntax Tree (AST) node of a Bushel language program.
 public struct Expression {
     
+    /// An expression's kind and constituents, like terms and subexpressions,
+    /// which vary by kind.
     public indirect enum Kind {
-        case empty
-        case that
-        case it
-        case null
-        case sequence([Expression])
-        case scoped(Expression)
+        /// Syntactically groups its constituent. Evaluates it and yields the
+        /// result.
         case parentheses(Expression)
-        case function(name: Term, parameters: [Term], arguments: [Term], body: Expression)
-        case try_(body: Expression, handle: Expression)
-        case if_(condition: Expression, then: Expression, else: Expression?)
-        case repeatWhile(condition: Expression, repeating: Expression)
-        case repeatTimes(times: Expression, repeating: Expression)
-        case repeatFor(variable: Term, container: Expression, repeating: Expression)
+        /// Pushes an anonymous dictionary _D_ to the lexicon, evaluates its
+        /// constituent, and then pops _D_ off the lexicon. Yields the result
+        /// of evaluating its constituent.
+        case scoped(Expression)
+        /// Evaluates each constituent expression in order and yields the result
+        /// of the last one.
+        case sequence([Expression])
+        /// Represents a blank line in a sequence. Yields the equivalent of
+        /// `.that`.
+        case empty
+        /// Yields the result of the previous evaluated expression in the
+        /// current sequence.
+        case that
+        /// Yields the current target.
+        case it
+        /// Evaluates `target` without evaluating specifiers, makes the result
+        /// the current target, evalutes `to`, and then reverts the current
+        /// target.
         case tell(target: Expression, to: Expression)
-        case let_(Term, initialValue: Expression?)
-        case define(Term, as: Term?)
-        case defining(Term, as: Term?, body: Expression)
-        case return_(Expression?)
-        case raise(Expression)
+        /// Imports the resource identified by `resource`.
+        /// See [Resources](https://bushelscript.github.io/help/docs/ref/resources).
         case use(resource: Term)
+        /// Yields the resource identified by its constituent term.
         case resource(Term)
+        /// Yields the null constant.
+        case null
+        /// Yields an integer object with its constituent value.
         case integer(Int64)
+        /// Yields a double-precision floating-point number object with its
+        /// constituent value.
         case double(Double)
+        /// Yields a string object with its constituent value.
         case string(String)
-        case list([Expression])
-        case record([(key: Expression, value: Expression)])
-        case prefixOperator(operation: UnaryOperation, operand: Expression)
-        case postfixOperator(operation: UnaryOperation, operand: Expression)
-        case infixOperator(operation: BinaryOperation, lhs: Expression, rhs: Expression)
-        case variable(Term)
-        case enumerator(Term)
-        case class_(Term)
-        case specifier(Specifier)
-        case insertionSpecifier(InsertionSpecifier)
-        case reference(to: Expression)
-        case get(Expression)
-        case set(Expression, to: Expression)
-        case command(Term, parameters: [(key: Term, value: Expression)])
+        /// Yields a string object with `body` as its (possibly multiline)
+        /// value.
         case multilineString(bihash: Bihash, body: String)
+        /// Evaluates each of its constituent expressions in order, and yields
+        /// a list object containing their results.
+        case list([Expression])
+        /// Evaluates each of its constituent key-value pairs in order by:
+        ///  - Evaluating the key without evaluating specifiers, then
+        ///  - Evaluating the value.
+        ///
+        /// Yields a record object mapping the result keys to the result values.
+        case record([(key: Expression, value: Expression)])
+        /// Yields the value bound to its constituent variable term.
+        case variable(Term)
+        /// Yields a constant object reflecting its constituent term.
+        case enumerator(Term)
+        /// Yields a class object reflecting its constituent term.
+        case class_(Term)
+        /// Builds a specifier object from its constituent specifier, evaluting
+        /// all of its expressions in order.
+        /// If the current context evaluates specifiers, evaluates the specifier
+        /// object and yields the result.
+        /// Otherwise, yields the specifier object.
+        case specifier(Specifier)
+        /// Builds an insertion specifier object from its constituent insertion
+        /// specifier, evaluating all of its expressions in order, and yields
+        /// the insertion specifier object.
+        case insertionSpecifier(InsertionSpecifier)
+        /// Evaluates `to` without evaluating specifiers and yields the result.
+        case reference(to: Expression)
+        /// Evaluates its constituent, evaluating specifiers, and yields the
+        /// result.
+        case get(Expression)
+        /// If its constituent is a `.variable` expression, evaluates `to` and
+        /// binds the result to the `.variable` expression's variable term.
+        /// Otherwise, evaluates its constituent _C_ without evaluating
+        /// specifiers, evaluates `to`, and calls the command `ae8:coresetd`
+        /// with the result of _C_ as the direct object argument and the result
+        /// of `to` as the `ae4:data` argument.
+        case set(Expression, to: Expression)
+        /// Evaluates each `value` expression in `parameters`, then calls its
+        /// constituent command term with the result of each `value` as the argument for its key-value pair's `key` parameter term. Yields the
+        /// result of the call.
+        case command(Term, parameters: [(key: Term, value: Expression)])
+        /// Evaluates `operand`, then yields `operation` applied to the result.
+        case prefixOperator(operation: UnaryOperation, operand: Expression)
+        /// Evaluates `operand`, then yields `operation` applied to the result.
+        case postfixOperator(operation: UnaryOperation, operand: Expression)
+        /// Evaluates `lhs`, then `rhs`, and then yields `operation` applied
+        /// to the result of `lhs` and the result of `rhs`.
+        case infixOperator(operation: BinaryOperation, lhs: Expression, rhs: Expression)
+        /// Performs the equivalent of the following:
+        ///  - Creates an executable temporary file _F_ with `hashbang`'s
+        ///    invocation as a `#!` signature and with no other content.
+        ///  - Appends `body` to _F_.
+        ///  - Requests that the OS execute _F_, establishing communication with
+        ///    the newly created process _P_ via stdin pipe _I_ and stdout pipe
+        ///    _O_.
+        ///  - Writes the equivalent of `.that` coereced to a string to _I_ and
+        ///    then closes _I_.
+        ///  - Blocks until _P_ has terminated.
+        ///  - Yields the entire contents of _O_ as a string.
         case weave(hashbang: Hashbang, body: String)
+        /// Defines the constituent variable term in the current dictionary.
+        /// If `initialValue` exists, evaluates `initialValue` and binds the
+        /// result to the constituent variable term.
+        case let_(Term, initialValue: Expression?)
+        /// Let _T_ be a term with the role and name of the constituent term.
+        /// If `as` exists, _T_ has the URI of `as`.
+        /// Otherwise, _T_ has a pathname URI composed of its name and the
+        /// name of each dictionary in the lexicon, in order.
+        /// Defines _T_ in the current dictionary.
+        /// Yields the equivalent of `.that`.
+        case define(Term, as: Term?)
+        /// Semantically equivalent to _.define_, except that after defining
+        /// _T_, pushes _T_'s dictionary _D_ on the lexicon, evaluates `body`,
+        /// and then pops _D_ off the lexicon. Yields the result of `body`.
+        case defining(Term, as: Term?, body: Expression)
+        /// Defines a function by adding `name` to the current dictionary as a
+        /// command term with parameter terms `parameters`. Yields the
+        /// equivalent of `.that`.
+        ///
+        /// `body` is the function definition. When the function is called,
+        /// a function dictionary is pushed to the lexicon, each argument is
+        /// bound to a variable term in `arguments`, `body` is evaluated, the
+        /// function dictionary is popped off the lexicon, and the result of
+        /// `body` is yielded.
+        case function(name: Term, parameters: [Term], arguments: [Term], body: Expression)
+        /// Evaluates its constituent _C_ if it exists, then returns control
+        /// from the current function context.
+        /// If _C_ exists, the function yields the result of _C_.
+        /// Otherwise, the function yields the equivalent of `.that`.
+        case return_(Expression?)
+        /// Evaluates its constituent and raises the result as an error.
+        case raise(Expression)
+        /// Evaluates `body`. If an error is raised while evaluating `body`,
+        /// makes the raised object the current target, evaluates `handle`, and
+        /// then reverts the current target.
+        case try_(body: Expression, handle: Expression)
+        /// _Conditional expression_.
+        ///
+        /// Evaluates `condition`.
+        /// If the result is truthy, evaluates `then` and yields its result.
+        /// Otherwise:
+        ///   - If `else` exists, evaluates `else` and yields its result.
+        ///   - Otherwise, yields the equivalent of `.that`.
+        case if_(condition: Expression, then: Expression, else: Expression?)
+        /// _Indefinite loop expression_.
+        ///
+        /// Evaluates `condition`.
+        /// If the result is truthy:
+        ///  - (A) Evalutes `repeating`. Then, evaluates `condition`:
+        ///    - If the result of `condition` is truthy, continues from
+        ///      line (A).
+        ///    - Otherwise, yields the result of the last evaluation of
+        ///      `repeating`.
+        ///
+        ///  Otherwise, yields the equivalent of `.that`.
+        case repeatWhile(condition: Expression, repeating: Expression)
+        /// _Definite counting loop expression_.
+        ///
+        /// Evaluates `times`.
+        ///
+        /// If the result of `times` is numeric, let _n_ be that number rounded
+        /// to an integer toward positive infinity.
+        /// Then:
+        ///  - Evaluates `repeating`.
+        ///  - If `repeating` has been evaluated _n_ times, yields the result of
+        ///    the last evaluation of `repeating`.
+        ///
+        /// Otherwise (if the result of `times` is not numeric), yields the
+        /// equivalent of `.that`.
+        case repeatTimes(times: Expression, repeating: Expression)
+        /// _Definite iterating loop expression_.
+        ///
+        /// Evaluates `container`.
+        ///
+        /// If the result of `container` is a sequence, let _n_ be the length
+        /// of that seuqnece.
+        /// Then:
+        ///  - Binds the element at zero-based index _i_ of the sequence to the
+        ///    variable term `variable`, where _i_ is the number of times
+        ///    `repeating` has been evaluated.
+        ///  - Evaluates `repeating`.
+        ///  - If `repeating` has been evaluated _n_ times, yields the result of
+        ///    the last evaluation of `repeating`.
+        ///
+        /// Otherwise (if the result of `container` is not a sequence), raises
+        /// some error.
+        case repeatFor(variable: Term, container: Expression, repeating: Expression)
     }
     
+    /// Kind and constituents, including terms and subexpressions.
     public let kind: Kind
+    /// Location in the source code from which the expression was parsed.
     public let location: SourceLocation
     
-    public static func empty(at location: SourceLocation) -> Expression {
-        Expression(.empty, at: location)
-    }
-    public static func emptySequence(at location: SourceLocation) -> Expression {
-        Expression(.sequence([]), at: location)
-    }
-    
+    /// Initializes from constituent kind and location.
     public init(_ kind: Kind, at location: SourceLocation) {
         self.kind = kind
         self.location = location
@@ -64,6 +209,17 @@ public struct Expression {
 
 extension Expression {
     
+    /// Whether evaluating the expression may have any detectable effects other
+    /// than yielding a value (side-effects).
+    ///
+    /// Simple constant and read expressions do not have side-effects.
+    ///
+    /// Many expressions do not intrinsically have side-effects but do have
+    /// subexpressions. Such expressions may have side-effects if and only if
+    /// any of their subexpressions have side-effects.
+    ///
+    /// Some kinds of expression intrinsically may have side-effects. This is
+    /// usually due to some uncontrolled external interaction (like `.command`).
     public var hasSideEffects: Bool {
         switch kind {
         case .empty, .that, .it, .null, .resource, .integer, .double, .string, .variable, .enumerator, .class_, .multilineString:
