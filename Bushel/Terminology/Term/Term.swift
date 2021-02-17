@@ -1,6 +1,6 @@
 import Foundation
 
-public class Term: Hashable {
+public class Term: Hashable, CustomStringConvertible {
     
     public let id: ID
     public let name: Name?
