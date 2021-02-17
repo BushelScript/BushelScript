@@ -6,7 +6,7 @@ repeat 1 times
             end
             repeating 6 times
             
-            end repeating
+            end
         end
-    end repeat
+    end
 end

@@ -14,33 +14,33 @@ class TermNameSearchingTests: XCTestCase {
     }
     
     func test_simpleSearch_matchesAtBeginning() {
-        let (termString, Term.Name) = termNames(["one", "two"]).findSimpleTermName(in: source)
+        let (termString, termName) = termNames(["one", "two"]).findSimpleTermName(in: source)
         XCTAssertEqual(termString, "one")
-        XCTAssertEqual(Term.Name, Term.Name("one"))
+        XCTAssertEqual(termName, Term.Name("one"))
     }
     func test_simpleSearch_doesNotMatchBeyondFirst() {
-        let (termString, Term.Name) = termNames(["two", "three"]).findSimpleTermName(in: source)
+        let (termString, termName) = termNames(["two", "three"]).findSimpleTermName(in: source)
         XCTAssertEqual(termString, "")
-        XCTAssertEqual(Term.Name, nil)
+        XCTAssertEqual(termName, nil)
     }
     
     func test_complexSearch_matchesSingleWordAtBeginning() {
         let table = buildTraversalTable(for: termNames(["one", "two"]))
-        let (termString, Term.Name) = findComplexTermName(from: table, in: source)
+        let (termString, termName) = findComplexTermName(from: table, in: source)
         XCTAssertEqual(termString, "one")
-        XCTAssertEqual(Term.Name, Term.Name("one"))
+        XCTAssertEqual(termName, Term.Name("one"))
     }
     func test_complexSearch_doesNotMatchSingleWordBeyondFirst() {
         let table = buildTraversalTable(for: termNames(["two", "three"]))
-        let (termString, Term.Name) = findComplexTermName(from: table, in: source)
+        let (termString, termName) = findComplexTermName(from: table, in: source)
         XCTAssertEqual(termString, "")
-        XCTAssertEqual(Term.Name, nil)
+        XCTAssertEqual(termName, nil)
     }
     func test_complexSearch_matchesMultiWordAtBeginning() {
         let table = buildTraversalTable(for: termNames(["one two three", "two", "three", "a"]))
-        let (termString, Term.Name) = findComplexTermName(from: table, in: source)
+        let (termString, termName) = findComplexTermName(from: table, in: source)
         XCTAssertEqual(termString, "one two three")
-        XCTAssertEqual(Term.Name, Term.Name("one two three"))
+        XCTAssertEqual(termName, Term.Name("one two three"))
     }
     
     func testPerformence_simpleSearch_shortWords() {

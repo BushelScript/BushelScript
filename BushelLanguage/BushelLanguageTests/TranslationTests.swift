@@ -4,6 +4,8 @@ import Bushel
 
 // Protip: ⌥⇧⌘← to fold all methods
 
+private typealias Pathname = Term.SemanticURI.Pathname
+
 class TranslationParserTests: XCTestCase {
     
     private let currentFormat = "0.1"
@@ -128,17 +130,17 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[Term.ID(.type, .id("global"))],
+            translation[Term.ID(.type, .id(Pathname(["global"])))],
             Term.Name("BushelScript"),
             "id type should have supplied name"
         )
         XCTAssertEqual(
-            translation[Term.ID(.property, .id("current date"))],
+            translation[Term.ID(.property, .id(Pathname(["current date"])))],
             Term.Name("current date"),
             "id property should have supplied name"
         )
         XCTAssertEqual(
-            translation[Term.ID(.command, .id("delay"))],
+            translation[Term.ID(.command, .id(Pathname(["delay"])))],
             Term.Name("delay"),
             "id command should have supplied name"
         )
@@ -169,27 +171,27 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[Term.ID(.property, .id("Math:pi"))],
+            translation[Term.ID(.property, .id(Pathname(["Math", "pi"])))],
             Term.Name("pi"),
             "Nested id property should have supplied name"
         )
         XCTAssertEqual(
-            translation[Term.ID(.command, .id("Math:abs"))],
+            translation[Term.ID(.command, .id(Pathname(["Math", "abs"])))],
             Term.Name("absolute value"),
             "Nested id command should have supplied name"
         )
         XCTAssertEqual(
-            translation[Term.ID(.command, .id("Math:sqrt"))],
+            translation[Term.ID(.command, .id(Pathname(["Math", "sqrt"])))],
             Term.Name("√"),
             "Nested id command should have supplied name"
         )
         XCTAssertEqual(
-            translation[Term.ID(.parameter, .id("Math:pow:.direct"))],
+            translation[Term.ID(.parameter, .id(Pathname(["Math", "pow", ".direct"])))],
             Term.Name("of"),
             "Nested id parameter should have supplied name"
         )
         XCTAssertEqual(
-            translation[Term.ID(.parameter, .id("Math:pow:exponent"))],
+            translation[Term.ID(.parameter, .id(Pathname(["Math", "pow", "exponent"])))],
             Term.Name("to the"),
             "Nested id parameter should have supplied name"
         )
@@ -231,83 +233,9 @@ translation:
         let translation = try Translation(source: translationSource)
         
         XCTAssertEqual(
-            translation[Term.ID(.command, .id("delay"))],
+            translation[Term.ID(.command, .id(Pathname(["delay"])))],
             [Term.Name("delay"), Term.Name("wait")],
             "id command should have supplied synonymous names"
-        )
-    }
-        
-    func test_parsesMappings_ae4_withVariants() throws {
-        let translationSource = """
-translation:
-    format: \(currentFormat)
-    language: bushelscript_en
-    mappings:
-        type:
-            ae4:
-                alis:
-                    /standard: alias
-                    /plural: aliases
-"""
-        let translation = try Translation(source: translationSource)
-        
-        XCTAssertEqual(
-            translation[Term.ID(.type, .ae4(code: try! FourCharCode(fourByteString: "alis")))],
-            [Term.Name("alias")],
-            "ae4 type should have variant name"
-        )
-        XCTAssertEqual(
-            translation[Term.ID(.type, .variant(.plural, .ae4(code: try! FourCharCode(fourByteString: "alis"))))],
-            [Term.Name("aliases")],
-            "ae4 type should have variant name"
-        )
-    }
-    
-    
-    func test_parsesMappings_ae4_withSynonymousVariants() throws {
-        let translationSource = """
-translation:
-    format: \(currentFormat)
-    language: bushelscript_en
-    mappings:
-        type:
-            ae4:
-                utxt:
-                    /standard:
-                        - string
-                        - text
-                    /plural:
-                        - strings
-                        - text
-                utf8:
-                    -
-                        /standard: UTF-8 string
-                        /plural: UTF-8 strings
-                    -
-                        /standard: UTF-8 text
-                        /plural: UTF-8 text
-"""
-        let translation = try Translation(source: translationSource)
-        
-        XCTAssertEqual(
-            translation[Term.ID(.type, .ae4(code: try! FourCharCode(fourByteString: "utxt")))],
-            [Term.Name("string"), Term.Name("text")],
-            "ae4 type should have supplied synonymous variant names"
-        )
-        XCTAssertEqual(
-            translation[Term.ID(.type, .variant(.plural, .ae4(code: try! FourCharCode(fourByteString: "utxt"))))],
-            [Term.Name("strings"), Term.Name("text")],
-            "ae4 type should have supplied synonymous variant names"
-        )
-        XCTAssertEqual(
-            translation[Term.ID(.type, .ae4(code: try! FourCharCode(fourByteString: "utf8")))],
-            [Term.Name("UTF-8 string"), Term.Name("UTF-8 text")],
-            "ae4 type should have supplied synonymous variant names"
-        )
-        XCTAssertEqual(
-            translation[Term.ID(.type, .variant(.plural, .ae4(code: try! FourCharCode(fourByteString: "utf8"))))],
-            [Term.Name("UTF-8 strings"), Term.Name("UTF-8 text")],
-            "ae4 type should have supplied synonymous variant names"
         )
     }
     

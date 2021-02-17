@@ -3,10 +3,10 @@ repeat 1 times
         repeat 3 times
             4
             repeat 5 times
-            end repeat
+            end
             repeat 6 times
                 
-            end repeat
-        end repeat
-    end repeat
-end repeat
+            end
+        end
+    end
+end

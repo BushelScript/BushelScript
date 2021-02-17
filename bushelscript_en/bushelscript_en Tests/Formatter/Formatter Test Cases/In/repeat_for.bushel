@@ -6,7 +6,7 @@ repeat for a in 1
             end
             repeating for   e in 6
             
-            end repeating
+            end
         end
-    end repeat
+    end
 end

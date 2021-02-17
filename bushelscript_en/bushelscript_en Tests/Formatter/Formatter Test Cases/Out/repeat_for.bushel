@@ -3,10 +3,10 @@ repeat for a in 1
         repeat for c in 3
             4
             repeat for d in 5
-            end repeat
+            end
             repeat for e in 6
                 
-            end repeat
-        end repeat
-    end repeat
-end repeat
+            end
+        end
+    end
+end
