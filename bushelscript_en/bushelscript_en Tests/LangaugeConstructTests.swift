@@ -43,24 +43,6 @@ class LanguageConstructTests: XCTestCase {
         XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
     456
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123
-    456
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
 end
 """))
         XCTAssertNoThrow(try parser.parse(source: """
@@ -75,18 +57,6 @@ end
         XCTAssertNoThrow(try parser.parse(source: """
 if 123
 end
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
-    789
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123
-    456
-    789
-end if
 """))
         XCTAssertNoThrow(try parser.parse(source: """
 if 123 then
@@ -110,32 +80,6 @@ if 123 then
     456
 else
     789
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123
-    456
-else
-    789
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-else
-    789
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123
-else
-    789
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
-else
-    789
 end
 """))
         XCTAssertNoThrow(try parser.parse(source: """
@@ -164,24 +108,6 @@ if 123 then
 else
     654
     321
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123
-    456
-    789
-else
-    654
-    321
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
-    789
-else
-    654
-    321
 end
 """))
         XCTAssertNoThrow(try parser.parse(source: """
@@ -194,21 +120,10 @@ else
 end
 """))
         XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
-else
-end if
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
 else
 end
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123
-else
-end if
 """))
         XCTAssertNoThrow(try parser.parse(source: """
 if 123
@@ -220,12 +135,6 @@ end
         XCTAssertNoThrow(try parser.parse(source: """
 if 123 then 456
 else 789
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then 456
-else
-    789
-end if
 """))
         XCTAssertNoThrow(try parser.parse(source: """
 if 123 then 456
@@ -259,21 +168,6 @@ else 789
     
     func test_tell() {
         let parser = module.parser()
-        XCTAssertNoThrow(try parser.parse(source: """
-tell 123
-    456
-end tell
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-tell 123
-    456
-    789
-end tell
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-tell 123
-end tell
-"""))
         XCTAssertNoThrow(try parser.parse(source: """
 tell 123
     456
