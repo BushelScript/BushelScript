@@ -37,7 +37,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             formatted += format(handle, level: level)
             
             if needsEnd {
-                formatted += "end try"
+                formatted += "end"
             }
             return formatted
         case let .if_(condition, then, else_):
@@ -64,18 +64,18 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             }
             
             if needsEnd {
-                formatted += "end if"
+                formatted += "end"
             }
             return formatted
         case let .repeatWhile(condition, repeating):
-            return "repeat while \(format(condition, level: level))\n\(format(repeating, level: level))end repeat"
+            return "repeat while \(format(condition, level: level))\n\(format(repeating, level: level))end"
         case let .repeatTimes(times, repeating):
-            return "repeat \(format(times, level: level)) times\n\(format(repeating, level: level))end repeat"
+            return "repeat \(format(times, level: level)) times\n\(format(repeating, level: level))end"
         case let .repeatFor(variable, container, repeating):
-            return "repeat for \(variable) in \(format(container, level: level))\n\(format(repeating, level: level))end repeat"
+            return "repeat for \(variable) in \(format(container, level: level))\n\(format(repeating, level: level))end"
         case .tell(let target, let to):
             if case .sequence = to.kind {
-                return "tell \(format(target, level: level))\n\(format(to, level: level))end tell"
+                return "tell \(format(target, level: level))\n\(format(to, level: level))end"
             } else {
                 return "tell \(format(target, level: level)) to \(format(to, level: level))"
             }
@@ -96,7 +96,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             if let existingTerm = existingTerm {
                 formatted += " as \(existingTerm)"
             }
-            formatted += "\n\(format(body, level: level))end defining"
+            formatted += "\n\(format(body, level: level))end"
             return formatted
         case .return_(let returnValue):
             var formatted = "return"
@@ -299,7 +299,7 @@ public final class EnglishFormatter: BushelLanguage.SourceFormatter {
             
             formatted += "\n\(format(body, level: level))"
             
-            formatted += "end \(name)"
+            formatted += "end"
             return formatted
         case .multilineString(let bihash, let body):
             return
