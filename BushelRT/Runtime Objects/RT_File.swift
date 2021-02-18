@@ -40,6 +40,15 @@ public class RT_File: RT_Object {
         keyPath.evaluate(on: self)
     }
     
+    public override func coerce(to type: TypeInfo) -> RT_Object? {
+        switch Types(type.id) {
+        case .string:
+            return RT_String(value: value.path)
+        default:
+            return super.coerce(to: type)
+        }
+    }
+    
     public override func compareEqual(with other: RT_Object) -> Bool {
         (other as? RT_File).map { value == $0.value } ?? false
     }

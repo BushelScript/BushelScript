@@ -86,6 +86,8 @@ public class RT_String: RT_Object, AEEncodable {
             return Double(value).map { RT_Real(value: $0) }
         case .date:
             return DateFormatter().date(from: value).map { RT_Date(value: $0) }
+        case .file:
+            return RT_File(value: URL(fileURLWithPath: value))
         default:
             return super.coerce(to: type)
         }
