@@ -40,16 +40,16 @@ public class RT_Boolean: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch type.id.ae4Code {
-        case typeEnumerated:
+        switch Types(type.id) {
+        case .constant:
             // A boolean "is-a" constant
             // This is how AppleScript handles this coercion
             return self
-        case typeSInt64:
+        case .integer:
             return RT_Integer(value: value ? 1 : 0)
-        case typeIEEE64BitFloatingPoint:
+        case .real:
             return RT_Real(value: value ? 1 : 0)
-        case typeUnicodeText:
+        case .string:
             return RT_String(value: value ? "true" : "false")
         default:
             return super.coerce(to: type)
@@ -57,7 +57,7 @@ public class RT_Boolean: RT_Object, AEEncodable {
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
-        return NSAppleEventDescriptor(boolean: value)
+        NSAppleEventDescriptor(boolean: value)
     }
     
 }

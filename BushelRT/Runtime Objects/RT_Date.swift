@@ -13,7 +13,7 @@ public class RT_Date: RT_Object {
     }
     
     public override var description: String {
-        String(describing: value)
+        value.description(with: nil)
     }
     
     private static let typeInfo_ = TypeInfo(.date)
@@ -48,8 +48,6 @@ public class RT_Date: RT_Object {
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
         switch Types(type.id) {
-        case .string:
-            return RT_String(value: value.description(with: nil))
         case .real:
             return RT_Real(value: value.timeIntervalSince1970)
         case .integer:
