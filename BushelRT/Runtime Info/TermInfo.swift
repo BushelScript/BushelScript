@@ -2,8 +2,8 @@ import Bushel
 
 public protocol TermInfo: CustomStringConvertible, CustomDebugStringConvertible {
     
-    var kind: Term.SyntacticRole { get }
-    var uid: Term.SemanticURI { get }
+    var role: Term.SyntacticRole { get }
+    var uri: Term.SemanticURI { get }
     var name: Term.Name? { get }
     
     func addName(_ name: Term.Name)
@@ -12,8 +12,8 @@ public protocol TermInfo: CustomStringConvertible, CustomDebugStringConvertible 
 
 extension TermInfo {
     
-    public var typedUID: Term.ID {
-        Term.ID(kind, uid)
+    public var id: Term.ID {
+        Term.ID(role, uri)
     }
     
 }
@@ -24,12 +24,12 @@ extension TermInfo {
         if let name = name {
             return String(describing: name)
         } else {
-            return "«\(typedUID.role) \(uid)»"
+            return "«\(id.role) \(uri)»"
         }
     }
     
     public var debugDescription: String {
-        "[\(type(of: self)) \(typedUID)\(name.map { " / ”\($0)“" } ?? "")]"
+        "[\(type(of: self)) \(id)\(name.map { " / ”\($0)“" } ?? "")]"
     }
     
 }

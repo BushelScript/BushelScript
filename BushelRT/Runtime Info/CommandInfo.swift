@@ -9,10 +9,10 @@ public class CommandInfo: TermInfo, Hashable {
         
     }
     
-    public var uid: Term.SemanticURI
+    public var uri: Term.SemanticURI
     public var tags: Set<Tag> = []
     
-    public var kind: Term.SyntacticRole {
+    public var role: Term.SyntacticRole {
         .command
     }
     
@@ -30,11 +30,11 @@ public class CommandInfo: TermInfo, Hashable {
     }
     
     public static func == (lhs: CommandInfo, rhs: CommandInfo) -> Bool {
-        return lhs.uid == rhs.uid
+        return lhs.uri == rhs.uri
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(uid)
+        hasher.combine(uri)
     }
     
     public convenience init(_ predefined: Commands, _ tags: Set<Tag> = []) {
@@ -42,7 +42,7 @@ public class CommandInfo: TermInfo, Hashable {
     }
     
     public init(_ uid: Term.SemanticURI, _ tags: Set<Tag> = []) {
-        self.uid = uid
+        self.uri = uid
         self.tags = tags
     }
     

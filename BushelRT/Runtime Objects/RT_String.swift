@@ -74,7 +74,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch Types(type.typedUID) {
+        switch Types(type.id) {
         case .character:
             guard value.count == 1 else {
                 return nil
@@ -112,7 +112,7 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        switch Commands(command.typedUID) {
+        switch Commands(command.id) {
         case .String_split:
             guard let separator = arguments[ParameterInfo(.String_split_by)]?.coerce(to: RT_String.self) else {
                 // TODO: Throw error

@@ -89,7 +89,7 @@ public class Runtime {
             }
             
             let type = typeInfo(for: term)
-            typesByUID[type.typedUID] = type
+            typesByUID[type.id] = type
             if let supertype = type.supertype {
                 if typesBySupertype[supertype] == nil {
                     typesBySupertype[supertype] = []
@@ -112,15 +112,15 @@ public class Runtime {
             case .property:
                 let tags: [PropertyInfo.Tag] = term.name.map { [.name($0)] } ?? []
                 let property = PropertyInfo(term.uri, Set(tags))
-                propertiesByUID[property.typedUID] = property
+                propertiesByUID[property.id] = property
             case .constant:
                 let tags: [ConstantInfo.Tag] = term.name.map { [.name($0)] } ?? []
                 let constant = ConstantInfo(term.uri, Set(tags))
-                constantsByUID[constant.typedUID] = constant
+                constantsByUID[constant.id] = constant
             case .command:
                 let tags: [CommandInfo.Tag] = term.name.map { [.name($0)] } ?? []
                 let command = CommandInfo(term.uri, Set(tags))
-                commandsByUID[command.typedUID] = command
+                commandsByUID[command.id] = command
             case .parameter:
                 break
             case .variable:

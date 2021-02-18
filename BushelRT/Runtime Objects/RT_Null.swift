@@ -23,7 +23,7 @@ public class RT_Null: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch Types(type.uid) {
+        switch Types(type.uri) {
         case .string:
             return RT_String(value: "null")
         case .type:

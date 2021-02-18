@@ -16,7 +16,7 @@ public class RT_Type: RT_Object, AEEncodable {
     }
     
     public override var description: String {
-        "\(value.name as Any? ?? "«type \(value.uid)»")"
+        "\(value.name as Any? ?? "«type \(value.uri)»")"
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {
@@ -28,7 +28,7 @@ public class RT_Type: RT_Object, AEEncodable {
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
-        guard let aeCode = value.uid.ae4Code else {
+        guard let aeCode = value.uri.ae4Code else {
             throw Unencodable(object: self)
         }
         return NSAppleEventDescriptor(typeCode: aeCode)

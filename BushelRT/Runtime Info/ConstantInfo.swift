@@ -9,10 +9,10 @@ public class ConstantInfo: TermInfo, Hashable {
         
     }
     
-    public var uid: Term.SemanticURI
+    public var uri: Term.SemanticURI
     public var tags: Set<Tag> = []
     
-    public var kind: Term.SyntacticRole {
+    public var role: Term.SyntacticRole {
         .constant
     }
     
@@ -30,11 +30,11 @@ public class ConstantInfo: TermInfo, Hashable {
     }
     
     public static func == (lhs: ConstantInfo, rhs: ConstantInfo) -> Bool {
-        return lhs.uid == rhs.uid
+        return lhs.uri == rhs.uri
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(uid)
+        hasher.combine(uri)
     }
     
     public convenience init(_ predefined: Constants, _ tags: Set<Tag> = []) {
@@ -42,12 +42,12 @@ public class ConstantInfo: TermInfo, Hashable {
     }
     
     public init(_ uid: Term.SemanticURI, _ tags: Set<Tag> = []) {
-        self.uid = uid
+        self.uri = uid
         self.tags = tags
     }
     
     public convenience init(property: PropertyInfo) {
-        self.init(property.uid, Set(property.tags.map { propertyTag in
+        self.init(property.uri, Set(property.tags.map { propertyTag in
             switch propertyTag {
             case .name(let name):
                 return .name(name)
@@ -56,7 +56,7 @@ public class ConstantInfo: TermInfo, Hashable {
     }
     
     public convenience init(type: TypeInfo) {
-        self.init(type.uid, Set(type.tags.compactMap { typeTag in
+        self.init(type.uri, Set(type.tags.compactMap { typeTag in
             switch typeTag {
             case .name(let name):
                 return .name(name)

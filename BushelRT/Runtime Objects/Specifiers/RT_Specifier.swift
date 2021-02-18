@@ -146,7 +146,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
         case let root as RT_SpecifierRemoteRoot:
             return try root.perform(command: command, arguments: arguments, implicitDirect: implicitDirect, for: self)
         default:
-            switch Commands(command.uid) {
+            switch Commands(command.uri) {
             case .set:
                 guard let property = property else {
                     throw NonPropertyIsNotWritable(specifier: self)
@@ -180,10 +180,10 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
         }
         
         if case .property = kind {
-            return parentSpecifier.property(property!.typedUID.ae4Code!)
+            return parentSpecifier.property(property!.id.ae4Code!)
         }
         
-        guard let code = type?.typedUID.ae4Code else {
+        guard let code = type?.id.ae4Code else {
             // TODO: handle these errors more gracefully (should make this a throwing method)
             fatalError("must have code to evaluate by Apple Event")
         }

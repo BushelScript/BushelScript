@@ -264,7 +264,7 @@ extension SwiftAutomation.Specifier {
     }
     
     func sendEvent(for command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> ReplyEventDescriptor {
-        guard let codes = command.typedUID.ae8Code else {
+        guard let codes = command.id.ae8Code else {
             throw Unencodable(object: command)
         }
         return try self.sendAppleEvent(codes.class, codes.id, arguments)

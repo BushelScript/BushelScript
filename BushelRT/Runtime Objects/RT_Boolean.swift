@@ -40,7 +40,7 @@ public class RT_Boolean: RT_Object, AEEncodable {
     }
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch type.typedUID.ae4Code {
+        switch type.id.ae4Code {
         case typeEnumerated:
             // A boolean "is-a" constant
             // This is how AppleScript handles this coercion

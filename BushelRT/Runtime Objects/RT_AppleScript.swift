@@ -27,11 +27,11 @@ public class RT_AppleScript: RT_Object {
         let eventClass: AEEventClass
         let eventID: AEEventID
         var subroutineName: String?
-        if let asidName = command.uid.asidName {
+        if let asidName = command.uri.asidName {
             eventClass = 0x61736372 /* kASAppleScriptSuite 'ascr' */
             eventID = 0x70736272 /* kASSubroutineEvent 'psbr' */
             subroutineName = asidName
-        } else if let (class: classAE4Code, id: idAE4Code) = command.uid.ae8Code {
+        } else if let (class: classAE4Code, id: idAE4Code) = command.uri.ae8Code {
             eventClass = classAE4Code
             eventID = idAE4Code
         } else {

@@ -9,10 +9,10 @@ public class ParameterInfo: TermInfo, Hashable {
         
     }
     
-    public var uid: Term.SemanticURI
+    public var uri: Term.SemanticURI
     public var tags: Set<Tag> = []
     
-    public var kind: Term.SyntacticRole {
+    public var role: Term.SyntacticRole {
         .parameter
     }
     
@@ -30,11 +30,11 @@ public class ParameterInfo: TermInfo, Hashable {
     }
     
     public static func == (lhs: ParameterInfo, rhs: ParameterInfo) -> Bool {
-        return lhs.uid == rhs.uid
+        return lhs.uri == rhs.uri
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(uid)
+        hasher.combine(uri)
     }
     
     public convenience init(_ predefined: Parameters, _ tags: Set<Tag> = []) {
@@ -43,7 +43,7 @@ public class ParameterInfo: TermInfo, Hashable {
     
     public init(_ uid: Term.SemanticURI, _ tags: Set<Tag> = []) {
         // Normalize all "direct" parameters into one value for the sake of runtime comparisons
-        self.uid = uid.isDirectParameter ? Term.SemanticURI(Parameters.direct) : uid
+        self.uri = uid.isDirectParameter ? Term.SemanticURI(Parameters.direct) : uid
         self.tags = tags
     }
     

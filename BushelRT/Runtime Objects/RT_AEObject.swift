@@ -26,7 +26,7 @@ public class RT_AEObject: RT_Object, AEEncodable {
     
     public override func coerce(to type: TypeInfo) -> RT_Object? {
         guard
-            let code = type.typedUID.ae4Code,
+            let code = type.id.ae4Code,
             let coercedDescriptor = descriptor.coerce(toDescriptorType: code)
         else {
             return nil

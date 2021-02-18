@@ -70,12 +70,12 @@ public class RT_Record: RT_Object, AEEncodable {
                 let aeCode: OSType = ({
                     if let key = key as? RT_Specifier {
                         if key.kind == .property {
-                            return key.property?.uid.ae4Code
+                            return key.property?.uri.ae4Code
                         } else {
-                            return key.type?.uid.ae4Code
+                            return key.type?.uri.ae4Code
                         }
                     } else if let key = key as? RT_Type {
-                        return key.value.uid.ae4Code
+                        return key.value.uri.ae4Code
                     } else {
                         return nil
                     }

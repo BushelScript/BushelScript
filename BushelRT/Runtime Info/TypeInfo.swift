@@ -21,10 +21,10 @@ public class TypeInfo: TermInfo, Hashable {
         
     }
     
-    public var uid: Term.SemanticURI
+    public var uri: Term.SemanticURI
     public var tags: Set<Tag> = []
     
-    public var kind: Term.SyntacticRole {
+    public var role: Term.SyntacticRole {
         .type
     }
     
@@ -51,11 +51,11 @@ public class TypeInfo: TermInfo, Hashable {
     }
     
     public static func == (lhs: TypeInfo, rhs: TypeInfo) -> Bool {
-        return lhs.uid == rhs.uid
+        return lhs.uri == rhs.uri
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(uid)
+        hasher.combine(uri)
     }
     
     public convenience init(_ predefined: Types, _ tags: Set<Tag> = []) {
@@ -63,7 +63,7 @@ public class TypeInfo: TermInfo, Hashable {
     }
     
     public init(_ uid: Term.SemanticURI, _ tags: Set<Tag> = []) {
-        self.uid = uid
+        self.uri = uid
         self.tags = tags
     }
     

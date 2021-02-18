@@ -14,7 +14,7 @@ public class RT_Core: RT_Object {
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         if
-            let commandClass = command.typedUID.ae8Code?.class,
+            let commandClass = command.id.ae8Code?.class,
             commandClass == (try! FourCharCode(fourByteString: "bShG"))
         {
             // Run GUIHost command
@@ -24,7 +24,7 @@ public class RT_Core: RT_Object {
             
             var arguments = arguments
             if
-                arguments.first(where: { $0.key.uid.ae4Code == Parameters.GUI_ask_title.ae12Code!.code }) == nil,
+                arguments.first(where: { $0.key.uri.ae4Code == Parameters.GUI_ask_title.ae12Code!.code }) == nil,
                 let scriptName = Optional("")//rt.topScript.name
             // FIXME: fix
             {
@@ -34,7 +34,7 @@ public class RT_Core: RT_Object {
             return try RT_Application(bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
         
-        switch Commands(command.typedUID) {
+        switch Commands(command.id) {
         case .delay:
             let delaySeconds = arguments[ParameterInfo(.direct)]?.coerce(to: RT_Real.self)?.value ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)

@@ -37,7 +37,7 @@ public class RT_EnvVar: RT_Object {
     }
     
     public override func setProperty(_ property: PropertyInfo, to newValue: RT_Object) throws {
-        switch Properties(property.uid) {
+        switch Properties(property.uri) {
         case .environmentVariable_value:
             self.value = newValue
         default:

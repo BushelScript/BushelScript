@@ -113,7 +113,7 @@ public struct MissingParameter: LocalizedError {
     public let parameter: ParameterInfo
     
     public var errorDescription: String? {
-        "The required \(Parameters(parameter.uid) == .direct ? "direct object parameter" : "parameter \(parameter)") is missing from a call to \(command)"
+        "The required \(Parameters(parameter.uri) == .direct ? "direct object parameter" : "parameter \(parameter)") is missing from a call to \(command)"
     }
     
 }
@@ -126,7 +126,7 @@ public struct WrongParameterType: LocalizedError {
     public let actual: TypeInfo
     
     public var errorDescription: String? {
-        "The \(Parameters(parameter.uid) == .direct ? "direct object parameter" : "parameter \(parameter)") for a call to \(command) expects \("\(expected)".startsWithVowel ? "an" : "a") \(expected) but received \("\(actual)".startsWithVowel ? "an" : "a") \(actual)"
+        "The \(Parameters(parameter.uri) == .direct ? "direct object parameter" : "parameter \(parameter)") for a call to \(command) expects \("\(expected)".startsWithVowel ? "an" : "a") \(expected) but received \("\(actual)".startsWithVowel ? "an" : "a") \(actual)"
     }
     
 }
