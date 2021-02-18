@@ -28,6 +28,8 @@ public class RT_Character: RT_Object, AEEncodable {
         switch Types(type.uri) {
         case .string:
             return RT_String(value: String(value))
+        case .integer:
+            return value.unicodeScalars.count == 1 ? RT_Integer(value: Int64(value.unicodeScalars.first!.value)) : nil
         default:
             return super.coerce(to: type)
         }
