@@ -46,6 +46,19 @@ public class RT_Date: RT_Object {
         keyPath.evaluate(on: self)
     }
     
+    public override func coerce(to type: TypeInfo) -> RT_Object? {
+        switch Types(type.id) {
+        case .string:
+            return RT_String(value: value.description(with: nil))
+        case .real:
+            return RT_Real(value: value.timeIntervalSince1970)
+        case .integer:
+            return RT_Integer(value: Int64(value.timeIntervalSince1970))
+        default:
+            return super.coerce(to: type)
+        }
+    }
+    
     public override func compare(with other: RT_Object) -> ComparisonResult? {
         (other as? RT_Date)
             .map { value <=> $0.value }
