@@ -710,7 +710,6 @@ public enum Parameters: String, Term.PredefinedID {
 
 public enum Resources: String, Term.PredefinedID {
     
-    case bushelscript
     case system
     
     public var role: Term.SyntacticRole {

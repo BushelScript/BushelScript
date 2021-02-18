@@ -46,7 +46,6 @@ translation:
                     CLI: CLI
         resource:
             res:
-                bushelscript: BushelScript
                 system: system
         constant:
              ae4:

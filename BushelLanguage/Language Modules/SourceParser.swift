@@ -96,12 +96,6 @@ extension SourceParser {
         
         // Pop the Core term.
         lexicon.pop()
-        
-        // Assign the builtins dictionary to the 'BushelScript' resource term.
-        // TODO: Remove
-        if let bushelscript = lexicon.term(id: Term.ID(Resources.bushelscript)) {
-            bushelscript.dictionary = lexicon.stack.last!.dictionary
-        }
     }
     
     public func parse(source: String) throws -> Program {
@@ -120,7 +114,6 @@ extension SourceParser {
         
         buildTraversalTables()
         
-        lexicon.pushDictionaryTerm(uri: .id(Term.SemanticURI.Pathname(["script"])))
         defer { lexicon.pop() }
         do {
             return Program(try parseDocument(), elements, source: entireSource, terms: lexicon.pool)
