@@ -48,7 +48,15 @@ public struct Lexicon: TerminologySource {
     /// - Parameter name: The name of the term residing in the current
     ///                   dictionary.
     public func makeURI(forName name: Term.Name) -> Term.SemanticURI {
-        .id(Term.SemanticURI.Pathname(rawValue: "\(stack.compactMap { $0.name?.normalized }.joined(separator: String(Term.SemanticURI.Pathname.separator)))\(Term.SemanticURI.Pathname.separator)\(name)"))
+        var components: [String] = []
+        let lastStackTermURI = stack.last!.uri
+        if let pathnameComponents = lastStackTermURI.pathname?.components {
+            components.append(contentsOf: pathnameComponents)
+        } else {
+            components.append("\(lastStackTermURI.scheme);\(lastStackTermURI.name)")
+        }
+        components.append(name.normalized)
+        return .id(Term.SemanticURI.Pathname(components))
     }
     /// Constructs a universally unique `SemanticURI` with the `id` scheme.
     public func makeUniqueURI() -> Term.SemanticURI {
