@@ -59,14 +59,46 @@ public protocol SourceParser: AnyObject {
 // MARK: Consumer interface
 extension SourceParser {
     
-    public init(translations: [Translation]) {
+    public init(translations allTranslations: [Translation]) {
         self.init()
+        
+        // Handle top-level Script and Core terms specially:
+        // Push Script, then push Core.
+        var translations = allTranslations
+        for index in allTranslations.indices {
+            var translation = allTranslations[index]
+            
+            let scriptTermID = Term.ID(Variables.Script)
+            if let scriptTermNames = translation.mappings[scriptTermID] {
+                translation.mappings.removeValue(forKey: scriptTermID)
+                
+                let scriptTerm = Term(scriptTermID, name: scriptTermNames.first!)
+                lexicon.push(scriptTerm)
+            }
+            
+            let coreTermID = Term.ID(Variables.Core)
+            if let coreTermNames = translation.mappings[coreTermID] {
+                translation.mappings.removeValue(forKey: coreTermID)
+                
+                let coreTerm = Term(coreTermID, name: coreTermNames.first!, exports: true)
+                lexicon.push(coreTerm)
+            }
+            
+            translations[index] = translation
+        }
+        
+        // Add all other terms.
         for translation in translations {
             lexicon.add(translation.makeTerms(under: lexicon.pool))
         }
+        
         lexicon.add(Term(Term.ID(Parameters.direct)))
         
+        // Pop the Core term.
+        lexicon.pop()
+        
         // Assign the builtins dictionary to the 'BushelScript' resource term.
+        // TODO: Remove
         if let bushelscript = lexicon.term(id: Term.ID(Resources.bushelscript)) {
             bushelscript.dictionary = lexicon.stack.last!.dictionary
         }

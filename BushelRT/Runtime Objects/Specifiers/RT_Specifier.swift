@@ -134,7 +134,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
             return try evaluate(on: evaluatedParent)
         } catch let origError where origError is NoPropertyExists || origError is NoElementExists {
             do {
-                return try evaluate(on: RT_Global())
+                return try evaluate(on: RT_Core())
             } catch {
                 throw origError
             }

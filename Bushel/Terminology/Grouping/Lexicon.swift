@@ -16,7 +16,7 @@ public struct Lexicon: TerminologySource {
     private(set) public var pool = TermPool()
     
     public init() {
-        pushRoot()
+        stack.append(Term(Term.ID(Dictionaries.root), exports: false))
     }
     
     public func term(id: Term.ID) -> Term? {
@@ -56,6 +56,7 @@ public struct Lexicon: TerminologySource {
     }
     
     public mutating func push(_ term: Term) {
+        add(term)
         stack.append(term)
     }
     
@@ -69,24 +70,15 @@ public struct Lexicon: TerminologySource {
         push(dictionaryTerm)
     }
     
-    private mutating func pushRoot() {
-        push(Term(Term.ID(Dictionaries.root), exports: false))
-    }
-    
     public mutating func pop() {
-        if !stack.isEmpty {
+        if stack.count > 1 {
             stack.removeLast()
         }
     }
     
     @discardableResult
     public mutating func add(_ term: Term) -> Term {
-        if stack.isEmpty {
-            pushRoot()
-        }
-        let dictionary = stack[stack.index(before: stack.endIndex)]
-        dictionary.makeDictionary(under: pool).add(term)
-        pool.add(term)
+        stack.last!.makeDictionary(under: pool).add(term)
         return term
     }
     

@@ -2,52 +2,91 @@ translation:
     format: 0.1
     language: bushelscript_en
     mappings:
+        variable:
+            id:
+                # Script is the rough equivalent of the "global object" in
+                # JavaScript, the current module in Python, or the "main" module
+                # in Ruby. (Though unlike JavaScript's global object, it is not
+                # populated with any builtin members; that's Core's job.)
+                #
+                # Term:
+                #   Defined in the outermost (unnamed) dictionary.
+                #   Defines Core.
+                #   The sole member of the Standard Lexicon (implying that it
+                #     contains all of the user's top-level term definitions.)
+                #
+                # Value:
+                #   A `script` that contains all of the user's top-level
+                #     function definitions.
+                #   Active target above Core in the Standard Target Stack
+                #     (i.e., used before Core).
+                '': Script
+                # Core is the rough equivalent of `Kernel` in Ruby or
+                # `builtins` in Python (although the actual lookup processes
+                # differ considerably.)
+                #
+                # Term:
+                #   Defined in Script.
+                #   Defines all other builtin terms (the rest of this file).
+                #   Exports so that its contents are reached by implicit lookup.
+                #
+                # Value:
+                #   Object of type `core object` that implements the builtin
+                #     commands.
+                #   Active target at the bottom of the Standard Target Stack
+                #     (i.e., searched last).
+                Core: Core
         dictionary:
             id:
-                Math: Math
-                Sequence: Sequence
-                String: String
-                GUI: GUI
-                CLI: CLI
+                Core:
+                    Math: Math
+                    Sequence: Sequence
+                    String: String
+                    GUI: GUI
+                    CLI: CLI
         resource:
             res:
                 bushelscript: BushelScript
                 system: system
+        constant:
+             ae4:
+                 'true': 'true'
+                 fals: 'false'
         type:
             ae4:
                 cobj: item
-                cwin: window
-                utf8: UTF-8 text
-                list: list
-                reco: record
                 enum: constant
+                pcls: type
                 bool: boolean
-                utxt: string
-                'cha ': character
                 nmbr: number
                 comp: integer
                 doub: real
+                utxt: string
+                'cha ': character
+                utf8: UTF-8 text
+                list: list
+                reco: record
+                'obj ': specifier
+                cmpd: comparison test specifier
+                logi: logical test specifier
                 'ldt ': date
-                cwin: window
-                docu: document
                 file: file
                 alis: alias
                 capp:
                     - application
                     - app
-                'obj ': specifier
-                cmpd: comparison test specifier
-                logi: logical test specifier
-                pcls: type
+                cwin: window
+                docu: document
             id:
-                global: builtin
-                script: script
-                function: function
-                environment variable:
-                    - environment variable
-                    - environment var
-                    - env variable
-                    - env var
+                Core:
+                    core object: core object
+                    script: script
+                    function: function
+                    environment variable:
+                        - environment variable
+                        - environment var
+                        - env variable
+                        - env var
         property:
             ae4:
                 pALL: properties
@@ -83,10 +122,6 @@ translation:
                 Math:
                     pi: pi
                     e: e
-        constant:
-             ae4:
-                 'true': 'true'
-                 fals: 'false'
         command:
             ae8:
                 # Standard AE-based application commands.

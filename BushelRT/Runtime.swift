@@ -67,15 +67,15 @@ public class Runtime {
     
     public let termPool = TermPool()
     public let topScript: RT_Script
-    public var global: RT_Global!
+    public var core: RT_Core!
     
     public var currentApplicationBundleID: String?
     
     public init(scriptName: String? = nil, currentApplicationBundleID: String? = nil) {
         self.topScript = RT_Script(name: scriptName)
         self.currentApplicationBundleID = currentApplicationBundleID
-        self.global = nil
-        self.global = RT_Global()
+        self.core = nil
+        self.core = RT_Core()
     }
     
     public func inject(terms: TermPool) {
@@ -212,9 +212,12 @@ public extension Runtime {
         builtin = Builtin()
         builtin.rt = self
         
+        builtin.stack.variables[Term.SemanticURI(Variables.Script)] = topScript
+        builtin.stack.variables[Term.SemanticURI(Variables.Core)] = core
+        
         let result: RT_Object
         do {
-            result = try runPrimary(expression, lastResult: ExprValue(expression, RT_Null.null), target: ExprValue(expression, global))
+            result = try runPrimary(expression, lastResult: ExprValue(expression, RT_Null.null), target: ExprValue(expression, core))
         } catch let earlyReturn as EarlyReturn {
             result = earlyReturn.value
         } catch let inFlightRuntimeError as InFlightRuntimeError {
@@ -265,11 +268,11 @@ public extension Runtime {
                 argumentValue = actualArguments[ParameterInfo(parameter.uri)] ?? RT_Null.null
             }
             
-            builtin.newVariable(argument, argumentValue)
+            builtin.setVariableValue(argument, argumentValue)
         }
         
         do {
-            return try runPrimary(body, lastResult: ExprValue(body, RT_Null.null), target: ExprValue(body, global))
+            return try runPrimary(body, lastResult: ExprValue(body, RT_Null.null), target: ExprValue(body, core))
         } catch let earlyReturn as EarlyReturn {
             return earlyReturn.value
         }
@@ -345,7 +348,7 @@ public extension Runtime {
             // 1-based indices wheeeeee
             for count in 1...timesValue {
                 let elementValue = try builtin.getFromSequenceAtIndex(containerValue, Int64(count))
-                builtin.newVariable(variable, elementValue)
+                builtin.setVariableValue(variable, elementValue)
                 repeatResult = try runPrimary(repeating, lastResult: lastResult, target: target)
             }
             return try repeatResult ?? evaluate(lastResult, lastResult: lastResult, target: target)
@@ -354,7 +357,7 @@ public extension Runtime {
             return try runPrimary(to, lastResult: lastResult, target: newTargetValue)
         case .let_(let term, let initialValue): // MARK: .let_
             let initialExprValue = try initialValue.map { try runPrimary($0, lastResult: lastResult, target: target) } ?? RT_Null.null
-            builtin.newVariable(term, initialExprValue)
+            builtin.setVariableValue(term, initialExprValue)
             return initialExprValue
         case .define(_, as: _): // MARK: .define
             return try evaluate(lastResult, lastResult: lastResult, target: target)

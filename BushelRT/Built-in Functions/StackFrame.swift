@@ -17,7 +17,7 @@ public struct ProgramStack {
         }
     }
     
-    public var variables: [Bushel.Term.Name : RT_Object] {
+    public var variables: [Term.SemanticURI : RT_Object] {
         get {
             currentFrame.variables
         }
@@ -74,7 +74,7 @@ extension Stack {
 public struct StackFrame {
     
     public let rt: Runtime
-    public var variables: [Bushel.Term.Name : RT_Object] = [:]
+    public var variables: [Term.SemanticURI : RT_Object] = [:]
     public var script: RT_Script
     
     init(inheritingFrom other: StackFrame) {
@@ -82,7 +82,7 @@ public struct StackFrame {
         self.variables = other.variables
         self.script = other.script
     }
-    init(_ rt: Runtime, variables: [Bushel.Term.Name : RT_Object], script: RT_Script) {
+    init(_ rt: Runtime, variables: [Term.SemanticURI : RT_Object], script: RT_Script) {
         self.rt = rt
         self.variables = variables
         self.script = script

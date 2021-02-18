@@ -42,7 +42,7 @@ public class RT_Script: RT_Object {
     }
     
     public override var description: String {
-        "script"
+        "script\(name.map { " \"\($0)\"" } ?? "")"
     }
     
     public var dynamicProperties: [PropertyInfo : RT_Object] = [:]

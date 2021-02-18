@@ -19,16 +19,13 @@ final class Builtin {
         stack.popFrame()
     }
     
-    func newVariable(_ term: Bushel.Term, _ initialValue: RT_Object) {
-        stack.currentFrame.variables[term.name!] = initialValue
+    func getVariableValue(_ term: Term) -> RT_Object {
+        stack.variables[term.uri] ?? RT_Null.null
     }
     
-    func getVariableValue(_ term: Bushel.Term) -> RT_Object {
-        stack.variables[term.name!] ?? RT_Null.null
-    }
-    
-    func setVariableValue(_ term: Bushel.Term, _ newValue: RT_Object) -> RT_Object {
-        stack.currentFrame.variables[term.name!] = newValue
+    @discardableResult
+    func setVariableValue(_ term: Term, _ newValue: RT_Object) -> RT_Object {
+        stack.variables[term.uri] = newValue
         return newValue
     }
     
@@ -128,14 +125,14 @@ final class Builtin {
         return {
             switch term.resource {
             case .bushelscript:
-                return RT_Global()
+                return RT_Core()
             case .system(_):
                 return RT_System()
             case .applicationByName(let bundle),
                  .applicationByID(let bundle):
                 return RT_Application(bundle: bundle)
             case .scriptingAdditionByName(_):
-                return RT_Global()
+                return RT_Core()
             case .applescriptLibraryByName(_, _, let script),
                  .applescriptAtPath(_, let script):
                 return RT_AppleScript(name: term.name!.normalized, value: script)
@@ -198,7 +195,7 @@ final class Builtin {
                 try rt.topScript.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             } ??
             catchingErrors {
-                try RT_Global().perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+                try RT_Core().perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             } ?? RT_Null.null
     }
     
@@ -389,7 +386,7 @@ extension RT_HierarchicalSpecifier {
             }
             var root = rootAncestor()
             if root is RT_RootSpecifier {
-                root = RT_Global()
+                root = RT_Core()
             }
             return try evaluateLocalSpecifier(self, from: root)
         }

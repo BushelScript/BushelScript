@@ -1,15 +1,15 @@
 import Bushel
 import SwiftAutomation
 
-public class RT_Global: RT_Object {
+public class RT_Core: RT_Object {
     
-    private static let typeInfo_ = TypeInfo(.global)
+    private static let typeInfo_ = TypeInfo(.coreObject)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }
     
     public override var description: String {
-        "builtin"
+        "Core"
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
@@ -61,7 +61,7 @@ public class RT_Global: RT_Object {
     
 }
 
-extension RT_Global {
+extension RT_Core {
     
     public override var debugDescription: String {
         super.debugDescription

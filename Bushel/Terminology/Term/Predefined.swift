@@ -119,17 +119,37 @@ public extension Term.ID {
     
 }
 
+public enum Variables: String, Term.PredefinedID {
+    
+    case Script = ""
+    case Core
+    
+    public var role: Term.SyntacticRole {
+        .variable
+    }
+    
+    public init?(_ uri: Term.SemanticURI) {
+        switch uri {
+        case .id(let pathname):
+            self.init(pathname: pathname)
+        default:
+            return nil
+        }
+    }
+    
+}
+
 public enum Dictionaries: String, Term.PredefinedID {
     
     case root
     
     case function
     
-    case Math
-    case Sequence
-    case String
-    case GUI
-    case CLI
+    case Core_Math
+    case Core_Sequence
+    case Core_String
+    case Core_GUI
+    case Core_CLI
     
     public var role: Term.SyntacticRole {
         .dictionary
@@ -169,7 +189,7 @@ public enum Types: String, Term.PredefinedID {
     case logicalTestSpecifier
     case type
     case null
-    case global
+    case coreObject
     case script
     case function
     case system
@@ -226,7 +246,7 @@ public enum Types: String, Term.PredefinedID {
             return pClass
         case .null:
             return try! FourCharCode(fourByteString: "msng")
-        case .global, .script, .function, .system, .error, .environmentVariable:
+        case .coreObject, .script, .function, .system, .error, .environmentVariable:
             return nil
         }
     }
