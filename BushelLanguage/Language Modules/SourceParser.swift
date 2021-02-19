@@ -1136,59 +1136,13 @@ extension SourceParser {
     }
     
     public func withTerminology<Result>(of expression: Expression, parse: () throws -> Result) throws -> Result {
-        var terminologyPushed = false
-        defer {
-            if terminologyPushed {
-                lexicon.pop()
-            }
+        if let term = expression.term() {
+            lexicon.push(term)
+            defer { lexicon.pop() }
+            return try parse()
+        } else {
+            return try parse()
         }
-        
-        noTerminology: do {
-            let appBundle: Bundle
-            switch expression.kind {
-            case .specifier(let specifier):
-                guard specifier.term.id == Term.ID(Types.application) else {
-                    break noTerminology
-                }
-                
-                switch specifier.kind {
-                case .simple(let dataExpression), .name(let dataExpression):
-                    guard case .string(let name) = dataExpression.kind else {
-                        break noTerminology
-                    }
-                    guard let bundle = Bundle(applicationName: name) else {
-                        throw AdHocParseError("no application found with name ‘\(name)’", at: expression.location)
-                    }
-                    appBundle = bundle
-                case .id(let dataExpression):
-                    guard case .string(let bundleID) = dataExpression.kind else {
-                        break noTerminology
-                    }
-                    guard let bundle = Bundle(applicationBundleIdentifier: bundleID) else {
-                        throw AdHocParseError("no application found for bundle identifier ‘\(bundleID)’", at: expression.location)
-                    }
-                    appBundle = bundle
-                default:
-                    break noTerminology
-                }
-                
-                lexicon.pushUnnamedDictionary()
-                terminologyPushed = true
-                try lexicon.stack.last!.load(from: appBundle.bundleURL, under: lexicon.pool)
-            case .use(let term),
-                 .resource(let term):
-                lexicon.push(term)
-                terminologyPushed = true
-            default:
-                break noTerminology
-            }
-        } catch let error as ParseErrorProtocol {
-            throw error
-        } catch {
-            throw ParseError(.terminologyImportFailure(error: error), at: expression.location)
-        }
-        
-        return try parse()
     }
     
     public var currentLocation: SourceLocation {

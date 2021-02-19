@@ -113,4 +113,21 @@ extension Expression {
         }
     }
     
+    public func term() -> Term? {
+        switch kind {
+        case .parentheses, .scoped, .sequence, .empty, .that, .it, .tell, .null, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor:
+            return nil
+        case let .use(term),
+             let .resource(term),
+             let .variable(term),
+             let .enumerator(term),
+             let .type(term),
+             let .let_(term, _),
+             let .define(term, _),
+             let .defining(term, _, _),
+             let .function(term, _, _, _):
+            return term
+        }
+    }
+    
 }
