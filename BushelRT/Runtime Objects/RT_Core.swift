@@ -51,6 +51,23 @@ public class RT_Core: RT_Object {
         }
     }
     
+    public override func property(_ property: PropertyInfo) throws -> RT_Object {
+        switch Properties(property.id) {
+        case .currentDate:
+            return RT_Date(value: Date())
+        case .Math_NaN:
+            return RT_Real(value: Double.nan)
+        case .Math_inf:
+            return RT_Real(value: Double.infinity)
+        case .Math_pi:
+            return RT_Real(value: Double.pi)
+        case .Math_e:
+            return RT_Real(value: exp(1))
+        default:
+            throw NoPropertyExists(type: dynamicTypeInfo, property: property)
+        }
+    }
+    
     public override func compareEqual(with other: RT_Object) -> Bool {
         other.dynamicTypeInfo.isA(dynamicTypeInfo)
     }

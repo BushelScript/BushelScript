@@ -83,8 +83,57 @@ public class RT_Real: RT_Object, AEEncodable {
                 throw WrongParameterType(command: command, parameter: ParameterInfo(.Math_pow_exponent), expected: TypeInfo(.number), actual: exponentObj.dynamicTypeInfo)
             }
             return RT_Real(value: pow(self.value, exponent.value))
+        case .Math_ln:
+            return RT_Real(value: log(value))
+        case .Math_log10:
+            return RT_Real(value: log10(value))
+        case .Math_log2:
+            return RT_Real(value: log2(value))
+        case .Math_sin:
+            return RT_Real(value: sin(value))
+        case .Math_cos:
+            return RT_Real(value: cos(value))
+        case .Math_tan:
+            return RT_Real(value: tan(value))
+        case .Math_asin:
+            return RT_Real(value: asin(value))
+        case .Math_acos:
+            return RT_Real(value: acos(value))
+        case .Math_atan:
+            return RT_Real(value: atan(value))
+        case .Math_atan2:
+            guard let xObj = arguments[ParameterInfo(.Math_atan2_x)] else {
+                throw MissingParameter(command: command, parameter: ParameterInfo(.Math_atan2_x))
+            }
+            guard let xReal = xObj.coerce(to: RT_Real.self) else {
+                throw WrongParameterType(command: command, parameter: ParameterInfo(.Math_atan2_x), expected: TypeInfo(.number), actual: xObj.dynamicTypeInfo)
+            }
+            return RT_Real(value: atan2(value, xReal.value))
+        case .Math_round:
+            return RT_Real(value: round(value))
+        case .Math_ceil:
+            return RT_Real(value: ceil(value))
+        case .Math_floor:
+            return RT_Real(value: floor(value))
         default:
             return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+        }
+    }
+    
+    public override func property(_ property: PropertyInfo) throws -> RT_Object {
+        switch Properties(property.id) {
+        case .Math_NaN_Q:
+            return RT_Boolean.withValue(value.isNaN)
+        case .Math_inf_Q:
+            return RT_Boolean.withValue(value.isInfinite)
+        case .Math_finite_Q:
+            return RT_Boolean.withValue(value.isFinite)
+        case .Math_normal_Q:
+            return RT_Boolean.withValue(value.isNormal)
+        case .Math_zero_Q:
+            return RT_Boolean.withValue(value.isZero)
+        default:
+            throw NoPropertyExists(type: dynamicTypeInfo, property: property)
         }
     }
     

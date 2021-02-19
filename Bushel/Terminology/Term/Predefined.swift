@@ -334,6 +334,13 @@ public enum Properties: String, Term.PredefinedID {
     case date_hours
     case date_secondsSinceMidnight
     
+    case Math_NaN
+    case Math_inf
+    case Math_NaN_Q = "Math_NaN?"
+    case Math_inf_Q = "Math_inf?"
+    case Math_finite_Q = "Math_finite?"
+    case Math_normal_Q = "Math_normal?"
+    case Math_zero_Q = "Math_zero?"
     case Math_pi
     case Math_e
     
@@ -463,6 +470,19 @@ public enum Commands: String, Term.PredefinedID {
     case Math_square
     case Math_cube
     case Math_pow
+    case Math_ln
+    case Math_log10
+    case Math_log2
+    case Math_sin
+    case Math_cos
+    case Math_tan
+    case Math_asin
+    case Math_acos
+    case Math_atan
+    case Math_atan2
+    case Math_round
+    case Math_ceil
+    case Math_floor
     
     case Sequence_join
     
@@ -553,6 +573,7 @@ public enum Parameters: String, Term.PredefinedID {
     case open_searchText
     
     case Math_pow_exponent
+    case Math_atan2_x
     
     case Sequence_join_with
     

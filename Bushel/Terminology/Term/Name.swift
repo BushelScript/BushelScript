@@ -77,7 +77,7 @@ extension Character {
 private let wordBreakingPunctuationCharacters: CharacterSet =
     CharacterSet.punctuationCharacters
     .union(.symbols)
-    .subtracting(CharacterSet(charactersIn: "_.-/'’"))
+    .subtracting(CharacterSet(charactersIn: "_.-/'’?"))
 private let wordBreakingCharacters: CharacterSet =
     CharacterSet.whitespacesAndNewlines
     .union(wordBreakingPunctuationCharacters)

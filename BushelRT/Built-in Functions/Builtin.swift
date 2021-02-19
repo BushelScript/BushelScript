@@ -182,6 +182,7 @@ final class Builtin {
             return nil
         }
         
+        // TODO: Revise with Target Stack
         return try
             catchingErrors {
                 try directParameter?.perform(command: command, arguments: argumentsWithoutDirect, implicitDirect: implicitDirect)

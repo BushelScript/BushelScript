@@ -89,14 +89,6 @@ import Bushel
     /// `propertyKeyPaths` and `evaluateStaticProperty(_:)` pair is preferable.
     public func property(_ property: PropertyInfo) throws -> RT_Object {
         switch Properties(property.id) {
-        // GLOBAL PROPERTIES
-        case .currentDate:
-            return RT_Date(value: Date())
-        case .Math_pi:
-            return RT_Real(value: Double.pi)
-        case .Math_e:
-            return RT_Real(value: exp(1))
-        // END GLOBAL PROPERTIES
         case .properties:
             return RT_Record(contents:
                 [RT_Object : RT_Object](uniqueKeysWithValues:

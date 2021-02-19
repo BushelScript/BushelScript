@@ -80,7 +80,16 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
     public func evaluateLocally(on evaluatedParent: RT_Object) throws -> RT_Object {
         func evaluate(on parent: RT_Object) throws -> RT_Object {
             if case .property = kind {
-                return try parent.property(property!)
+                // TODO: Revise with Target Stack
+                do {
+                    return try parent.property(property!)
+                } catch let e {
+                    do {
+                        return try RT_Core().property(property!)
+                    } catch {
+                        throw e
+                    }
+                }
             }
             
             let type = self.type!

@@ -100,7 +100,6 @@ translation:
                 # This would be id:environment variable:value
                 valL: value
             id:
-                top script: top script
                 current date: current date
                 file:
                     basename:
@@ -119,6 +118,18 @@ translation:
                     hours: hours
                     seconds since midnight: seconds since midnight
                 Math:
+                    NaN: NaN
+                    inf:
+                        - inf
+                        - infinity
+                    NaN?: NaN?
+                    inf?:
+                        - inf?
+                        - infinity?
+                        - infinite?
+                    finite?: finite?
+                    normal?: normal?
+                    zero?: zero?
                     pi: pi
                     e: e
         command:
@@ -142,25 +153,54 @@ translation:
                     - wait
                 Math:
                     abs:
-                        - absolute value
                         - abs
+                        - absolute value
                     sqrt:
-                        - square root
                         - sqrt
+                        - square root
                         - √
                     cbrt:
+                        - cbrt
                         - cube root
                         - cubic root
-                        - cbrt
-                    square:
-                        - square
-                        - squared
-                    cube:
-                        - cube
-                        - cubed
+                    square: square
+                    cube: cube
                     pow:
-                        - power
                         - pow
+                        - power
+                    ln:
+                        - ln
+                        - log
+                        - loge
+                    log10: log10
+                    log2: log2
+                    sin:
+                        - sin
+                        - sine
+                    cos:
+                        - cos
+                        - cosine
+                    tan:
+                        - tan
+                        - tangent
+                    asin:
+                        - asin
+                        - arcsin
+                        - arcsine
+                    acos:
+                        - acos
+                        - arccos
+                        - arccosine
+                    atan:
+                        - atan
+                        - arctan
+                        - arctangent
+                    atan2: atan2
+                    round: round
+                    ceil:
+                        - ceil
+                        - ceiling
+                    floor: floor
                 Sequence:
                     join: join
                 String:
@@ -210,6 +250,9 @@ translation:
                     pow:
                         .direct: of
                         exponent: to the
+                    atan2:
+                        .direct: y
+                        x: x
                 Sequence:
                     join:
                         with:
