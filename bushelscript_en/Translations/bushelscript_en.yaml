@@ -77,15 +77,14 @@ translation:
                 cwin: window
                 docu: document
             id:
-                Core:
-                    core object: core object
-                    script: script
-                    function: function
-                    environment variable:
-                        - environment variable
-                        - environment var
-                        - env variable
-                        - env var
+                core object: core object
+                script: script
+                function: function
+                environment variable:
+                    - environment variable
+                    - environment var
+                    - env variable
+                    - env var
         property:
             ae4:
                 pALL: properties
