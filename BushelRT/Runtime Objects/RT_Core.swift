@@ -68,6 +68,55 @@ public class RT_Core: RT_Object {
         }
     }
     
+    public override func element(_ type: TypeInfo, named name: String) throws -> RT_Object {
+        func element() -> RT_Object? {
+            switch Types(type.uri) {
+            case .application:
+                return RT_Application(named: name)
+            case .file:
+                return RT_File(value: URL(fileURLWithPath: (name as NSString).expandingTildeInPath))
+            case .environmentVariable:
+                return RT_EnvVar(name: name)
+            default:
+                return nil
+            }
+        }
+        guard let elem = element() else {
+            return try super.element(type, named: name)
+        }
+        return elem
+    }
+    
+    public override func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object {
+        func element() -> RT_Object? {
+            switch Types(type.uri) {
+            case .application:
+                guard
+                    let appBundleID = id.coerce(to: RT_String.self)?.value,
+                    let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
+                else {
+                    return nil
+                }
+                return RT_Application(bundle: appBundle)
+            default:
+                return nil
+            }
+        }
+        guard let elem = element() else {
+            return try super.element(type, id: id)
+        }
+        return elem
+    }
+    
+    public override func elements(_ type: TypeInfo) throws -> RT_Object {
+        switch Types(type.uri) {
+        case .environmentVariable:
+            return RT_List(contents: ProcessInfo.processInfo.environment.keys.map { RT_EnvVar(name: $0) })
+        default:
+            return try super.elements(type)
+        }
+    }
+    
     public override func compareEqual(with other: RT_Object) -> Bool {
         other.dynamicTypeInfo.isA(dynamicTypeInfo)
     }
