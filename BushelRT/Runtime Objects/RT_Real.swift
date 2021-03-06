@@ -133,7 +133,7 @@ public class RT_Real: RT_Object, AEEncodable {
         case .Math_zero_Q:
             return RT_Boolean.withValue(value.isZero)
         default:
-            throw NoPropertyExists(type: dynamicTypeInfo, property: property)
+            return try super.property(property)
         }
     }
     
