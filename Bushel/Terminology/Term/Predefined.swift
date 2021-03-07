@@ -484,6 +484,8 @@ public enum Commands: String, Term.PredefinedID {
     case Math_ceil
     case Math_floor
     
+    case Sequence_add
+    case Sequence_remove
     case Sequence_join
     
     case String_split

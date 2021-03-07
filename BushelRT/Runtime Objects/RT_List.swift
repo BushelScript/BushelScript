@@ -130,6 +130,23 @@ public class RT_List: RT_Object, AEEncodable {
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         switch Commands(command.id) {
+        case .Sequence_add:
+            guard let new = arguments[ParameterInfo(.direct)] else {
+                throw MissingParameter(command: command, parameter: ParameterInfo(.direct))
+            }
+            contents.append(new)
+            return new
+        case .Sequence_remove:
+            guard let toRemove = arguments[ParameterInfo(.direct)] else {
+                throw MissingParameter(command: command, parameter: ParameterInfo(.direct))
+            }
+            if let index = contents.firstIndex(where: { toRemove.compareEqual(with: $0) }) {
+                let item = contents[index]
+                contents.remove(at: index)
+                return item
+            } else {
+                return RT_Null.null
+            }
         case .Sequence_join:
             guard let separator = arguments[ParameterInfo(.Sequence_join_with)]?.coerce(to: RT_String.self) else {
                 // TODO: Throw error
