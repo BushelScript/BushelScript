@@ -5,7 +5,7 @@ import Foundation
 
 private let CFBundleShortVersionString = "CFBundleShortVersionString"
 
-private let toolVersion = "0.2.0"
+private let toolVersion = "0.3.0"
 private let frameworks = ["Bushel", "BushelLanguage", "BushelRT", "SwiftAutomation"]
 private let frameworkForMainVersion = "Bushel"
 
