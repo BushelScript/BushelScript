@@ -569,6 +569,7 @@ public enum Commands: String, Term.PredefinedID {
 public enum Parameters: String, Term.PredefinedID {
     
     case direct = ".direct"
+    case target = ".target"
     case set_to
     case open_searchText
     

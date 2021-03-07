@@ -170,7 +170,6 @@ final class Builtin {
         if arguments[ParameterInfo(.direct)] == nil {
             implicitDirect = target
         }
-        let directParameter = arguments[ParameterInfo(.direct)] ?? implicitDirect
         
         func catchingErrors(do action: () throws -> RT_Object?) throws -> RT_Object? {
             do {
@@ -182,15 +181,23 @@ final class Builtin {
             return nil
         }
         
+        var directArgTarget = arguments[ParameterInfo(.direct)] ?? implicitDirect
+        var defaultTarget = target
+        if let targetArgument = arguments[ParameterInfo(.target)] {
+            defaultTarget = targetArgument
+            // Don't send the message to the direct argument.
+            directArgTarget = nil
+        }
+        
         // TODO: Revise with Target Stack
         return try
             catchingErrors {
-                try directParameter?.perform(command: command, arguments: argumentsWithoutDirect, implicitDirect: implicitDirect)
+                try directArgTarget?.perform(command: command, arguments: argumentsWithoutDirect, implicitDirect: implicitDirect)
             } ??
             catchingErrors {
-                directParameter == target ?
+                directArgTarget == defaultTarget ?
                     nil :
-                    try target.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+                    try defaultTarget.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             } ??
             catchingErrors {
                 try rt.topScript.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)

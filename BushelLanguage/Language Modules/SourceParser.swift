@@ -93,6 +93,7 @@ extension SourceParser {
         }
         
         lexicon.add(Term(Term.ID(Parameters.direct)))
+        lexicon.add(Term(Term.ID(Parameters.target)))
         
         // Pop the Core term.
         lexicon.pop()

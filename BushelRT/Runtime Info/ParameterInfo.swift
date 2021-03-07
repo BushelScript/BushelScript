@@ -42,8 +42,10 @@ public class ParameterInfo: TermInfo, Hashable {
     }
     
     public init(_ uid: Term.SemanticURI, _ tags: Set<Tag> = []) {
-        // Normalize all "direct" parameters into one value for the sake of runtime comparisons
+        // Normalize all "direct" and "target" parameters into one value
+        // for the sake of runtime comparisons
         self.uri = uid.isDirectParameter ? Term.SemanticURI(Parameters.direct) : uid
+        self.uri = uid.isTargetParameter ? Term.SemanticURI(Parameters.target) : uid
         self.tags = tags
     }
     
