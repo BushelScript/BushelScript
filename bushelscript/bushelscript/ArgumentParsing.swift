@@ -11,6 +11,8 @@ private var optionAwaitingArgument: OptionAwaitingArgument? = nil
 
 func parse(longOption option: Substring) {
     switch option {
+    case "no-result":
+        parse(shortOptions: "R")
     case "version":
         parse(shortOptions: "v")
     case "help":
@@ -28,6 +30,8 @@ func parse(shortOptions options: Substring) {
             switch option {
             case "i":
                 invocation.interactive = true
+            case "R":
+                invocation.printResult = false
             case "v":
                 exit(printVersion())
             case "h":

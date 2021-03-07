@@ -15,7 +15,8 @@ Arguments:
 
 Options:
     -e                      Specifies a line of script code to run.
-    -v, --version           Display version of this command-line tool and of installed BushelScript frameworks, then exit.
-    -h, --help              Print this help text, then exit.
+    -R, --no-result         Disables printing the final result to stdout.
+    -v, --version           Displays version of this command-line tool and of installed BushelScript frameworks, then exits.
+    -h, --help              Prints this help text, then exits.
 """)
 }

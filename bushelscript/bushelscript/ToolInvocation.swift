@@ -14,6 +14,7 @@ struct ToolInvocation {
     
     var language: String?
     var interactive: Bool = false
+    var printResult: Bool = true
     
 }
 
@@ -22,6 +23,7 @@ private struct InvocationState {
     var storedLanguageModule: (module: LanguageModule, language: String)?
     var storedParser: (parser: SourceParser, module: LanguageModule)?
     var rt = Runtime(currentApplicationBundleID: "com.justcheesy.BushelGUIHost")
+    var lastResult: RT_Object?
     
 }
 
@@ -40,6 +42,10 @@ extension ToolInvocation {
         }
         if interactive {
             try runREPL(&state)
+        } else {
+            if printResult {
+                print(state.lastResult!)
+            }
         }
     }
     
@@ -68,7 +74,7 @@ extension ToolInvocation {
         
         do {
             let program = try parser(&state, for: language).parse(source: source)
-            print(try state.rt.run(program))
+            state.lastResult = try state.rt.run(program)
         } catch let error as ParseErrorProtocol {
             print(error: error, in: source, fileName: fileName)
         }
