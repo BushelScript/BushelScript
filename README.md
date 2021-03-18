@@ -23,19 +23,9 @@ tl;dr please don't trust this software. It will crash inexplicably, report that 
 
 See [releases on GitHub](https://github.com/BushelScript/BushelScript/releases). The latest version is at the top of the page.
 
-## Build BushelScript from source
+## Build from source
 
-Building from source is always an option, and is pretty straightforward if you have Xcode installed and know your way around the command line.
-
-To build BushelScript and create an installer package:
-
-1. Clone this repository to your local machine. (`git clone https://github.com/BushelScript/BushelScript.git` in a Terminal prompt, or download the zip file from the web interface).
-2. Make sure [Xcode](https://developer.apple.com/xcode) is installed.
-3. In the directory that `git clone` created: `./make-pkg.sh`
-
-Now you can `open BushelScript.pkg` (or double-click it) to run the installer.
-
-If you're having trouble, please open an issue detailing the problem.
+See [HOW_TO_BUILD.md](HOW_TO_BUILD.md).
 
 ## Component listing
 
