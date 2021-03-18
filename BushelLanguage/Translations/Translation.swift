@@ -25,7 +25,7 @@ public struct Translation {
         case invalidTermName
     }
     
-    public var format: String
+    public var format: Double
     public var language: String
     public var mappings: [Term.ID : Set<Term.Name>] = [:]
     
@@ -42,18 +42,19 @@ public struct Translation {
         guard case .scalar(let format) = translation["format"] else {
             throw ParseError.missingFormat
         }
-        self.format = format.string
         guard case .scalar(let language) = translation["language"] else {
             throw ParseError.missingLanguage
         }
         self.language = language.string
         
-        if self.format.hasPrefix("v") {
-            self.format.removeFirst()
+        var formatString = format.string
+        if formatString.hasPrefix("v") {
+            formatString.removeFirst()
         }
-        guard Double(self.format) == Translation.currentFormat else {
+        guard Double(formatString) == Translation.currentFormat else {
             throw ParseError.invalidFormat
         }
+        self.format = Translation.currentFormat
         
         guard case .mapping(let mappings) = translation["mappings"] else {
             return
