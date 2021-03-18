@@ -357,7 +357,7 @@
 				3C0566FA23135690004CDB1A /* BushelLanguageTests.xctest */,
 				3CFA68C423EE300E00A3E87E /* BushelLanguageTestingTools.framework */,
 				3C0566FC23135690004CDB1A /* bushelscript_en.bundle */,
-				3C0566FE23135690004CDB1A /* BushelScriptEnglishTests.xctest */,
+				3C0566FE23135690004CDB1A /* bushelscript_en Tests.xctest */,
 				3C0566EE23135690004CDB1A /* BushelRT.framework */,
 				3C0566F023135690004CDB1A /* BushelRTTests.xctest */,
 				3CFA68C623EE300E00A3E87E /* BushelGUIHost.app */,
@@ -681,10 +681,10 @@
 			remoteRef = 3C0566FB23135690004CDB1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		3C0566FE23135690004CDB1A /* BushelScriptEnglishTests.xctest */ = {
+		3C0566FE23135690004CDB1A /* bushelscript_en Tests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = BushelScriptEnglishTests.xctest;
+			path = "bushelscript_en Tests.xctest";
 			remoteRef = 3C0566FD23135690004CDB1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -987,14 +987,14 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "BushelScript Editor/Info/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.justcheesy.BushelScript-Editor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "BushelScript Editor-Bridging-Header.h";
@@ -1013,14 +1013,14 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "BushelScript Editor/Info/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.justcheesy.BushelScript-Editor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "BushelScript Editor-Bridging-Header.h";
@@ -1134,14 +1134,14 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "BushelScript Editor/Info/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.justcheesy.BushelScript-Editor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "BushelScript Editor-Bridging-Header.h";

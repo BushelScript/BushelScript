@@ -153,7 +153,7 @@
 				3C1D25182306E33300D202FA /* BushelLanguageTests.xctest */,
 				3CBF21C423FF9B0E00E3074A /* BushelLanguageTestingTools.framework */,
 				3C1D251A2306E33300D202FA /* bushelscript_en.bundle */,
-				3C1D251C2306E33300D202FA /* BushelScriptEnglishTests.xctest */,
+				3C1D251C2306E33300D202FA /* bushelscript_en Tests.xctest */,
 				3C1D250C2306E33300D202FA /* BushelRT.framework */,
 				3C1D250E2306E33300D202FA /* BushelRTTests.xctest */,
 				3CBF21C623FF9B0E00E3074A /* BushelGUIHost.app */,
@@ -316,10 +316,10 @@
 			remoteRef = 3C1D25192306E33300D202FA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		3C1D251C2306E33300D202FA /* BushelScriptEnglishTests.xctest */ = {
+		3C1D251C2306E33300D202FA /* bushelscript_en Tests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = BushelScriptEnglishTests.xctest;
+			path = "bushelscript_en Tests.xctest";
 			remoteRef = 3C1D251B2306E33300D202FA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -488,10 +488,10 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -505,10 +505,10 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -577,10 +577,10 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
