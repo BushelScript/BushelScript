@@ -2,4 +2,5 @@
 # to determine the license files to copy into the final product.
 # For human-readable licensing terms, see LICENSING.txt in the project's root directory.
 
+Regex/LICENSE.txt -> Regex-LICENSE.txt
 Yams/LICENSE -> Yams-LICENSE.txt
