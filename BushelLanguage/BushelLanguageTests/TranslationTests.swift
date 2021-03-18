@@ -8,7 +8,7 @@ private typealias Pathname = Term.SemanticURI.Pathname
 
 class TranslationParserTests: XCTestCase {
     
-    private let currentFormat = "0.1"
+    private let currentFormat = Translation.currentFormat
     
     func test_parsesMetadata() throws {
         let translationSource = """

@@ -9,6 +9,8 @@ private let log = OSLog(subsystem: logSubsystem, category: "Translations")
 /// Can be constructed from the contents of a YAML-based translation file.
 public struct Translation {
     
+    public static let currentFormat = 0.3
+    
     public enum ParseError: Error {
         case invalidSyntax
         case noOuterMapping
@@ -49,7 +51,7 @@ public struct Translation {
         if self.format.hasPrefix("v") {
             self.format.removeFirst()
         }
-        guard self.format == "0.1" else {
+        guard Double(self.format) == Translation.currentFormat else {
             throw ParseError.invalidFormat
         }
         
