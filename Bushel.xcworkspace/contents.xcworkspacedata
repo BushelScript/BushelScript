@@ -23,7 +23,13 @@
             location = "group:README.md">
          </FileRef>
          <FileRef
+            location = "group:WHAT_GETS_INSTALLED.md">
+         </FileRef>
+         <FileRef
             location = "group:HOW_TO_BUILD.md">
+         </FileRef>
+         <FileRef
+            location = "group:HOW_TO_UNINSTALL.md">
          </FileRef>
          <FileRef
             location = "group:LICENSING.txt">

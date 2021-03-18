@@ -19,35 +19,17 @@ Check out the [help site](https://bushelscript.github.io/help/) for guides, refe
 
 tl;dr please don't trust this software. It will crash inexplicably, report that 1 = 2, and eat the last slice of your pizza.
 
-## Install BushelScript
+## Install
 
-See [releases on GitHub](https://github.com/BushelScript/BushelScript/releases). The latest version is at the top of the page.
+See [releases on GitHub](https://github.com/BushelScript/BushelScript/releases). The latest version is at the top of the page. Download and run the installer package `BushelScript.pkg`.
+
+See [WHAT_GETS_INSTALLED.md](WHAT_GETS_INSTALLED.md) for details on what is installed where.
 
 ## Build from source
 
 See [HOW_TO_BUILD.md](HOW_TO_BUILD.md).
 
-## Component listing
+## Uninstall
 
-A BushelScript installation has the following components:
+See [HOW_TO_UNINSTALL.md](HOW_TO_UNINSTALL.md) (it's pretty easy).
 
-* Core frameworks, at `/Library/BushelScript/Core/*.framework`:
-  - `SwiftAutomation.framework`
-  - `Bushel.framework`
-  - `BushelLanguage.framework`
-  - `BushelRT.framework`
-* Language service, `/Library/BushelScript/Core/BushelLanguageServiceConnectionCreation.framework`:
-  - `BushelLanguageServiceConnectionCreation.framework`
-    - `BushelLanguageService.xpc`
-* Language modules, at `/Library/BushelScript/Languages/*.bundle`:
-  - `bushelscript_en.bundle`
-* BushelScript Editor application, at `/Applications/BushelScript Editor.app`
-* `bushelscript` command-line tool, at `/usr/local/bin/bushelscript`
-
-## Uninstall BushelScript
-
-To uninstall BushelScript, remove the following files and directories:
-
-* `/Library/BushelScript`
-* `/Applications/BushelScript Editor.app`
-* `/usr/local/bin/bushelscript`
