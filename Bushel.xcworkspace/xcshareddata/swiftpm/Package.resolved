@@ -42,7 +42,7 @@
         "repositoryURL": "https://github.com/ThatsJustCheesy/SDEFinitely.git",
         "state": {
           "branch": "master",
-          "revision": "f4a405992900fd7e543e7016d3a6dbd4c1b0fd7f",
+          "revision": "1df293adc9d0a60173e2d52d30c608f475844e11",
           "version": null
         }
       },
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/jpsim/Yams.git",
         "state": {
           "branch": null,
-          "revision": "88caa2e6fffdbef2e91c2022d038576062042907",
-          "version": "4.0.0"
+          "revision": "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
+          "version": "4.0.6"
         }
       }
     ]

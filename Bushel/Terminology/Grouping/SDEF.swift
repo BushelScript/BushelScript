@@ -42,11 +42,14 @@ extension TermDictionary {
             }
             merge(scriptDictionary)
         } else {
-            // TODO: Why are errors suppressed here?
             let sdef: Data
             do {
                 sdef = try readSDEF(from: url)
+            } catch is NoSDEF {
+                // That's OK.
+                return
             } catch is SDEFError {
+                // TODO: Why are errors suppressed here?
                 return
             }
             
