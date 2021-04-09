@@ -1,4 +1,3 @@
-import Bushel
 
 /// Formats error messages.
 public protocol MessageFormatter {

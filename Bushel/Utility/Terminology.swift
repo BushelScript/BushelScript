@@ -1,4 +1,3 @@
-import Bushel
 
 public typealias TermNameTraversalTable = [Term.Name : [Term.Name]]
 

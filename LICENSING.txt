@@ -1,8 +1,7 @@
 Different parts of this project may be licensed differently.
 The status quo is as follows:
 
-• Bushel (parsing; "frontend"): Pending decision
-• BushelLanguage (language module internal and consumer API): Pending decision
+• Bushel (common structures, language module internal and consumer API): Pending decision
 • Language modules:
 	• bushelscript_en (primary English module): Pending decision
 • BushelRT (codegen and runtime library; "backend"): Pending decision

@@ -5,8 +5,7 @@ A standard BushelScript installation consists of the following components:
 - Shared components: `/Library/BushelScript/`
   - Core frameworks: `Core/`
     - AppleEvent support: `SwiftAutomation.framework`
-    - Common structure (including AST) definitions: `Bushel.framework`
-    - Language module (parser and formatter) API: `BushelLanguage.framework`
+    - Common structure (including AST) definitions, language module (parser and formatter) API: `Bushel.framework`
     - Runtime: `BushelRT.framework`
     - XPC service consumer API: `BushelLanguageServiceConnectionCreation.framework/`:
       - XPC service: `XPCServices/BushelLanguageService.xpc`

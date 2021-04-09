@@ -1,5 +1,5 @@
 import XCTest
-import BushelLanguage
+import Bushel
 
 // Protip: ⌥⇧⌘← to fold all methods
 
@@ -27,13 +27,11 @@ class LanguageConstructTests: XCTestCase {
     
     func test_useApplication_byName_findsApplication() {
         let parser = module.parser()
-        XCTAssertNoThrow(try parser.parse(source: "use application Finder"))
         XCTAssertNoThrow(try parser.parse(source: "use app Finder"))
     }
     
     func test_useApplication_byID_findsApplication() {
         let parser = module.parser()
-        XCTAssertNoThrow(try parser.parse(source: "use application id com.apple.Finder"))
         XCTAssertNoThrow(try parser.parse(source: "use app id com.apple.Finder"))
     }
     

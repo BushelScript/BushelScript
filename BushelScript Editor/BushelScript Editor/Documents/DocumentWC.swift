@@ -3,7 +3,7 @@
 // See file LICENSE.txt for licensing information.
 
 import Cocoa
-import BushelLanguage
+import Bushel
 
 class DocumentWC: NSWindowController {
     

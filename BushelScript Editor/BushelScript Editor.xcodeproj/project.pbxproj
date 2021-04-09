@@ -31,7 +31,6 @@
 		3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C249D472319C1D700F5826E /* PreferencesViewController.swift */; };
 		3C2BC9AB23E258E400CB8C20 /* InlineErrorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */; };
 		3C2BC9AC23E258E400CB8C20 /* InlineErrorVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C2BC9AA23E258E400CB8C20 /* InlineErrorVC.xib */; };
-		3C2BC9B123E2748500CB8C20 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566F823135690004CDB1A /* BushelLanguage.framework */; };
 		3C2BC9C923E2772500CB8C20 /* SECompileScriptTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3C2BC9C223E2772400CB8C20 /* SECompileScriptTemplate.pdf */; };
 		3C2BC9CB23E2774200CB8C20 /* SERunScriptTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3C2BC9CA23E2774200CB8C20 /* SERunScriptTemplate.pdf */; };
 		3C2BC9EC23E27E6200CB8C20 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C0566B523135675004CDB1A /* Main.storyboard */; };
@@ -112,20 +111,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3CCD8AB722CC45040049C74F;
 			remoteInfo = BushelRTTests;
-		};
-		3C0566F723135690004CDB1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C6B756F2305AF3F0006C354;
-			remoteInfo = BushelLanguage;
-		};
-		3C0566F923135690004CDB1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C6B75772305AF3F0006C354;
-			remoteInfo = BushelLanguageTests;
 		};
 		3C0566FB23135690004CDB1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -266,7 +251,6 @@
 				3C05670D231356E7004CDB1A /* Bushel.framework in Frameworks */,
 				3C32B10A23B151C2002FF795 /* SwiftAutomation.framework in Frameworks */,
 				3C0430692316124F00758339 /* BushelLanguageServiceConnectionCreation.framework in Frameworks */,
-				3C2BC9B123E2748500CB8C20 /* BushelLanguage.framework in Frameworks */,
 				3C66A80C23CA6BC7005BA372 /* OSAKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -353,8 +337,6 @@
 			children = (
 				3C0566EA23135690004CDB1A /* Bushel.framework */,
 				3C0566EC23135690004CDB1A /* BushelTests.xctest */,
-				3C0566F823135690004CDB1A /* BushelLanguage.framework */,
-				3C0566FA23135690004CDB1A /* BushelLanguageTests.xctest */,
 				3CFA68C423EE300E00A3E87E /* BushelLanguageTestingTools.framework */,
 				3C0566FC23135690004CDB1A /* bushelscript_en.bundle */,
 				3C0566FE23135690004CDB1A /* bushelscript_en Tests.xctest */,
@@ -658,20 +640,6 @@
 			fileType = wrapper.cfbundle;
 			path = BushelRTTests.xctest;
 			remoteRef = 3C0566EF23135690004CDB1A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C0566F823135690004CDB1A /* BushelLanguage.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = BushelLanguage.framework;
-			remoteRef = 3C0566F723135690004CDB1A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C0566FA23135690004CDB1A /* BushelLanguageTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = BushelLanguageTests.xctest;
-			remoteRef = 3C0566F923135690004CDB1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3C0566FC23135690004CDB1A /* bushelscript_en.bundle */ = {
@@ -980,7 +948,6 @@
 		3C0566D323135675004CDB1A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "BushelScript Editor/Info/BushelScript Editor.entitlements";
@@ -1006,7 +973,6 @@
 		3C0566D423135675004CDB1A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "BushelScript Editor/Info/BushelScript Editor.entitlements";
@@ -1127,7 +1093,6 @@
 		3C4897B02400B9AE008EE9D1 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "BushelScript Editor/Info/BushelScript Editor.entitlements";

@@ -1,7 +1,6 @@
-import BushelLanguage
 import Bushel
 
-public final class EnglishMessageFormatter: BushelLanguage.MessageFormatter {
+public final class EnglishMessageFormatter: MessageFormatter {
     
     public init() {
     }

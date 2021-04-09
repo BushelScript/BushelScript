@@ -4,7 +4,7 @@
 
 import Cocoa
 import Defaults
-import BushelLanguage
+import Bushel
 import os
 
 private let log = OSLog(subsystem: logSubsystem, category: "App delegate")

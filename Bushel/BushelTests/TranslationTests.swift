@@ -1,6 +1,5 @@
 import XCTest
-@testable import BushelLanguage
-import Bushel
+@testable import Bushel
 
 // Protip: ⌥⇧⌘← to fold all methods
 
@@ -30,7 +29,7 @@ translation:
 """
         XCTAssertThrowsError(try Translation(source: translationSource), "A newer translation format should be rejected") { error in
             guard
-                let parseError = error as? BushelLanguage.Translation.ParseError,
+                let parseError = error as? Bushel.Translation.ParseError,
                 case .invalidFormat = parseError
             else {
                 return XCTFail("Should throw a Translation.ParseError.invalidFormat")

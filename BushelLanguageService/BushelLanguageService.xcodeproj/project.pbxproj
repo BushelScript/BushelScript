@@ -15,7 +15,6 @@
 		3C0430652315CB2A00758339 /* BushelLanguageServiceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C0430172315ABB900758339 /* BushelLanguageServiceProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C75066923A1A455006E7591 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C75066823A1A455006E7591 /* SwiftAutomation.framework */; };
 		3C9703CA23551FD30099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0430392315AFA900758339 /* Bushel.framework */; };
-		3C9703D423551FD50099AA05 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C04303D2315AFA900758339 /* BushelLanguage.framework */; };
 		3C9703D623551FD60099AA05 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0430452315AFA900758339 /* BushelRT.framework */; };
 		3CB253A124008724005DD807 /* BushelLanguageService.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 3C0430142315ABB900758339 /* BushelLanguageService.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -34,20 +33,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3C35A5C422C81DE7002D4582;
 			remoteInfo = BushelTests;
-		};
-		3C04303C2315AFA900758339 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C04302A2315AFA900758339 /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C6B756F2305AF3F0006C354;
-			remoteInfo = BushelLanguage;
-		};
-		3C04303E2315AFA900758339 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C04302A2315AFA900758339 /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C6B75772305AF3F0006C354;
-			remoteInfo = BushelLanguageTests;
 		};
 		3C0430402315AFA900758339 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -131,7 +116,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C9703D423551FD50099AA05 /* BushelLanguage.framework in Frameworks */,
 				3C9703D623551FD60099AA05 /* BushelRT.framework in Frameworks */,
 				3C9703CA23551FD30099AA05 /* Bushel.framework in Frameworks */,
 				3C75066923A1A455006E7591 /* SwiftAutomation.framework in Frameworks */,
@@ -187,8 +171,6 @@
 			children = (
 				3C0430392315AFA900758339 /* Bushel.framework */,
 				3C04303B2315AFA900758339 /* BushelTests.xctest */,
-				3C04303D2315AFA900758339 /* BushelLanguage.framework */,
-				3C04303F2315AFA900758339 /* BushelLanguageTests.xctest */,
 				3CB2539E240086FD005DD807 /* BushelLanguageTestingTools.framework */,
 				3C0430412315AFA900758339 /* bushelscript_en.bundle */,
 				3C0430432315AFA900758339 /* bushelscript_en Tests.xctest */,
@@ -336,20 +318,6 @@
 			fileType = wrapper.cfbundle;
 			path = BushelTests.xctest;
 			remoteRef = 3C04303A2315AFA900758339 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C04303D2315AFA900758339 /* BushelLanguage.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = BushelLanguage.framework;
-			remoteRef = 3C04303C2315AFA900758339 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C04303F2315AFA900758339 /* BushelLanguageTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = BushelLanguageTests.xctest;
-			remoteRef = 3C04303E2315AFA900758339 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3C0430412315AFA900758339 /* bushelscript_en.bundle */ = {

@@ -4,7 +4,6 @@
 
 import Cocoa
 import Bushel
-import BushelLanguage // For module descriptors
 import BushelLanguageServiceConnectionCreation
 import Defaults
 

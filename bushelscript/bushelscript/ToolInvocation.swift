@@ -1,9 +1,8 @@
 // BushelScript command-line interface.
 // See file main.swift for copyright and licensing information.
 
-import BushelLanguage
+import Bushel
 import BushelRT
-import Bushel // TEMPORARY!!
 
 private var defaultLanguageID = "bushelscript_en"
 
@@ -149,7 +148,7 @@ private func print(error: ParseErrorProtocol, in source: String, fileName: Strin
         do {
             try fix.apply(to: &fixedSource, initialSource: source, impacts: &impacts)
         } catch {
-            print("error while applying fix: \(error)") // TODO: Move this code to BushelLanguage and make this print an os_log
+            print("error while applying fix: \(error)") // TODO: Move this code to Bushel and make this print an os_log
         }
         
         let lowestIndex = fix.locations.reduce(fix.locations[0].range.lowerBound) { $1.range.lowerBound < $0 ? $1.range.lowerBound : $0 }

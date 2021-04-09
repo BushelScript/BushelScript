@@ -1,4 +1,3 @@
-import Bushel
 import SDEFinitely
 import os
 import Regex
@@ -976,7 +975,7 @@ extension SourceParser {
             source.removeFirst(result.termString.count)
         }
         return result.termName.map { termName in
-            (termName: termName, operator: postfixOperators[name]!)
+            (termName: termName, operator: postfixOperators[termName]!)
         }
     }
     

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3C32B0FC23B147D4002FF795 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424322F9FDF0006EEF85 /* Bushel.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		3C32B10623B147D6002FF795 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B75CB2305F1F90006C354 /* BushelLanguage.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C32B10823B147D7002FF795 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424A22FA0C87006EEF85 /* BushelRT.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C32B11123B15638002FF795 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C32B11023B15638002FF795 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C47423C22F9F85E006EEF85 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47423B22F9F85E006EEF85 /* main.swift */; };
@@ -47,20 +46,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3CCD8AB722CC45040049C74F;
 			remoteInfo = BushelRTTests;
-		};
-		3C1D25152306E33300D202FA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C1D24F92306E33300D202FA /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C6B756F2305AF3F0006C354;
-			remoteInfo = BushelLanguage;
-		};
-		3C1D25172306E33300D202FA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C1D24F92306E33300D202FA /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C6B75772305AF3F0006C354;
-			remoteInfo = BushelLanguageTests;
 		};
 		3C1D25192306E33300D202FA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -135,7 +120,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C32B11123B15638002FF795 /* SwiftAutomation.framework in Frameworks */,
-				3C32B10623B147D6002FF795 /* BushelLanguage.framework in Frameworks */,
 				3C32B10823B147D7002FF795 /* BushelRT.framework in Frameworks */,
 				3C32B0FC23B147D4002FF795 /* Bushel.framework in Frameworks */,
 			);
@@ -149,8 +133,6 @@
 			children = (
 				3C1D25082306E33300D202FA /* Bushel.framework */,
 				3C1D250A2306E33300D202FA /* BushelTests.xctest */,
-				3C1D25162306E33300D202FA /* BushelLanguage.framework */,
-				3C1D25182306E33300D202FA /* BushelLanguageTests.xctest */,
 				3CBF21C423FF9B0E00E3074A /* BushelLanguageTestingTools.framework */,
 				3C1D251A2306E33300D202FA /* bushelscript_en.bundle */,
 				3C1D251C2306E33300D202FA /* bushelscript_en Tests.xctest */,
@@ -293,20 +275,6 @@
 			fileType = wrapper.cfbundle;
 			path = BushelRTTests.xctest;
 			remoteRef = 3C1D250D2306E33300D202FA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C1D25162306E33300D202FA /* BushelLanguage.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = BushelLanguage.framework;
-			remoteRef = 3C1D25152306E33300D202FA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C1D25182306E33300D202FA /* BushelLanguageTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = BushelLanguageTests.xctest;
-			remoteRef = 3C1D25172306E33300D202FA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3C1D251A2306E33300D202FA /* bushelscript_en.bundle */ = {

@@ -39,7 +39,6 @@
 		3C2DD4A823A06E90002FAE57 /* ParameterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */; };
 		3C3065B1230B7ABB00833CE8 /* Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B0230B7ABB00833CE8 /* Name.swift */; };
 		3C3065B3230B7E2000833CE8 /* TerminologySource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B2230B7E2000833CE8 /* TerminologySource.swift */; };
-		3C3065B5230B83B500833CE8 /* MessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B4230B83B500833CE8 /* MessageFormatter.swift */; };
 		3C35A5C522C81DE7002D4582 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C35A5CC22C81DE7002D4582 /* Bushel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C35A5BE22C81DE7002D4582 /* Bushel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C35A5DB22C81E60002D4582 /* SourceLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C35A5D522C81E60002D4582 /* SourceLocation.swift */; };
@@ -56,7 +55,6 @@
 		3C43D4FA2409BB6200981DDB /* ChooseFromWC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C43D4F82409BB6200981DDB /* ChooseFromWC.xib */; };
 		3C43D4FD2409BB8600981DDB /* ChooseFrom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C43D4FC2409BB8600981DDB /* ChooseFrom.swift */; };
 		3C554CB423F7B1A10029E71A /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
-		3C554CB723F7B1A20029E71A /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
 		3C554CB923F7B1A30029E71A /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
 		3C554CBB23F7B1A40029E71A /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3C57DD4C2352C55A00F9F2A0 /* Weave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C57DD4B2352C55A00F9F2A0 /* Weave.swift */; };
@@ -71,21 +69,12 @@
 		3C68D18323EF6F240002A7A4 /* UneditableVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C68D18123EF6F240002A7A4 /* UneditableVC.xib */; };
 		3C68D2452353BA300059FD3E /* BinaryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C68D2442353BA300059FD3E /* BinaryOperation.swift */; };
 		3C6B75282304B1360006C354 /* TermPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75272304B1360006C354 /* TermPool.swift */; };
-		3C6B75782305AF3F0006C354 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
-		3C6B757F2305AF3F0006C354 /* TranslationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B757E2305AF3F0006C354 /* TranslationTests.swift */; };
-		3C6B75812305AF3F0006C354 /* BushelLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C6B75712305AF3F0006C354 /* BushelLanguage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C6B758E2305AFC40006C354 /* SourceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B758D2305AFC40006C354 /* SourceParser.swift */; };
-		3C6B75902305B17D0006C354 /* Terminology.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B758F2305B17D0006C354 /* Terminology.swift */; };
-		3C6B75922305B2C90006C354 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75912305B2C90006C354 /* Logging.swift */; };
 		3C6B75B62305B5B80006C354 /* EnglishParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75B52305B5B80006C354 /* EnglishParser.swift */; };
 		3C6B75C02305BA270006C354 /* LangaugeConstructTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B752B2304EFF40006C354 /* LangaugeConstructTests.swift */; };
-		3C6B75C62305D6ED0006C354 /* SourceFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C52305D6ED0006C354 /* SourceFormatter.swift */; };
 		3C6B75C82305D8EA0006C354 /* EnglishFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */; };
-		3C6B75CF2305F95A0006C354 /* LanguageModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75CE2305F95A0006C354 /* LanguageModule.swift */; };
 		3C70A6A423C5898C00CD5F73 /* RT_TestSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C70A6A323C5898C00CD5F73 /* RT_TestSpecifier.swift */; };
 		3C75066523A1A3BF006E7591 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3C75067223A1A4EF006E7591 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
-		3C75067523A1A4F1006E7591 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
 		3C8FEEF322DE2B8300C1F1CF /* Builtin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8FEEF222DE2B8300C1F1CF /* Builtin.swift */; };
 		3C906F00231CD30A0099B139 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906EFF231CD30A0099B139 /* Ordering.swift */; };
 		3C9456F823E8F7DE00D59C2C /* FormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9456F623E8F7DE00D59C2C /* FormatterTests.swift */; };
@@ -98,12 +87,10 @@
 		3C950EB72572ADCE00B7E094 /* RT_EnvVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C950EB62572ADCE00B7E094 /* RT_EnvVar.swift */; };
 		3C9703D8235520D20099AA05 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3C9703DE235520D50099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
-		3C9703E5235520DF0099AA05 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C9CA8392532620C0098708F /* CodableErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9E9B23258ECF00198564 /* CodableErrors.swift */; };
 		3CA2699023F9F09F009E1944 /* RT_System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA2698F23F9F09F009E1944 /* RT_System.swift */; };
 		3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */; };
 		3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */; };
-		3CACF810241846BD002E1A52 /* TermNameSearchingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CACF80B24184443002E1A52 /* TermNameSearchingTests.swift */; };
 		3CB328E823EDAD4C003BF646 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB328E723EDAD4C003BF646 /* AppDelegate.swift */; };
 		3CB328EA23EDAD50003BF646 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CB328E923EDAD50003BF646 /* Assets.xcassets */; };
 		3CB328ED23EDAD50003BF646 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CB328EB23EDAD50003BF646 /* MainMenu.xib */; };
@@ -121,21 +108,27 @@
 		3CC774812414270E00EC1E3B /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC774802414270E00EC1E3B /* Formatting.swift */; };
 		3CCA1C7E235D0C010037058C /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCA1C7B235D0C010037058C /* Logging.swift */; };
 		3CCB8A75244B91C7003EBCD2 /* EnglishMessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCB8A74244B91C7003EBCD2 /* EnglishMessageFormatter.swift */; };
-		3CCB8A7A244B990F003EBCD2 /* ParseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCB8A79244B990F003EBCD2 /* ParseError.swift */; };
 		3CCD8AB822CC45040049C74F /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
 		3CCD8ABD22CC45040049C74F /* BushelRTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8ABC22CC45040049C74F /* BushelRTTests.swift */; };
 		3CCD8ABF22CC45040049C74F /* BushelRT.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCD8AB122CC45040049C74F /* BushelRT.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CCD8AC722CC45860049C74F /* StackFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8AC622CC45860049C74F /* StackFrame.swift */; };
 		3CCD8BA522CFA6020049C74F /* PrettyPrinting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8BA422CFA6020049C74F /* PrettyPrinting.swift */; };
-		3CCDDEBB23ED024D007684D1 /* BushelLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */; };
 		3CCDDEC323ED0257007684D1 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3CCDDECA23ED06E8007684D1 /* RT_AppleScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */; };
-		3CCE9EAC2325A9E200198564 /* SourceFix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9EAB2325A9E200198564 /* SourceFix.swift */; };
 		3CD113D422FB700000329583 /* ResourceLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113D322FB700000329583 /* ResourceLocation.swift */; };
 		3CD113DB22FC6E9300329583 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD113DA22FC6E9300329583 /* Logging.swift */; };
+		3CD18DE32620A1BD00144A3C /* Terminology.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B758F2305B17D0006C354 /* Terminology.swift */; };
+		3CD18DF62620A1D300144A3C /* TranslationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B757E2305AF3F0006C354 /* TranslationTests.swift */; };
+		3CD18DF72620A1D300144A3C /* TermNameSearchingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CACF80B24184443002E1A52 /* TermNameSearchingTests.swift */; };
+		3CD18E0A2620A2B800144A3C /* SourceFix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCE9EAB2325A9E200198564 /* SourceFix.swift */; };
+		3CD18E142620A2BA00144A3C /* ParseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCB8A79244B990F003EBCD2 /* ParseError.swift */; };
+		3CD18E452620A3ED00144A3C /* Translation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8397C23DD2454000F2516 /* Translation.swift */; };
+		3CD18E462620A3ED00144A3C /* MessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B4230B83B500833CE8 /* MessageFormatter.swift */; };
+		3CD18E472620A3ED00144A3C /* SourceFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C52305D6ED0006C354 /* SourceFormatter.swift */; };
+		3CD18E482620A3ED00144A3C /* LanguageModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75CE2305F95A0006C354 /* LanguageModule.swift */; };
+		3CD18E492620A3ED00144A3C /* SourceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B758D2305AFC40006C354 /* SourceParser.swift */; };
+		3CD18E542620A40600144A3C /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 3CD18E532620A40600144A3C /* Yams */; };
 		3CD8397A23DCE4F6000F2516 /* ConstantInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8397923DCE4F6000F2516 /* ConstantInfo.swift */; };
-		3CD8397D23DD2454000F2516 /* Translation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8397C23DD2454000F2516 /* Translation.swift */; };
-		3CD8398023DD32F5000F2516 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 3CD8397F23DD32F5000F2516 /* Yams */; };
 		3CD8398923DD3651000F2516 /* Translations in Resources */ = {isa = PBXBuildFile; fileRef = 3CD8398823DD3651000F2516 /* Translations */; };
 		3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */; };
 		3CE88935253363A90036E3F2 /* Located.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE88934253363A90036E3F2 /* Located.swift */; };
@@ -160,33 +153,12 @@
 			remoteGlobalIDString = 3C35A5BA22C81DE7002D4582;
 			remoteInfo = Bushel;
 		};
-		3C6B75792305AF3F0006C354 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C6B756E2305AF3F0006C354;
-			remoteInfo = BushelParser;
-		};
 		3C6B75A22305B5990006C354 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 3C6B75972305B5980006C354;
 			remoteInfo = BushelScriptEnglish;
-		};
-		3C6B75BA2305B75C0006C354 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C35A5BA22C81DE7002D4582;
-			remoteInfo = Bushel;
-		};
-		3C6B75BC2305B7770006C354 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C6B756E2305AF3F0006C354;
-			remoteInfo = BushelParser;
 		};
 		3C6B75BE2305B7790006C354 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -237,26 +209,12 @@
 			remoteGlobalIDString = 3CCD8AAE22CC45040049C74F;
 			remoteInfo = BushelRT;
 		};
-		3CCDDEBD23ED024D007684D1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C6B756E2305AF3F0006C354;
-			remoteInfo = BushelLanguage;
-		};
 		3CCDDEC523ED0257007684D1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 3C35A5BA22C81DE7002D4582;
 			remoteInfo = Bushel;
-		};
-		3CFA68D723EE491800A3E87E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C35A5B222C81DE7002D4582 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C6B756E2305AF3F0006C354;
-			remoteInfo = BushelLanguage;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -339,15 +297,9 @@
 		3C68D2442353BA300059FD3E /* BinaryOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinaryOperation.swift; sourceTree = "<group>"; };
 		3C6B75272304B1360006C354 /* TermPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermPool.swift; sourceTree = "<group>"; };
 		3C6B752B2304EFF40006C354 /* LangaugeConstructTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LangaugeConstructTests.swift; sourceTree = "<group>"; };
-		3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BushelLanguage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3C6B75712305AF3F0006C354 /* BushelLanguage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BushelLanguage.h; sourceTree = "<group>"; };
-		3C6B75722305AF3F0006C354 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3C6B75772305AF3F0006C354 /* BushelLanguageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BushelLanguageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C6B757E2305AF3F0006C354 /* TranslationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationTests.swift; sourceTree = "<group>"; };
-		3C6B75802305AF3F0006C354 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C6B758D2305AFC40006C354 /* SourceParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceParser.swift; sourceTree = "<group>"; };
 		3C6B758F2305B17D0006C354 /* Terminology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminology.swift; sourceTree = "<group>"; };
-		3C6B75912305B2C90006C354 /* Logging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3C6B75982305B5980006C354 /* bushelscript_en.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bushelscript_en.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C6B759B2305B5990006C354 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C6B75A02305B5990006C354 /* bushelscript_en Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "bushelscript_en Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -411,7 +363,6 @@
 		3CC224972391E08800448D25 /* Predefined.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Predefined.swift; sourceTree = "<group>"; };
 		3CC224992391F3C400448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC2249D2391F6A100448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		3CC224A02391FA2A00448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC774802414270E00EC1E3B /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		3CCA1C7B235D0C010037058C /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3CCB8A74244B91C7003EBCD2 /* EnglishMessageFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnglishMessageFormatter.swift; sourceTree = "<group>"; };
@@ -451,6 +402,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CF7486F23B825AC00A2F981 /* InAnyCase in Frameworks */,
+				3CD18E542620A40600144A3C /* Yams in Frameworks */,
 				3C75066523A1A3BF006E7591 /* SwiftAutomation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -463,29 +415,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3C6B756C2305AF3F0006C354 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3CD8398023DD32F5000F2516 /* Yams in Frameworks */,
-				3C9703E5235520DF0099AA05 /* Bushel.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3C6B75742305AF3F0006C354 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3C6B75782305AF3F0006C354 /* BushelLanguage.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3C6B75952305B5980006C354 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				3C75067223A1A4EF006E7591 /* Bushel.framework in Frameworks */,
-				3C75067523A1A4F1006E7591 /* BushelLanguage.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,7 +436,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C94570D23E8FCD000D59C2C /* XCTest.framework in Frameworks */,
-				3CCDDEBB23ED024D007684D1 /* BushelLanguage.framework in Frameworks */,
 				3CCDDEC323ED0257007684D1 /* Bushel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -512,7 +445,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C554CB423F7B1A10029E71A /* Bushel.framework in Frameworks */,
-				3C554CB723F7B1A20029E71A /* BushelLanguage.framework in Frameworks */,
 				3C554CB923F7B1A30029E71A /* BushelRT.framework in Frameworks */,
 				3C554CBB23F7B1A40029E71A /* SwiftAutomation.framework in Frameworks */,
 			);
@@ -611,7 +543,6 @@
 			children = (
 				3CB253AC240087A3005DD807 /* Config */,
 				3C35A5BD22C81DE7002D4582 /* Bushel */,
-				3C6B75702305AF3F0006C354 /* BushelLanguage */,
 				3C94570323E8FBC200D59C2C /* BushelLanguageTestingTools */,
 				3C6B75992305B5980006C354 /* bushelscript_en */,
 				3CCD8AB022CC45040049C74F /* BushelRT */,
@@ -629,8 +560,6 @@
 				3C35A5C422C81DE7002D4582 /* BushelTests.xctest */,
 				3CCD8AAF22CC45040049C74F /* BushelRT.framework */,
 				3CCD8AB722CC45040049C74F /* BushelRTTests.xctest */,
-				3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */,
-				3C6B75772305AF3F0006C354 /* BushelLanguageTests.xctest */,
 				3C6B75982305B5980006C354 /* bushelscript_en.bundle */,
 				3C6B75A02305B5990006C354 /* bushelscript_en Tests.xctest */,
 				3C94570223E8FBC200D59C2C /* BushelLanguageTestingTools.framework */,
@@ -642,6 +571,10 @@
 		3C35A5BD22C81DE7002D4582 /* Bushel */ = {
 			isa = PBXGroup;
 			children = (
+				3CC224A12391FB4A00448D25 /* Language Modules */,
+				3CD8397B23DD2419000F2516 /* Translations */,
+				3CCB8A79244B990F003EBCD2 /* ParseError.swift */,
+				3CCE9EAB2325A9E200198564 /* SourceFix.swift */,
 				3C043073231857CE00758339 /* Program.swift */,
 				3CCD8BA622CFA6120049C74F /* AST-derived Output */,
 				3CCD8B9922CDAA700049C74F /* AST */,
@@ -657,6 +590,8 @@
 		3C35A5C822C81DE7002D4582 /* BushelTests */ = {
 			isa = PBXGroup;
 			children = (
+				3CACF80B24184443002E1A52 /* TermNameSearchingTests.swift */,
+				3C6B757E2305AF3F0006C354 /* TranslationTests.swift */,
 				3CFC16E12326F4C0007A1055 /* TermNameTests.swift */,
 				3C35A5CB22C81DE7002D4582 /* Info.plist */,
 			);
@@ -689,30 +624,6 @@
 				3C94570C23E8FCD000D59C2C /* XCTest.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		3C6B75702305AF3F0006C354 /* BushelLanguage */ = {
-			isa = PBXGroup;
-			children = (
-				3CC224A12391FB4A00448D25 /* Language Modules */,
-				3CD8397B23DD2419000F2516 /* Translations */,
-				3CCE9EAD2325A9EA00198564 /* Errors */,
-				3CC224A22391FC7F00448D25 /* Utilities */,
-				3CC224A42391FCB500448D25 /* Config */,
-				3C6B757D2305AF3F0006C354 /* BushelLanguageTests */,
-				3CC224A02391FA2A00448D25 /* README.md */,
-			);
-			path = BushelLanguage;
-			sourceTree = "<group>";
-		};
-		3C6B757D2305AF3F0006C354 /* BushelLanguageTests */ = {
-			isa = PBXGroup;
-			children = (
-				3CACF80B24184443002E1A52 /* TermNameSearchingTests.swift */,
-				3C6B757E2305AF3F0006C354 /* TranslationTests.swift */,
-				3C6B75802305AF3F0006C354 /* Info.plist */,
-			);
-			path = BushelLanguageTests;
 			sourceTree = "<group>";
 		};
 		3C6B75992305B5980006C354 /* bushelscript_en */ = {
@@ -787,6 +698,7 @@
 		3C906F21231DD9E30099B139 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				3C6B758F2305B17D0006C354 /* Terminology.swift */,
 				3CE88934253363A90036E3F2 /* Located.swift */,
 				3CD113D322FB700000329583 /* ResourceLocation.swift */,
 				3CC774802414270E00EC1E3B /* Formatting.swift */,
@@ -912,24 +824,6 @@
 			path = "Language Modules";
 			sourceTree = "<group>";
 		};
-		3CC224A22391FC7F00448D25 /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				3C6B758F2305B17D0006C354 /* Terminology.swift */,
-				3C6B75912305B2C90006C354 /* Logging.swift */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
-		3CC224A42391FCB500448D25 /* Config */ = {
-			isa = PBXGroup;
-			children = (
-				3C6B75712305AF3F0006C354 /* BushelLanguage.h */,
-				3C6B75722305AF3F0006C354 /* Info.plist */,
-			);
-			name = Config;
-			sourceTree = "<group>";
-		};
 		3CCD8AB022CC45040049C74F /* BushelRT */ = {
 			isa = PBXGroup;
 			children = (
@@ -1003,15 +897,6 @@
 			path = Ask;
 			sourceTree = "<group>";
 		};
-		3CCE9EAD2325A9EA00198564 /* Errors */ = {
-			isa = PBXGroup;
-			children = (
-				3CCB8A79244B990F003EBCD2 /* ParseError.swift */,
-				3CCE9EAB2325A9E200198564 /* SourceFix.swift */,
-			);
-			path = Errors;
-			sourceTree = "<group>";
-		};
 		3CD8397B23DD2419000F2516 /* Translations */ = {
 			isa = PBXGroup;
 			children = (
@@ -1028,14 +913,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C35A5CC22C81DE7002D4582 /* Bushel.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3C6B756A2305AF3F0006C354 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3C6B75812305AF3F0006C354 /* BushelLanguage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1075,6 +952,7 @@
 			name = Bushel;
 			packageProductDependencies = (
 				3CF7486E23B825AC00A2F981 /* InAnyCase */,
+				3CD18E532620A40600144A3C /* Yams */,
 			);
 			productName = Bushel;
 			productReference = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */;
@@ -1098,47 +976,6 @@
 			productReference = 3C35A5C422C81DE7002D4582 /* BushelTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		3C6B756E2305AF3F0006C354 /* BushelLanguage */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3C6B75862305AF3F0006C354 /* Build configuration list for PBXNativeTarget "BushelLanguage" */;
-			buildPhases = (
-				3C6B756A2305AF3F0006C354 /* Headers */,
-				3C6B756B2305AF3F0006C354 /* Sources */,
-				3C6B756C2305AF3F0006C354 /* Frameworks */,
-				3C6B756D2305AF3F0006C354 /* Resources */,
-				3CD8398123DD3414000F2516 /* Copy SPM Dependency Licenses */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				3C6B75BB2305B75C0006C354 /* PBXTargetDependency */,
-			);
-			name = BushelLanguage;
-			packageProductDependencies = (
-				3CD8397F23DD32F5000F2516 /* Yams */,
-			);
-			productName = BushelParser;
-			productReference = 3C6B756F2305AF3F0006C354 /* BushelLanguage.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		3C6B75762305AF3F0006C354 /* BushelLanguageTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3C6B758A2305AF3F0006C354 /* Build configuration list for PBXNativeTarget "BushelLanguageTests" */;
-			buildPhases = (
-				3C6B75732305AF3F0006C354 /* Sources */,
-				3C6B75742305AF3F0006C354 /* Frameworks */,
-				3C6B75752305AF3F0006C354 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				3C6B757A2305AF3F0006C354 /* PBXTargetDependency */,
-			);
-			name = BushelLanguageTests;
-			productName = BushelParserTests;
-			productReference = 3C6B75772305AF3F0006C354 /* BushelLanguageTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		3C6B75972305B5980006C354 /* bushelscript_en */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3C6B75AF2305B5990006C354 /* Build configuration list for PBXNativeTarget "bushelscript_en" */;
@@ -1150,7 +987,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				3C6B75BD2305B7770006C354 /* PBXTargetDependency */,
 				3C6B75BF2305B7790006C354 /* PBXTargetDependency */,
 			);
 			name = bushelscript_en;
@@ -1191,7 +1027,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				3CCDDEBE23ED024D007684D1 /* PBXTargetDependency */,
 				3CCDDEC623ED0257007684D1 /* PBXTargetDependency */,
 			);
 			name = BushelLanguageTestingTools;
@@ -1211,7 +1046,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				3CFA68D823EE491800A3E87E /* PBXTargetDependency */,
 			);
 			name = BushelGUIHost;
 			packageProductDependencies = (
@@ -1278,13 +1112,6 @@
 						CreatedOnToolsVersion = 10.2.1;
 						LastSwiftMigration = 1020;
 					};
-					3C6B756E2305AF3F0006C354 = {
-						CreatedOnToolsVersion = 10.2.1;
-						LastSwiftMigration = 1020;
-					};
-					3C6B75762305AF3F0006C354 = {
-						CreatedOnToolsVersion = 10.2.1;
-					};
 					3C6B75972305B5980006C354 = {
 						CreatedOnToolsVersion = 10.2.1;
 						LastSwiftMigration = 1020;
@@ -1332,8 +1159,6 @@
 			targets = (
 				3C35A5BA22C81DE7002D4582 /* Bushel */,
 				3C35A5C322C81DE7002D4582 /* BushelTests */,
-				3C6B756E2305AF3F0006C354 /* BushelLanguage */,
-				3C6B75762305AF3F0006C354 /* BushelLanguageTests */,
 				3C94570123E8FBC200D59C2C /* BushelLanguageTestingTools */,
 				3C6B75972305B5980006C354 /* bushelscript_en */,
 				3C6B759F2305B5990006C354 /* bushelscript_en Tests */,
@@ -1377,20 +1202,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		3C35A5C222C81DE7002D4582 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3C6B756D2305AF3F0006C354 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3C6B75752305AF3F0006C354 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1496,26 +1307,6 @@
 			shellScript = "\"$SRCROOT/BuildScripts/copy-spm-licenses-into-product.rb\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3CD8398123DD3414000F2516 /* Copy SPM Dependency Licenses */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/$(TARGET_NAME)/SPMLicenses.txt",
-			);
-			name = "Copy SPM Dependency Licenses";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/BuildScripts/copy-spm-licenses-into-product.rb\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1527,15 +1318,22 @@
 				3CE88935253363A90036E3F2 /* Located.swift in Sources */,
 				3C6874412394188F004144AC /* PrecedenceGroup.swift in Sources */,
 				3C3065B3230B7E2000833CE8 /* TerminologySource.swift in Sources */,
+				3CD18E452620A3ED00144A3C /* Translation.swift in Sources */,
+				3CD18E482620A3ED00144A3C /* LanguageModule.swift in Sources */,
+				3CD18E142620A2BA00144A3C /* ParseError.swift in Sources */,
 				3C57DD4C2352C55A00F9F2A0 /* Weave.swift in Sources */,
+				3CD18DE32620A1BD00144A3C /* Terminology.swift in Sources */,
 				3C68743C2394164E004144AC /* UnaryOperation.swift in Sources */,
 				3C35A5DB22C81E60002D4582 /* SourceLocation.swift in Sources */,
+				3CD18E462620A3ED00144A3C /* MessageFormatter.swift in Sources */,
 				3C906F00231CD30A0099B139 /* Ordering.swift in Sources */,
 				3C6B75282304B1360006C354 /* TermPool.swift in Sources */,
 				3C043074231857CE00758339 /* Program.swift in Sources */,
+				3CD18E0A2620A2B800144A3C /* SourceFix.swift in Sources */,
 				3C065BB625DB2F7D00C86E5C /* Resource.swift in Sources */,
 				3CC774812414270E00EC1E3B /* Formatting.swift in Sources */,
 				3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */,
+				3CD18E472620A3ED00144A3C /* SourceFormatter.swift in Sources */,
 				3C3F06E123C14B15005BC0F2 /* Ranges.swift in Sources */,
 				3C065B6725DB1F9300C86E5C /* SyntacticRole.swift in Sources */,
 				3C9CA8392532620C0098708F /* CodableErrors.swift in Sources */,
@@ -1549,6 +1347,7 @@
 				3CD113DB22FC6E9300329583 /* Logging.swift in Sources */,
 				3CB7FEC623B7CA22003191AC /* ID.swift in Sources */,
 				3C065BE125DB975500C86E5C /* SDEF.swift in Sources */,
+				3CD18E492620A3ED00144A3C /* SourceParser.swift in Sources */,
 				3CC224982391E08800448D25 /* Predefined.swift in Sources */,
 				3CD113D422FB700000329583 /* ResourceLocation.swift in Sources */,
 				3C68D2452353BA300059FD3E /* BinaryOperation.swift in Sources */,
@@ -1561,32 +1360,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CD18DF72620A1D300144A3C /* TermNameSearchingTests.swift in Sources */,
 				3CFC16E22326F4C0007A1055 /* TermNameTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3C6B756B2305AF3F0006C354 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3C6B758E2305AFC40006C354 /* SourceParser.swift in Sources */,
-				3C6B75CF2305F95A0006C354 /* LanguageModule.swift in Sources */,
-				3CD8397D23DD2454000F2516 /* Translation.swift in Sources */,
-				3CCE9EAC2325A9E200198564 /* SourceFix.swift in Sources */,
-				3CCB8A7A244B990F003EBCD2 /* ParseError.swift in Sources */,
-				3C6B75922305B2C90006C354 /* Logging.swift in Sources */,
-				3C6B75C62305D6ED0006C354 /* SourceFormatter.swift in Sources */,
-				3C3065B5230B83B500833CE8 /* MessageFormatter.swift in Sources */,
-				3C6B75902305B17D0006C354 /* Terminology.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3C6B75732305AF3F0006C354 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3C6B757F2305AF3F0006C354 /* TranslationTests.swift in Sources */,
-				3CACF810241846BD002E1A52 /* TermNameSearchingTests.swift in Sources */,
+				3CD18DF62620A1D300144A3C /* TranslationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1703,25 +1479,10 @@
 			target = 3C35A5BA22C81DE7002D4582 /* Bushel */;
 			targetProxy = 3C35A5C622C81DE7002D4582 /* PBXContainerItemProxy */;
 		};
-		3C6B757A2305AF3F0006C354 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3C6B756E2305AF3F0006C354 /* BushelLanguage */;
-			targetProxy = 3C6B75792305AF3F0006C354 /* PBXContainerItemProxy */;
-		};
 		3C6B75A32305B5990006C354 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3C6B75972305B5980006C354 /* bushelscript_en */;
 			targetProxy = 3C6B75A22305B5990006C354 /* PBXContainerItemProxy */;
-		};
-		3C6B75BB2305B75C0006C354 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3C35A5BA22C81DE7002D4582 /* Bushel */;
-			targetProxy = 3C6B75BA2305B75C0006C354 /* PBXContainerItemProxy */;
-		};
-		3C6B75BD2305B7770006C354 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3C6B756E2305AF3F0006C354 /* BushelLanguage */;
-			targetProxy = 3C6B75BC2305B7770006C354 /* PBXContainerItemProxy */;
 		};
 		3C6B75BF2305B7790006C354 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1743,20 +1504,10 @@
 			target = 3CCD8AAE22CC45040049C74F /* BushelRT */;
 			targetProxy = 3CCD8AB922CC45040049C74F /* PBXContainerItemProxy */;
 		};
-		3CCDDEBE23ED024D007684D1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3C6B756E2305AF3F0006C354 /* BushelLanguage */;
-			targetProxy = 3CCDDEBD23ED024D007684D1 /* PBXContainerItemProxy */;
-		};
 		3CCDDEC623ED0257007684D1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3C35A5BA22C81DE7002D4582 /* Bushel */;
 			targetProxy = 3CCDDEC523ED0257007684D1 /* PBXContainerItemProxy */;
-		};
-		3CFA68D823EE491800A3E87E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3C6B756E2305AF3F0006C354 /* BushelLanguage */;
-			targetProxy = 3CFA68D723EE491800A3E87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2112,53 +1863,6 @@
 			};
 			name = Profiling;
 		};
-		3C48979524008B87008EE9D1 /* Profiling */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
-				DEFINES_MODULE = YES;
-				DEPLOYMENT_LOCATION = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = BushelLanguage/Info.plist;
-				INSTALL_PATH = "$(BUSHELSCRIPT_CORE_DIR)";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 0.3.0;
-				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguage;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = NO;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Profiling;
-		};
-		3C48979624008B87008EE9D1 /* Profiling */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = BushelLanguage/BushelLanguageTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguageTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Profiling;
-		};
 		3C48979724008B87008EE9D1 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2299,100 +2003,6 @@
 				SWIFT_VERSION = 5.0;
 			};
 			name = Profiling;
-		};
-		3C6B75872305AF3F0006C354 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = BushelLanguage/Info.plist;
-				INSTALL_PATH = "$(BUSHELSCRIPT_CORE_DIR)";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 0.3.0;
-				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguage;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		3C6B75882305AF3F0006C354 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
-				DEFINES_MODULE = YES;
-				DEPLOYMENT_LOCATION = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = BushelLanguage/Info.plist;
-				INSTALL_PATH = "$(BUSHELSCRIPT_CORE_DIR)";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 0.3.0;
-				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguage;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = NO;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
-		3C6B758B2305AF3F0006C354 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = BushelLanguage/BushelLanguageTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguageTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		3C6B758C2305AF3F0006C354 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = BushelLanguage/BushelLanguageTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelLanguageTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
 		};
 		3C6B75B02305B5990006C354 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2710,26 +2320,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3C6B75862305AF3F0006C354 /* Build configuration list for PBXNativeTarget "BushelLanguage" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3C6B75872305AF3F0006C354 /* Debug */,
-				3C6B75882305AF3F0006C354 /* Release */,
-				3C48979524008B87008EE9D1 /* Profiling */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3C6B758A2305AF3F0006C354 /* Build configuration list for PBXNativeTarget "BushelLanguageTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3C6B758B2305AF3F0006C354 /* Debug */,
-				3C6B758C2305AF3F0006C354 /* Release */,
-				3C48979624008B87008EE9D1 /* Profiling */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		3C6B75AF2305B5990006C354 /* Build configuration list for PBXNativeTarget "bushelscript_en" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2812,7 +2402,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3CD8397F23DD32F5000F2516 /* Yams */ = {
+		3CD18E532620A40600144A3C /* Yams */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3CD8397E23DD32F4000F2516 /* XCRemoteSwiftPackageReference "Yams" */;
 			productName = Yams;

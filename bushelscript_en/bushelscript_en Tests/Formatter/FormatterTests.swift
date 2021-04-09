@@ -1,6 +1,6 @@
 import XCTest
 import BushelLanguageTestingTools
-import BushelLanguage
+import Bushel
 
 // Protip: ⌥⇧⌘← to fold all methods
 

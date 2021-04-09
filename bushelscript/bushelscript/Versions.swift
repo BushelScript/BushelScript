@@ -6,7 +6,7 @@ import Foundation
 private let CFBundleShortVersionString = "CFBundleShortVersionString"
 
 private let toolVersion = "0.3.0"
-private let frameworks = ["Bushel", "BushelLanguage", "BushelRT", "SwiftAutomation"]
+private let frameworks = ["Bushel", "BushelRT", "SwiftAutomation"]
 private let frameworkForMainVersion = "Bushel"
 
 private func version(of framework: String) -> String? {

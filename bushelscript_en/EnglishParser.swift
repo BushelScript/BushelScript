@@ -1,8 +1,7 @@
-import BushelLanguage
 import Bushel
 import Regex
 
-public final class EnglishParser: BushelLanguage.SourceParser {
+public final class EnglishParser: SourceParser {
     
     public static var sdefCache: [URL : Data] = [:]
     

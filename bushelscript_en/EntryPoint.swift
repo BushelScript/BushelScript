@@ -1,5 +1,5 @@
 import Foundation
-import BushelLanguage
+import Bushel
 
 @objc(BushelScriptEnEntryPoint)
 public class BushelScriptEnEntryPoint: NSObject, LanguageModuleEntryPoint {
