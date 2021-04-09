@@ -2,18 +2,22 @@ import Regex
 
 private var defaultLanguageID = "bushelscript_en"
 
-func parse(from url: URL) throws -> Program {
-    try parse(source: String(contentsOf: url), at: url)
+func parse(from url: URL, ignoringImports: Set<URL> = []) throws -> Program {
+    try parse(source: String(contentsOf: url), ignoringImports: ignoringImports.union([url]))
 }
 
-func parse(source: String, at url: URL?) throws -> Program {
+func parse(source: String, at url: URL) throws -> Program {
+    try parse(source: source, ignoringImports: [url])
+}
+
+func parse(source: String, ignoringImports: Set<URL> = []) throws -> Program {
     var source = source
     let languageID = eatHashbang(from: &source) ?? defaultLanguageID
     
     guard let languageModule = LanguageModule(identifier: languageID) else {
         throw NoSuchLanguageModule(languageID: languageID)
     }
-    return try languageModule.parser().parse(source: source, at: url)
+    return try languageModule.parser().parse(source: source, ignoringImports: ignoringImports)
 }
 
 private func eatHashbang(from source: inout String) -> String? {

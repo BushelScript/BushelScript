@@ -101,6 +101,10 @@ extension SourceParser {
     }
     
     public func parse(source: String, at url: URL?) throws -> Program {
+        try parse(source: source, ignoringImports: url.map { [$0] } ?? [])
+    }
+    
+    public func parse(source: String, ignoringImports: Set<URL> = []) throws -> Program {
         signpostBegin()
         defer { signpostEnd() }
         
@@ -110,7 +114,7 @@ extension SourceParser {
         self.sequenceNestingLevel = -1
         self.elements = []
         
-        self.nativeImports = url.map { [$0] } ?? []
+        self.nativeImports = ignoringImports
         
         guard !source.isEmpty else {
             return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, terms: TermPool())
