@@ -1,28 +1,5 @@
 import Bushel
 
-public extension Collection where Element == Term.Name {
-    
-    func findSimpleTermName(in source: Substring) -> (termString: Substring, termName: Term.Name?) {
-        func noMatch() -> (termString: Substring, termName: Term.Name?) {
-            (source[..<source.startIndex], nil)
-        }
-        if source.isEmpty {
-            return noMatch()
-        }
-        var word = source.removingLeadingWhitespace().prefix(while: { !$0.isWordBreaking })
-        if word.isEmpty {
-            word = source[...source.startIndex]
-        }
-        let termName = Term.Name(word)
-        if self.contains(termName) {
-            return (word, termName)
-        } else {
-            return noMatch()
-        }
-    }
-    
-}
-
 public typealias TermNameTraversalTable = [Term.Name : [Term.Name]]
 
 public func findComplexTermName(from dictionary: TermNameTraversalTable, in source: Substring) -> (termString: Substring, termName: Term.Name?) {

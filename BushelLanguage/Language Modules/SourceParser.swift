@@ -929,21 +929,15 @@ extension SourceParser {
     }
     
     private func eatLineCommentMarker() -> Bool {
-        let result = lineCommentMarkers.findSimpleTermName(in: source)
-        source.removeFirst(result.termString.count)
-        return result.termName != nil
+        lineCommentMarkers.first { tryRemovingPrefix($0, withComments: false) } != nil
     }
     
     private func eatBlockCommentBeginMarker() -> Bool {
-        let result = blockCommentMarkers.map { $0.begin }.findSimpleTermName(in: source)
-        source.removeFirst(result.termString.count)
-        return result.termName != nil
+        blockCommentMarkers.first { tryRemovingPrefix($0.begin, withComments: false) } != nil
     }
     
     private func eatBlockCommentEndMarker() -> Bool {
-        let result = blockCommentMarkers.map { $0.end }.findSimpleTermName(in: source)
-        source.removeFirst(result.termString.count)
-        return result.termName != nil
+        blockCommentMarkers.first { tryRemovingPrefix($0.end, withComments: false) } != nil
     }
     
     private func eatKeyword() -> Term.Name? {
@@ -1010,50 +1004,23 @@ extension SourceParser {
     }
     
     private func eatStringBeginMarker() -> (begin: Term.Name, end: Term.Name)? {
-        let result = stringMarkers.map { $0.begin }.findSimpleTermName(in: source)
-        guard let termName = result.termName else {
-            return nil
-        }
-        addingElement(.string, spacing: .left) {
-            source.removeFirst(result.termString.count)
-        }
-        return stringMarkers.first { $0.begin == termName }
+        stringMarkers.first { tryEating($0.begin, .string, spacing: .left) }
     }
     
     private func eatExpressionGroupingBeginMarker() -> (begin: Term.Name, end: Term.Name)? {
-        let result = expressionGroupingMarkers.map { $0.begin }.findSimpleTermName(in: source)
-        guard let termName = result.termName else {
-            return nil
-        }
-        assume(tryEating(termName, spacing: .left))
-        return expressionGroupingMarkers.first { $0.begin == termName }
+        expressionGroupingMarkers.first { tryEating($0.begin, spacing: .left) }
     }
     
     private func eatListBeginMarker() -> (begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name])? {
-        let result = listMarkers.map { $0.begin }.findSimpleTermName(in: source)
-        guard let termName = result.termName else {
-            return nil
-        }
-        assume(tryEating(termName, spacing: .left))
-        return listMarkers.first { $0.begin == termName }
+        listMarkers.first { tryEating($0.begin, spacing: .left) }
     }
     
     private func eatRecordBeginMarker() -> (begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])? {
-        let result = recordMarkers.map { $0.begin }.findSimpleTermName(in: source)
-        guard let termName = result.termName else {
-            return nil
-        }
-        assume(tryEating(termName, spacing: .left))
-        return recordMarkers.first { $0.begin == termName }
+        recordMarkers.first { tryEating($0.begin, spacing: .left) }
     }
     
     private func eatListAndRecordBeginMarker() -> (begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])? {
-        let result = listAndRecordMarkers.map { $0.begin }.findSimpleTermName(in: source)
-        guard let termName = result.termName else {
-            return nil
-        }
-        assume(tryEating(termName, spacing: .left))
-        return listAndRecordMarkers.first { $0.begin == termName }
+        listAndRecordMarkers.first { tryEating($0.begin, spacing: .left) }
     }
     
 }
@@ -1062,34 +1029,19 @@ extension SourceParser {
 extension SourceParser {
     
     public func tryEating(_ termName: Term.Name, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
-        let rollbackSource = source
-        for word in termName.words {
-            guard tryEating(prefix: word, styling, spacing: spacing) else {
-                source = rollbackSource
-                return false
-            }
+        addingElement(styling, spacing: spacing) {
+            tryRemovingPrefix(termName)
         }
-        return true
     }
     
     public func tryEating(oneOf termNames: [Term.Name], _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Term.Name? {
         termNames.first { tryEating($0, styling, spacing: spacing) }
     }
     
-    public func tryEating(prefix target: String, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
-        eatCommentsAndWhitespace()
-        
-        guard
-            source.hasPrefix(target),
-            target.last!.isWordBreaking || (source.dropFirst(target.count).first?.isWordBreaking ?? true)
-        else {
-            return false
-        }
-        
+    public func tryEating(prefix: String, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> Bool {
         addingElement(styling, spacing: spacing) {
-            source.removeFirst(target.count)
+            tryRemovingPrefix(prefix)
         }
-        return true
     }
     
     public func tryEating(_ regex: Regex, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) -> MatchResult? {
@@ -1107,6 +1059,52 @@ extension SourceParser {
         }
         
         return match
+    }
+    
+    public func tryRemovingPrefix(_ termName: Term.Name, withComments: Bool = true) -> Bool {
+        let rollbackSource = source
+        for word in termName.words {
+            guard tryRemovingPrefix(word, withComments: withComments) else {
+                source = rollbackSource
+                return false
+            }
+        }
+        return true
+    }
+    
+    public func tryRemovingPrefix(_ prefix: String, withComments: Bool = true) -> Bool {
+        if withComments {
+            eatCommentsAndWhitespace()
+        } else {
+            source.removeLeadingWhitespace()
+        }
+        guard isNext(prefix) else {
+            return false
+        }
+        
+        source.removeFirst(prefix.count)
+        return true
+    }
+    
+    public func isNext(_ termName: Term.Name) -> Bool {
+        var source = self.source
+        for word in termName.words {
+            source.removeLeadingWhitespace()
+            guard Self.isNext(word, source: source) else {
+                return false
+            }
+            source.removeFirst(word.count)
+        }
+        return true
+    }
+    
+    public func isNext(_ prefix: String) -> Bool {
+        Self.isNext(prefix, source: source)
+    }
+    
+    public static func isNext(_ prefix: String, source: Substring) -> Bool {
+        source.hasPrefix(prefix) &&
+            (prefix.last!.isWordBreaking || (source.dropFirst(prefix.count).first?.isWordBreaking ?? true))
     }
     
     public func awaiting<Result>(endMarkers: Set<Term.Name>, perform action: () throws -> Result) rethrows -> Result {
