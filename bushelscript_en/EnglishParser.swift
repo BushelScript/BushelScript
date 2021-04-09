@@ -180,20 +180,11 @@ public final class EnglishParser: BushelLanguage.SourceParser {
     
     public lazy var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] = [
         Term.Name("system"): (false, [], handleUseSystem),
-        Term.Name("operating system"): (false, [], handleUseSystem),
-        Term.Name("OS"): (false, [], handleUseSystem),
-        Term.Name("macOS"): (false, [], handleUseSystem),
-        Term.Name("OS X"): (false, [], handleUseSystem),
-        Term.Name("MacOS"): (false, [], handleUseSystem),
-        Term.Name("Mac OS"): (false, [], handleUseSystem),
-        Term.Name("Mac OS X"): (false, [], handleUseSystem),
         
-        Term.Name("application"): (true, [], handleUseApplicationName),
         Term.Name("app"): (true, [], handleUseApplicationName),
-        Term.Name("application id"): (true, [], handleUseApplicationID),
         Term.Name("app id"): (true, [], handleUseApplicationID),
         
-        Term.Name("AppleScript library"): (true, [], handleUseAppleScriptLibrary),
+        Term.Name("library"): (true, [], handleUseAppleScriptLibrary),
         
         Term.Name("AppleScript"): (true, ["at"], handleUseAppleScript),
     ]
