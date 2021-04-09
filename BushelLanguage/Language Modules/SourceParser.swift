@@ -421,8 +421,7 @@ extension SourceParser {
     private func parsePostfixOperators() throws -> Expression? {
         eatCommentsAndWhitespace()
         var expression: Expression?
-        while let (_, operation) = findPostfixOperator() {
-            eatPostfixOperator()
+        while let (_, operation) = eatPostfixOperator() {
             
             eatCommentsAndWhitespace()
             guard let operand = try expression ?? parsePrimary() else {
@@ -968,20 +967,16 @@ extension SourceParser {
         }
     }
     
-    private func findPostfixOperator() -> (termName: Term.Name, operator: UnaryOperation)? {
-        let result = findComplexTermName(from: postfixOperatorsTraversalTable, in: source)
-        return result.termName.map { name in
-            (termName: name, operator: postfixOperators[name]!)
-        }
-    }
-    
-    private func eatPostfixOperator() {
+    private func eatPostfixOperator() -> (termName: Term.Name, operator: UnaryOperation)? {
         let result = findComplexTermName(from: postfixOperatorsTraversalTable, in: source)
         guard result.termName != nil else {
-            return
+            return nil
         }
         addingElement(.operator) {
             source.removeFirst(result.termString.count)
+        }
+        return result.termName.map { termName in
+            (termName: termName, operator: postfixOperators[name]!)
         }
     }
     
