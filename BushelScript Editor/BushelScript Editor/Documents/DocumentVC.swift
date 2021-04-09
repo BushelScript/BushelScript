@@ -572,7 +572,14 @@ extension DocumentVC: NSTextViewDelegate {
     
     private func display(error: Error, at sourceRange: NSRange) {
         func hightlightError() {
-            textView.textStorage?.addAttribute(.backgroundColor, value: NSColor(named: "ErrorHighlightColor")!, range: sourceRange)
+            guard
+                let textStorage = textView.textStorage,
+                let swiftRange = Range(sourceRange, in: textStorage.string),
+                textStorage.string.range.contains(swiftRange)
+            else {
+                return
+            }
+            textStorage.addAttribute(.backgroundColor, value: NSColor(named: "ErrorHighlightColor")!, range: sourceRange)
             textView.typingAttributes = defaultSourceCodeAttributes()
         }
         func addInlineErrorView() {
