@@ -446,7 +446,7 @@ public final class EnglishParser: SourceParser {
         return .defining(term, as: existingTerm, body: body)
     }
     
-    private func handleUseSystem(name: Term.Name) throws -> Term {
+    private func handleUseSystem(name _: Term.Name) throws -> Term {
         var system = Resource.System()
         if tryEating(prefix: "version") {
             eatCommentsAndWhitespace()
@@ -467,11 +467,16 @@ public final class EnglishParser: SourceParser {
             system = resolved
         }
         
-        let term = Term(.resource, .res("system"), name: name, resource: system.enumerated())
-        
-        // Terminology should be defined in translation files
-        
-        return term
+        // Term should be defined in translation files (we don't have a name
+        // for it here).
+        if let term = lexicon.pool.term(id: Term.ID(Variables.Core))!.makeDictionary(under: lexicon.pool).term(id: Term.ID(Resources.system)) {
+            return term
+        } else {
+            // Resort to empty name.
+            let term = Term(.resource, .res("system"), name: Term.Name([]), resource: system.enumerated())
+            try term.loadResourceTerminology(under: lexicon.pool)
+            return term
+        }
     }
     
     private func handleUseApplicationName(name: Term.Name) throws -> Term {
@@ -480,10 +485,7 @@ public final class EnglishParser: SourceParser {
         }
         
         let term = Term(.resource, .res("app:\(name)"), name: name, resource: application.enumerated())
-        
         try term.loadResourceTerminology(under: lexicon.pool)
-        lexicon.add(term)
-        
         return term
     }
     
@@ -492,10 +494,7 @@ public final class EnglishParser: SourceParser {
             throw ParseError(.unmetResourceRequirement(.applicationByBundleID(bundleID: name.normalized)), at: termNameLocation)
         }
         let term = Term(.resource, .res("appid:\(name)"), name: name, resource: application.enumerated())
-        
         try term.loadResourceTerminology(under: lexicon.pool)
-        lexicon.add(term)
-        
         return term
     }
     
@@ -504,10 +503,7 @@ public final class EnglishParser: SourceParser {
             throw ParseError(.unmetResourceRequirement(.libraryByName(name: name.normalized)), at: termNameLocation)
         }
         let term = Term(.resource, .res("library:\(name)"), name: name, resource: library.enumerated())
-        
         try? term.loadResourceTerminology(under: lexicon.pool)
-        lexicon.add(term)
-        
         return term
     }
     
@@ -527,10 +523,7 @@ public final class EnglishParser: SourceParser {
             throw ParseError(.unmetResourceRequirement(.applescriptAtPath(path: path)), at: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
         }
         let term = Term(.resource, .res("as:\(path)"), name: name, resource: applescript.enumerated())
-        
         try? term.loadResourceTerminology(under: lexicon.pool)
-        lexicon.add(term)
-        
         return term
     }
     

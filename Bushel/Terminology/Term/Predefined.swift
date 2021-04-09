@@ -740,6 +740,10 @@ public enum Resources: String, Term.PredefinedID {
         .resource
     }
     
+    public var resourceName: String? {
+        rawValue
+    }
+    
     public init?(_ uid: Term.SemanticURI) {
         switch uid {
         case .res(let resourceName):

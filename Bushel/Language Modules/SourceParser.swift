@@ -72,7 +72,7 @@ extension SourceParser {
                 translation.mappings.removeValue(forKey: scriptTermID)
                 
                 let scriptTerm = Term(scriptTermID, name: scriptTermNames.first!)
-                lexicon.push(scriptTerm)
+                lexicon.addPush(scriptTerm)
             }
             
             let coreTermID = Term.ID(Variables.Core)
@@ -80,7 +80,7 @@ extension SourceParser {
                 translation.mappings.removeValue(forKey: coreTermID)
                 
                 let coreTerm = Term(coreTermID, name: coreTermNames.first!, exports: true)
-                lexicon.push(coreTerm)
+                lexicon.addPush(coreTerm)
             }
             
             translations[index] = translation
@@ -178,6 +178,7 @@ extension SourceParser {
         eatCommentsAndWhitespace()
         
         let resourceTerm = try handler(name)
+        lexicon.add(resourceTerm)
         return .use(resource: resourceTerm)
     }
     
@@ -1130,9 +1131,7 @@ extension SourceParser {
     
     public func withTerminology<Result>(of expression: Expression, parse: () throws -> Result) throws -> Result {
         if let term = expression.term() {
-            lexicon.push(term)
-            defer { lexicon.pop() }
-            return try parse()
+            return try withTerminology(of: term, parse: parse)
         } else {
             return try parse()
         }

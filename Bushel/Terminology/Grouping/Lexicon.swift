@@ -64,18 +64,22 @@ public struct Lexicon: TerminologySource {
     }
     
     public mutating func push(_ term: Term) {
-        add(term)
         stack.append(term)
     }
     
+    public mutating func addPush(_ term: Term) {
+        add(term)
+        push(term)
+    }
+    
     public mutating func pushUnnamedDictionary(exports: Bool = false) {
-        push(Term(.dictionary, makeUniqueURI(), exports: false))
+        addPush(Term(.dictionary, makeUniqueURI(), exports: false))
     }
     
     public mutating func pushDictionaryTerm(uri: Term.SemanticURI, exports: Bool = false) {
         let id = Term.ID(.dictionary, uri)
         let dictionaryTerm = term(id: id) ?? add(Term(id, exports: exports))
-        push(dictionaryTerm)
+        addPush(dictionaryTerm)
     }
     
     public mutating func pop() {
