@@ -8,7 +8,7 @@ public enum Resource {
     case applicationByName(bundle: Bundle)
     case applicationByID(bundle: Bundle)
     case scriptingAdditionByName(bundle: Bundle)
-    case applescriptLibraryByName(name: String, url: URL, script: NSAppleScript)
+    case libraryByName(name: String, url: URL, library: Library)
     case applescriptAtPath(path: String, script: NSAppleScript)
     
 }
@@ -24,6 +24,13 @@ extension OperatingSystemVersion: CustomStringConvertible {
     public var description: String {
         "\(majorVersion).\(minorVersion).\(patchVersion)"
     }
+    
+}
+
+public enum Library {
+    
+    case native(Program)
+    case applescript(NSAppleScript)
     
 }
 
@@ -136,24 +143,27 @@ extension Resource {
         
     }
     
-    public struct AppleScriptLibraryByName: ResolvedResource {
+    public struct LibraryByName: ResolvedResource {
         
         public let name: String
         public let url: URL
-        public let script: NSAppleScript
+        public let library: Library
         
         public init?(name: String) {
-            guard let (url, script) = findAppleScriptLibrary(named: name) else {
+            guard let (url, library) =
+                findNativeLibrary(named: name) ??
+                findAppleScriptLibrary(named: name)
+            else {
                 return nil
             }
             
             self.name = name
             self.url = url
-            self.script = script
+            self.library = library
         }
         
         public func enumerated() -> Resource {
-            .applescriptLibraryByName(name: name, url: url, script: script)
+            .libraryByName(name: name, url: url, library: library)
         }
         
     }
@@ -198,7 +208,7 @@ extension Resource: CustomStringConvertible {
         case applicationByName = "app"
         case applicationByID = "appid"
         case scriptingAdditionByName = "osax"
-        case applescriptLibraryByName = "aslib"
+        case libraryByName = "library"
         case applescriptAtPath = "as"
     }
     
@@ -214,8 +224,8 @@ extension Resource: CustomStringConvertible {
             return .applicationByID
         case .scriptingAdditionByName:
             return .scriptingAdditionByName
-        case .applescriptLibraryByName:
-            return .applescriptLibraryByName
+        case .libraryByName:
+            return .libraryByName
         case .applescriptAtPath:
             return .applescriptAtPath
         }
@@ -232,7 +242,7 @@ extension Resource: CustomStringConvertible {
             return bundle.bundleIdentifier!
         case .scriptingAdditionByName(let bundle):
             return bundle.fileSystemName
-        case .applescriptLibraryByName(let name, _, _):
+        case .libraryByName(let name, _, _):
             return name
         case .applescriptAtPath(let path, _):
             return path
@@ -269,8 +279,8 @@ extension Resource {
                     return ApplicationByID(id: data)
                 case .scriptingAdditionByName:
                     return ScriptingAdditionByName(name: data)
-                case .applescriptLibraryByName:
-                    return AppleScriptLibraryByName(name: data)
+                case .libraryByName:
+                    return LibraryByName(name: data)
                 case .applescriptAtPath:
                     return AppleScriptAtPath(path: data)
                 }
@@ -301,7 +311,7 @@ extension Term {
              .applicationByID(let bundle),
              .scriptingAdditionByName(let bundle):
             try load(from: bundle.bundleURL, under: pool)
-        case .applescriptLibraryByName(_, let url, _):
+        case .libraryByName(_, let url, _):
             try load(from: url, under: pool)
         case .applescriptAtPath(let path, _):
             try load(from: URL(fileURLWithPath: path), under: pool)

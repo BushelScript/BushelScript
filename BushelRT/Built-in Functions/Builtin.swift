@@ -121,20 +121,37 @@ final class Builtin {
         }() ?? RT_Null.null
     }
     
-    func getResource(_ term: Term) -> RT_Object {
-        return {
+    private var nativeLibraryRTs: [URL : Runtime] = [:]
+    
+    func getResource(_ term: Term) throws -> RT_Object {
+        return try {
             switch term.resource {
             case .bushelscript:
                 return RT_Core()
             case .system(_):
                 return RT_System()
-            case .applicationByName(let bundle),
-                 .applicationByID(let bundle):
+            case let .applicationByName(bundle),
+                 let .applicationByID(bundle):
                 return RT_Application(bundle: bundle)
             case .scriptingAdditionByName(_):
                 return RT_Core()
-            case .applescriptLibraryByName(_, _, let script),
-                 .applescriptAtPath(_, let script):
+            case let .libraryByName(_, url, library):
+                switch library {
+                case let .native(program):
+                    if let libraryRT = nativeLibraryRTs[url] {
+                        return libraryRT.topScript
+                    } else {
+                        let libraryRT = Runtime(scriptName: term.name!.normalized, currentApplicationBundleID: self.rt.currentApplicationBundleID)
+                        
+                        _ = try libraryRT.run(program)
+                        
+                        nativeLibraryRTs[url] = libraryRT
+                        return libraryRT.topScript
+                    }
+                case let .applescript(applescript):
+                    return RT_AppleScript(name: term.name!.normalized, value: applescript)
+                }
+            case let .applescriptAtPath(_, script):
                 return RT_AppleScript(name: term.name!.normalized, value: script)
             case nil:
                 return RT_Null.null

@@ -325,8 +325,8 @@ extension Term {
             return "app id \(name)"
         case .scriptingAdditionByName:
             return "scripting addition \(name)"
-        case .applescriptLibraryByName:
-            return "AppleScript library \(name)"
+        case .libraryByName:
+            return "library \(name)"
         case .applescriptAtPath(let path, _):
             // TODO: Escape path when spitting back out
             return "AppleScript \(name) at \"\(path)\""

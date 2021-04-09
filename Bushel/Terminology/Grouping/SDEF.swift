@@ -6,9 +6,11 @@ extension Term {
     /// If the dictionary has not been created yet, then it is initialized with
     /// `pool` as its term pool.
     ///
-    /// `url` must have scheme `file` or `eppc`. It may identify either an SDEF
-    /// file, or an application bundle that contains one or more of an SDEF,
-    /// a Cocoa Scripting plist pair, or a classic `aete` resource.
+    /// `url` must have scheme `file` or `eppc`, and identify one of:
+    ///   - A BushelScript file
+    ///   - An SDEF file
+    ///   - An application bundle that contains one or more of an SDEF,
+    ///     a Cocoa Scripting plist pair, or a classic `aete` resource
     ///
     /// - Throws: `SDEFError` if the terms cannot be loaded for any reason.
     public func load(from url: URL, under pool: TermPool) throws {
@@ -21,40 +23,55 @@ extension TermDictionary {
     
     /// Loads the scripting definition at `url` into the dictionary.
     ///
-    /// `url` must have scheme `file` or `eppc`. It may identify either an SDEF
-    /// file, or an application bundle that contains one or more of an SDEF,
-    /// a Cocoa Scripting plist pair, or a classic `aete` resource.
+    /// `url` must have scheme `file` or `eppc`, and identify one of:
+    ///   - A BushelScript file
+    ///   - An SDEF file
+    ///   - An application bundle that contains one or more of an SDEF,
+    ///     a Cocoa Scripting plist pair, or a classic `aete` resource
     ///
     /// - Throws: `SDEFError` if the terms cannot be loaded for any reason.
     public func load(from url: URL) throws {
-        // TODO: Why are errors suppressed here?
-        let sdef: Data
-        do {
-            sdef = try readSDEF(from: url)
-        } catch is SDEFError {
-            return
+        if url.pathExtension == "bushel" {
+            let program = try parse(from: url)
+            // The Script term is always the top-level term in the hierarchy.
+            guard
+                let scriptTerm = program.terms.term(id: Term.ID(Variables.Script)),
+                let scriptDictionary = scriptTerm.dictionary
+            else {
+                return
+            }
+            merge(scriptDictionary)
+        } else {
+            // TODO: Why are errors suppressed here?
+            let sdef: Data
+            do {
+                sdef = try readSDEF(from: url)
+            } catch is SDEFError {
+                return
+            }
+            
+            var terms = try parse(sdef: sdef, under: pool)
+            
+            terms.removeAll { term in
+                // Don't import terms that shadow the "set" and "get"
+                // builtin special-case commands
+                [Commands.get, Commands.set]
+                    .map { Term.ID($0) }
+                    .contains(term.id)
+            }
+            
+            add(terms)
         }
-        
-        var terms = try parse(sdef: sdef, under: pool)
-        
-        terms.removeAll { term in
-            // Don't import terms that shadow the "set" and "get"
-            // builtin special-case commands
-            [Commands.get, Commands.set]
-                .map { Term.ID($0) }
-                .contains(term.id)
-        }
-        
-        add(terms)
     }
     
 }
 
 /// SDEF data containing the contents of the scripting definition at `url`.
 ///
-/// `url` must have scheme `file` or `eppc`. It may identify either an SDEF
-/// file, or an application bundle that contains one or more of an SDEF,
-/// a Cocoa Scripting plist pair, or a classic `aete` resource.
+/// `url` must have scheme `file` or `eppc`, and identify one of:
+///   - An SDEF file
+///   - An application bundle that contains one or more of an SDEF,
+///     a Cocoa Scripting plist pair, or a classic `aete` resource
 ///
 /// Maintains a cache, so external changes to previously read URLs may be
 /// ignored.

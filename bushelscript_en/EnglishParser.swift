@@ -183,7 +183,7 @@ public final class EnglishParser: SourceParser {
         Term.Name("app"): (true, [], handleUseApplicationName),
         Term.Name("app id"): (true, [], handleUseApplicationID),
         
-        Term.Name("library"): (true, [], handleUseAppleScriptLibrary),
+        Term.Name("library"): (true, [], handleUseLibrary),
         
         Term.Name("AppleScript"): (true, ["at"], handleUseAppleScript),
     ]
@@ -499,11 +499,11 @@ public final class EnglishParser: SourceParser {
         return term
     }
     
-    private func handleUseAppleScriptLibrary(name: Term.Name) throws -> Term {
-        guard let applescript = Resource.AppleScriptLibraryByName(name: name.normalized) else {
-            throw ParseError(.unmetResourceRequirement(.applescriptLibraryByName(name: name.normalized)), at: termNameLocation)
+    private func handleUseLibrary(name: Term.Name) throws -> Term {
+        guard let library = Resource.LibraryByName(name: name.normalized) else {
+            throw ParseError(.unmetResourceRequirement(.libraryByName(name: name.normalized)), at: termNameLocation)
         }
-        let term = Term(.resource, .res("aslib:\(name)"), name: name, resource: applescript.enumerated())
+        let term = Term(.resource, .res("library:\(name)"), name: name, resource: library.enumerated())
         
         try? term.loadResourceTerminology(under: lexicon.pool)
         lexicon.add(term)

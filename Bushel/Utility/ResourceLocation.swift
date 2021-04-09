@@ -53,11 +53,38 @@ extension Bundle {
     
 }
 
-public func findAppleScriptLibrary(named libraryName: String) -> (url: URL, applescript: NSAppleScript)? {
+public func findNativeLibrary(named libraryName: String) -> (url: URL, library: Library)? {
     signpostBegin()
     defer { signpostEnd() }
     
     for libraryDirURL in scriptLibraryDirectories {
+        let validExtensions = ["bushel"]
+        let libraryURLs = validExtensions.map { `extension` in
+            libraryDirURL.appendingPathComponent("\(libraryName).\(`extension`)")
+        }
+        
+        for libraryURL in libraryURLs {
+            do {
+                // Likely to throw.
+                let program = try parse(from: libraryURL)
+                
+                os_log("Found native library at %@", log: log, type: .debug, libraryURL as NSURL)
+                return (url: libraryURL, library: .native(program))
+            } catch {
+                os_log("No valid native library at %@: %@", log: log, type: .debug, libraryURL as NSURL, error as NSError)
+            }
+        }
+    }
+    
+    os_log("Failed to find native library with name '%@'", log: log, type: .debug, libraryName)
+    return nil
+}
+
+public func findAppleScriptLibrary(named libraryName: String) -> (url: URL, library: Library)? {
+    signpostBegin()
+    defer { signpostEnd() }
+    
+    for libraryDirURL in applescriptLibraryDirectories {
         let validExtensions = ["applescript", "scpt", "scptd"]
         let libraryURLs = validExtensions.map { `extension` in
             libraryDirURL.appendingPathComponent("\(libraryName).\(`extension`)")
@@ -66,7 +93,7 @@ public func findAppleScriptLibrary(named libraryName: String) -> (url: URL, appl
         for libraryURL in libraryURLs {
             if let applescript = NSAppleScript(contentsOf: libraryURL, error: nil) {
                 os_log("Found AppleScript library at %@", log: log, type: .debug, libraryURL as NSURL)
-                return (url: libraryURL, applescript: applescript)
+                return (url: libraryURL, library: .applescript(applescript))
             }
         }
     }
@@ -74,7 +101,7 @@ public func findAppleScriptLibrary(named libraryName: String) -> (url: URL, appl
     os_log("Failed to find AppleScript library with name '%@'", log: log, type: .debug, libraryName)
     return nil
 }
-    
+
 private var scriptLibraryDirectories: [URL] = {
     let libraryURLs = FileManager.default.urls(for: .libraryDirectory, in: .allDomainsMask)
     return libraryURLs.flatMap { url in
@@ -82,6 +109,14 @@ private var scriptLibraryDirectories: [URL] = {
             url
                 .appendingPathComponent("BushelScript", isDirectory: true)
                 .appendingPathComponent("Libraries", isDirectory: true),
+        ]
+    }
+}()
+    
+private var applescriptLibraryDirectories: [URL] = {
+    let libraryURLs = FileManager.default.urls(for: .libraryDirectory, in: .allDomainsMask)
+    return scriptLibraryDirectories + libraryURLs.flatMap { url in
+        [
             url
                 .appendingPathComponent("Script Libraries", isDirectory: true)
         ]

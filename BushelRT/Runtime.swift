@@ -409,7 +409,7 @@ public extension Runtime {
             return builtin.getVariableValue(term)
         case .use(let term), // MARK: .use
              .resource(let term): // MARK: .resource
-            return builtin.getResource(term)
+            return try builtin.getResource(term)
         case .enumerator(let term): // MARK: .constant
             return builtin.newConstant(term.id)
         case .type(let term): // MARK: .class_
