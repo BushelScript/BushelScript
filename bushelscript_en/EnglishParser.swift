@@ -23,6 +23,8 @@ public final class EnglishParser: SourceParser {
     public var postfixOperatorsTraversalTable: TermNameTraversalTable = [:]
     public var binaryOperatorsTraversalTable: TermNameTraversalTable = [:]
     
+    public var nativeImports: Set<URL> = []
+    
     public init() {
     }
     
@@ -499,9 +501,10 @@ public final class EnglishParser: SourceParser {
     }
     
     private func handleUseLibrary(name: Term.Name) throws -> Term {
-        guard let library = Resource.LibraryByName(name: name.normalized) else {
+        guard let library = Resource.LibraryByName(name: name.normalized, ignoring: nativeImports) else {
             throw ParseError(.unmetResourceRequirement(.libraryByName(name: name.normalized)), at: termNameLocation)
         }
+        nativeImports.insert(library.url)
         let term = Term(.resource, .res("library:\(name)"), name: name, resource: library.enumerated())
         try? term.loadResourceTerminology(under: lexicon.pool)
         return term

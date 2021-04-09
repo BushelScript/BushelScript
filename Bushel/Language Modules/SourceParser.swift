@@ -28,6 +28,8 @@ public protocol SourceParser: AnyObject {
     var postfixOperatorsTraversalTable: TermNameTraversalTable { get set }
     var binaryOperatorsTraversalTable: TermNameTraversalTable { get set }
     
+    var nativeImports: Set<URL> { get set }
+    
     var keywords: [Term.Name : KeywordHandler] { get }
     var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] { get }
     var prefixOperators: [Term.Name : UnaryOperation] { get }
@@ -98,7 +100,7 @@ extension SourceParser {
         lexicon.pop()
     }
     
-    public func parse(source: String) throws -> Program {
+    public func parse(source: String, at url: URL?) throws -> Program {
         signpostBegin()
         defer { signpostEnd() }
         
@@ -107,6 +109,8 @@ extension SourceParser {
         self.expressionStartIndex = source.startIndex
         self.sequenceNestingLevel = -1
         self.elements = []
+        
+        self.nativeImports = url.map { [$0] } ?? []
         
         guard !source.isEmpty else {
             return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, terms: TermPool())

@@ -24,12 +24,12 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
     private var errors = StoragePool<Error>()
     private var objects = StoragePool<RT_Object>()
     
-    func parseSource(_ source: String, usingLanguageModule module: Any, reply: @escaping (Any?, Any?) -> Void) {
+    func parseSource(_ source: String, at url: URL?, usingLanguageModule module: Any, reply: @escaping (Any?, Any?) -> Void) {
         guard let module = loadedLanguageModules[module] else {
             return reply(nil, nil)
         }
         do {
-            let program = try module.parser().parse(source: source)
+            let program = try module.parser().parse(source: source, at: url)
             reply(programs.retain(program), nil)
         } catch {
             reply(nil, errors.retain(error))

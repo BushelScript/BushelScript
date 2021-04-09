@@ -438,7 +438,7 @@ class DocumentVC: NSViewController {
             }
             
             self.pushStatus(.compiling)
-            service.parseSource(source, usingLanguageModule: language) { (program, error) in
+            service.parseSource(source, at: document.fileURL, usingLanguageModule: language) { (program, error) in
                 self.popStatus(.compiling)
                 then(service, language as LanguageModuleToken, program as ProgramToken?, error as ErrorToken?)
             }

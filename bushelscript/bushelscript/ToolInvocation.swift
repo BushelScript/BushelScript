@@ -31,12 +31,12 @@ extension ToolInvocation {
     func run() throws {
         var state = InvocationState()
         if !scriptLines.isEmpty {
-            try run(&state, source: scriptLines.map { String($0) }.joined(separator: "\n"), fileName: "<command-line>")
+            try run(&state, source: scriptLines.map { String($0) }.joined(separator: "\n"), fileName: "<command-line>", url: nil)
         }
         if !files.isEmpty {
             for file in files {
                 let file = String(file)
-                try run(&state, source: try String(contentsOfFile: file), fileName: file)
+                try run(&state, source: try String(contentsOfFile: file), fileName: file, url: URL(fileURLWithPath: file))
             }
         }
         if interactive {
@@ -48,7 +48,7 @@ extension ToolInvocation {
         }
     }
     
-    private func run(_ state: inout InvocationState, source: String, fileName: String) throws {
+    private func run(_ state: inout InvocationState, source: String, fileName: String, url: URL?) throws {
         var source = source
         var language = self.language
         
@@ -72,7 +72,7 @@ extension ToolInvocation {
         }
         
         do {
-            let program = try parser(&state, for: language).parse(source: source)
+            let program = try parser(&state, for: language).parse(source: source, at: url)
             state.lastResult = try state.rt.run(program)
         } catch let error as ParseErrorProtocol {
             print(error: error, in: source, fileName: fileName)
@@ -94,7 +94,7 @@ extension ToolInvocation {
             guard !(Substring(line).trimmingWhitespace() == ":exit") else {
                 return
             }
-            try run(&state, source: line, fileName: "<repl>")
+            try run(&state, source: line, fileName: "<repl>", url: nil)
         }
         print()
     }

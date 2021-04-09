@@ -149,9 +149,9 @@ extension Resource {
         public let url: URL
         public let library: Library
         
-        public init?(name: String) {
+        public init?(name: String, ignoring: Set<URL>) {
             guard let (url, library) =
-                findNativeLibrary(named: name) ??
+                findNativeLibrary(named: name, ignoring: ignoring) ??
                 findAppleScriptLibrary(named: name)
             else {
                 return nil
@@ -280,7 +280,7 @@ extension Resource {
                 case .scriptingAdditionByName:
                     return ScriptingAdditionByName(name: data)
                 case .libraryByName:
-                    return LibraryByName(name: data)
+                    return LibraryByName(name: data, ignoring: [])
                 case .applescriptAtPath:
                     return AppleScriptAtPath(path: data)
                 }

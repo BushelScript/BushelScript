@@ -14,7 +14,7 @@ typedef id SourceFixToken;
 - (void)loadLanguageModuleWithIdentifier:(NSString *)moduleIdentifier reply:(void (^)(_Nullable LanguageModuleToken))reply;
 - (void)unloadLanguageModule:(LanguageModuleToken)module reply:(void(^)(BOOL))reply;
 
-- (void)parseSource:(NSString *)source usingLanguageModule:(LanguageModuleToken)module reply:(void (^)(_Nullable ProgramToken, _Nullable ErrorToken))reply;
+- (void)parseSource:(NSString *)source atURL:(NSURL *_Nullable)url usingLanguageModule:(LanguageModuleToken)module reply:(void (^)(_Nullable ProgramToken, _Nullable ErrorToken))reply;
 - (void)releaseProgram:(ProgramToken)program reply:(void(^)(BOOL))reply;
 
 - (void)highlightProgram:(ProgramToken)program reply:(void(^)(NSData *_Nullable /* NSAttributedString rtf data */))reply;

@@ -53,7 +53,7 @@ extension Bundle {
     
 }
 
-public func findNativeLibrary(named libraryName: String) -> (url: URL, library: Library)? {
+public func findNativeLibrary(named libraryName: String, ignoring: Set<URL>) -> (url: URL, library: Library)? {
     signpostBegin()
     defer { signpostEnd() }
     
@@ -63,7 +63,7 @@ public func findNativeLibrary(named libraryName: String) -> (url: URL, library: 
             libraryDirURL.appendingPathComponent("\(libraryName).\(`extension`)")
         }
         
-        for libraryURL in libraryURLs {
+        for libraryURL in libraryURLs where !ignoring.contains(libraryURL) {
             do {
                 // Likely to throw.
                 let program = try parse(from: libraryURL)
