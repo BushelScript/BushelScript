@@ -321,9 +321,9 @@ extension Term {
         case .system(let version):
             return "system\(version.map { " version \($0)" } ?? "")"
         case .applicationByName:
-            return "application \(name)"
+            return "app \(name)"
         case .applicationByID:
-            return "application id \(name)"
+            return "app id \(name)"
         case .scriptingAdditionByName:
             return "scripting addition \(name)"
         case .applescriptLibraryByName:
