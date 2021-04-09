@@ -256,6 +256,18 @@ extension SourceParser {
         
         var expressions: [Expression] = []
         
+        @discardableResult
+        func addIndentation() -> SourceElement {
+            withCurrentIndex { startIndex in
+                eatCommentsAndWhitespace()
+                
+                let loc = SourceLocation(at: location(from: startIndex))
+                let element = SourceElement(Indentation(level: sequenceNestingLevel, location: loc))
+                elements.insert(element)
+                return element
+            }
+        }
+        
         func eatNewlines() {
             eatCommentsAndWhitespace()
             while let newline = parseNewline() {
@@ -857,18 +869,6 @@ extension SourceParser {
         eatCommentsAndWhitespace()
         
         return newline
-    }
-    
-    @discardableResult
-    private func addIndentation() -> SourceElement {
-        withCurrentIndex { startIndex in
-            eatCommentsAndWhitespace()
-            
-            let loc = SourceLocation(at: location(from: startIndex))
-            let element = SourceElement(Indentation(level: sequenceNestingLevel, location: loc))
-            elements.insert(element)
-            return element
-        }
     }
     
     private func eatBihash(delimiter: String? = nil) throws -> Bihash? {
