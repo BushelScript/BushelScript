@@ -4,3 +4,4 @@
 
 InAnyCase/LICENSE.txt -> InAnyCase-LICENSE.txt
 Regex/LICENSE.txt -> Regex-LICENSE.txt
+Yams/LICENSE -> Yams-LICENSE.txt
