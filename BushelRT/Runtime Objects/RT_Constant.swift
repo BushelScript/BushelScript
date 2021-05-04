@@ -31,7 +31,7 @@ public class RT_Constant: RT_Object, AEEncodable {
         guard let aeCode = value.uri.ae4Code else {
             throw Unencodable(object: self)
         }
-        return NSAppleEventDescriptor(typeCode: aeCode)
+        return NSAppleEventDescriptor(enumCode: aeCode)
     }
     
 }
