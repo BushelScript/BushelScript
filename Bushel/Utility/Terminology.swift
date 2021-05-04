@@ -20,7 +20,8 @@ public func findComplexTermName(from dictionary: TermNameTraversalTable, in sour
         endIndex =
             line[endIndex...]
             .drop(while: { $0.isWhitespace })
-            .drop(while: { !$0.isWhitespace })
+            .dropFirst()
+            .drop(while: { !$0.isWordBreaking })
             .startIndex
         
         guard let subsequentWords = dictionary[Term.Name(line[..<endIndex])] else {
