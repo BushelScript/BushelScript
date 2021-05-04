@@ -31,8 +31,6 @@
 		3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C249D472319C1D700F5826E /* PreferencesViewController.swift */; };
 		3C2BC9AB23E258E400CB8C20 /* InlineErrorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */; };
 		3C2BC9AC23E258E400CB8C20 /* InlineErrorVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C2BC9AA23E258E400CB8C20 /* InlineErrorVC.xib */; };
-		3C2BC9C923E2772500CB8C20 /* SECompileScriptTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3C2BC9C223E2772400CB8C20 /* SECompileScriptTemplate.pdf */; };
-		3C2BC9CB23E2774200CB8C20 /* SERunScriptTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3C2BC9CA23E2774200CB8C20 /* SERunScriptTemplate.pdf */; };
 		3C2BC9EC23E27E6200CB8C20 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C0566B523135675004CDB1A /* Main.storyboard */; };
 		3C2E1345231B709000E0EB8E /* NoHashbang.bushel in Resources */ = {isa = PBXBuildFile; fileRef = 3C2E1344231B709000E0EB8E /* NoHashbang.bushel */; };
 		3C32B10A23B151C2002FF795 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEF504023529437008603E3 /* SwiftAutomation.framework */; };
@@ -214,8 +212,6 @@
 		3C249D472319C1D700F5826E /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 		3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineErrorVC.swift; sourceTree = "<group>"; };
 		3C2BC9AA23E258E400CB8C20 /* InlineErrorVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InlineErrorVC.xib; sourceTree = "<group>"; };
-		3C2BC9C223E2772400CB8C20 /* SECompileScriptTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = SECompileScriptTemplate.pdf; path = "/System/Applications/Utilities/Script Editor.app/Contents/Resources/SECompileScriptTemplate.pdf"; sourceTree = "<absolute>"; };
-		3C2BC9CA23E2774200CB8C20 /* SERunScriptTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = SERunScriptTemplate.pdf; path = "/System/Applications/Utilities/Script Editor.app/Contents/Resources/SERunScriptTemplate.pdf"; sourceTree = "<absolute>"; };
 		3C2E1344231B709000E0EB8E /* NoHashbang.bushel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NoHashbang.bushel; sourceTree = "<group>"; };
 		3C3355F023490F2500AEAAE9 /* NSTabViewController+SelectionConvenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSTabViewController+SelectionConvenience.swift"; sourceTree = "<group>"; };
 		3C3C1810231A20B100553072 /* DocumentWC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentWC.swift; sourceTree = "<group>"; };
@@ -418,8 +414,6 @@
 			isa = PBXGroup;
 			children = (
 				3C0566B323135675004CDB1A /* Assets.xcassets */,
-				3C2BC9C223E2772400CB8C20 /* SECompileScriptTemplate.pdf */,
-				3C2BC9CA23E2774200CB8C20 /* SERunScriptTemplate.pdf */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -685,9 +679,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C20C0BF23400BEE00CBB613 /* ObjectInspectorVC.storyboard in Resources */,
-				3C2BC9CB23E2774200CB8C20 /* SERunScriptTemplate.pdf in Resources */,
 				3C05672F23139EF6004CDB1A /* SuggestionList.storyboard in Resources */,
-				3C2BC9C923E2772500CB8C20 /* SECompileScriptTemplate.pdf in Resources */,
 				3C66AD3823C2E45D001E6C87 /* ExpressionInspector.storyboard in Resources */,
 				3C0566B423135675004CDB1A /* Assets.xcassets in Resources */,
 				3C2BC9EC23E27E6200CB8C20 /* Main.storyboard in Resources */,
