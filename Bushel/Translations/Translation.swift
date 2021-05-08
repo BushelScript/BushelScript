@@ -255,7 +255,7 @@ public struct Translation {
         }
         
         for resourceTerm in resourceTerms {
-            try? resourceTerm.loadResourceTerminology(under: pool)
+            try? resourceTerm.loadDictionary(under: pool)
         }
         
         return resultTerms.values.reduce(into: Set()) { set, terms in set.formUnion(terms) }

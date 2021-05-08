@@ -294,30 +294,33 @@ extension Resource {
     
 }
 
-// MARK: Terminology loading
+// MARK: Resource URL
+extension Resource {
+    
+    public var url: URL? {
+        switch self {
+        case .bushelscript:
+            return nil
+        case .system(_):
+            return ApplicationByID(id: "com.apple.SystemEvents")?.bundle.bundleURL
+        case let .applicationByName(bundle),
+             let .applicationByID(bundle),
+             let .scriptingAdditionByName(bundle):
+            return bundle.bundleURL
+        case let .libraryByName(_, url, _):
+            return url
+        case let .applescriptAtPath(path, _):
+            return URL(fileURLWithPath: path)
+        }
+    }
+    
+}
+
+// MARK: Dictionary loading
 extension Term {
     
-    public func loadResourceTerminology(under pool: TermPool) throws {
-        switch resource {
-        case .bushelscript:
-            // Always loaded implicitly
-            return
-        case .system(_):
-            guard let application = Resource.ApplicationByID(id: "com.apple.SystemEvents") else {
-                return
-            }
-            try load(from: application.bundle.bundleURL, under: pool)
-        case .applicationByName(let bundle),
-             .applicationByID(let bundle),
-             .scriptingAdditionByName(let bundle):
-            try load(from: bundle.bundleURL, under: pool)
-        case .libraryByName(_, let url, _):
-            try load(from: url, under: pool)
-        case .applescriptAtPath(let path, _):
-            try load(from: URL(fileURLWithPath: path), under: pool)
-        case nil:
-            return
-        }
+    public func loadDictionary(under pool: TermPool) throws {
+        try resource?.url.map { try load(from: $0, under: pool) }
     }
     
 }

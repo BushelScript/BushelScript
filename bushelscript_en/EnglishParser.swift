@@ -476,7 +476,7 @@ public final class EnglishParser: SourceParser {
         } else {
             // Resort to empty name.
             let term = Term(.resource, .res("system"), name: Term.Name([]), resource: system.enumerated())
-            try term.loadResourceTerminology(under: lexicon.pool)
+            try term.loadDictionary(under: lexicon.pool)
             return term
         }
     }
@@ -487,7 +487,7 @@ public final class EnglishParser: SourceParser {
         }
         
         let term = Term(.resource, .res("app:\(name)"), name: name, resource: application.enumerated())
-        try term.loadResourceTerminology(under: lexicon.pool)
+        try term.loadDictionary(under: lexicon.pool)
         return term
     }
     
@@ -496,7 +496,7 @@ public final class EnglishParser: SourceParser {
             throw ParseError(.unmetResourceRequirement(.applicationByBundleID(bundleID: name.normalized)), at: termNameLocation)
         }
         let term = Term(.resource, .res("appid:\(name)"), name: name, resource: application.enumerated())
-        try term.loadResourceTerminology(under: lexicon.pool)
+        try term.loadDictionary(under: lexicon.pool)
         return term
     }
     
@@ -506,7 +506,7 @@ public final class EnglishParser: SourceParser {
         }
         nativeImports.insert(library.url)
         let term = Term(.resource, .res("library:\(name)"), name: name, resource: library.enumerated())
-        try? term.loadResourceTerminology(under: lexicon.pool)
+        try? term.loadDictionary(under: lexicon.pool)
         return term
     }
     
@@ -526,7 +526,7 @@ public final class EnglishParser: SourceParser {
             throw ParseError(.unmetResourceRequirement(.applescriptAtPath(path: path)), at: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
         }
         let term = Term(.resource, .res("as:\(path)"), name: name, resource: applescript.enumerated())
-        try? term.loadResourceTerminology(under: lexicon.pool)
+        try? term.loadDictionary(under: lexicon.pool)
         return term
     }
     
