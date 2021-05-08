@@ -4,7 +4,8 @@ import Foundation
 /// Effectively creates a scoping system for terms.
 public struct Lexicon: TerminologySource {
     
-    public typealias Term = Bushel.Term
+    /// Default ID of the root term.
+    public static let defaultRootTermID = Term.ID(Variables.Script)
     
     private(set) public var stack: [Term] = []
     private var exporting: [Term] {
@@ -13,10 +14,17 @@ public struct Lexicon: TerminologySource {
         }
     }
     
-    private(set) public var pool = TermPool()
-    
     public init() {
-        stack.append(Term(Term.ID(Dictionaries.root), exports: false))
+        stack.append(Term(Lexicon.defaultRootTermID, exports: false))
+    }
+    
+    public var rootTerm: Term {
+        get {
+            stack[0]
+        }
+        set {
+            stack[0] = newValue
+        }
     }
     
     public func term(id: Term.ID) -> Term? {
@@ -90,7 +98,7 @@ public struct Lexicon: TerminologySource {
     
     @discardableResult
     public mutating func add(_ term: Term) -> Term {
-        stack.last!.makeDictionary(under: pool).add(term)
+        stack.last!.makeDictionary().add(term)
         return term
     }
     

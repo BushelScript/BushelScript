@@ -185,7 +185,7 @@ public struct Translation {
         mappings[typedUID]?.first
     }
     
-    public func makeTerms(under pool: TermPool) -> Set<Term> {
+    public func makeTerms() -> Set<Term> {
         var resourceTerms: [Term] = []
         
         let termPairs: [(Term.ID, [Term])] = mappings.map { kv in
@@ -232,7 +232,7 @@ public struct Translation {
                     let ancestorTerms = allTermsByURI[.id(Term.SemanticURI.Pathname(scopes.map { String($0) }))] ?? []
                     
                     let dictionaries: [TermDictionary] = ancestorTerms.map {
-                        $0.makeDictionary(under: pool)
+                        $0.makeDictionary()
                     }
                     
                     // Add the nested terms to the appropriate dictionary.
@@ -249,13 +249,8 @@ public struct Translation {
             }
         }
         
-        // Make defined terms available to imported resource terminology.
-        for (_, terms) in allTerms {
-            pool.add(terms)
-        }
-        
         for resourceTerm in resourceTerms {
-            try? resourceTerm.loadDictionary(under: pool)
+            try? resourceTerm.loadDictionary()
         }
         
         return resultTerms.values.reduce(into: Set()) { set, terms in set.formUnion(terms) }

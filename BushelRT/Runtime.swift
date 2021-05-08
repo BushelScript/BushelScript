@@ -65,7 +65,6 @@ public class Runtime {
         locations.last
     }
     
-    public let termPool = TermPool()
     public let topScript: RT_Script
     public var core: RT_Core!
     
@@ -78,7 +77,7 @@ public class Runtime {
         self.core = RT_Core()
     }
     
-    public func inject(terms: TermPool) {
+    public func injectTerms(from rootTerm: Term) {
         func add(typeTerm term: Term) {
             func typeInfo(for typeTerm: Term) -> TypeInfo {
                 var tags: Set<TypeInfo.Tag> = []
@@ -101,9 +100,7 @@ public class Runtime {
             }
         }
         
-        termPool.add(terms)
-        
-        for term in terms.byID.values {
+        for term in rootTerm.makeDictionary().contents {
             switch term.role {
             case .dictionary:
                 break
@@ -128,6 +125,8 @@ public class Runtime {
             case .resource:
                 break
             }
+            
+            injectTerms(from: term)
         }
     }
     
@@ -204,7 +203,7 @@ public class Runtime {
 public extension Runtime {
     
     func run(_ program: Program) throws -> RT_Object {
-        inject(terms: program.terms)
+        injectTerms(from: program.rootTerm)
         return try run(program.ast)
     }
     

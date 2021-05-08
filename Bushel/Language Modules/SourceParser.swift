@@ -69,12 +69,10 @@ extension SourceParser {
         for index in allTranslations.indices {
             var translation = allTranslations[index]
             
-            let scriptTermID = Term.ID(Variables.Script)
-            if let scriptTermNames = translation.mappings[scriptTermID] {
-                translation.mappings.removeValue(forKey: scriptTermID)
+            if let scriptTermNames = translation.mappings[Lexicon.defaultRootTermID] {
+                translation.mappings.removeValue(forKey: Lexicon.defaultRootTermID)
                 
-                let scriptTerm = Term(scriptTermID, name: scriptTermNames.first!)
-                lexicon.addPush(scriptTerm)
+                lexicon.rootTerm = Term(Lexicon.defaultRootTermID, name: scriptTermNames.first!)
             }
             
             let coreTermID = Term.ID(Variables.Core)
@@ -90,7 +88,7 @@ extension SourceParser {
         
         // Add all other terms.
         for translation in translations {
-            lexicon.add(translation.makeTerms(under: lexicon.pool))
+            lexicon.add(translation.makeTerms())
         }
         
         lexicon.add(Term(Term.ID(Parameters.direct)))
@@ -117,14 +115,14 @@ extension SourceParser {
         self.nativeImports = ignoringImports
         
         guard !source.isEmpty else {
-            return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, terms: TermPool())
+            return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, rootTerm: lexicon.rootTerm)
         }
         
         buildTraversalTables()
         
         defer { lexicon.pop() }
         do {
-            return Program(try parseDocument(), elements, source: entireSource, terms: lexicon.pool)
+            return Program(try parseDocument(), elements, source: entireSource, rootTerm: lexicon.rootTerm)
         } catch var error as ParseErrorProtocol {
             if !entireSource.range.contains(error.location.range.lowerBound) {
                 error.location.range = entireSource.index(before: entireSource.endIndex)..<entireSource.endIndex
@@ -1262,12 +1260,7 @@ extension SourceParser {
                     throw ParseError(.missing(.termURI), at: currentLocation)
                 }
                 
-                let term = lexicon.term(id: Term.ID(role, uid)) ??
-                    {
-                        let term = Term(role, uid)
-                        lexicon.pool.add(term)
-                        return term
-                    }()
+                let term = lexicon.term(id: Term.ID(role, uid)) ?? Term(role, uid)
                 
                 addElement(from: startIndex, styling: styling(for: term), spacing: .leftRight)
                 

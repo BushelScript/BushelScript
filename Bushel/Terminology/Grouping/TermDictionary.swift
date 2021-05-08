@@ -6,25 +6,24 @@ import SDEFinitely
 /// A collection of terms.
 public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
     
-    private(set) public var pool: TermPool
-    
-    private var byID: [Term.ID : Term]
-    private var byName: [Term.Name : Term]
+    private var byID: [Term.ID : Term] = [:]
+    private var byName: [Term.Name : Term] = [:]
     
     /// Constituent terms that export their dictionary contents.
     private(set) public var exportingTerms: Set<Term> = []
     
-    /// Initializes with the terms in `contents` and the term pool `pool`.
-    /// The new contents are also added to the pool.
-    public init(pool: TermPool, contents: [Term] = []) {
-        self.pool = pool
+    /// Initializes with no contents.
+    public init() {
+    }
+    
+    /// Initializes with the terms in `contents`.
+    public init<Contents: TermCollection>(contents: Contents) {
         self.byID = Dictionary(uniqueKeysWithValues: contents.map { (key: $0.id, value: $0) })
         self.byName = Dictionary(uniqueKeysWithValues:
             contents.compactMap { term in
                 term.name.flatMap { (key: $0, value: term) }
             })
         findExportingTerms(in: contents)
-        pool.add(contents)
     }
     
     /// Initializes from the terms in `old` and then merges all terms in `new`
@@ -32,10 +31,14 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
     /// AppleScript compatibility.
     /// `new`'s term pool is used and `old`'s is ignored.
     public init(merging new: TermDictionary, into old: TermDictionary) {
-        self.pool = new.pool
         self.byID = new.byID.merging(old.byID, uniquingKeysWith: TermDictionary.whichTermWins)
         self.byName = new.byName.merging(old.byName, uniquingKeysWith: TermDictionary.whichTermWins)
         findExportingTerms(in: self.byID.values)
+    }
+    
+    /// The terms in the dictionary.
+    public var contents: some TermCollection {
+        byID.values
     }
     
     /// The term with ID `id`, or nil if such a term is not in the dictionary.
@@ -55,7 +58,6 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
             byName[name] = term
         }
         findExportingTerms(in: [term])
-        pool.add(term)
     }
     
     /// Adds all terms in `terms` to the dictionary and the term pool.
@@ -68,7 +70,6 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
             uniquingKeysWith: TermDictionary.whichTermWins
         )
         findExportingTerms(in: terms)
-        pool.add(terms)
     }
     
     /// Adds all terms in `dictionary` to this dictionary, resolving conflicts
@@ -77,7 +78,6 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
         byID.merge(dictionary.byID, uniquingKeysWith: TermDictionary.whichTermWins)
         byName.merge(dictionary.byName, uniquingKeysWith: TermDictionary.whichTermWins)
         findExportingTerms(in: dictionary.byID.values)
-        pool.add(Array(dictionary.byID.values))
     }
     
     private func findExportingTerms<Terms: Collection>(in terms: Terms) where Terms.Element == Term {
@@ -150,12 +150,21 @@ extension TermDictionary: Hashable {
 extension Term {
     
     @discardableResult
-    public func makeDictionary(under pool: TermPool) -> TermDictionary {
+    public func makeDictionary() -> TermDictionary {
         if let dictionary = dictionary {
             return dictionary
         }
-        dictionary = TermDictionary(pool: pool)
+        dictionary = TermDictionary()
         return dictionary!
     }
     
 }
+
+// MARK: Generic term collection
+
+public protocol TermCollection: Collection where Element == Term {}
+
+extension Array: TermCollection where Element == Term {}
+extension Set: TermCollection where Element == Term {}
+extension Dictionary.Keys: TermCollection where Element == Term {}
+extension Dictionary.Values: TermCollection where Element == Term {}

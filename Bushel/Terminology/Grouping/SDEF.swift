@@ -3,8 +3,7 @@ import SDEFinitely
 extension Term {
     
     /// Loads the scripting definition at `url` into the term's dictionary.
-    /// If the dictionary has not been created yet, then it is initialized with
-    /// `pool` as its term pool.
+    /// If the dictionary has not been created yet, then it is initialized.
     ///
     /// `url` must have scheme `file` or `eppc`, and identify one of:
     ///   - A BushelScript file
@@ -13,8 +12,8 @@ extension Term {
     ///     a Cocoa Scripting plist pair, or a classic `aete` resource
     ///
     /// - Throws: `SDEFError` if the terms cannot be loaded for any reason.
-    public func load(from url: URL, under pool: TermPool) throws {
-        try makeDictionary(under: pool).load(from: url)
+    public func load(from url: URL) throws {
+        try makeDictionary().load(from: url)
     }
     
 }
@@ -34,10 +33,7 @@ extension TermDictionary {
         if url.pathExtension == "bushel" {
             let program = try parse(from: url)
             // The Script term is always the top-level term in the hierarchy.
-            guard
-                let scriptTerm = program.terms.term(id: Term.ID(Variables.Script)),
-                let scriptDictionary = scriptTerm.dictionary
-            else {
+            guard let scriptDictionary = program.rootTerm.dictionary else {
                 return
             }
             merge(scriptDictionary)
@@ -53,7 +49,7 @@ extension TermDictionary {
                 return
             }
             
-            var terms = try parse(sdef: sdef, under: pool)
+            var terms = try parse(sdef: sdef)
             
             terms.removeAll { term in
                 // Don't import terms that shadow the "set" and "get"
@@ -102,24 +98,18 @@ private func withSDEFCache<Result>(do action: (inout [URL : Data]) throws -> Res
     }
 }
 
-/// Parses SDEF data `sdef`, adding terms to `pool` and then returning them.
+/// Parses and returns terms from SDEF data `sdef`.
 ///
 /// SDEF data can be obtained from `readSDEF(from:)`.
 ///
 /// - Throws: `SDEFError` if the data cannot be parsed for any reason.
-public func parse(sdef: Data, under pool: TermPool) throws -> [Term] {
-    let delegate = SetOfTermSDEFParserDelegate(pool)
+public func parse(sdef: Data) throws -> [Term] {
+    let delegate = SetOfTermSDEFParserDelegate()
     try SDEFParser(delegate: delegate).parse(sdef)
     return delegate.terms
 }
 
 private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
-    
-    var pool: TermPool
-    
-    init(_ pool: TermPool) {
-        self.pool = pool
-    }
     
     var terms: [Term] = []
     
