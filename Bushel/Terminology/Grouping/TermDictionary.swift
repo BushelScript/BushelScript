@@ -147,19 +147,6 @@ extension TermDictionary: Hashable {
     
 }
 
-extension Term {
-    
-    @discardableResult
-    public func makeDictionary() -> TermDictionary {
-        if let dictionary = dictionary {
-            return dictionary
-        }
-        dictionary = TermDictionary()
-        return dictionary!
-    }
-    
-}
-
 // MARK: Generic term collection
 
 public protocol TermCollection: Collection where Element == Term {}

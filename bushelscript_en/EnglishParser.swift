@@ -222,7 +222,7 @@ public final class EnglishParser: SourceParser {
         }
         let body = try withScope {
             lexicon.add(Set(arguments))
-            lexicon.add(Term(Term.ID(Dictionaries.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.makeDictionary()))
+            lexicon.add(Term(Term.ID(Dictionaries.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.dictionary))
             return try parseSequence()
         }
         
@@ -471,7 +471,7 @@ public final class EnglishParser: SourceParser {
         
         // Term should be defined in translation files (we don't have a name
         // for it here).
-        if let term = lexicon.term(id: Term.ID(Variables.Core))!.makeDictionary().term(id: Term.ID(Resources.system)) {
+        if let term = lexicon.term(id: Term.ID(Variables.Core))!.dictionary.term(id: Term.ID(Resources.system)) {
             return term
         } else {
             // Resort to empty name.

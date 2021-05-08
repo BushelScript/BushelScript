@@ -100,7 +100,7 @@ public class Runtime {
             }
         }
         
-        for term in rootTerm.makeDictionary().contents {
+        for term in rootTerm.dictionary.contents {
             switch term.role {
             case .dictionary:
                 break

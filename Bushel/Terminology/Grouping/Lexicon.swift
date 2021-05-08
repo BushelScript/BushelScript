@@ -9,9 +9,7 @@ public struct Lexicon: TerminologySource {
     
     private(set) public var stack: [Term] = []
     private var exporting: [Term] {
-        stack.flatMap { term in
-            term.dictionary?.exportingTerms.compactMap { $0 } ?? []
-        }
+        stack.flatMap { $0.dictionary.exportingTerms.sorted() }
     }
     
     public init() {
@@ -41,10 +39,7 @@ public struct Lexicon: TerminologySource {
     
     private func find<Terms: Collection>(in terms: Terms, _ extractTerm: (TermDictionary) -> Term?) -> Term? where Terms.Element == Term {
         for term in terms {
-            if
-                let dictionary = term.dictionary,
-                let term = extractTerm(dictionary)
-            {
+            if let term = extractTerm(term.dictionary) {
                 return term
             }
         }
@@ -98,7 +93,7 @@ public struct Lexicon: TerminologySource {
     
     @discardableResult
     public mutating func add(_ term: Term) -> Term {
-        stack.last!.makeDictionary().add(term)
+        stack.last!.dictionary.add(term)
         return term
     }
     

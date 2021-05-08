@@ -320,7 +320,7 @@ extension Resource {
 extension Term {
     
     public func loadDictionary() throws {
-        try resource?.url.map { try load(from: $0) }
+        try resource?.url.map { try dictionary.load(from: $0) }
     }
     
 }

@@ -77,3 +77,12 @@ extension Term.ID: CustomStringConvertible {
     }
     
 }
+
+// MARK: Comparison
+extension Term.ID: Comparable {
+    
+    public static func < (lhs: Term.ID, rhs: Term.ID) -> Bool {
+        lhs.normalized < rhs.normalized
+    }
+    
+}

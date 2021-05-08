@@ -12,14 +12,14 @@ public class Term: Hashable, CustomStringConvertible {
         id.uri
     }
     
-    public var dictionary: TermDictionary?
+    public var dictionary: TermDictionary
     public let exports: Bool
     
     public var parameters: ParameterTermDictionary?
     
     public var resource: Resource?
     
-    public init(_ id: ID, name: Name? = nil, dictionary: TermDictionary? = nil, exports: Bool = true, parameters: ParameterTermDictionary? = nil, resource: Resource? = nil) {
+    public init(_ id: ID, name: Name? = nil, dictionary: TermDictionary = TermDictionary(), exports: Bool = true, parameters: ParameterTermDictionary? = nil, resource: Resource? = nil) {
         self.id = id
         self.name = name
         self.dictionary = dictionary
@@ -28,7 +28,7 @@ public class Term: Hashable, CustomStringConvertible {
         self.resource = resource
     }
     
-    public convenience init(_ role: SyntacticRole, _ uri: SemanticURI, name: Name? = nil, dictionary: TermDictionary? = nil, exports: Bool = true, parameters: ParameterTermDictionary? = nil, resource: Resource? = nil) {
+    public convenience init(_ role: SyntacticRole, _ uri: SemanticURI, name: Name? = nil, dictionary: TermDictionary = TermDictionary(), exports: Bool = true, parameters: ParameterTermDictionary? = nil, resource: Resource? = nil) {
         self.init(ID(role, uri), name: name, dictionary: dictionary, exports: exports, parameters: parameters, resource: resource)
     }
     
@@ -50,6 +50,15 @@ public class Term: Hashable, CustomStringConvertible {
         } else {
             return "«\(role) \(uri)»"
         }
+    }
+    
+}
+
+// MARK: Comparison
+extension Term: Comparable {
+    
+    public static func < (lhs: Term, rhs: Term) -> Bool {
+        lhs.id < rhs.id
     }
     
 }

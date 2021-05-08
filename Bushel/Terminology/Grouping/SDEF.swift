@@ -1,23 +1,5 @@
 import SDEFinitely
 
-extension Term {
-    
-    /// Loads the scripting definition at `url` into the term's dictionary.
-    /// If the dictionary has not been created yet, then it is initialized.
-    ///
-    /// `url` must have scheme `file` or `eppc`, and identify one of:
-    ///   - A BushelScript file
-    ///   - An SDEF file
-    ///   - An application bundle that contains one or more of an SDEF,
-    ///     a Cocoa Scripting plist pair, or a classic `aete` resource
-    ///
-    /// - Throws: `SDEFError` if the terms cannot be loaded for any reason.
-    public func load(from url: URL) throws {
-        try makeDictionary().load(from: url)
-    }
-    
-}
-
 extension TermDictionary {
     
     /// Loads the scripting definition at `url` into the dictionary.
@@ -31,12 +13,7 @@ extension TermDictionary {
     /// - Throws: `SDEFError` if the terms cannot be loaded for any reason.
     public func load(from url: URL) throws {
         if url.pathExtension == "bushel" {
-            let program = try parse(from: url)
-            // The Script term is always the top-level term in the hierarchy.
-            guard let scriptDictionary = program.rootTerm.dictionary else {
-                return
-            }
-            merge(scriptDictionary)
+            merge(try parse(from: url).rootTerm.dictionary)
         } else {
             let sdef: Data
             do {

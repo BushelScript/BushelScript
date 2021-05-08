@@ -1209,13 +1209,9 @@ extension SourceParser {
             var sourceWithColon: Substring = source
             while tryEating(prefix: ":") {
                 // For explicit term specification Lhs : rhs,
-                // avoid eating the colon unless:
-                //  a) Lhs contains a dictionary, *and*
-                //  b) rhs is a term defined by that dictionary.
-                guard
-                    let dictionary = term.dictionary,
-                    let result = findTerm(in: dictionary)
-                else {
+                // only eat the colon if rhs is the name of a term defined
+                // in the dictionary of Lhs.
+                guard let result = findTerm(in: term.dictionary) else {
                     // Restore the colon. It may have come from some other construct,
                     // e.g., a record key such as: {Math : pi: "the constant pi"}
                     source = sourceWithColon

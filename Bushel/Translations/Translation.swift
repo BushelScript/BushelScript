@@ -232,7 +232,7 @@ public struct Translation {
                     let ancestorTerms = allTermsByURI[.id(Term.SemanticURI.Pathname(scopes.map { String($0) }))] ?? []
                     
                     let dictionaries: [TermDictionary] = ancestorTerms.map {
-                        $0.makeDictionary()
+                        $0.dictionary
                     }
                     
                     // Add the nested terms to the appropriate dictionary.
