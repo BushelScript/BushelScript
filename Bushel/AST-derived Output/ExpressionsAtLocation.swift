@@ -26,8 +26,8 @@ extension Expression {
             return [expression]
         case let .parentheses(expression):
             return [expression]
-        case let .function(name: _, parameters: _, arguments: _, body):
-            return [body]
+        case let .function(name: _, parameters: _, types, arguments: _, body):
+            return types.compactMap { $0 } + [body]
         case let .try_(body, handle):
             return [body, handle]
         case let .if_(condition, then, `else`):
@@ -125,7 +125,7 @@ extension Expression {
              let .let_(term, _),
              let .define(term, _),
              let .defining(term, _, _),
-             let .function(term, _, _, _):
+             let .function(term, _, _, _, _):
             return term
         }
     }

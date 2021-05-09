@@ -197,16 +197,26 @@ public final class EnglishParser: SourceParser {
         let functionNameTerm = Term(.variable, lexicon.makeURI(forName: termName), name: termName)
         
         var parameters: [Term] = []
+        var types: [Expression?] = []
         var arguments: [Term] = []
         if tryEating(prefix: ":", spacing: .right) {
             while let parameterTermName = try parseTermNameLazily() {
                 parameters.append(Term(.parameter, .id(Term.SemanticURI.Pathname([parameterTermName.normalized])), name: parameterTermName))
                 
-                var argumentName = try parseTermNameEagerly(stoppingAt: [","]) ?? parameterTermName
+                var argumentName = try parseTermNameEagerly(stoppingAt: expressionGroupingMarkers.map { $0.begin.normalized } + [","]) ?? parameterTermName
                 if argumentName.words.isEmpty {
                     argumentName = parameterTermName
                 }
                 arguments.append(Term(.variable, .id(Term.SemanticURI.Pathname([argumentName.normalized])), name: argumentName))
+                
+                if
+                    let groupedExpression = try parseGroupedExpression(),
+                    case let .parentheses(type) = groupedExpression.kind
+                {
+                    types.append(type)
+                } else {
+                    types.append(nil)
+                }
                 
                 if !tryEating(prefix: ",", spacing: .right) {
                     break
@@ -226,7 +236,7 @@ public final class EnglishParser: SourceParser {
             return try parseSequence()
         }
         
-        return .function(name: functionNameTerm, parameters: parameters, arguments: arguments, body: body)
+        return .function(name: functionNameTerm, parameters: parameters, types: types, arguments: arguments, body: body)
     }
     
     private func handleTry() throws -> Expression.Kind? {

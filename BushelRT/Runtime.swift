@@ -241,7 +241,7 @@ public extension Runtime {
     }
     
     func runFunction(_ functionExpression: Expression, actualArguments: [ParameterInfo : RT_Object]) throws -> RT_Object {
-        guard case let .function(_, parameters, arguments, body) = functionExpression.kind else {
+        guard case let .function(_, parameters, _, arguments, body) = functionExpression.kind else {
             preconditionFailure("expected function expression but got \(functionExpression)")
         }
         
@@ -464,8 +464,16 @@ public extension Runtime {
                 }
             }()
             return RT_InsertionSpecifier(parent: parentValue, kind: insertionSpecifier.kind)
-        case .function(let name, let parameters, _, _): // MARK: .function
-            let signature = RT_Function.Signature(command: self.command(forUID: Term.ID(.command, name.uri)), parameters: RT_Function.ParameterSignature(parameters.map { (ParameterInfo($0.uri), TypeInfo(.item)) }, uniquingKeysWith: { l, r in l }))
+        case .function(let name, let parameters, let types, _, _): // MARK: .function
+            let evaluatedTypes = try types.map { try $0.map { try runPrimary($0, lastResult: lastResult, target: target) } }
+            let typeInfos = evaluatedTypes.compactMap { $0.map { ($0 as? RT_Type)?.value } }
+            
+            let parameterSignature = RT_Function.ParameterSignature(
+                parameters.enumerated().map { (ParameterInfo($0.element.uri), typeInfos[$0.offset]!) },
+                uniquingKeysWith: { l, r in l }
+            )
+            let signature = RT_Function.Signature(command: command(forUID: Term.ID(.command, name.uri)), parameters: parameterSignature)
+            
             let implementation = RT_ExpressionImplementation(rt: self, functionExpression: expression)
             
             let function = RT_Function(signature: signature, implementation: implementation)

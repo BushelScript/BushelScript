@@ -541,21 +541,8 @@ extension SourceParser {
                 throw ParseError(.invalidString, at: currentLocation)
             }
             return Expression(.string(string), at: expressionLocation)
-        } else if let (beginMarker, endMarker) = eatExpressionGroupingBeginMarker() {
-            return try awaiting(endMarker: endMarker) {
-                eatCommentsAndWhitespace(eatingNewlines: true)
-                
-                guard let enclosed = try parsePrimary() else {
-                    throw ParseError(.missing(.groupedExpressionAfterBeginMarker(beginMarker: beginMarker)), at: expressionLocation)
-                }
-                
-                eatCommentsAndWhitespace(eatingNewlines: true)
-                guard tryEating(endMarker, spacing: .right) else {
-                    throw ParseError(.missing(.groupedExpressionEndMarker(endMarker: endMarker)), at: expressionLocation)
-                }
-                
-                return Expression(.parentheses(enclosed), at: expressionLocation)
-            }
+        } else if let groupedExpression = try parseGroupedExpression() {
+            return groupedExpression
         } else if let (_, endMarker, itemSeparators, keyValueSeparators) = eatListAndRecordBeginMarker() {
             return try awaiting(endMarkers: Set([endMarker] + itemSeparators + keyValueSeparators)) {
                 eatCommentsAndWhitespace(eatingNewlines: true)
@@ -738,6 +725,26 @@ extension SourceParser {
 
 // MARK: Parse helpers
 extension SourceParser {
+    
+    public func parseGroupedExpression() throws -> Expression? {
+        guard let (beginMarker, endMarker) = eatExpressionGroupingBeginMarker() else {
+            return nil
+        }
+        return try awaiting(endMarker: endMarker) {
+            eatCommentsAndWhitespace(eatingNewlines: true)
+            
+            guard let enclosed = try parsePrimary() else {
+                throw ParseError(.missing(.groupedExpressionAfterBeginMarker(beginMarker: beginMarker)), at: expressionLocation)
+            }
+            
+            eatCommentsAndWhitespace(eatingNewlines: true)
+            guard tryEating(endMarker, spacing: .right) else {
+                throw ParseError(.missing(.groupedExpressionEndMarker(endMarker: endMarker)), at: expressionLocation)
+            }
+            
+            return Expression(.parentheses(enclosed), at: expressionLocation)
+        }
+    }
     
     public func parseVariableTerm(stoppingAt: [String] = []) throws -> Term? {
         guard

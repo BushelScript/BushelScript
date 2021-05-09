@@ -274,7 +274,7 @@ public final class EnglishFormatter: SourceFormatter {
             }
             
             return formatted
-        case .function(let name, let parameters, let arguments, let body):
+        case .function(let name, let parameters, let types, let arguments, let body):
             var formatted = "on \(name)"
             
             if !parameters.isEmpty {
@@ -286,6 +286,10 @@ public final class EnglishFormatter: SourceFormatter {
                     formatted += " \(parameter)"
                     if argument.name != parameter.name {
                         formatted += " \(argument)"
+                    }
+                    
+                    if let type = types[index] {
+                        formatted += "(\(format(type, level: level))"
                     }
                 }
                 
