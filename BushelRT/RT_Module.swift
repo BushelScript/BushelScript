@@ -45,9 +45,44 @@ public struct FunctionSet {
             return nil
         }
         
-        // For now, only deal with exact match.
+        // Check for exact match.
         let exactMatchSignature = RT_Function.ParameterSignature(arguments.map { ($0.key, $0.value.dynamicTypeInfo) }, uniquingKeysWith: { l, r in l })
-        return functions[exactMatchSignature]
+        if let exactMatch = functions[exactMatchSignature] {
+            return exactMatch
+        }
+        
+        // Find best nonexact match.
+        return functions.values.sorted().reduce((typeScore: -1, countScore: Int.min, function: nil as RT_Function?)) { bestSoFar, function in
+            let parameters = function.signature.parameters
+            
+            // Ensure each argument maps to a parameter of suitable type.
+            var typeScore = 0
+            for (parameter, argument) in arguments {
+                guard
+                    let parameterType = parameters[parameter],
+                    argument.dynamicTypeInfo.isA(parameterType)
+                else {
+                    return bestSoFar
+                }
+                
+                // +1 point for each exact type match.
+                if argument.dynamicTypeInfo == parameterType {
+                    typeScore += 1
+                }
+            }
+            
+            // -1 point for each additional parameter.
+            let countScore = arguments.count - parameters.count
+            
+            if
+                typeScore > bestSoFar.typeScore ||
+                typeScore == bestSoFar.typeScore && countScore > bestSoFar.countScore
+            {
+                return (typeScore: typeScore, countScore: countScore, function: function)
+            } else {
+                return bestSoFar
+            }
+        }.function
     }
     
 }
