@@ -18,7 +18,7 @@ translation:
                 # Value:
                 #   A `script` that contains all of the user's top-level
                 #     function definitions.
-                #   Active target above Core in the Standard Target Stack
+                #   Module above Core in the Standard Module Stack
                 #     (i.e., used before Core).
                 '': Script
                 # Core is the rough equivalent of `Kernel` in Ruby or
@@ -33,7 +33,7 @@ translation:
                 # Value:
                 #   Object of type `core object` that implements the builtin
                 #     commands.
-                #   Active target at the bottom of the Standard Target Stack
+                #   Module at the bottom of the Standard Module Stack
                 #     (i.e., searched last).
                 Core: Core
         dictionary:

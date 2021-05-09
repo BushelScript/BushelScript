@@ -210,7 +210,6 @@ final class Builtin {
             directArgTarget = nil
         }
         
-        // TODO: Revise with Target Stack
         return try
             catchingErrors {
                 try directArgTarget?.perform(command: command, arguments: argumentsWithoutDirect, implicitDirect: implicitDirect)
@@ -221,10 +220,9 @@ final class Builtin {
                     try defaultTarget.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
             } ??
             catchingErrors {
-                try rt.topScript.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-            } ??
-            catchingErrors {
-                try rt.core.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+                try propagate(up: moduleStack) { module in
+                    try module.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+                }
             } ?? rt.null
     }
     
