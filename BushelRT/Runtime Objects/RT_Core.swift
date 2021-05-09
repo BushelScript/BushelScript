@@ -1,7 +1,7 @@
 import Bushel
 import SwiftAutomation
 
-public class RT_Core: RT_Object {
+public class RT_Core: RT_Object, RT_Module {
     
     private static let typeInfo_ = TypeInfo(.coreObject)
     public override class var typeInfo: TypeInfo {
@@ -10,6 +10,26 @@ public class RT_Core: RT_Object {
     
     public override var description: String {
         "Core"
+    }
+    
+    public var functions = FunctionSet()
+    
+    public override init() {
+        super.init()
+        
+        functions.add(.delay, parameters: [.direct: .real]) { arguments in
+            let delaySeconds = arguments[ParameterInfo(.direct)]?.coerce(to: RT_Real.self)?.value ?? 1.0
+            Thread.sleep(forTimeInterval: delaySeconds)
+            return RT_Null.null
+        }
+        functions.add(.CLI_log, parameters: [.direct: .item]) { arguments in
+            guard let message = arguments[ParameterInfo(.direct)] else {
+                // TODO: Throw error
+                return RT_Null.null
+            }
+            print(message.coerce(to: RT_String.self)?.value ?? String(describing: message))
+            return RT_Null.null
+        }
     }
     
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
@@ -34,21 +54,9 @@ public class RT_Core: RT_Object {
             return try RT_Application(bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
         
-        switch Commands(command.id) {
-        case .delay:
-            let delaySeconds = arguments[ParameterInfo(.direct)]?.coerce(to: RT_Real.self)?.value ?? 1.0
-            Thread.sleep(forTimeInterval: delaySeconds)
-            return RT_Null.null
-        case .CLI_log:
-            guard let message = arguments[ParameterInfo(.direct)] else {
-                // TODO: Throw error
-                return RT_Null.null
-            }
-            print(message.coerce(to: RT_String.self)?.value ?? String(describing: message))
-            return RT_Null.null
-        default:
-            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-        }
+        return try
+            runFunction(for: command, arguments: arguments) ??
+            super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
     }
     
     public override func property(_ property: PropertyInfo) throws -> RT_Object {

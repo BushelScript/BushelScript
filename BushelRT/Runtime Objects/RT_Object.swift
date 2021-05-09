@@ -371,7 +371,7 @@ import Bushel
     /// alongside `concatenating(_:)` to define any addition operations
     /// between objects.
     public func concatenated(to other: RT_Object) -> RT_Object? {
-        return nil
+        nil
     }
     
     /// Applies a binary coercion operation.
@@ -400,7 +400,7 @@ import Bushel
     /// - Returns: The result of this object executing the command, or
     ///            `nil` if the command could not be handled.
     public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        return nil
+        nil
     }
     
     // Most of the following default implementations just throw UnsupportedIndexForm.

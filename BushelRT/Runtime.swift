@@ -464,11 +464,12 @@ public extension Runtime {
                 }
             }()
             return RT_InsertionSpecifier(parent: parentValue, kind: insertionSpecifier.kind)
-        case .function(let name, _, _, _): // MARK: .function
-            let commandInfo = self.command(forUID: Term.ID(.command, name.uri))
+        case .function(let name, let parameters, _, _): // MARK: .function
+            let signature = RT_Function.Signature(command: self.command(forUID: Term.ID(.command, name.uri)), parameters: RT_Function.ParameterSignature(parameters.map { (ParameterInfo($0.uri), TypeInfo(.item)) }, uniquingKeysWith: { l, r in l }))
+            let implementation = RT_ExpressionImplementation(rt: self, functionExpression: expression)
             
-            let function = RT_Function(self, expression)
-            topScript.dynamicFunctions[commandInfo] = function
+            let function = RT_Function(signature: signature, implementation: implementation)
+            topScript.functions.add(function)
                 
             return try evaluate(lastResult, lastResult: lastResult, target: target)
         case .multilineString(_, let body): // MARK: .multilineString
