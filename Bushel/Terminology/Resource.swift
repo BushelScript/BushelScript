@@ -302,7 +302,7 @@ extension Resource {
         case .bushelscript:
             return nil
         case .system(_):
-            return ApplicationByID(id: "com.apple.SystemEvents")?.bundle.bundleURL
+            return ApplicationByID(id: "com.apple.systemevents")?.bundle.bundleURL
         case let .applicationByName(bundle),
              let .applicationByID(bundle),
              let .scriptingAdditionByName(bundle):
