@@ -3,16 +3,6 @@ import os
 
 private let log = OSLog(subsystem: logSubsystem, category: "Runtime")
 
-public struct CodeGenOptions {
-    
-    /// Whether the stack should be runtime-introspectable.
-    /// Generates push and pop runtime calls, and forces all variables to be
-    /// tracked dynamically.
-    /// For end-user debugging purposes.
-    public let stackIntrospectability: Bool
-    
-}
-
 public struct RuntimeError: CodableLocalizedError, Located {
     
     /// The error message as formatted during init.
@@ -51,7 +41,6 @@ public struct InFlightRuntimeError: Error {
 
 public class Runtime {
     
-    var options = CodeGenOptions(stackIntrospectability: false)
     var builtin: Builtin!
     
     private var locations: [SourceLocation] = []
