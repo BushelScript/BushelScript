@@ -100,6 +100,11 @@ public class Runtime {
             }
         }
         
+        guard !terms.contains(rootTerm) else {
+            return
+        }
+        terms.insert(rootTerm)
+        
         for term in rootTerm.dictionary.contents {
             switch term.role {
             case .dictionary:
@@ -129,6 +134,8 @@ public class Runtime {
             injectTerms(from: term)
         }
     }
+    
+    private var terms: Set<Term> = []
     
     private var typesByUID: [Term.ID : TypeInfo] = [:]
     private var typesBySupertype: [TypeInfo : [TypeInfo]] = [:]
