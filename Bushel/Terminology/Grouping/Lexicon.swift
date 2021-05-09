@@ -77,7 +77,7 @@ public struct Lexicon: ByNameTermLookup {
     }
     
     public mutating func pushUnnamedDictionary(exports: Bool = false) {
-        addPush(Term(.dictionary, makeUniqueURI(), exports: false))
+        addPush(Term(.dictionary, makeUniqueURI(), exports: exports))
     }
     
     public mutating func pushDictionaryTerm(uri: Term.SemanticURI, exports: Bool = false) {
