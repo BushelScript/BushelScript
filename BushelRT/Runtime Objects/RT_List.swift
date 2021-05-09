@@ -6,8 +6,9 @@ public class RT_List: RT_Object, AEEncodable {
     
     public var contents: [RT_Object] = []
     
-    public init(contents: [RT_Object]) {
+    public init(_ rt: Runtime, contents: [RT_Object]) {
         self.contents = contents
+        super.init(rt)
     }
     
     public override var description: String {
@@ -29,29 +30,29 @@ public class RT_List: RT_Object, AEEncodable {
     
     public override func concatenating(_ other: RT_Object) -> RT_Object? {
         if let other = other.coerce(to: RT_List.self) {
-            return RT_List(contents: self.contents + other.contents)
+            return RT_List(rt, contents: self.contents + other.contents)
         } else {
-            return RT_List(contents: self.contents + [other])
+            return RT_List(rt, contents: self.contents + [other])
         }
     }
     
     public override func concatenated(to other: RT_Object) -> RT_Object? {
         if let other = other.coerce(to: RT_List.self) {
-            return RT_List(contents: other.contents + self.contents)
+            return RT_List(rt, contents: other.contents + self.contents)
         } else {
-            return RT_List(contents: [other] + self.contents)
+            return RT_List(rt, contents: [other] + self.contents)
         }
     }
     
     public var length: RT_Integer {
         let count = Int64(contents.count)
-        return RT_Integer(value: count)
+        return RT_Integer(rt, value: count)
     }
     public var reverse: RT_List {
-        RT_List(contents: contents.reversed())
+        RT_List(rt, contents: contents.reversed())
     }
     public var tail: RT_List {
-        RT_List(contents: [RT_Object](contents[1...]))
+        RT_List(rt, contents: [RT_Object](contents[1...]))
     }
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
@@ -92,7 +93,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override func elements(_ type: TypeInfo) throws -> RT_Object {
-        return RT_List(contents: filteredContents(type))
+        return RT_List(rt, contents: filteredContents(type))
     }
     
     public override func elements(_ type: TypeInfo, from: RT_Object, thru: RT_Object) throws -> RT_Object {
@@ -114,7 +115,7 @@ public class RT_List: RT_Object, AEEncodable {
             throw InFlightRuntimeError(description: "Range ‘(\(zeroBasedFrom + 1)) thru (\(zeroBasedThru + 1))’ is out of bounds for ’\(self)’")
         }
         
-        return RT_List(contents: Array(filteredContents[zeroBasedFrom...zeroBasedThru]))
+        return RT_List(rt, contents: Array(filteredContents[zeroBasedFrom...zeroBasedThru]))
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
@@ -123,7 +124,7 @@ public class RT_List: RT_Object, AEEncodable {
     }
     
     public override func contains(_ other: RT_Object) -> RT_Object? {
-        RT_Boolean.withValue(
+        RT_Boolean.withValue(rt, 
             contents.contains { $0.equal(to: other)?.truthy ?? false }
         )
     }
@@ -145,7 +146,7 @@ public class RT_List: RT_Object, AEEncodable {
                 contents.remove(at: index)
                 return item
             } else {
-                return RT_Null.null
+                return rt.null
             }
         case .Sequence_join:
             guard let separator = arguments[ParameterInfo(.Sequence_join_with)]?.coerce(to: RT_String.self) else {
@@ -156,7 +157,7 @@ public class RT_List: RT_Object, AEEncodable {
                 // TODO: Throw error
                 return nil
             }
-            return RT_String(value: strings.joined(separator: separator.value))
+            return RT_String(rt, value: strings.joined(separator: separator.value))
         default:
             return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }

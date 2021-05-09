@@ -1,6 +1,7 @@
 import BushelRT
 
 public func runAlert(heading: String, message: String, title: String, suspension: NSAppleEventManager.SuspensionID) {
+    let rt = Runtime()
     
     let wc = AlertWC(windowNibName: "AlertWC")
     
@@ -13,9 +14,8 @@ public func runAlert(heading: String, message: String, title: String, suspension
     
     display(window: window) {
         returnResultToSender(
-            wc.response.map { RT_String(value: $0) } ?? RT_Null.null,
+            wc.response.map { RT_String(rt, value: $0) } ?? rt.null,
             for: suspension
         )
     }
-    
 }

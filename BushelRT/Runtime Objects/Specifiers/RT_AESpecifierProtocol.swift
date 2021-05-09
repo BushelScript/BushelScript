@@ -28,7 +28,7 @@ extension RT_SASpecifierConvertible where Self: RT_Object {
         guard let saSpecifier = self.saSpecifier(appData: appData) else {
             throw Unencodable(object: self)
         }
-        return try saSpecifier.perform(command: command, arguments: encodedArguments)
+        return try saSpecifier.perform(rt, command: command, arguments: encodedArguments)
     }
     
 }

@@ -112,7 +112,6 @@
 		3CCD8AB822CC45040049C74F /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
 		3CCD8ABD22CC45040049C74F /* BushelRTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8ABC22CC45040049C74F /* BushelRTTests.swift */; };
 		3CCD8ABF22CC45040049C74F /* BushelRT.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCD8AB122CC45040049C74F /* BushelRT.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CCD8AC722CC45860049C74F /* StackFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8AC622CC45860049C74F /* StackFrame.swift */; };
 		3CCD8BA522CFA6020049C74F /* PrettyPrinting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8BA422CFA6020049C74F /* PrettyPrinting.swift */; };
 		3CCDDEC323ED0257007684D1 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3CCDDECA23ED06E8007684D1 /* RT_AppleScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */; };
@@ -130,6 +129,10 @@
 		3CD18E492620A3ED00144A3C /* SourceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B758D2305AFC40006C354 /* SourceParser.swift */; };
 		3CD18E542620A40600144A3C /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 3CD18E532620A40600144A3C /* Yams */; };
 		3CD18EA42620AAD400144A3C /* ParseFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18E8D2620A9C300144A3C /* ParseFile.swift */; };
+		3CD82157264852C200493B89 /* RT_TargetStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD82156264852C200493B89 /* RT_TargetStack.swift */; };
+		3CD8217326485D3300493B89 /* RT_FrameStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8217226485D3300493B89 /* RT_FrameStack.swift */; };
+		3CD8218326485D8000493B89 /* RT_Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8218226485D8000493B89 /* RT_Stack.swift */; };
+		3CD82193264865D200493B89 /* RT_ModuleStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD82192264865D200493B89 /* RT_ModuleStack.swift */; };
 		3CD8397A23DCE4F6000F2516 /* ConstantInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8397923DCE4F6000F2516 /* ConstantInfo.swift */; };
 		3CD8398923DD3651000F2516 /* Translations in Resources */ = {isa = PBXBuildFile; fileRef = 3CD8398823DD3651000F2516 /* Translations */; };
 		3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */; };
@@ -376,7 +379,6 @@
 		3CCD8AB722CC45040049C74F /* BushelRTTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BushelRTTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CCD8ABC22CC45040049C74F /* BushelRTTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BushelRTTests.swift; sourceTree = "<group>"; };
 		3CCD8ABE22CC45040049C74F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3CCD8AC622CC45860049C74F /* StackFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackFrame.swift; sourceTree = "<group>"; };
 		3CCD8BA422CFA6020049C74F /* PrettyPrinting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrettyPrinting.swift; sourceTree = "<group>"; };
 		3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_AppleScript.swift; sourceTree = "<group>"; };
 		3CCDDECB23EDA388007684D1 /* Ask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ask.swift; sourceTree = "<group>"; };
@@ -387,6 +389,10 @@
 		3CD113D322FB700000329583 /* ResourceLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceLocation.swift; sourceTree = "<group>"; };
 		3CD113DA22FC6E9300329583 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3CD18E8D2620A9C300144A3C /* ParseFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseFile.swift; sourceTree = "<group>"; };
+		3CD82156264852C200493B89 /* RT_TargetStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_TargetStack.swift; sourceTree = "<group>"; };
+		3CD8217226485D3300493B89 /* RT_FrameStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_FrameStack.swift; sourceTree = "<group>"; };
+		3CD8218226485D8000493B89 /* RT_Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Stack.swift; sourceTree = "<group>"; };
+		3CD82192264865D200493B89 /* RT_ModuleStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_ModuleStack.swift; sourceTree = "<group>"; };
 		3CD8397923DCE4F6000F2516 /* ConstantInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstantInfo.swift; sourceTree = "<group>"; };
 		3CD8397C23DD2454000F2516 /* Translation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Translation.swift; sourceTree = "<group>"; };
 		3CD8398823DD3651000F2516 /* Translations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Translations; sourceTree = "<group>"; };
@@ -782,7 +788,10 @@
 			isa = PBXGroup;
 			children = (
 				3C8FEEF222DE2B8300C1F1CF /* Builtin.swift */,
-				3CCD8AC622CC45860049C74F /* StackFrame.swift */,
+				3CD82156264852C200493B89 /* RT_TargetStack.swift */,
+				3CD82192264865D200493B89 /* RT_ModuleStack.swift */,
+				3CD8217226485D3300493B89 /* RT_FrameStack.swift */,
+				3CD8218226485D8000493B89 /* RT_Stack.swift */,
 			);
 			path = "Built-in Functions";
 			sourceTree = "<group>";
@@ -1444,6 +1453,8 @@
 				3C12EF892354E3590057E0CC /* RT_Constant.swift in Sources */,
 				3C8FEEF322DE2B8300C1F1CF /* Builtin.swift in Sources */,
 				3CC3E6052647930600516559 /* RT_Function.swift in Sources */,
+				3CD82193264865D200493B89 /* RT_ModuleStack.swift in Sources */,
+				3CD8217326485D3300493B89 /* RT_FrameStack.swift in Sources */,
 				3CB528EB237FAF8A0051460B /* TypeInfo.swift in Sources */,
 				3C12EF9A2354E5AC0057E0CC /* RT_Application.swift in Sources */,
 				3C12EF9E2354E6010057E0CC /* RT_Core.swift in Sources */,
@@ -1458,13 +1469,14 @@
 				3C12EF752354E23C0057E0CC /* RT_Object.swift in Sources */,
 				3C12EF832354E30C0057E0CC /* RT_Record.swift in Sources */,
 				3CF7487423B88C5500A2F981 /* TermInfo.swift in Sources */,
+				3CD8218326485D8000493B89 /* RT_Stack.swift in Sources */,
 				3CCDDECA23ED06E8007684D1 /* RT_AppleScript.swift in Sources */,
 				3C12EF7D2354E2B50057E0CC /* RT_Boolean.swift in Sources */,
 				3C70A6A423C5898C00CD5F73 /* RT_TestSpecifier.swift in Sources */,
+				3CD82157264852C200493B89 /* RT_TargetStack.swift in Sources */,
 				3C12EF8F2354E4130057E0CC /* Errors.swift in Sources */,
 				3CC3E5F22647904800516559 /* RT_Module.swift in Sources */,
 				3C5B345423E7BCF90040766D /* RT_File.swift in Sources */,
-				3CCD8AC722CC45860049C74F /* StackFrame.swift in Sources */,
 				3C12EF962354E53C0057E0CC /* RT_AESpecifierProtocol.swift in Sources */,
 				3C12EF872354E3470057E0CC /* RT_Character.swift in Sources */,
 				3C12EF912354E4AA0057E0CC /* RT_Specifier.swift in Sources */,

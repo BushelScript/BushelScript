@@ -5,15 +5,16 @@ public class RT_EnvVar: RT_Object {
     
     public var name: String
     
-    public init(name: String) {
+    public init(_ rt: Runtime, name: String) {
         self.name = name
+        super.init(rt)
     }
     
     // Either RT_String or RT_Null.
     public var value: RT_Object {
         get {
             name.withCString {
-                getenv($0).map { RT_String(value: String(cString: $0)) } ?? RT_Null.null
+                getenv($0).map { RT_String(rt, value: String(cString: $0)) } ?? rt.null
             }
         }
         set {

@@ -14,21 +14,21 @@ public class RT_Core: RT_Object, RT_Module {
     
     public var functions = FunctionSet()
     
-    public override init() {
-        super.init()
+    public override init(_ rt: Runtime) {
+        super.init(rt)
         
-        functions.add(.delay, parameters: [.direct: .real]) { arguments in
+        functions.add(rt, .delay, parameters: [.direct: .real]) { arguments in
             let delaySeconds = arguments[ParameterInfo(.direct)]?.coerce(to: RT_Real.self)?.value ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)
-            return RT_Null.null
+            return rt.null
         }
-        functions.add(.CLI_log, parameters: [.direct: .item]) { arguments in
+        functions.add(rt, .CLI_log, parameters: [.direct: .item]) { arguments in
             guard let message = arguments[ParameterInfo(.direct)] else {
                 // TODO: Throw error
-                return RT_Null.null
+                return rt.null
             }
             print(message.coerce(to: RT_String.self)?.value ?? String(describing: message))
-            return RT_Null.null
+            return rt.null
         }
     }
     
@@ -48,10 +48,10 @@ public class RT_Core: RT_Object, RT_Module {
                 let scriptName = Optional("")//rt.topScript.name
             // FIXME: fix
             {
-                arguments[ParameterInfo(.GUI_ask_title)] = RT_String(value: scriptName)
+                arguments[ParameterInfo(.GUI_ask_title)] = RT_String(rt, value: scriptName)
             }
             
-            return try RT_Application(bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+            return try RT_Application(rt, bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
         
         return try
@@ -59,32 +59,32 @@ public class RT_Core: RT_Object, RT_Module {
             super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
     }
     
-    public override func property(_ property: PropertyInfo) throws -> RT_Object {
+    public override func property(_ property: PropertyInfo) throws -> RT_Object? {
         switch Properties(property.id) {
         case .currentDate:
-            return RT_Date(value: Date())
+            return RT_Date(rt, value: Date())
         case .Math_NaN:
-            return RT_Real(value: Double.nan)
+            return RT_Real(rt, value: Double.nan)
         case .Math_inf:
-            return RT_Real(value: Double.infinity)
+            return RT_Real(rt, value: Double.infinity)
         case .Math_pi:
-            return RT_Real(value: Double.pi)
+            return RT_Real(rt, value: Double.pi)
         case .Math_e:
-            return RT_Real(value: exp(1))
+            return RT_Real(rt, value: exp(1))
         default:
-            throw NoPropertyExists(type: dynamicTypeInfo, property: property)
+            return nil
         }
     }
     
-    public override func element(_ type: TypeInfo, named name: String) throws -> RT_Object {
+    public override func element(_ type: TypeInfo, named name: String) throws -> RT_Object? {
         func element() -> RT_Object? {
             switch Types(type.uri) {
             case .application:
-                return RT_Application(named: name)
+                return RT_Application(rt, named: name)
             case .file:
-                return RT_File(value: URL(fileURLWithPath: (name as NSString).expandingTildeInPath))
+                return RT_File(rt, value: URL(fileURLWithPath: (name as NSString).expandingTildeInPath))
             case .environmentVariable:
-                return RT_EnvVar(name: name)
+                return RT_EnvVar(rt, name: name)
             default:
                 return nil
             }
@@ -95,7 +95,7 @@ public class RT_Core: RT_Object, RT_Module {
         return elem
     }
     
-    public override func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object {
+    public override func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object? {
         func element() -> RT_Object? {
             switch Types(type.uri) {
             case .application:
@@ -105,7 +105,7 @@ public class RT_Core: RT_Object, RT_Module {
                 else {
                     return nil
                 }
-                return RT_Application(bundle: appBundle)
+                return RT_Application(rt, bundle: appBundle)
             default:
                 return nil
             }
@@ -119,7 +119,7 @@ public class RT_Core: RT_Object, RT_Module {
     public override func elements(_ type: TypeInfo) throws -> RT_Object {
         switch Types(type.uri) {
         case .environmentVariable:
-            return RT_List(contents: ProcessInfo.processInfo.environment.keys.map { RT_EnvVar(name: $0) })
+            return RT_List(rt, contents: ProcessInfo.processInfo.environment.keys.map { RT_EnvVar(rt, name: $0) })
         default:
             return try super.elements(type)
         }

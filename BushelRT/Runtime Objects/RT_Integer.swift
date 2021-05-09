@@ -6,13 +6,13 @@ public class RT_Integer: RT_Object, AEEncodable {
     
     public var value: Int64 = 0
     
-    public init(value: Int64) {
+    public init(_ rt: Runtime, value: Int64) {
         self.value = value
+        super.init(rt)
     }
     
-    public convenience init(value: Int) {
-        let value = Int64(value)
-        self.init(value: value)
+    public convenience init(_ rt: Runtime, value: Int) {
+        self.init(rt, value: Int64(value))
     }
     
     public override var description: String {
@@ -40,9 +40,9 @@ public class RT_Integer: RT_Object, AEEncodable {
     
     public override func adding(_ other: RT_Object) -> RT_Object? {
         if let other = other as? RT_Integer {
-            return RT_Integer(value: self.value + other.value)
+            return RT_Integer(rt, value: self.value + other.value)
         } else if let other = other as? RT_Numeric {
-            return RT_Real(value: self.numericValue + other.numericValue)
+            return RT_Real(rt, value: self.numericValue + other.numericValue)
         } else {
             return nil
         }
@@ -50,9 +50,9 @@ public class RT_Integer: RT_Object, AEEncodable {
     
     public override func subtracting(_ other: RT_Object) -> RT_Object? {
         if let other = other as? RT_Integer {
-            return RT_Integer(value: self.value - other.value)
+            return RT_Integer(rt, value: self.value - other.value)
         } else if let other = other as? RT_Numeric {
-            return RT_Real(value: self.numericValue - other.numericValue)
+            return RT_Real(rt, value: self.numericValue - other.numericValue)
         } else {
             return nil
         }
@@ -60,9 +60,9 @@ public class RT_Integer: RT_Object, AEEncodable {
     
     public override func multiplying(by other: RT_Object) -> RT_Object? {
         if let other = other as? RT_Integer {
-            return RT_Integer(value: self.value * other.value)
+            return RT_Integer(rt, value: self.value * other.value)
         } else if let other = other as? RT_Numeric {
-            return RT_Real(value: self.numericValue * other.numericValue)
+            return RT_Real(rt, value: self.numericValue * other.numericValue)
         } else {
             return nil
         }
@@ -70,7 +70,7 @@ public class RT_Integer: RT_Object, AEEncodable {
     
     public override func dividing(by other: RT_Object) -> RT_Object? {
         if let other = other as? RT_Numeric {
-            return RT_Real(value: self.numericValue / other.numericValue)
+            return RT_Real(rt, value: self.numericValue / other.numericValue)
         } else {
             return nil
         }
@@ -79,21 +79,21 @@ public class RT_Integer: RT_Object, AEEncodable {
     public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
         switch Commands(command.id) {
         case .Math_abs:
-            return RT_Integer(value: abs(self.value))
+            return RT_Integer(rt, value: abs(self.value))
         case .Math_sqrt:
-            return RT_Real(value: sqrt(self.numericValue))
+            return RT_Real(rt, value: sqrt(self.numericValue))
         case .Math_cbrt:
-            return RT_Real(value: cbrt(self.numericValue))
+            return RT_Real(rt, value: cbrt(self.numericValue))
         case .Math_square:
             let squared = self.value * self.value
-            return RT_Integer(value: squared)
+            return RT_Integer(rt, value: squared)
         case .Math_cube:
             // Swift likes taking an egregiously long time to typecheck a
             // three-way multiplication…
             // So we split it up to hopefully help matters a little.
             let squared = self.value * self.value
             let cubed = squared * self.value
-            return RT_Integer(value: cubed)
+            return RT_Integer(rt, value: cubed)
         case .Math_pow:
             guard let exponentObj = arguments[ParameterInfo(.Math_pow_exponent)] else {
                 throw MissingParameter(command: command, parameter: ParameterInfo(.Math_pow_exponent))
@@ -101,7 +101,7 @@ public class RT_Integer: RT_Object, AEEncodable {
             guard let exponent = exponentObj.coerce(to: RT_Real.self) else {
                 throw WrongParameterType(command: command, parameter: ParameterInfo(.Math_pow_exponent), expected: TypeInfo(.number), actual: exponentObj.dynamicTypeInfo)
             }
-            return RT_Integer(value: Int64(pow(Double(self.value), exponent.value)))
+            return RT_Integer(rt, value: Int64(pow(Double(self.value), exponent.value)))
         default:
             return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
         }
@@ -110,7 +110,7 @@ public class RT_Integer: RT_Object, AEEncodable {
     public override func coerce(to type: TypeInfo) -> RT_Object? {
         switch Types(type.id) {
         case .real:
-            return RT_Real(value: Double(value))
+            return RT_Real(rt, value: Double(value))
         default:
             return super.coerce(to: type)
         }

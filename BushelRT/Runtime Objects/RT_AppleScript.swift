@@ -7,9 +7,10 @@ public class RT_AppleScript: RT_Object {
     public let name: String
     private let value: NSAppleScript
     
-    public init(name: String, value: NSAppleScript) {
+    public init(_ rt: Runtime, name: String, value: NSAppleScript) {
         self.name = name
         self.value = value
+        super.init(rt)
     }
     
     public override var description: String {
@@ -60,7 +61,7 @@ public class RT_AppleScript: RT_Object {
             throw AppleScriptError(number: errorInfo[NSAppleScript.errorNumber as NSString] as? OSStatus, message: errorInfo[NSAppleScript.errorMessage as NSString] as? String)
         }
         
-        return try RT_Object.fromAEDescriptor(AppData(), resultDescriptor)
+        return try RT_Object.fromAEDescriptor(rt, AppData(), resultDescriptor)
     }
     
 }

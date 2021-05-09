@@ -6,33 +6,35 @@ public class RT_Application: RT_Object {
     public let bundle: Bundle?
     public let target: TargetApplication
     
-    public init(bundle: Bundle) {
+    public init(_ rt: Runtime, bundle: Bundle) {
         self.bundle = bundle
         self.target = bundle.bundleIdentifier.map { .bundleIdentifier($0, false) } ??
             .url(bundle.bundleURL)
+        super.init(rt)
     }
     
-    public init(target: TargetApplication) {
+    public init(_ rt: Runtime, target: TargetApplication) {
         self.bundle = nil
         self.target = target
+        super.init(rt)
     }
     
     public convenience init(_ rt: Runtime, currentApplication: ()) {
         if let bundleID = rt.currentApplicationBundleID {
-            self.init(target: .bundleIdentifier(bundleID, false))
+            self.init(rt, target: .bundleIdentifier(bundleID, false))
         } else {
-            self.init(target: .current)
+            self.init(rt, target: .current)
         }
     }
     
-    public convenience init?(named name: String) {
+    public convenience init?(_ rt: Runtime, named name: String) {
         guard
             let appBundleID = TargetApplication.name(name).bundleIdentifier,
             let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
         else {
             return nil
         }
-        self.init(bundle: appBundle)
+        self.init(rt, bundle: appBundle)
     }
     
     public override var description: String {

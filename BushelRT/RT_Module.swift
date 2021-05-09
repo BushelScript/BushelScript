@@ -90,8 +90,9 @@ public struct FunctionSet {
 // MARK: Add convenience
 extension FunctionSet {
     
-    public mutating func add(_ command: Commands, parameters: [Parameters : Types], implementation: @escaping RT_SwiftImplementation.Function) {
+    public mutating func add(_ rt: Runtime, _ command: Commands, parameters: [Parameters : Types], implementation: @escaping RT_SwiftImplementation.Function) {
         add(RT_Function(
+            rt,
             signature: RT_Function.Signature(
                 command: CommandInfo(command),
                 parameters: RT_Function.ParameterSignature(

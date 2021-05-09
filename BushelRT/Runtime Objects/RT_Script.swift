@@ -4,8 +4,9 @@ public class RT_Script: RT_Object, RT_Module {
     
     public var name: String?
     
-    public init(name: String? = nil) {
+    public init(_ rt: Runtime, name: String? = nil) {
         self.name = name
+        super.init(rt)
     }
     
     private static let typeInfo_ = TypeInfo(.script)

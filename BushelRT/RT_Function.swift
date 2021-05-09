@@ -18,9 +18,10 @@ public class RT_Function: RT_Object {
     
     var implementation: RT_Implementation
     
-    init(signature: Signature, implementation: RT_Implementation) {
+    init(_ rt: Runtime, signature: Signature, implementation: RT_Implementation) {
         self.signature = signature
         self.implementation = implementation
+        super.init(rt)
     }
     
     private static let typeInfo_ = TypeInfo(.function)

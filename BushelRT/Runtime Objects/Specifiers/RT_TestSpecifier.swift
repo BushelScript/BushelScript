@@ -8,10 +8,10 @@ public final class RT_TestSpecifier: RT_Object {
     public var lhs: RT_Object
     public var rhs: RT_Object
     
-    public init(operation: BinaryOperation, lhs: RT_Object, rhs: RT_Object) {
+    public init(_ rt: Runtime, operation: BinaryOperation, lhs: RT_Object, rhs: RT_Object) {
         self.operation = operation
         
-        let specimenRoot = RT_RootSpecifier(kind: .specimen)
+        let specimenRoot = RT_RootSpecifier(rt, kind: .specimen)
         if let lhs = lhs as? RT_HierarchicalSpecifier {
             lhs.setRootAncestor(specimenRoot)
         }
@@ -20,6 +20,8 @@ public final class RT_TestSpecifier: RT_Object {
             rhs.setRootAncestor(specimenRoot)
         }
         self.rhs = rhs
+        
+        super.init(rt)
     }
     
     public func saTestClause(appData: AppData) -> SwiftAutomation.TestClause? {

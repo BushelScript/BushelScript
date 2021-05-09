@@ -43,6 +43,13 @@ public class Runtime {
     
     var builtin: Builtin!
     
+    /// The singleton `null` instance.
+    public lazy var null = RT_Null(self)
+    /// The singleton `true` boolean instance.
+    public lazy var `true` = RT_Boolean(self, value: true)
+    /// The singleton `false` boolean instance.
+    public lazy var `false` = RT_Boolean(self, value: false)
+    
     private var locations: [SourceLocation] = []
     private func pushLocation(_ location: SourceLocation) {
         locations.append(location)
@@ -54,17 +61,16 @@ public class Runtime {
         locations.last
     }
     
-    public let topScript: RT_Script
-    public var core: RT_Core!
-    
+    public var scriptName: String?
     public var currentApplicationBundleID: String?
     
     public init(scriptName: String? = nil, currentApplicationBundleID: String? = nil) {
-        self.topScript = RT_Script(name: scriptName)
+        self.scriptName = scriptName
         self.currentApplicationBundleID = currentApplicationBundleID
-        self.core = nil
-        self.core = RT_Core()
     }
+    
+    public lazy var topScript = RT_Script(self, name: scriptName)
+    public lazy var core = RT_Core(self)
     
     public func injectTerms(from rootTerm: Term) {
         func add(typeTerm term: Term) {
@@ -204,15 +210,19 @@ public extension Runtime {
     }
     
     func run(_ expression: Expression) throws -> RT_Object {
-        builtin = Builtin()
-        builtin.rt = self
-        
-        builtin.stack.variables[Term.SemanticURI(Variables.Script)] = topScript
-        builtin.stack.variables[Term.SemanticURI(Variables.Core)] = core
+        builtin = Builtin(
+            self,
+            frameStack: RT_FrameStack(bottom: [
+                Term.SemanticURI(Variables.Core): core,
+                Term.SemanticURI(Variables.Script): topScript
+            ]),
+            moduleStack: RT_ModuleStack(bottom: core, rest: [topScript]),
+            targetStack: RT_TargetStack(bottom: core, rest: [topScript])
+        )
         
         let result: RT_Object
         do {
-            result = try runPrimary(expression, lastResult: ExprValue(expression, RT_Null.null), target: ExprValue(expression, core))
+            result = try runPrimary(expression, lastResult: null)
         } catch let earlyReturn as EarlyReturn {
             result = earlyReturn.value
         } catch let inFlightRuntimeError as InFlightRuntimeError {
@@ -234,9 +244,9 @@ public extension Runtime {
             preconditionFailure("expected function expression but got \(functionExpression)")
         }
         
-        builtin.pushFrame()
+        builtin.frameStack.repush()
         defer {
-            builtin.popFrame()
+            builtin.frameStack.pop()
         }
         
         // Create variables for each of the function's parameters.
@@ -253,27 +263,27 @@ public extension Runtime {
             //  l = "hello" even though it's not explicitly specified.
             //  Without this special-case, the call would have to be:
             //     cat l "hello, " with "world"
-            var argumentValue: RT_Object = RT_Null.null
+            var argumentValue: RT_Object = null
             if index == 0 {
                 argumentValue =
                     actualArguments[ParameterInfo(parameter.uri)] ??
                     actualArguments[ParameterInfo(Parameters.direct)] ??
-                    RT_Null.null
+                    null
             } else {
-                argumentValue = actualArguments[ParameterInfo(parameter.uri)] ?? RT_Null.null
+                argumentValue = actualArguments[ParameterInfo(parameter.uri)] ?? null
             }
             
-            builtin.setVariableValue(argument, argumentValue)
+            builtin[variable: argument] = argumentValue
         }
         
         do {
-            return try runPrimary(body, lastResult: ExprValue(body, RT_Null.null), target: ExprValue(body, core))
+            return try runPrimary(body, lastResult: null)
         } catch let earlyReturn as EarlyReturn {
             return earlyReturn.value
         }
     }
     
-    private func runPrimary(_ expression: Expression, lastResult: ExprValue, target: ExprValue, evaluateSpecifiers: Bool = true) throws -> RT_Object {
+    private func runPrimary(_ expression: Expression, lastResult: RT_Object, evaluateSpecifiers: Bool = true) throws -> RT_Object {
         pushLocation(expression.location)
         defer {
             popLocation()
@@ -281,111 +291,108 @@ public extension Runtime {
         
         switch expression.kind {
         case .empty: // MARK: .empty
-            return try evaluate(lastResult, lastResult: lastResult, target: target)
+            return lastResult
         case .that: // MARK: .that
-            return try
-                evaluateSpecifiers ?
-                evaluatingSpecifier(evaluate(lastResult, lastResult: lastResult, target: target)) :
-                evaluate(lastResult, lastResult: lastResult, target: target)
+            return try evaluateSpecifiers ? evaluatingSpecifier(lastResult) : lastResult
         case .it: // MARK: .it
-            return try
-                evaluateSpecifiers ?
-                evaluatingSpecifier(evaluate(target, lastResult: lastResult, target: target)) :
-                evaluate(target, lastResult: lastResult, target: target)
+            return try evaluateSpecifiers ? evaluatingSpecifier(builtin.target) : builtin.target
         case .null: // MARK: .null
-            return RT_Null.null
+            return null
         case .sequence(let expressions): // MARK: .sequence
-            return try evaluate(expressions
-                .reduce(lastResult, { (lastResult, expression) in
-                    return try mapEval(ExprValue(expression), lastResult: lastResult, target: target)
-                }), lastResult: lastResult, target: target)
+            return try expressions.reduce(lastResult, { (lastResult, expression) in
+                try runPrimary(expression, lastResult: lastResult)
+            })
         case .scoped(let expression): // MARK: .scoped
-            return try runPrimary(expression, lastResult: lastResult, target: target)
+            return try runPrimary(expression, lastResult: lastResult)
         case .parentheses(let expression): // MARK: .parentheses
-            return try runPrimary(expression, lastResult: lastResult, target: target)
+            return try runPrimary(expression, lastResult: lastResult)
         case let .try_(body, handle): // MARK: .try_
             do {
-                return try runPrimary(body, lastResult: lastResult, target: target)
+                return try runPrimary(body, lastResult: lastResult)
             } catch {
-                return try runPrimary(handle, lastResult: lastResult, target: ExprValue(Expression(.empty, at: SourceLocation(at: handle.location)), RT_Error(error)))
+                builtin.targetStack.push(RT_Error(self, error))
+                defer { builtin.targetStack.pop() }
+                return try runPrimary(handle, lastResult: lastResult)
             }
         case let .if_(condition, then, else_): // MARK: .if_
-            let conditionValue = try runPrimary(condition, lastResult: lastResult, target: target)
+            let conditionValue = try runPrimary(condition, lastResult: lastResult)
             
             if conditionValue.truthy {
-                return try runPrimary(then, lastResult: lastResult, target: target)
+                return try runPrimary(then, lastResult: lastResult)
             } else if let else_ = else_ {
-                return try runPrimary(else_, lastResult: lastResult, target: target)
+                return try runPrimary(else_, lastResult: lastResult)
             } else {
-                return try evaluate(lastResult, lastResult: lastResult, target: target)
+                return lastResult
             }
         case .repeatWhile(let condition, let repeating): // MARK: .repeatWhile
             var repeatResult: RT_Object?
-            while try runPrimary(condition, lastResult: lastResult, target: target).truthy {
-                repeatResult = try runPrimary(repeating, lastResult: lastResult, target: target)
+            while try runPrimary(condition, lastResult: lastResult).truthy {
+                repeatResult = try runPrimary(repeating, lastResult: lastResult)
             }
-            return try repeatResult ?? evaluate(lastResult, lastResult: lastResult, target: target)
+            return repeatResult ?? lastResult
         case .repeatTimes(let times, let repeating): // MARK: .repeatTimes
-            let timesValue = try runPrimary(times, lastResult: lastResult, target: target)
+            let timesValue = try runPrimary(times, lastResult: lastResult)
             
             var repeatResult: RT_Object?
             var count = 0
-            while try builtin.binaryOp(.less, RT_Integer(value: count), timesValue).truthy {
-                repeatResult = try runPrimary(repeating, lastResult: lastResult, target: target)
+            while try builtin.binaryOp(.less, RT_Integer(self, value: count), timesValue).truthy {
+                repeatResult = try runPrimary(repeating, lastResult: lastResult)
                 count += 1
             }
-            return try repeatResult ?? evaluate(lastResult, lastResult: lastResult, target: target)
+            return repeatResult ?? lastResult
         case .repeatFor(let variable, let container, let repeating): // MARK: .repeatFor
-            let containerValue = try runPrimary(container, lastResult: lastResult, target: target)
+            let containerValue = try runPrimary(container, lastResult: lastResult)
             let timesValue = try builtin.getSequenceLength(containerValue)
             
             var repeatResult: RT_Object?
             // 1-based indices wheeeeee
             for count in 1...timesValue {
                 let elementValue = try builtin.getFromSequenceAtIndex(containerValue, Int64(count))
-                builtin.setVariableValue(variable, elementValue)
-                repeatResult = try runPrimary(repeating, lastResult: lastResult, target: target)
+                builtin[variable: variable] = elementValue
+                repeatResult = try runPrimary(repeating, lastResult: lastResult)
             }
-            return try repeatResult ?? evaluate(lastResult, lastResult: lastResult, target: target)
+            return repeatResult ?? lastResult
         case .tell(let newTarget, let to): // MARK: .tell
-            let newTargetValue = try mapEval(ExprValue(newTarget), lastResult: lastResult, target: target, evaluateSpecifiers: false)
-            return try runPrimary(to, lastResult: lastResult, target: newTargetValue)
+            let newTargetValue = try runPrimary(newTarget, lastResult: lastResult, evaluateSpecifiers: false)
+            builtin.targetStack.push(newTargetValue)
+            defer { builtin.targetStack.pop() }
+            return try runPrimary(to, lastResult: lastResult)
         case .let_(let term, let initialValue): // MARK: .let_
-            let initialExprValue = try initialValue.map { try runPrimary($0, lastResult: lastResult, target: target) } ?? RT_Null.null
-            builtin.setVariableValue(term, initialExprValue)
+            let initialExprValue = try initialValue.map { try runPrimary($0, lastResult: lastResult) } ?? null
+            builtin[variable: term] = initialExprValue
             return initialExprValue
         case .define(_, as: _): // MARK: .define
-            return try evaluate(lastResult, lastResult: lastResult, target: target)
+            return lastResult
         case .defining(_, as: _, body: let body): // MARK: .defining
-            return try runPrimary(body, lastResult: lastResult, target: target)
+            return try runPrimary(body, lastResult: lastResult)
         case .return_(let returnValue): // MARK: .return_
-            let returnExprValue = try returnValue.map { try runPrimary($0, lastResult: lastResult, target: target) } ??
-                evaluate(lastResult, lastResult: lastResult, target: target)
+            let returnExprValue = try returnValue.map { try runPrimary($0, lastResult: lastResult) } ??
+                lastResult
             throw EarlyReturn(value: returnExprValue)
         case .raise(let error): // MARK: .raise
-            let errorValue = try runPrimary(error, lastResult: lastResult, target: target)
+            let errorValue = try runPrimary(error, lastResult: lastResult)
             if let errorValue = errorValue as? RT_Error {
                 throw errorValue.error
             } else {
                 throw RaisedObjectError(error: errorValue, location: expression.location)
             }
         case .integer(let value): // MARK: .integer
-            return RT_Integer(value: value)
+            return RT_Integer(self, value: value)
         case .double(let value): // MARK: .double
-            return RT_Real(value: value)
+            return RT_Real(self, value: value)
         case .string(let value): // MARK: .string
-            return RT_String(value: value)
+            return RT_String(self, value: value)
         case .list(let expressions): // MARK: .list
-            return try RT_List(contents:
-                expressions.map { try runPrimary($0, lastResult: lastResult, target: target) }
+            return try RT_List(self, contents:
+                expressions.map { try runPrimary($0, lastResult: lastResult) }
             )
         case .record(let keyValues): // MARK: .record
-            return try RT_Record(contents:
+            return try RT_Record(self, contents:
                 [RT_Object : RT_Object](
                     try keyValues.map {
                         try (
-                            runPrimary($0.key, lastResult: lastResult, target: target, evaluateSpecifiers: false),
-                            runPrimary($0.value, lastResult: lastResult, target: target)
+                            runPrimary($0.key, lastResult: lastResult, evaluateSpecifiers: false),
+                            runPrimary($0.value, lastResult: lastResult)
                         )
                     },
                     uniquingKeysWith: {
@@ -394,67 +401,67 @@ public extension Runtime {
                 )
             )
         case .prefixOperator(let operation, let operand), .postfixOperator(let operation, let operand): // MARK: .prefixOperator, .postfixOperator
-            let operandValue = try runPrimary(operand, lastResult: lastResult, target: target)
+            let operandValue = try runPrimary(operand, lastResult: lastResult)
             return builtin.unaryOp(operation, operandValue)
         case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
-            let lhsValue = try runPrimary(lhs, lastResult: lastResult, target: target)
-            let rhsValue = try runPrimary(rhs, lastResult: lastResult, target: target)
+            let lhsValue = try runPrimary(lhs, lastResult: lastResult)
+            let rhsValue = try runPrimary(rhs, lastResult: lastResult)
             return try builtin.binaryOp(operation, lhsValue, rhsValue)
         case .variable(let term): // MARK: .variable
-            return builtin.getVariableValue(term)
+            return builtin[variable: term]
         case .use(let term), // MARK: .use
              .resource(let term): // MARK: .resource
             return try builtin.getResource(term)
         case .enumerator(let term): // MARK: .constant
             return builtin.newConstant(term.id)
         case .type(let term): // MARK: .class_
-            return RT_Type(value: type(forUID: term.id))
+            return RT_Type(self, value: type(forUID: term.id))
         case .set(let expression, to: let newValueExpression): // MARK: .set
             if case .variable(let variableTerm) = expression.kind {
-                let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult, target: target)
-                _ = builtin.setVariableValue(variableTerm, newValueExprValue)
+                let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult)
+                builtin[variable: variableTerm] = newValueExprValue
                 return newValueExprValue
             } else {
-                let expressionExprValue = try runPrimary(expression, lastResult: lastResult, target: target, evaluateSpecifiers: false)
-                let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult, target: target)
+                let expressionExprValue = try runPrimary(expression, lastResult: lastResult, evaluateSpecifiers: false)
+                let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult)
                 
                 let arguments: [ParameterInfo : RT_Object] = [
                     ParameterInfo(.direct): expressionExprValue,
                     ParameterInfo(.set_to): newValueExprValue
                 ]
                 let command = self.command(forUID: Term.ID(Commands.set))
-                return try builtin.run(command: command, arguments: arguments, target: evaluate(target, lastResult: lastResult, target: target))
+                return try builtin.run(command: command, arguments: arguments)
             }
         case .command(let term, let parameters): // MARK: .command
             let parameterExprValues: [(key: ParameterInfo, value: RT_Object)] = try parameters.map { kv in
                 let (parameterTerm, parameterValue) = kv
                 let parameterInfo = ParameterInfo(parameterTerm.uri)
-                let value = try runPrimary(parameterValue, lastResult: lastResult, target: target)
+                let value = try runPrimary(parameterValue, lastResult: lastResult)
                 return (parameterInfo, value)
             }
             let arguments = [ParameterInfo : RT_Object](uniqueKeysWithValues:
                 parameterExprValues
             )
             let command = self.command(forUID: term.id)
-            return try builtin.run(command: command, arguments: arguments, target: evaluate(target, lastResult: lastResult, target: target))
+            return try builtin.run(command: command, arguments: arguments)
         case .reference(let expression): // MARK: .reference
-            return try runPrimary(expression, lastResult: lastResult, target: target, evaluateSpecifiers: false)
+            return try runPrimary(expression, lastResult: lastResult, evaluateSpecifiers: false)
         case .get(let expression): // MARK: .get
-            return try evaluatingSpecifier(runPrimary(expression, lastResult: lastResult, target: target))
+            return try evaluatingSpecifier(runPrimary(expression, lastResult: lastResult))
         case .specifier(let specifier): // MARK: .specifier
-            let specifierValue = try buildSpecifier(specifier, lastResult: lastResult, target: target)
+            let specifierValue = try buildSpecifier(specifier, lastResult: lastResult)
             return evaluateSpecifiers ? try evaluatingSpecifier(specifierValue) : specifierValue
         case .insertionSpecifier(let insertionSpecifier): // MARK: .insertionSpecifier
             let parentValue: RT_Object = try {
                 if let parent = insertionSpecifier.parent {
-                    return try runPrimary(parent, lastResult: lastResult, target: target)
+                    return try runPrimary(parent, lastResult: lastResult)
                 } else {
-                    return try evaluate(target, lastResult: lastResult, target: target)
+                    return builtin.target
                 }
             }()
-            return RT_InsertionSpecifier(parent: parentValue, kind: insertionSpecifier.kind)
+            return RT_InsertionSpecifier(self, parent: parentValue, kind: insertionSpecifier.kind)
         case .function(let name, let parameters, let types, _, _): // MARK: .function
-            let evaluatedTypes = try types.map { try $0.map { try runPrimary($0, lastResult: lastResult, target: target) } }
+            let evaluatedTypes = try types.map { try $0.map { try runPrimary($0, lastResult: lastResult) } }
             let typeInfos = evaluatedTypes.map { $0.map { ($0 as? RT_Type)?.value ?? TypeInfo(.item) } ?? TypeInfo(.item) }
             
             let parameterSignature = RT_Function.ParameterSignature(
@@ -465,38 +472,38 @@ public extension Runtime {
             
             let implementation = RT_ExpressionImplementation(rt: self, functionExpression: expression)
             
-            let function = RT_Function(signature: signature, implementation: implementation)
-            topScript.functions.add(function)
+            let function = RT_Function(self, signature: signature, implementation: implementation)
+            builtin.moduleStack.top.functions.add(function)
                 
-            return try evaluate(lastResult, lastResult: lastResult, target: target)
+            return lastResult
         case .multilineString(_, let body): // MARK: .multilineString
-            return RT_String(value: body)
+            return RT_String(self, value: body)
         case .weave(let hashbang, let body): // MARK: .weave
             if hashbang.isEmpty {
-                return try evaluate(lastResult, lastResult: lastResult, target: target)
+                return lastResult
             } else {
-                return builtin.runWeave(hashbang.invocation, body, try evaluate(lastResult, lastResult: lastResult, target: target))
+                return builtin.runWeave(hashbang.invocation, body, lastResult)
             }
         }
     }
     
-    private func buildSpecifier(_ specifier: Specifier, lastResult: ExprValue, target: ExprValue) throws -> RT_Object {
+    private func buildSpecifier(_ specifier: Specifier, lastResult: RT_Object) throws -> RT_Object {
         let id = specifier.term.id
         
-        let parent = try specifier.parent.map { try runPrimary($0, lastResult: lastResult, target: target, evaluateSpecifiers: false) }
+        let parent = try specifier.parent.map { try runPrimary($0, lastResult: lastResult, evaluateSpecifiers: false) }
         
         let data: [RT_Object]
         if case .test(_, let testComponent) = specifier.kind {
-            data = [try runTestComponent(testComponent, lastResult: lastResult, target: target)]
+            data = [try runTestComponent(testComponent, lastResult: lastResult)]
         } else {
             data = try specifier.allDataExpressions().map { dataExpression in
-                try runPrimary(dataExpression, lastResult: lastResult, target: target)
+                try runPrimary(dataExpression, lastResult: lastResult)
             }
         }
         
         func generate() -> RT_Specifier {
             if case .property = specifier.kind {
-                return RT_Specifier(parent: parent, type: nil, property: property(forUID: id), data: [], kind: .property)
+                return RT_Specifier(self, parent: parent, type: nil, property: property(forUID: id), data: [], kind: .property)
             }
             
             let kind: RT_Specifier.Kind = {
@@ -531,58 +538,28 @@ public extension Runtime {
                     fatalError("unreachable")
                 }
             }()
-            return RT_Specifier(parent: parent, type: type(forUID: id), data: data, kind: kind)
+            return RT_Specifier(self, parent: parent, type: type(forUID: id), data: data, kind: kind)
         }
         
         let resultValue = generate()
         return (specifier.parent == nil) ?
-            builtin.qualifySpecifier(resultValue, try evaluate(target, lastResult: lastResult, target: target)) :
+            builtin.qualifySpecifier(resultValue) :
             resultValue
     }
     
-    private func runTestComponent(_ testComponent: TestComponent, lastResult: ExprValue, target: ExprValue) throws -> RT_Object {
+    private func runTestComponent(_ testComponent: TestComponent, lastResult: RT_Object) throws -> RT_Object {
         switch testComponent {
         case let .expression(expression):
-            return try runPrimary(expression, lastResult: lastResult, target: target, evaluateSpecifiers: false)
+            return try runPrimary(expression, lastResult: lastResult, evaluateSpecifiers: false)
         case let .predicate(predicate):
-            let lhsValue = try runTestComponent(predicate.lhs, lastResult: lastResult, target: target)
-            let rhsValue = try runTestComponent(predicate.rhs, lastResult: lastResult, target: target)
+            let lhsValue = try runTestComponent(predicate.lhs, lastResult: lastResult)
+            let rhsValue = try runTestComponent(predicate.rhs, lastResult: lastResult)
             return builtin.newTestSpecifier(predicate.operation, lhsValue, rhsValue)
         }
     }
     
     private func evaluatingSpecifier(_ object: RT_Object) throws -> RT_Object {
         try builtin.evaluateSpecifier(object)
-    }
-    
-}
-
-extension Runtime {
-    
-    func evaluate(_ exprValue: ExprValue, lastResult: ExprValue, target: ExprValue, evaluateSpecifiers: Bool = true) throws -> RT_Object {
-        if let value = exprValue.value {
-            return value
-        }
-        
-        let value = try runPrimary(exprValue.expression, lastResult: lastResult, target: target, evaluateSpecifiers: evaluateSpecifiers)
-        exprValue.value = value
-        return value
-    }
-    
-    func mapEval(_ exprValue: ExprValue, lastResult: ExprValue, target: ExprValue, evaluateSpecifiers: Bool = true) throws -> ExprValue {
-        ExprValue(exprValue.expression, try evaluate(exprValue, lastResult: lastResult, target: target, evaluateSpecifiers: evaluateSpecifiers))
-    }
-    
-}
-
-class ExprValue {
-    
-    var expression: Expression
-    var value: RT_Object?
-    
-    init(_ expression: Expression, _ value: RT_Object? = nil) {
-        self.expression = expression
-        self.value = value
     }
     
 }
