@@ -4,7 +4,7 @@ import SDEFinitely
 // MARK: Definition
 
 /// A collection of terms.
-public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
+public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     
     private var byID: [Term.ID : Term] = [:]
     private var byName: [Term.Name : Term] = [:]
@@ -99,38 +99,6 @@ public class TermDictionary: TerminologySource, CustomDebugStringConvertible {
     
     public var debugDescription: String {
         return "[TermDictionary:\n\t\(byID)\n]"
-    }
-    
-}
-
-public class ParameterTermDictionary: TerminologySource {
-    
-    private var contentsByID: [Term.ID : Term]
-    private var contentsByName: [Term.Name : Term]
-    
-    public init(contents: [Term] = []) {
-        self.contentsByID = Dictionary(contents.map { (key: $0.id, value: $0) }, uniquingKeysWith: { x, _ in x })
-        self.contentsByName = Dictionary(
-            contents.compactMap { term in
-                term.name.flatMap { (key: $0, value: term) }
-            },
-            uniquingKeysWith: { x, _ in x }
-        )
-    }
-    
-    public func term(id: Term.ID) -> Term? {
-        return contentsByID[id]
-    }
-    
-    public func term(named name: Term.Name) -> Term? {
-        return contentsByName[name]
-    }
-    
-    public func add(_ term: Term) {
-        contentsByID[term.id] = term
-        if let name = term.name {
-            contentsByName[name] = term
-        }
     }
     
 }

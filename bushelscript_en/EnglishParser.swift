@@ -224,7 +224,7 @@ public final class EnglishParser: SourceParser {
             }
         }
         
-        let commandTerm = Term(.command, lexicon.makeURI(forName: termName), name: termName, parameters: ParameterTermDictionary(contents: parameters))
+        let commandTerm = Term(.command, lexicon.makeURI(forName: termName), name: termName, dictionary: TermDictionary(contents: parameters))
         lexicon.add(commandTerm)
         
         guard tryEating(prefix: "\n") else {
@@ -588,11 +588,7 @@ public final class EnglishParser: SourceParser {
         case .command: // MARK: .command
             var parameters: [(Term, Expression)] = []
             func parseParameter() throws -> Bool {
-                guard
-                    let parameterDict = term.parameters,
-                    let parameterTerm = try eatTerm(terminology: parameterDict),
-                    parameterTerm.role == .parameter
-                else {
+                guard let parameterTerm = try eatTerm(from: term.dictionary, role: .parameter) else {
                     return false
                 }
                 

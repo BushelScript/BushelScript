@@ -2,7 +2,7 @@ import Foundation
 
 /// A stack of dictionaries.
 /// Effectively creates a scoping system for terms.
-public struct Lexicon: TerminologySource {
+public struct Lexicon: ByNameTermLookup {
     
     /// Default ID of the root term.
     public static let defaultRootTermID = Term.ID(Variables.Script)
@@ -59,6 +59,7 @@ public struct Lexicon: TerminologySource {
             components.append("\(lastStackTermURI.scheme);\(lastStackTermURI.name)")
         }
         components.append(name.normalized)
+        print(Term.SemanticURI.Pathname(components).rawValue)
         return .id(Term.SemanticURI.Pathname(components))
     }
     /// Constructs a universally unique `SemanticURI` with the `id` scheme.

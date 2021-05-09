@@ -1184,12 +1184,12 @@ extension SourceParser {
     }
     
     public func eatTerm() throws -> Term? {
-        try eatTerm(terminology: lexicon)
+        try eatTerm(from: lexicon)
     }
     
-    public func eatTerm<Terminology: TerminologySource>(terminology: Terminology) throws -> Term? {
+    public func eatTerm<Terminology: ByNameTermLookup>(from dictionary: Terminology, role: Term.SyntacticRole? = nil) throws -> Term? {
         func eatDefinedTerm() -> Term? {
-            func findTerm<Terminology: TerminologySource>(in dictionary: Terminology) -> (termString: Substring, term: Term)? {
+            func findTerm<Terminology: ByNameTermLookup>(in dictionary: Terminology) -> (termString: Substring, term: Term)? {
                 eatCommentsAndWhitespace()
                 var termString = source.prefix { !$0.isNewline }.prefix { !$0.isWordBreaking || $0.isWhitespace || $0 == ":" }
                 while let lastNonBreakingIndex = termString.lastIndex(where: { !$0.isWordBreaking }) {
@@ -1204,41 +1204,51 @@ extension SourceParser {
                 return nil
             }
             
-            guard var (termString, term) = findTerm(in: terminology) else {
+            guard var (termString, term) = findTerm(in: dictionary) else {
                 return nil
             }
             
-            addingElement(styling(for: term)) {
-                source.removeFirst(termString.count)
-            }
-            eatCommentsAndWhitespace()
-            
-            var sourceWithColon: Substring = source
-            while tryEating(prefix: ":") {
-                // For explicit term specification Lhs : rhs,
-                // only eat the colon if rhs is the name of a term defined
-                // in the dictionary of Lhs.
-                guard let result = findTerm(in: term.dictionary) else {
-                    // Restore the colon. It may have come from some other construct,
-                    // e.g., a record key such as: {Math : pi: "the constant pi"}
-                    source = sourceWithColon
-                    
-                    return term
-                }
-                
-                // Eat rhs.
-                (termString, term) = result
-                
+            if role == nil, tryEating(prefix: ":") {
                 addingElement(styling(for: term)) {
                     source.removeFirst(termString.count)
                 }
                 eatCommentsAndWhitespace()
                 
-                // We're committed to this colon forming an explicit specification
-                sourceWithColon = source
+                var sourceWithColon: Substring = source
+                repeat {
+                    // For explicit term specification Lhs : rhs,
+                    // only eat the colon if rhs is the name of a term defined
+                    // in the dictionary of Lhs.
+                    guard let result = findTerm(in: term.dictionary) else {
+                        // Restore the colon. It may have come from some other construct,
+                        // e.g., a record key such as: {Math : pi: "the constant pi"}
+                        source = sourceWithColon
+                        
+                        return term
+                    }
+                    
+                    // Eat rhs.
+                    (termString, term) = result
+                    
+                    addingElement(styling(for: term)) {
+                        source.removeFirst(termString.count)
+                    }
+                    eatCommentsAndWhitespace()
+                    
+                    // We're committed to this colon forming an explicit specification
+                    sourceWithColon = source
+                } while tryEating(prefix: ":")
+                
+                return term
+            } else if role == nil || term.role == role {
+                addingElement(styling(for: term)) {
+                    source.removeFirst(termString.count)
+                }
+                return term
+            } else {
+                return nil
             }
             
-            return term
         }
         func eatRawFormTerm() throws -> Term? {
             return try withCurrentIndex { startIndex in
