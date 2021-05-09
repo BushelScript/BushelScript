@@ -466,7 +466,7 @@ public extension Runtime {
             return RT_InsertionSpecifier(parent: parentValue, kind: insertionSpecifier.kind)
         case .function(let name, let parameters, let types, _, _): // MARK: .function
             let evaluatedTypes = try types.map { try $0.map { try runPrimary($0, lastResult: lastResult, target: target) } }
-            let typeInfos = evaluatedTypes.compactMap { $0.map { ($0 as? RT_Type)?.value } }
+            let typeInfos = evaluatedTypes.map { $0.map { ($0 as? RT_Type)?.value } ?? TypeInfo(.item) }
             
             let parameterSignature = RT_Function.ParameterSignature(
                 parameters.enumerated().map { (ParameterInfo($0.element.uri), typeInfos[$0.offset]!) },
