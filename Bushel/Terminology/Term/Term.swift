@@ -21,7 +21,8 @@ public class Term: Hashable, CustomStringConvertible {
         self.id = id
         self.name = name
         self.dictionary = dictionary
-        self.exports = exports
+        // Commands should _never_ export (parameter terms are meaningless on their own).
+        self.exports = (id.role == .command) ? false : exports
         self.resource = resource
     }
     
