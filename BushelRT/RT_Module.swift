@@ -22,21 +22,17 @@ extension RT_Module {
 
 public struct FunctionSet {
     
-    var byCommand: [CommandInfo : [RT_Function.ParameterSignature : RT_Function]] = [:]
+    var byCommand: [CommandInfo : [RT_Function]] = [:]
     
     public mutating func add(_ function: RT_Function) {
         if byCommand[function.signature.command] == nil {
-            byCommand[function.signature.command] = [:]
+            byCommand[function.signature.command] = []
         }
-        byCommand[function.signature.command]![function.signature.parameters] = function
+        byCommand[function.signature.command]!.append(function)
     }
     
-    public func functions(for command: CommandInfo) -> [RT_Function.ParameterSignature : RT_Function] {
-        byCommand[command] ?? [:]
-    }
-    
-    public func function(for signature: RT_Function.Signature) -> RT_Function? {
-        byCommand[signature.command]?[signature.parameters]
+    public func functions(for command: CommandInfo) -> [RT_Function] {
+        byCommand[command] ?? []
     }
     
     public func bestMatch(for command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Function? {
@@ -45,14 +41,7 @@ public struct FunctionSet {
             return nil
         }
         
-        // Check for exact match.
-        let exactMatchSignature = RT_Function.ParameterSignature(arguments.map { ($0.key, $0.value.dynamicTypeInfo) }, uniquingKeysWith: { l, r in l })
-        if let exactMatch = functions[exactMatchSignature] {
-            return exactMatch
-        }
-        
-        // Find best nonexact match.
-        return functions.values.sorted().reduce((typeScore: -1, countScore: Int.min, function: nil as RT_Function?)) { bestSoFar, function in
+        return functions.reduce((typeScore: -1, countScore: Int.min, function: nil as RT_Function?)) { bestSoFar, function in
             let parameters = function.signature.parameters
             
             // Ensure each argument maps to a parameter of suitable type.
@@ -75,8 +64,8 @@ public struct FunctionSet {
             let countScore = arguments.count - parameters.count
             
             if
-                typeScore > bestSoFar.typeScore ||
-                typeScore == bestSoFar.typeScore && countScore > bestSoFar.countScore
+                typeScore >= bestSoFar.typeScore ||
+                typeScore == bestSoFar.typeScore && countScore >= bestSoFar.countScore
             {
                 return (typeScore: typeScore, countScore: countScore, function: function)
             } else {
