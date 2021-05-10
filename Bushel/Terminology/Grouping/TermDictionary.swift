@@ -31,8 +31,8 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     /// AppleScript compatibility.
     /// `new`'s term pool is used and `old`'s is ignored.
     public init(merging new: TermDictionary, into old: TermDictionary) {
-        self.byID = new.byID.merging(old.byID, uniquingKeysWith: TermDictionary.whichTermWins)
-        self.byName = new.byName.merging(old.byName, uniquingKeysWith: TermDictionary.whichTermWins)
+        self.byID = new.byID.merging(old.byID, uniquingKeysWith: TermDictionary.resolveTermConflict)
+        self.byName = new.byName.merging(old.byName, uniquingKeysWith: TermDictionary.resolveTermConflict)
         findExportingTerms(in: self.byID.values)
     }
     
@@ -46,28 +46,24 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
         byID[id]
     }
     
-    /// The term named `name`, if nil if such a term is not in the dictionary.
+    /// The term named `name`, or nil if such a term is not in the dictionary.
     public func term(named name: Term.Name) -> Term? {
         byName[name]
     }
     
-    /// Adds `term` to the dictionary and the term pool.
+    /// Adds `term` to the dictionary.
     public func add(_ term: Term) {
-        byID[term.id] = term
-        if let name = term.name {
-            byName[name] = term
-        }
-        findExportingTerms(in: [term])
+        add([term])
     }
     
-    /// Adds all terms in `terms` to the dictionary and the term pool.
+    /// Adds all terms in `terms` to the dictionary.
     public func add(_ terms: [Term]) {
-        byID.merge(terms.map { (key: $0.id, value: $0) }, uniquingKeysWith: TermDictionary.whichTermWins)
+        byID.merge(terms.map { (key: $0.id, value: $0) }, uniquingKeysWith: TermDictionary.resolveTermConflict)
         byName.merge(
             terms.compactMap { term in
                 term.name.flatMap { (key: $0, value: term) }
             },
-            uniquingKeysWith: TermDictionary.whichTermWins
+            uniquingKeysWith: TermDictionary.resolveTermConflict
         )
         findExportingTerms(in: terms)
     }
@@ -75,8 +71,8 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     /// Adds all terms in `dictionary` to this dictionary, resolving conflicts
     /// in a way that preserves AppleScript compatibility.
     public func merge(_ dictionary: TermDictionary) {
-        byID.merge(dictionary.byID, uniquingKeysWith: TermDictionary.whichTermWins)
-        byName.merge(dictionary.byName, uniquingKeysWith: TermDictionary.whichTermWins)
+        byID.merge(dictionary.byID, uniquingKeysWith: TermDictionary.resolveTermConflict)
+        byName.merge(dictionary.byName, uniquingKeysWith: TermDictionary.resolveTermConflict)
         findExportingTerms(in: dictionary.byID.values)
     }
     
@@ -88,10 +84,15 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
         }
     }
     
-    private static func whichTermWins(_ old: Term, _ new: Term) -> Term {
+    private static func resolveTermConflict(_ old: Term, _ new: Term) -> Term {
+        // Merge the dictionaries of conflicting terms.
+        old.dictionary.merge(new.dictionary)
+        new.dictionary = old.dictionary
+        
         // For compatibility.
         // e.g., AppleScript sees Xcode : project as a class whilst ignoring the identically named property term.
         if case .type = old.role, case .property = new.role {
+            new.dictionary = old.dictionary
             return old
         }
         return new
