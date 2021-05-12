@@ -464,10 +464,13 @@ public extension Runtime {
             let evaluatedTypes = try types.map { try $0.map { try runPrimary($0, lastResult: lastResult) } }
             let typeInfos = evaluatedTypes.map { $0.map { ($0 as? RT_Type)?.value ?? TypeInfo(.item) } ?? TypeInfo(.item) }
             
-            let parameterSignature = RT_Function.ParameterSignature(
+            var parameterSignature = RT_Function.ParameterSignature(
                 parameters.enumerated().map { (ParameterInfo($0.element.uri), typeInfos[$0.offset]) },
                 uniquingKeysWith: { l, r in l }
             )
+            if !typeInfos.isEmpty {
+                parameterSignature[ParameterInfo(.direct)] = typeInfos[0]
+            }
             let signature = RT_Function.Signature(command: command(forUID: Term.ID(.command, name.uri)), parameters: parameterSignature)
             
             let implementation = RT_ExpressionImplementation(rt: self, functionExpression: expression)
