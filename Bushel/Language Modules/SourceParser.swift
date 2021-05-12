@@ -685,6 +685,12 @@ extension SourceParser {
             } else {
                 return nil
             }
+        } else if
+            let endKeyword = awaitingExpressionEndKeywords.last,
+            endKeyword.contains(where: isNext)
+        {
+            // Allow outer awaiting() call to eat.
+            return nil
         } else {
             guard let c = source.first else {
                 return nil
