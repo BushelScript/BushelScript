@@ -198,6 +198,10 @@ final class Builtin {
             } catch let error as Unencodable where error.object is CommandInfo || error.object is ParameterInfo {
                 // Tried to send an inapplicable command to a remote object
                 // Ignore it and fall through to the next target
+            } catch let error as RaisedObjectError where error.error.rt !== rt {
+                // This error originates from another file (with a different
+                // source mapping). Its location info is meaningless to us.
+                throw RaisedObjectError(error: error.error, location: rt.currentLocation!)
             }
             return nil
         }
