@@ -49,7 +49,8 @@ public struct FunctionSet {
             for (parameter, argument) in arguments {
                 guard
                     let parameterType = parameters[parameter],
-                    argument.dynamicTypeInfo.isA(parameterType)
+                    argument.dynamicTypeInfo.isA(parameterType) ||
+                        argument.dynamicTypeInfo.uri == Term.SemanticURI(Types.null)
                 else {
                     return bestSoFar
                 }
