@@ -43,7 +43,9 @@ queue.qualityOfService = .userInteractive
 
 NotificationCenter.default.addObserver(forName: NSApplication.didFinishLaunchingNotification, object: app, queue: queue) { (notification) in
     defer {
-        app.terminate(nil)
+        DispatchQueue.main.async {
+            app.terminate(nil)
+        }
     }
     
     do {
