@@ -209,10 +209,6 @@ public extension Runtime {
     
     func run(_ program: Program) throws -> RT_Object {
         injectTerms(from: program.rootTerm)
-        return try run(program.ast)
-    }
-    
-    func run(_ expression: Expression) throws -> RT_Object {
         builtin = Builtin(
             self,
             frameStack: RT_FrameStack(bottom: [
@@ -222,7 +218,10 @@ public extension Runtime {
             moduleStack: RT_ModuleStack(bottom: core, rest: [topScript]),
             targetStack: RT_TargetStack(bottom: core, rest: [topScript])
         )
-        
+        return try run(program.ast)
+    }
+    
+    func run(_ expression: Expression) throws -> RT_Object {
         let result: RT_Object
         do {
             result = try runPrimary(expression)
