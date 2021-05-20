@@ -43,6 +43,9 @@ public class Runtime {
     
     var builtin: Builtin!
     
+    /// The result of the last expression executed in sequence.
+    public lazy var lastResult: RT_Object = null
+    
     /// The singleton `null` instance.
     public lazy var null = RT_Null(self)
     /// The singleton `true` boolean instance.
@@ -222,7 +225,7 @@ public extension Runtime {
         
         let result: RT_Object
         do {
-            result = try runPrimary(expression, lastResult: null)
+            result = try runPrimary(expression)
         } catch let earlyReturn as EarlyReturn {
             result = earlyReturn.value
         } catch let inFlightRuntimeError as InFlightRuntimeError {
@@ -277,13 +280,14 @@ public extension Runtime {
         }
         
         do {
-            return try runPrimary(body, lastResult: null)
+            lastResult = null
+            return try runPrimary(body)
         } catch let earlyReturn as EarlyReturn {
             return earlyReturn.value
         }
     }
     
-    private func runPrimary(_ expression: Expression, lastResult: RT_Object, evaluateSpecifiers: Bool = true) throws -> RT_Object {
+    private func runPrimary(_ expression: Expression, evaluateSpecifiers: Bool = true) throws -> RT_Object {
         pushLocation(expression.location)
         defer {
             popLocation()
@@ -299,49 +303,50 @@ public extension Runtime {
         case .null: // MARK: .null
             return null
         case .sequence(let expressions): // MARK: .sequence
-            return try expressions.reduce(lastResult, { (lastResult, expression) in
-                try runPrimary(expression, lastResult: lastResult)
-            })
+            for expression in expressions {
+                lastResult = try runPrimary(expression)
+            }
+            return lastResult
         case .scoped(let expression): // MARK: .scoped
-            return try runPrimary(expression, lastResult: lastResult)
+            return try runPrimary(expression)
         case .parentheses(let expression): // MARK: .parentheses
-            return try runPrimary(expression, lastResult: lastResult)
+            return try runPrimary(expression)
         case let .try_(body, handle): // MARK: .try_
             do {
-                return try runPrimary(body, lastResult: lastResult)
+                return try runPrimary(body)
             } catch {
                 builtin.targetStack.push(RT_Error(self, error))
                 defer { builtin.targetStack.pop() }
-                return try runPrimary(handle, lastResult: lastResult)
+                return try runPrimary(handle)
             }
         case let .if_(condition, then, else_): // MARK: .if_
-            let conditionValue = try runPrimary(condition, lastResult: lastResult)
+            let conditionValue = try runPrimary(condition)
             
             if conditionValue.truthy {
-                return try runPrimary(then, lastResult: lastResult)
+                return try runPrimary(then)
             } else if let else_ = else_ {
-                return try runPrimary(else_, lastResult: lastResult)
+                return try runPrimary(else_)
             } else {
                 return lastResult
             }
         case .repeatWhile(let condition, let repeating): // MARK: .repeatWhile
             var repeatResult: RT_Object?
-            while try runPrimary(condition, lastResult: lastResult).truthy {
-                repeatResult = try runPrimary(repeating, lastResult: lastResult)
+            while try runPrimary(condition).truthy {
+                repeatResult = try runPrimary(repeating)
             }
             return repeatResult ?? lastResult
         case .repeatTimes(let times, let repeating): // MARK: .repeatTimes
-            let timesValue = try runPrimary(times, lastResult: lastResult)
+            let timesValue = try runPrimary(times)
             
             var repeatResult: RT_Object?
             var count = 0
             while try builtin.binaryOp(.less, RT_Integer(self, value: count), timesValue).truthy {
-                repeatResult = try runPrimary(repeating, lastResult: lastResult)
+                repeatResult = try runPrimary(repeating)
                 count += 1
             }
             return repeatResult ?? lastResult
         case .repeatFor(let variable, let container, let repeating): // MARK: .repeatFor
-            let containerValue = try runPrimary(container, lastResult: lastResult)
+            let containerValue = try runPrimary(container)
             let timesValue = try builtin.getSequenceLength(containerValue)
             
             var repeatResult: RT_Object?
@@ -349,28 +354,28 @@ public extension Runtime {
             for count in 1...timesValue {
                 let elementValue = try builtin.getFromSequenceAtIndex(containerValue, Int64(count))
                 builtin[variable: variable] = elementValue
-                repeatResult = try runPrimary(repeating, lastResult: lastResult)
+                repeatResult = try runPrimary(repeating)
             }
             return repeatResult ?? lastResult
         case .tell(let newTarget, let to): // MARK: .tell
-            let newTargetValue = try runPrimary(newTarget, lastResult: lastResult, evaluateSpecifiers: false)
+            let newTargetValue = try runPrimary(newTarget, evaluateSpecifiers: false)
             builtin.targetStack.push(newTargetValue)
             defer { builtin.targetStack.pop() }
-            return try runPrimary(to, lastResult: lastResult)
+            return try runPrimary(to)
         case .let_(let term, let initialValue): // MARK: .let_
-            let initialExprValue = try initialValue.map { try runPrimary($0, lastResult: lastResult) } ?? null
+            let initialExprValue = try initialValue.map { try runPrimary($0) } ?? null
             builtin[variable: term] = initialExprValue
             return initialExprValue
         case .define(_, as: _): // MARK: .define
             return lastResult
         case .defining(_, as: _, body: let body): // MARK: .defining
-            return try runPrimary(body, lastResult: lastResult)
+            return try runPrimary(body)
         case .return_(let returnValue): // MARK: .return_
-            let returnExprValue = try returnValue.map { try runPrimary($0, lastResult: lastResult) } ??
+            let returnExprValue = try returnValue.map { try runPrimary($0) } ??
                 lastResult
             throw EarlyReturn(value: returnExprValue)
         case .raise(let error): // MARK: .raise
-            let errorValue = try runPrimary(error, lastResult: lastResult)
+            let errorValue = try runPrimary(error)
             if let errorValue = errorValue as? RT_Error {
                 throw errorValue.error
             } else {
@@ -384,15 +389,15 @@ public extension Runtime {
             return RT_String(self, value: value)
         case .list(let expressions): // MARK: .list
             return try RT_List(self, contents:
-                expressions.map { try runPrimary($0, lastResult: lastResult) }
+                expressions.map { try runPrimary($0) }
             )
         case .record(let keyValues): // MARK: .record
             return try RT_Record(self, contents:
                 [RT_Object : RT_Object](
                     try keyValues.map {
                         try (
-                            runPrimary($0.key, lastResult: lastResult, evaluateSpecifiers: false),
-                            runPrimary($0.value, lastResult: lastResult)
+                            runPrimary($0.key, evaluateSpecifiers: false),
+                            runPrimary($0.value)
                         )
                     },
                     uniquingKeysWith: {
@@ -401,11 +406,11 @@ public extension Runtime {
                 )
             )
         case .prefixOperator(let operation, let operand), .postfixOperator(let operation, let operand): // MARK: .prefixOperator, .postfixOperator
-            let operandValue = try runPrimary(operand, lastResult: lastResult)
+            let operandValue = try runPrimary(operand)
             return builtin.unaryOp(operation, operandValue)
         case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
-            let lhsValue = try runPrimary(lhs, lastResult: lastResult)
-            let rhsValue = try runPrimary(rhs, lastResult: lastResult)
+            let lhsValue = try runPrimary(lhs)
+            let rhsValue = try runPrimary(rhs)
             return try builtin.binaryOp(operation, lhsValue, rhsValue)
         case .variable(let term): // MARK: .variable
             return builtin[variable: term]
@@ -418,12 +423,12 @@ public extension Runtime {
             return RT_Type(self, value: type(forUID: term.id))
         case .set(let expression, to: let newValueExpression): // MARK: .set
             if case .variable(let variableTerm) = expression.kind {
-                let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult)
+                let newValueExprValue = try runPrimary(newValueExpression)
                 builtin[variable: variableTerm] = newValueExprValue
                 return newValueExprValue
             } else {
-                let expressionExprValue = try runPrimary(expression, lastResult: lastResult, evaluateSpecifiers: false)
-                let newValueExprValue = try runPrimary(newValueExpression, lastResult: lastResult)
+                let expressionExprValue = try runPrimary(expression, evaluateSpecifiers: false)
+                let newValueExprValue = try runPrimary(newValueExpression)
                 
                 let arguments: [ParameterInfo : RT_Object] = [
                     ParameterInfo(.direct): expressionExprValue,
@@ -436,7 +441,7 @@ public extension Runtime {
             let parameterExprValues: [(key: ParameterInfo, value: RT_Object)] = try parameters.map { kv in
                 let (parameterTerm, parameterValue) = kv
                 let parameterInfo = ParameterInfo(parameterTerm.uri)
-                let value = try runPrimary(parameterValue, lastResult: lastResult)
+                let value = try runPrimary(parameterValue)
                 return (parameterInfo, value)
             }
             let arguments = [ParameterInfo : RT_Object](uniqueKeysWithValues:
@@ -445,23 +450,23 @@ public extension Runtime {
             let command = self.command(forUID: term.id)
             return try builtin.run(command: command, arguments: arguments)
         case .reference(let expression): // MARK: .reference
-            return try runPrimary(expression, lastResult: lastResult, evaluateSpecifiers: false)
+            return try runPrimary(expression, evaluateSpecifiers: false)
         case .get(let expression): // MARK: .get
-            return try evaluatingSpecifier(runPrimary(expression, lastResult: lastResult))
+            return try evaluatingSpecifier(runPrimary(expression))
         case .specifier(let specifier): // MARK: .specifier
-            let specifierValue = try buildSpecifier(specifier, lastResult: lastResult)
+            let specifierValue = try buildSpecifier(specifier)
             return evaluateSpecifiers ? try evaluatingSpecifier(specifierValue) : specifierValue
         case .insertionSpecifier(let insertionSpecifier): // MARK: .insertionSpecifier
             let parentValue: RT_Object = try {
                 if let parent = insertionSpecifier.parent {
-                    return try runPrimary(parent, lastResult: lastResult)
+                    return try runPrimary(parent)
                 } else {
                     return builtin.target
                 }
             }()
             return RT_InsertionSpecifier(self, parent: parentValue, kind: insertionSpecifier.kind)
         case .function(let name, let parameters, let types, _, _): // MARK: .function
-            let evaluatedTypes = try types.map { try $0.map { try runPrimary($0, lastResult: lastResult) } }
+            let evaluatedTypes = try types.map { try $0.map { try runPrimary($0) } }
             let typeInfos = evaluatedTypes.map { $0.map { ($0 as? RT_Type)?.value ?? TypeInfo(.item) } ?? TypeInfo(.item) }
             
             var parameterSignature = RT_Function.ParameterSignature(
@@ -490,17 +495,17 @@ public extension Runtime {
         }
     }
     
-    private func buildSpecifier(_ specifier: Specifier, lastResult: RT_Object) throws -> RT_Object {
+    private func buildSpecifier(_ specifier: Specifier) throws -> RT_Object {
         let id = specifier.term.id
         
-        let parent = try specifier.parent.map { try runPrimary($0, lastResult: lastResult, evaluateSpecifiers: false) }
+        let parent = try specifier.parent.map { try runPrimary($0, evaluateSpecifiers: false) }
         
         let data: [RT_Object]
         if case .test(_, let testComponent) = specifier.kind {
-            data = [try runTestComponent(testComponent, lastResult: lastResult)]
+            data = [try runTestComponent(testComponent)]
         } else {
             data = try specifier.allDataExpressions().map { dataExpression in
-                try runPrimary(dataExpression, lastResult: lastResult)
+                try runPrimary(dataExpression)
             }
         }
         
@@ -550,13 +555,13 @@ public extension Runtime {
             resultValue
     }
     
-    private func runTestComponent(_ testComponent: TestComponent, lastResult: RT_Object) throws -> RT_Object {
+    private func runTestComponent(_ testComponent: TestComponent) throws -> RT_Object {
         switch testComponent {
         case let .expression(expression):
-            return try runPrimary(expression, lastResult: lastResult, evaluateSpecifiers: false)
+            return try runPrimary(expression, evaluateSpecifiers: false)
         case let .predicate(predicate):
-            let lhsValue = try runTestComponent(predicate.lhs, lastResult: lastResult)
-            let rhsValue = try runTestComponent(predicate.rhs, lastResult: lastResult)
+            let lhsValue = try runTestComponent(predicate.lhs)
+            let rhsValue = try runTestComponent(predicate.rhs)
             return builtin.newTestSpecifier(predicate.operation, lhsValue, rhsValue)
         }
     }
