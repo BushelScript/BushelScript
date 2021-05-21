@@ -82,7 +82,7 @@ public struct FunctionSet {
             let countScore = arguments.contents.count - parameters.count
             
             if
-                typeScore >= bestSoFar.typeScore ||
+                typeScore > bestSoFar.typeScore ||
                 typeScore == bestSoFar.typeScore && countScore >= bestSoFar.countScore
             {
                 return (typeScore: typeScore, countScore: countScore, function: function)
