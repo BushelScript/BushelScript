@@ -210,10 +210,7 @@ public struct Translation {
                         let commandTerms = allTerms[Term.ID(.command, commandURI)]
                     {
                         for commandTerm in commandTerms {
-                            if commandTerm.parameters == nil {
-                                commandTerm.parameters = ParameterTermDictionary()
-                            }
-                            commandTerm.parameters!.add(parameterTerm)
+                            commandTerm.dictionary.add(parameterTerm)
                         }
                     }
                 }

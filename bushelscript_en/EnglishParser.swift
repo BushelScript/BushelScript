@@ -197,16 +197,26 @@ public final class EnglishParser: SourceParser {
         let functionNameTerm = Term(.variable, lexicon.makeURI(forName: termName), name: termName)
         
         var parameters: [Term] = []
+        var types: [Expression?] = []
         var arguments: [Term] = []
         if tryEating(prefix: ":", spacing: .right) {
             while let parameterTermName = try parseTermNameLazily() {
                 parameters.append(Term(.parameter, .id(Term.SemanticURI.Pathname([parameterTermName.normalized])), name: parameterTermName))
                 
-                var argumentName = try parseTermNameEagerly(stoppingAt: [","]) ?? parameterTermName
+                var argumentName = try parseTermNameEagerly(stoppingAt: expressionGroupingMarkers.map { $0.begin.normalized } + [","]) ?? parameterTermName
                 if argumentName.words.isEmpty {
                     argumentName = parameterTermName
                 }
                 arguments.append(Term(.variable, .id(Term.SemanticURI.Pathname([argumentName.normalized])), name: argumentName))
+                
+                if
+                    let groupedExpression = try parseGroupedExpression(),
+                    case let .parentheses(type) = groupedExpression.kind
+                {
+                    types.append(type)
+                } else {
+                    types.append(nil)
+                }
                 
                 if !tryEating(prefix: ",", spacing: .right) {
                     break
@@ -214,7 +224,7 @@ public final class EnglishParser: SourceParser {
             }
         }
         
-        let commandTerm = Term(.command, lexicon.makeURI(forName: termName), name: termName, parameters: ParameterTermDictionary(contents: parameters))
+        let commandTerm = Term(.command, lexicon.makeURI(forName: termName), name: termName, dictionary: TermDictionary(contents: parameters))
         lexicon.add(commandTerm)
         
         guard tryEating(prefix: "\n") else {
@@ -226,7 +236,7 @@ public final class EnglishParser: SourceParser {
             return try parseSequence()
         }
         
-        return .function(name: functionNameTerm, parameters: parameters, arguments: arguments, body: body)
+        return .function(name: functionNameTerm, parameters: parameters, types: types, arguments: arguments, body: body)
     }
     
     private func handleTry() throws -> Expression.Kind? {
@@ -578,11 +588,7 @@ public final class EnglishParser: SourceParser {
         case .command: // MARK: .command
             var parameters: [(Term, Expression)] = []
             func parseParameter() throws -> Bool {
-                guard
-                    let parameterDict = term.parameters,
-                    let parameterTerm = try eatTerm(terminology: parameterDict),
-                    parameterTerm.role == .parameter
-                else {
+                guard let parameterTerm = try eatTerm(from: term.dictionary, role: .parameter) else {
                     return false
                 }
                 

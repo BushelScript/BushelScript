@@ -1,6 +1,7 @@
 import BushelRT
 
 public func chooseFrom(list: [String], prompt: String, okButtonName: String, cancelButtonName: String, title: String, suspension: NSAppleEventManager.SuspensionID) {
+    let rt = Runtime()
     
     let wc = ChooseFromWC(windowNibName: "ChooseFromWC")
     
@@ -15,9 +16,8 @@ public func chooseFrom(list: [String], prompt: String, okButtonName: String, can
     
     display(window: window) {
         returnResultToSender(
-            wc.response.map { RT_String(value: $0) } ?? RT_Null.null,
+            wc.response.map { RT_String(rt, value: $0) } ?? rt.null,
             for: suspension
         )
     }
-    
 }

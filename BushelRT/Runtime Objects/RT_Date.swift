@@ -8,8 +8,9 @@ public class RT_Date: RT_Object {
     
     public var value: Date = Date()
     
-    public init(value: Date) {
+    public init(_ rt: Runtime, value: Date) {
         self.value = value
+        super.init(rt)
     }
     
     public override var description: String {
@@ -22,16 +23,16 @@ public class RT_Date: RT_Object {
     }
     
     public var seconds: RT_Integer {
-        RT_Integer(value: calendar.component(.second, from: value))
+        RT_Integer(rt, value: calendar.component(.second, from: value))
     }
     public var minutes: RT_Integer {
-        RT_Integer(value: calendar.component(.minute, from: value))
+        RT_Integer(rt, value: calendar.component(.minute, from: value))
     }
     public var hours: RT_Integer {
-        RT_Integer(value: calendar.component(.hour, from: value))
+        RT_Integer(rt, value: calendar.component(.hour, from: value))
     }
     public var secondsSinceMidnight: RT_Integer {
-        RT_Integer(value: calendar.dateComponents([.second], from: calendar.startOfDay(for: value), to: value).second!)
+        RT_Integer(rt, value: calendar.dateComponents([.second], from: calendar.startOfDay(for: value), to: value).second!)
     }
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
@@ -49,9 +50,9 @@ public class RT_Date: RT_Object {
     public override func coerce(to type: TypeInfo) -> RT_Object? {
         switch Types(type.id) {
         case .real:
-            return RT_Real(value: value.timeIntervalSince1970)
+            return RT_Real(rt, value: value.timeIntervalSince1970)
         case .integer:
-            return RT_Integer(value: Int64(value.timeIntervalSince1970))
+            return RT_Integer(rt, value: Int64(value.timeIntervalSince1970))
         default:
             return super.coerce(to: type)
         }

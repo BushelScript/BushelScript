@@ -121,15 +121,18 @@ public struct Expression {
         /// and then pops _D_ off the lexicon. Yields the result of `body`.
         case defining(Term, as: Term?, body: Expression)
         /// Defines a function by adding `name` to the current dictionary as a
-        /// command term with parameter terms `parameters`. Yields the
-        /// equivalent of `.that`.
+        /// command term with parameter terms `parameters`.
+        ///
+        /// When evaluated, adds a function with the signature identified by
+        /// `name`, `parameters`, and the result of each expression in `types`
+        /// to the current module. Yields the equivalent of `.that`.
         ///
         /// `body` is the function definition. When the function is called,
         /// a function dictionary is pushed to the lexicon, each argument is
         /// bound to a variable term in `arguments`, `body` is evaluated, the
         /// function dictionary is popped off the lexicon, and the result of
         /// `body` is yielded.
-        case function(name: Term, parameters: [Term], arguments: [Term], body: Expression)
+        case function(name: Term, parameters: [Term], types: [Expression?], arguments: [Term], body: Expression)
         /// Evaluates its constituent _C_ if it exists, then returns control
         /// from the current function context.
         /// If _C_ exists, the function yields the result of _C_.

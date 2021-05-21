@@ -164,6 +164,7 @@ extension AppDelegate {
 }
 
 func getArguments(from event: NSAppleEventDescriptor) -> [ParameterInfo : RT_Object] {
+    let rt = Runtime()
     var result: [ParameterInfo : RT_Object] = [:]
     
     let count = event.numberOfItems
@@ -180,7 +181,7 @@ func getArguments(from event: NSAppleEventDescriptor) -> [ParameterInfo : RT_Obj
             continue
         }
         
-        if let value = try? RT_Object.fromAEDescriptor(AppData(), descriptor) {
+        if let value = try? RT_Object.fromAEDescriptor(rt, AppData(), descriptor) {
             result[ParameterInfo(.ae12(class: eventClass, id: eventID, code: code))] = value
         }
     }

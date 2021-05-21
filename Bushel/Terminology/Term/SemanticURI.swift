@@ -1,5 +1,7 @@
 import Foundation
 
+private let keySubjectAttr: AEKeyword = 0x7375626A
+
 // MARK: Definition
 extension Term {
     
@@ -37,8 +39,10 @@ extension Term.SemanticURI {
              .ae12(_, _, let code):
             return code
         case .id(_):
-            // Special-case direct parameter
-            return isDirectParameter ? keyDirectObject : nil
+            return
+                isDirectParameter ? keyDirectObject :
+                isTargetParameter ? keySubjectAttr :
+                nil
         default:
             return nil
         }

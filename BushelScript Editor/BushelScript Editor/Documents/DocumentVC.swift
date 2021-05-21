@@ -107,7 +107,7 @@ class DocumentVC: NSViewController {
             DispatchQueue.main.async {
                 let alert = NSAlert()
                 alert.messageText = "The Bushel Language Service has crashed."
-                alert.informativeText = "It will be restarted automatically.\n\nIf your script exited due to an error, you can ignore this message. Proper error handling will be introduced in a future update.\n\nOtherwise, if this recurs, please file a bug report with the BushelLanguageService crash log attached.\n\nSorry for the inconvenience."
+                alert.informativeText = "It will be restarted automatically.\n\nIf this recurs, please file a bug report with the BushelLanguageService crash log attached.\n\nSorry for the inconvenience."
                 alert.runModal()
                 self.connection = self.newLanguageServiceConnection()
             }

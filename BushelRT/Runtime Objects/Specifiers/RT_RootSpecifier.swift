@@ -1,7 +1,7 @@
 import Bushel
 import SwiftAutomation
 
-public final class RT_RootSpecifier: RT_Object, RT_SASpecifierConvertible {
+public final class RT_RootSpecifier: RT_Object, RT_AESpecifier {
     
     public enum Kind {
         /// Root of all absolute object specifiers.
@@ -19,20 +19,21 @@ public final class RT_RootSpecifier: RT_Object, RT_SASpecifierConvertible {
     
     public var kind: Kind
     
-    public init(kind: Kind) {
+    public init(_ rt: Runtime, kind: Kind) {
         self.kind = kind
+        super.init(rt)
     }
     
-    public static func fromSARootSpecifier(_ specifier: SwiftAutomation.RootSpecifier) throws -> RT_Object {
+    public static func fromSARootSpecifier(_ rt: Runtime, _ specifier: SwiftAutomation.RootSpecifier) throws -> RT_Object {
         switch specifier.kind {
         case .application:
-            return RT_RootSpecifier(kind: .application)
+            return RT_RootSpecifier(rt, kind: .application)
         case .container:
-            return RT_RootSpecifier(kind: .container)
+            return RT_RootSpecifier(rt, kind: .container)
         case .specimen:
-            return RT_RootSpecifier(kind: .specimen)
+            return RT_RootSpecifier(rt, kind: .specimen)
         case let .object(descriptor):
-            return try RT_Object.fromAEDescriptor(specifier.appData, descriptor)
+            return try RT_Object.fromAEDescriptor(rt, specifier.appData, descriptor)
         }
     }
     

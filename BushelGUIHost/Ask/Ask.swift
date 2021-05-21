@@ -4,10 +4,9 @@ import BushelRT
 private typealias Constructor = () -> RT_Object
 
 public func ask(_ rt: Runtime, for type: TypeInfo, prompt: String, title: String, suspension: NSAppleEventManager.SuspensionID) {
-    
     func makeViewController() -> (NSViewController, Constructor) {
         func uneditableVC() -> (UneditableVC, Constructor) {
-            (UneditableVC(), { RT_Null.null })
+            (UneditableVC(), { rt.null })
         }
         func fileChooserVC(defaultLocation: URL? = nil, constructor: @escaping (FileChooserVC) -> RT_Object) -> (FileChooserVC, Constructor) {
             let vc = FileChooserVC(defaultLocation: defaultLocation)
@@ -37,19 +36,19 @@ public func ask(_ rt: Runtime, for type: TypeInfo, prompt: String, title: String
         
         switch Types(type.uri) {
         case .boolean:
-            return checkboxVC { RT_Boolean.withValue($0.value) }
+            return checkboxVC { RT_Boolean.withValue(rt, $0.value) }
         case .string:
-            return textFieldVC { RT_String(value: $0.value) }
+            return textFieldVC { RT_String(rt, value: $0.value) }
         case .character:
-            return textFieldVC(characterLimit: 1) { $0.value.first.map { RT_Character(value: $0) } ?? RT_Null.null }
+            return textFieldVC(characterLimit: 1) { $0.value.first.map { RT_Character(rt, value: $0) } ?? rt.null }
         case .number:
-            return numberFieldVC() { RT_Real(value: $0.value.doubleValue) }
+            return numberFieldVC() { RT_Real(rt, value: $0.value.doubleValue) }
         case .integer:
-            return numberFieldVC(integersOnly: true) { RT_Integer(value: $0.value.int64Value) }
+            return numberFieldVC(integersOnly: true) { RT_Integer(rt, value: $0.value.int64Value) }
         case .real:
-            return numberFieldVC() { RT_Real(value: $0.value.doubleValue) }
+            return numberFieldVC() { RT_Real(rt, value: $0.value.doubleValue) }
         case .file, .alias:
-            return fileChooserVC() { RT_File(value: $0.location) }
+            return fileChooserVC() { RT_File(rt, value: $0.location) }
         default:
             // TODO: Implement for custom types
             return uneditableVC()
@@ -69,5 +68,4 @@ public func ask(_ rt: Runtime, for type: TypeInfo, prompt: String, title: String
     display(window: window) {
         returnResultToSender(vc.1(), for: suspension)
     }
-    
 }

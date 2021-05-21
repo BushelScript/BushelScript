@@ -6,8 +6,9 @@ public class RT_Record: RT_Object, AEEncodable {
     
     public var contents: [RT_Object : RT_Object] = [:]
     
-    public init(contents: [RT_Object : RT_Object]) {
+    public init(_ rt: Runtime, contents: [RT_Object : RT_Object]) {
         self.contents = contents
+        super.init(rt)
     }
     
     public override var description: String {
@@ -28,7 +29,7 @@ public class RT_Record: RT_Object, AEEncodable {
     }
     
     public var length: RT_Integer {
-        RT_Integer(value: Int64(contents.count))
+        RT_Integer(rt, value: contents.count)
     }
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
@@ -38,7 +39,7 @@ public class RT_Record: RT_Object, AEEncodable {
         keyPath.evaluate(on: self)
     }
     
-    public override func property(_ property: PropertyInfo) throws -> RT_Object {
+    public override func property(_ property: PropertyInfo) throws -> RT_Object? {
         let propertyConstantKey = ConstantInfo(property: property)
         func keyMatchesProperty(key: RT_Object) -> Bool {
             (key as? RT_Constant)?.value == propertyConstantKey

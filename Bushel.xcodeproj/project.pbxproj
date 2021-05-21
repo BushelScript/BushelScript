@@ -29,7 +29,7 @@
 		3C12EF8F2354E4130057E0CC /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF8E2354E4130057E0CC /* Errors.swift */; };
 		3C12EF912354E4AA0057E0CC /* RT_Specifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF902354E4AA0057E0CC /* RT_Specifier.swift */; };
 		3C12EF932354E50B0057E0CC /* RT_RootSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF922354E50B0057E0CC /* RT_RootSpecifier.swift */; };
-		3C12EF962354E53C0057E0CC /* RT_AESpecifierProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF952354E53C0057E0CC /* RT_AESpecifierProtocol.swift */; };
+		3C12EF962354E53C0057E0CC /* RT_AESpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF952354E53C0057E0CC /* RT_AESpecifier.swift */; };
 		3C12EF982354E5720057E0CC /* RT_Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF972354E5720057E0CC /* RT_Date.swift */; };
 		3C12EF9A2354E5AC0057E0CC /* RT_Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF992354E5AC0057E0CC /* RT_Application.swift */; };
 		3C12EF9C2354E5D10057E0CC /* RT_AEObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF9B2354E5D10057E0CC /* RT_AEObject.swift */; };
@@ -38,7 +38,7 @@
 		3C187D68257C73E700481DA9 /* InsertionSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C187D67257C73E700481DA9 /* InsertionSpecifier.swift */; };
 		3C2DD4A823A06E90002FAE57 /* ParameterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */; };
 		3C3065B1230B7ABB00833CE8 /* Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B0230B7ABB00833CE8 /* Name.swift */; };
-		3C3065B3230B7E2000833CE8 /* TerminologySource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B2230B7E2000833CE8 /* TerminologySource.swift */; };
+		3C3065B3230B7E2000833CE8 /* ByNameTermLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B2230B7E2000833CE8 /* ByNameTermLookup.swift */; };
 		3C35A5C522C81DE7002D4582 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C35A5CC22C81DE7002D4582 /* Bushel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C35A5BE22C81DE7002D4582 /* Bushel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C35A5DB22C81E60002D4582 /* SourceLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C35A5D522C81E60002D4582 /* SourceLocation.swift */; };
@@ -104,13 +104,14 @@
 		3CC224892391CFF300448D25 /* PropertyInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224882391CFF300448D25 /* PropertyInfo.swift */; };
 		3CC224942391D9D500448D25 /* CommandInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224932391D9D500448D25 /* CommandInfo.swift */; };
 		3CC224982391E08800448D25 /* Predefined.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224972391E08800448D25 /* Predefined.swift */; };
+		3CC3E5F22647904800516559 /* RT_Module.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC3E5F12647904800516559 /* RT_Module.swift */; };
+		3CC3E6052647930600516559 /* RT_Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC3E6042647930600516559 /* RT_Function.swift */; };
 		3CC774812414270E00EC1E3B /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC774802414270E00EC1E3B /* Formatting.swift */; };
 		3CCA1C7E235D0C010037058C /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCA1C7B235D0C010037058C /* Logging.swift */; };
 		3CCB8A75244B91C7003EBCD2 /* EnglishMessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCB8A74244B91C7003EBCD2 /* EnglishMessageFormatter.swift */; };
 		3CCD8AB822CC45040049C74F /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCD8AAF22CC45040049C74F /* BushelRT.framework */; };
 		3CCD8ABD22CC45040049C74F /* BushelRTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8ABC22CC45040049C74F /* BushelRTTests.swift */; };
 		3CCD8ABF22CC45040049C74F /* BushelRT.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCD8AB122CC45040049C74F /* BushelRT.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CCD8AC722CC45860049C74F /* StackFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8AC622CC45860049C74F /* StackFrame.swift */; };
 		3CCD8BA522CFA6020049C74F /* PrettyPrinting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCD8BA422CFA6020049C74F /* PrettyPrinting.swift */; };
 		3CCDDEC323ED0257007684D1 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3CCDDECA23ED06E8007684D1 /* RT_AppleScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */; };
@@ -128,9 +129,16 @@
 		3CD18E492620A3ED00144A3C /* SourceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B758D2305AFC40006C354 /* SourceParser.swift */; };
 		3CD18E542620A40600144A3C /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 3CD18E532620A40600144A3C /* Yams */; };
 		3CD18EA42620AAD400144A3C /* ParseFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18E8D2620A9C300144A3C /* ParseFile.swift */; };
+		3CD82157264852C200493B89 /* RT_TargetStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD82156264852C200493B89 /* RT_TargetStack.swift */; };
+		3CD8217326485D3300493B89 /* RT_FrameStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8217226485D3300493B89 /* RT_FrameStack.swift */; };
+		3CD8218326485D8000493B89 /* RT_Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8218226485D8000493B89 /* RT_Stack.swift */; };
+		3CD82193264865D200493B89 /* RT_ModuleStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD82192264865D200493B89 /* RT_ModuleStack.swift */; };
 		3CD8397A23DCE4F6000F2516 /* ConstantInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8397923DCE4F6000F2516 /* ConstantInfo.swift */; };
 		3CD8398923DD3651000F2516 /* Translations in Resources */ = {isa = PBXBuildFile; fileRef = 3CD8398823DD3651000F2516 /* Translations */; };
 		3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */; };
+		3CE3B20C265758D4005BB4DA /* RT_AERootSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B20B265758D4005BB4DA /* RT_AERootSpecifier.swift */; };
+		3CE3B21C26575EDB005BB4DA /* RT_LocalModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B21B26575EDB005BB4DA /* RT_LocalModule.swift */; };
+		3CE3B225265761D9005BB4DA /* AEEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B224265761D9005BB4DA /* AEEncoding.swift */; };
 		3CE88935253363A90036E3F2 /* Located.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE88934253363A90036E3F2 /* Located.swift */; };
 		3CF7486F23B825AC00A2F981 /* InAnyCase in Frameworks */ = {isa = PBXBuildFile; productRef = 3CF7486E23B825AC00A2F981 /* InAnyCase */; };
 		3CF7487423B88C5500A2F981 /* TermInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF7487323B88C5500A2F981 /* TermInfo.swift */; };
@@ -254,7 +262,7 @@
 		3C12EF8E2354E4130057E0CC /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3C12EF902354E4AA0057E0CC /* RT_Specifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Specifier.swift; sourceTree = "<group>"; };
 		3C12EF922354E50B0057E0CC /* RT_RootSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_RootSpecifier.swift; sourceTree = "<group>"; };
-		3C12EF952354E53C0057E0CC /* RT_AESpecifierProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_AESpecifierProtocol.swift; sourceTree = "<group>"; };
+		3C12EF952354E53C0057E0CC /* RT_AESpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_AESpecifier.swift; sourceTree = "<group>"; };
 		3C12EF972354E5720057E0CC /* RT_Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Date.swift; sourceTree = "<group>"; };
 		3C12EF992354E5AC0057E0CC /* RT_Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Application.swift; sourceTree = "<group>"; };
 		3C12EF9B2354E5D10057E0CC /* RT_AEObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_AEObject.swift; sourceTree = "<group>"; };
@@ -263,7 +271,7 @@
 		3C187D67257C73E700481DA9 /* InsertionSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsertionSpecifier.swift; sourceTree = "<group>"; };
 		3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterInfo.swift; sourceTree = "<group>"; };
 		3C3065B0230B7ABB00833CE8 /* Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Name.swift; sourceTree = "<group>"; };
-		3C3065B2230B7E2000833CE8 /* TerminologySource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminologySource.swift; sourceTree = "<group>"; };
+		3C3065B2230B7E2000833CE8 /* ByNameTermLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByNameTermLookup.swift; sourceTree = "<group>"; };
 		3C3065B4230B83B500833CE8 /* MessageFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFormatter.swift; sourceTree = "<group>"; };
 		3C327261232DBAE2001A527C /* TypeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeInfo.swift; sourceTree = "<group>"; };
 		3C35A5BB22C81DE7002D4582 /* Bushel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Bushel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -362,6 +370,8 @@
 		3CC224972391E08800448D25 /* Predefined.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Predefined.swift; sourceTree = "<group>"; };
 		3CC224992391F3C400448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC2249D2391F6A100448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		3CC3E5F12647904800516559 /* RT_Module.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Module.swift; sourceTree = "<group>"; };
+		3CC3E6042647930600516559 /* RT_Function.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Function.swift; sourceTree = "<group>"; };
 		3CC774802414270E00EC1E3B /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		3CCA1C7B235D0C010037058C /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3CCB8A74244B91C7003EBCD2 /* EnglishMessageFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnglishMessageFormatter.swift; sourceTree = "<group>"; };
@@ -372,7 +382,6 @@
 		3CCD8AB722CC45040049C74F /* BushelRTTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BushelRTTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CCD8ABC22CC45040049C74F /* BushelRTTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BushelRTTests.swift; sourceTree = "<group>"; };
 		3CCD8ABE22CC45040049C74F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3CCD8AC622CC45860049C74F /* StackFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackFrame.swift; sourceTree = "<group>"; };
 		3CCD8BA422CFA6020049C74F /* PrettyPrinting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrettyPrinting.swift; sourceTree = "<group>"; };
 		3CCDDEC923ED06E8007684D1 /* RT_AppleScript.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_AppleScript.swift; sourceTree = "<group>"; };
 		3CCDDECB23EDA388007684D1 /* Ask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ask.swift; sourceTree = "<group>"; };
@@ -383,10 +392,17 @@
 		3CD113D322FB700000329583 /* ResourceLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceLocation.swift; sourceTree = "<group>"; };
 		3CD113DA22FC6E9300329583 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3CD18E8D2620A9C300144A3C /* ParseFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseFile.swift; sourceTree = "<group>"; };
+		3CD82156264852C200493B89 /* RT_TargetStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_TargetStack.swift; sourceTree = "<group>"; };
+		3CD8217226485D3300493B89 /* RT_FrameStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_FrameStack.swift; sourceTree = "<group>"; };
+		3CD8218226485D8000493B89 /* RT_Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Stack.swift; sourceTree = "<group>"; };
+		3CD82192264865D200493B89 /* RT_ModuleStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_ModuleStack.swift; sourceTree = "<group>"; };
 		3CD8397923DCE4F6000F2516 /* ConstantInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstantInfo.swift; sourceTree = "<group>"; };
 		3CD8397C23DD2454000F2516 /* Translation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Translation.swift; sourceTree = "<group>"; };
 		3CD8398823DD3651000F2516 /* Translations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Translations; sourceTree = "<group>"; };
 		3CDEAF5E23B31D26001D5A6D /* RT_Script.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RT_Script.swift; sourceTree = "<group>"; };
+		3CE3B20B265758D4005BB4DA /* RT_AERootSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_AERootSpecifier.swift; sourceTree = "<group>"; };
+		3CE3B21B26575EDB005BB4DA /* RT_LocalModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_LocalModule.swift; sourceTree = "<group>"; };
+		3CE3B224265761D9005BB4DA /* AEEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEEncoding.swift; sourceTree = "<group>"; };
 		3CE88934253363A90036E3F2 /* Located.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Located.swift; sourceTree = "<group>"; };
 		3CF7487323B88C5500A2F981 /* TermInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermInfo.swift; sourceTree = "<group>"; };
 		3CFA68CA23EE321C00A3E87E /* Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Events.swift; sourceTree = "<group>"; };
@@ -490,7 +506,7 @@
 				3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */,
 				3C065BE025DB975500C86E5C /* SDEF.swift */,
 				3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */,
-				3C3065B2230B7E2000833CE8 /* TerminologySource.swift */,
+				3C3065B2230B7E2000833CE8 /* ByNameTermLookup.swift */,
 			);
 			path = Grouping;
 			sourceTree = "<group>";
@@ -532,7 +548,9 @@
 				3C12EF902354E4AA0057E0CC /* RT_Specifier.swift */,
 				3C12EF922354E50B0057E0CC /* RT_RootSpecifier.swift */,
 				3C12EF992354E5AC0057E0CC /* RT_Application.swift */,
-				3C12EF952354E53C0057E0CC /* RT_AESpecifierProtocol.swift */,
+				3CE3B20B265758D4005BB4DA /* RT_AERootSpecifier.swift */,
+				3C12EF952354E53C0057E0CC /* RT_AESpecifier.swift */,
+				3CE3B224265761D9005BB4DA /* AEEncoding.swift */,
 			);
 			path = Specifiers;
 			sourceTree = "<group>";
@@ -778,7 +796,10 @@
 			isa = PBXGroup;
 			children = (
 				3C8FEEF222DE2B8300C1F1CF /* Builtin.swift */,
-				3CCD8AC622CC45860049C74F /* StackFrame.swift */,
+				3CD82156264852C200493B89 /* RT_TargetStack.swift */,
+				3CD82192264865D200493B89 /* RT_ModuleStack.swift */,
+				3CD8217226485D3300493B89 /* RT_FrameStack.swift */,
+				3CD8218226485D8000493B89 /* RT_Stack.swift */,
 			);
 			path = "Built-in Functions";
 			sourceTree = "<group>";
@@ -828,6 +849,9 @@
 			isa = PBXGroup;
 			children = (
 				3CB528EC23809DDD0051460B /* Runtime.swift */,
+				3CC3E5F12647904800516559 /* RT_Module.swift */,
+				3CE3B21B26575EDB005BB4DA /* RT_LocalModule.swift */,
+				3CC3E6042647930600516559 /* RT_Function.swift */,
 				3CC2249B2391F51F00448D25 /* Built-in Functions */,
 				3C12EF702354E1E50057E0CC /* Runtime Objects */,
 				3C12EF8E2354E4130057E0CC /* Errors.swift */,
@@ -1317,7 +1341,7 @@
 				3C35A5DE22C81E60002D4582 /* Specifier.swift in Sources */,
 				3CE88935253363A90036E3F2 /* Located.swift in Sources */,
 				3C6874412394188F004144AC /* PrecedenceGroup.swift in Sources */,
-				3C3065B3230B7E2000833CE8 /* TerminologySource.swift in Sources */,
+				3C3065B3230B7E2000833CE8 /* ByNameTermLookup.swift in Sources */,
 				3CD18E452620A3ED00144A3C /* Translation.swift in Sources */,
 				3CD18E482620A3ED00144A3C /* LanguageModule.swift in Sources */,
 				3CD18E142620A2BA00144A3C /* ParseError.swift in Sources */,
@@ -1426,6 +1450,7 @@
 				3C12EF812354E2F20057E0CC /* RT_List.swift in Sources */,
 				3CC224942391D9D500448D25 /* CommandInfo.swift in Sources */,
 				3C12EF7B2354E29B0057E0CC /* RT_Integer.swift in Sources */,
+				3CE3B225265761D9005BB4DA /* AEEncoding.swift in Sources */,
 				3C12EF852354E32C0057E0CC /* RT_String.swift in Sources */,
 				3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */,
 				3CA2699023F9F09F009E1944 /* RT_System.swift in Sources */,
@@ -1434,9 +1459,14 @@
 				3C12EF8D2354E3870057E0CC /* RT_Type.swift in Sources */,
 				3C12EF932354E50B0057E0CC /* RT_RootSpecifier.swift in Sources */,
 				3CCA1C7E235D0C010037058C /* Logging.swift in Sources */,
+				3CE3B20C265758D4005BB4DA /* RT_AERootSpecifier.swift in Sources */,
 				3C187D51257C69F200481DA9 /* RT_InsertionSpecifier.swift in Sources */,
 				3C12EF892354E3590057E0CC /* RT_Constant.swift in Sources */,
 				3C8FEEF322DE2B8300C1F1CF /* Builtin.swift in Sources */,
+				3CE3B21C26575EDB005BB4DA /* RT_LocalModule.swift in Sources */,
+				3CC3E6052647930600516559 /* RT_Function.swift in Sources */,
+				3CD82193264865D200493B89 /* RT_ModuleStack.swift in Sources */,
+				3CD8217326485D3300493B89 /* RT_FrameStack.swift in Sources */,
 				3CB528EB237FAF8A0051460B /* TypeInfo.swift in Sources */,
 				3C12EF9A2354E5AC0057E0CC /* RT_Application.swift in Sources */,
 				3C12EF9E2354E6010057E0CC /* RT_Core.swift in Sources */,
@@ -1451,13 +1481,15 @@
 				3C12EF752354E23C0057E0CC /* RT_Object.swift in Sources */,
 				3C12EF832354E30C0057E0CC /* RT_Record.swift in Sources */,
 				3CF7487423B88C5500A2F981 /* TermInfo.swift in Sources */,
+				3CD8218326485D8000493B89 /* RT_Stack.swift in Sources */,
 				3CCDDECA23ED06E8007684D1 /* RT_AppleScript.swift in Sources */,
 				3C12EF7D2354E2B50057E0CC /* RT_Boolean.swift in Sources */,
 				3C70A6A423C5898C00CD5F73 /* RT_TestSpecifier.swift in Sources */,
+				3CD82157264852C200493B89 /* RT_TargetStack.swift in Sources */,
 				3C12EF8F2354E4130057E0CC /* Errors.swift in Sources */,
+				3CC3E5F22647904800516559 /* RT_Module.swift in Sources */,
 				3C5B345423E7BCF90040766D /* RT_File.swift in Sources */,
-				3CCD8AC722CC45860049C74F /* StackFrame.swift in Sources */,
-				3C12EF962354E53C0057E0CC /* RT_AESpecifierProtocol.swift in Sources */,
+				3C12EF962354E53C0057E0CC /* RT_AESpecifier.swift in Sources */,
 				3C12EF872354E3470057E0CC /* RT_Character.swift in Sources */,
 				3C12EF912354E4AA0057E0CC /* RT_Specifier.swift in Sources */,
 			);

@@ -1,20 +1,13 @@
 import Bushel
 import SwiftAutomation
 
-public protocol RT_HierarchicalSpecifier: RT_SASpecifierConvertible {
+public protocol RT_HierarchicalSpecifier: RT_AESpecifier {
     
     var parent: RT_Object { get set }
     
     func evaluateLocally(on evaluatedParent: RT_Object) throws -> RT_Object
     
     func clone() -> Self
-    
-}
-
-public protocol RT_SpecifierRemoteRoot: RT_Object {
-    
-    func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object
-    func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, for specifier: RT_HierarchicalSpecifier) throws -> RT_Object
     
 }
 
@@ -43,7 +36,7 @@ extension RT_HierarchicalSpecifier {
 }
 
 /// An unevaluated object specifier.
-public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
+public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module {
     
     public enum Kind {
         case simple, index, name, id
@@ -61,12 +54,13 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
     public var kind: Kind
     
     // If parent is nil, a root of kind .application is implicitly added
-    public init(parent: RT_Object?, type: TypeInfo?, property: PropertyInfo? = nil, data: [RT_Object], kind: Kind) {
-        self.parent = parent ?? RT_RootSpecifier(kind: .application)
+    public init(_ rt: Runtime, parent: RT_Object?, type: TypeInfo?, property: PropertyInfo? = nil, data: [RT_Object], kind: Kind) {
+        self.parent = parent ?? RT_RootSpecifier(rt, kind: .application)
         self.type = type
         self.property = property
         self.data = data
         self.kind = kind
+        super.init(rt)
     }
     
     public func clone() -> RT_Specifier {
@@ -74,26 +68,16 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
         if let specifier = parent as? RT_Specifier {
             parent = specifier.clone()
         }
-        return RT_Specifier(parent: parent, type: type, property: property, data: data, kind: kind)
+        return RT_Specifier(rt, parent: parent, type: type, property: property, data: data, kind: kind)
     }
     
     public func evaluateLocally(on evaluatedParent: RT_Object) throws -> RT_Object {
-        func evaluate(on parent: RT_Object) throws -> RT_Object {
+        func evaluate(on parent: RT_Object) throws -> RT_Object? {
             if case .property = kind {
-                // TODO: Revise with Target Stack
-                do {
-                    return try parent.property(property!)
-                } catch let e {
-                    do {
-                        return try RT_Core().property(property!)
-                    } catch {
-                        throw e
-                    }
-                }
+                return try parent.property(property!)
             }
             
             let type = self.type!
-            
             switch kind {
             case .index:
                 guard data[0] is RT_Numeric else {
@@ -139,39 +123,21 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
             }
         }
         
-        do {
-            return try evaluate(on: evaluatedParent)
-        } catch let origError where origError is NoPropertyExists || origError is NoElementExists {
-            do {
-                return try evaluate(on: RT_Core())
-            } catch {
-                throw origError
+        guard let value = try propagate(from: evaluatedParent, up: rt.builtin.moduleStack, evaluate(on:)) else {
+            if case .property = kind {
+                throw NoPropertyExists(type: dynamicTypeInfo, property: property!)
             }
+            throw NoElementExists(locationDescription: "at: \(self)")
         }
+        return value
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
+    public func handle(_ arguments: RT_Arguments) throws -> RT_Object? {
         switch rootAncestor() {
-        case let root as RT_SpecifierRemoteRoot:
-            return try root.perform(command: command, arguments: arguments, implicitDirect: implicitDirect, for: self)
+        case let root as RT_AERootSpecifier:
+            return try self.handleByAppleEvent(arguments, appData: root.saRootSpecifier.appData)
         default:
-            switch Commands(command.uri) {
-            case .set:
-                guard let property = property else {
-                    throw NonPropertyIsNotWritable(specifier: self)
-                }
-                
-                let setTo = ParameterInfo(Parameters.set_to)
-                guard let newValue = arguments[setTo] else {
-                    throw MissingParameter(command: command, parameter: setTo)
-                }
-                
-                try parent.evaluate().setProperty(property, to: newValue)
-                return newValue
-                
-            default:
-                return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-            }
+            return nil
         }
     }
     
@@ -180,7 +146,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
             return saRootSpecifier()
         }
         
-        guard let parent = self.parent as? RT_SASpecifierConvertible else {
+        guard let parent = self.parent as? RT_AESpecifier else {
             return nil
         }
         guard let parentSpecifier = parent.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifierProtocol else {
@@ -266,10 +232,10 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
         }
     }
     
-    public convenience init?(saSpecifier: SwiftAutomation.ObjectSpecifier) {
+    public convenience init?(_ rt: Runtime, saSpecifier: SwiftAutomation.ObjectSpecifier) {
         let parent: RT_Object?
         if let objectSpecifier = saSpecifier.parentQuery as? SwiftAutomation.ObjectSpecifier {
-            parent = RT_Specifier(saSpecifier: objectSpecifier)
+            parent = RT_Specifier(rt, saSpecifier: objectSpecifier)
         } else if let rootSpecifier = saSpecifier.parentQuery as? SwiftAutomation.RootSpecifier {
             if rootSpecifier === AEApp {
                 guard
@@ -278,9 +244,9 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
                 else {
                     return nil
                 }
-                parent = RT_Application(bundle: bundle)
+                parent = RT_Application(rt, bundle: bundle)
             } else {
-                guard let root = try? RT_RootSpecifier.fromSARootSpecifier(rootSpecifier) else {
+                guard let root = try? RT_RootSpecifier.fromSARootSpecifier(rt, rootSpecifier) else {
                     return nil
                 }
                 parent = root
@@ -306,7 +272,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
                 return nil
             }
             let property = PropertyInfo(.ae4(code: code))
-            self.init(parent: parent!, type: nil, property: property, data: [], kind: .property)
+            self.init(rt, parent: parent!, type: nil, property: property, data: [], kind: .property)
             return
         case 0x75737270: // _formUserPropertyID:
             fatalError()
@@ -367,11 +333,12 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
         case .all, .first, .middle, .last, .random, .previous, .next:
             data = []
         case .index, .name, .id:
-            data = [RT_Object.fromSADecoded(saSpecifier.selectorData)]
+            data = [RT_Object.fromSADecoded(rt, saSpecifier.selectorData)]
         case .range:
             let rangeSelector = saSpecifier.selectorData as! SwiftAutomation.RangeSelector
-            data = [RT_Object.fromSADecoded(rangeSelector.start), RT_Object.fromSADecoded(rangeSelector.stop)]
+            data = [RT_Object.fromSADecoded(rt, rangeSelector.start), RT_Object.fromSADecoded(rt, rangeSelector.stop)]
         case .test:
+            // TODO: Low prio unimplemented
             fatalError("unimplemented")
         case .property:
             fatalError("unreachable")
@@ -380,7 +347,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
             return nil
         }
         
-        self.init(parent: parent!, type: type, data: nonNilData, kind: kind)
+        self.init(rt, parent: parent!, type: type, data: nonNilData, kind: kind)
     }
     
     public override var description: String {

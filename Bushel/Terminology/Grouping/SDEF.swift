@@ -111,9 +111,7 @@ private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
             .command,
             .ae8(class: term.eventClass, id: term.eventID),
             name: Term.Name(term.name),
-            parameters: ParameterTermDictionary(
-                contents: term.parameters.map { convertAE4(.parameter, $0) }
-            )
+            dictionary: TermDictionary(contents: term.parameters.map { convertAE4(.parameter, $0) })
         ))
     }
     

@@ -10,9 +10,10 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
     public var parent: RT_Object
     public var kind: Kind
     
-    public init(parent: RT_Object, kind: Kind) {
+    public init(_ rt: Runtime, parent: RT_Object, kind: Kind) {
         self.parent = parent
         self.kind = kind
+        super.init(rt)
     }
     
     public func clone() -> RT_InsertionSpecifier {
@@ -20,7 +21,7 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
         if let specifier = parent as? RT_Specifier {
             parent = specifier.clone()
         }
-        return RT_InsertionSpecifier(parent: parent, kind: kind)
+        return RT_InsertionSpecifier(rt, parent: parent, kind: kind)
     }
     
     public func evaluateLocally(on evaluatedParent: RT_Object) throws -> RT_Object {
@@ -28,7 +29,7 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
     }
     
     public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
-        guard let parent = self.parent as? RT_SASpecifierConvertible else {
+        guard let parent = self.parent as? RT_AESpecifier else {
             return nil
         }
         guard let parentSpecifier = parent.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifierProtocol else {
@@ -48,10 +49,10 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
         }
     }
     
-    public convenience init?(saSpecifier: SwiftAutomation.InsertionSpecifier) {
+    public convenience init?(_ rt: Runtime, saSpecifier: SwiftAutomation.InsertionSpecifier) {
         let parent: RT_Object?
         if let objectSpecifier = saSpecifier.parentQuery as? SwiftAutomation.ObjectSpecifier {
-            parent = RT_Specifier(saSpecifier: objectSpecifier)
+            parent = RT_Specifier(rt, saSpecifier: objectSpecifier)
         } else if let rootSpecifier = saSpecifier.parentQuery as? SwiftAutomation.RootSpecifier {
             if rootSpecifier === AEApp {
                 guard
@@ -60,9 +61,9 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
                 else {
                     return nil
                 }
-                parent = RT_Application(bundle: bundle)
+                parent = RT_Application(rt, bundle: bundle)
             } else {
-                guard let root = try? RT_RootSpecifier.fromSARootSpecifier(rootSpecifier) else {
+                guard let root = try? RT_RootSpecifier.fromSARootSpecifier(rt, rootSpecifier) else {
                     return nil
                 }
                 parent = root
@@ -91,7 +92,7 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
             return nil
         }
         
-        self.init(parent: parent!, kind: kind)
+        self.init(rt, parent: parent!, kind: kind)
     }
     
     public override var description: String {

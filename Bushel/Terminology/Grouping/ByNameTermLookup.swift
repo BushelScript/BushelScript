@@ -1,8 +1,7 @@
 import Foundation
 
-public protocol TerminologySource {
+public protocol ByNameTermLookup {
     
-    func term(id: Term.ID) -> Term?
     func term(named name: Term.Name) -> Term?
     
 }

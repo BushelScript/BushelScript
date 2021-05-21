@@ -6,8 +6,9 @@ public class RT_File: RT_Object {
     
     public var value: URL
     
-    public init(value: URL) {
+    public init(_ rt: Runtime, value: URL) {
         self.value = value
+        super.init(rt)
     }
     
     public override var description: String {
@@ -20,13 +21,13 @@ public class RT_File: RT_Object {
     }
     
     public var basename: RT_String {
-        RT_String(value: value.deletingPathExtension().lastPathComponent)
+        RT_String(rt, value: value.deletingPathExtension().lastPathComponent)
     }
     public var extname: RT_String {
-        RT_String(value: value.pathExtension)
+        RT_String(rt, value: value.pathExtension)
     }
     public var dirname: RT_String {
-        RT_String(value: value.deletingLastPathComponent().path)
+        RT_String(rt, value: value.deletingLastPathComponent().path)
     }
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
@@ -43,7 +44,7 @@ public class RT_File: RT_Object {
     public override func coerce(to type: TypeInfo) -> RT_Object? {
         switch Types(type.id) {
         case .string:
-            return RT_String(value: value.path)
+            return RT_String(rt, value: value.path)
         default:
             return super.coerce(to: type)
         }

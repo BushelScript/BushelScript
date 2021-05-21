@@ -7,15 +7,13 @@ public class RT_Boolean: RT_Object, AEEncodable {
     
     public let value: Bool
     
-    public static let `true` = RT_Boolean(value: true)
-    public static let `false` = RT_Boolean(value: false)
-    
-    public static func withValue(_ value: Bool) -> RT_Boolean {
-        value ? `true` : `false`
+    public static func withValue(_ rt: Runtime, _ value: Bool) -> RT_Boolean {
+        value ? rt.`true` : rt.`false`
     }
     
-    private init(value: Bool) {
+    internal init(_ rt: Runtime, value: Bool) {
         self.value = value
+        super.init(rt)
     }
     
     public override var description: String {
@@ -31,7 +29,7 @@ public class RT_Boolean: RT_Object, AEEncodable {
     }
     
     public static prefix func ! (boolean: RT_Boolean) -> RT_Boolean {
-        RT_Boolean.withValue(!boolean.value)
+        RT_Boolean.withValue(boolean.rt, !boolean.value)
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
@@ -46,11 +44,11 @@ public class RT_Boolean: RT_Object, AEEncodable {
             // This is how AppleScript handles this coercion
             return self
         case .integer:
-            return RT_Integer(value: value ? 1 : 0)
+            return RT_Integer(rt, value: value ? 1 : 0)
         case .real:
-            return RT_Real(value: value ? 1 : 0)
+            return RT_Real(rt, value: value ? 1 : 0)
         case .string:
-            return RT_String(value: value ? "true" : "false")
+            return RT_String(rt, value: value ? "true" : "false")
         default:
             return super.coerce(to: type)
         }

@@ -6,8 +6,9 @@ public class RT_Constant: RT_Object, AEEncodable {
     
     public var value: ConstantInfo
     
-    public init(value: ConstantInfo) {
+    public init(_ rt: Runtime, value: ConstantInfo) {
         self.value = value
+        super.init(rt)
     }
     
     private static let typeInfo_ = TypeInfo(.constant)

@@ -6,8 +6,9 @@ public class RT_String: RT_Object, AEEncodable {
     
     public var value: String = ""
     
-    public init(value: String) {
+    public init(_ rt: Runtime, value: String) {
         self.value = value
+        super.init(rt)
     }
     
     public override var description: String {
@@ -24,14 +25,14 @@ public class RT_String: RT_Object, AEEncodable {
     
     public override func concatenating(_ other: RT_Object) -> RT_Object? {
         if let other = other.coerce(to: RT_String.self) {
-            return RT_String(value: self.value + other.value)
+            return RT_String(rt, value: self.value + other.value)
         } else {
             return nil
         }
     }
     
     public var length: RT_Integer {
-        RT_Integer(value: Int64(value.count))
+        RT_Integer(rt, value: value.count)
     }
     
     public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
@@ -43,16 +44,16 @@ public class RT_String: RT_Object, AEEncodable {
         keyPath.evaluate(on: self)
     }
     
-    public override func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object {
+    public override func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object? {
         let zeroBasedIndex = index - 1
         if type.isA(RT_Character.typeInfo) {
-            return RT_Character(value: value[value.index(value.startIndex, offsetBy: Int(zeroBasedIndex))])
+            return RT_Character(rt, value: value[value.index(value.startIndex, offsetBy: Int(zeroBasedIndex))])
         } else {
             return try super.element(type, at: index)
         }
     }
     
-    public override func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object {
+    public override func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object? {
         switch positioning {
         case .first:
             return try element(type, at: 1)
@@ -67,7 +68,7 @@ public class RT_String: RT_Object, AEEncodable {
     
     public override func elements(_ type: TypeInfo) throws -> RT_Object {
         if type.isA(RT_Character.typeInfo) {
-            return RT_List(contents: value.map { RT_Character(value: $0) })
+            return RT_List(rt, contents: value.map { RT_Character(rt, value: $0) })
         } else {
             return try super.elements(type)
         }
@@ -79,15 +80,15 @@ public class RT_String: RT_Object, AEEncodable {
             guard value.count == 1 else {
                 return nil
             }
-            return RT_Character(value: value.first!)
+            return RT_Character(rt, value: value.first!)
         case .integer:
-            return Int64(value).map { RT_Integer(value: $0) }
+            return Int64(value).map { RT_Integer(rt, value: $0) }
         case .real:
-            return Double(value).map { RT_Real(value: $0) }
+            return Double(value).map { RT_Real(rt, value: $0) }
         case .date:
-            return DateFormatter().date(from: value).map { RT_Date(value: $0) }
+            return DateFormatter().date(from: value).map { RT_Date(rt, value: $0) }
         case .file:
-            return RT_File(value: URL(fileURLWithPath: value))
+            return RT_File(rt, value: URL(fileURLWithPath: value))
         default:
             return super.coerce(to: type)
         }
@@ -100,30 +101,17 @@ public class RT_String: RT_Object, AEEncodable {
     
     public override func startsWith(_ other: RT_Object) -> RT_Object? {
         other.coerce(to: RT_String.self)
-            .map { RT_Boolean.withValue(value.hasPrefix($0.value)) }
+            .map { RT_Boolean.withValue(rt, value.hasPrefix($0.value)) }
     }
     
     public override func endsWith(_ other: RT_Object) -> RT_Object? {
         other.coerce(to: RT_String.self)
-            .map { RT_Boolean.withValue(value.hasSuffix($0.value)) }
+            .map { RT_Boolean.withValue(rt, value.hasSuffix($0.value)) }
     }
     
     public override func contains(_ other: RT_Object) -> RT_Object? {
         other.coerce(to: RT_String.self)
-            .map { RT_Boolean.withValue(value.contains($0.value)) }
-    }
-    
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        switch Commands(command.id) {
-        case .String_split:
-            guard let separator = arguments[ParameterInfo(.String_split_by)]?.coerce(to: RT_String.self) else {
-                // TODO: Throw error
-                return nil
-            }
-            return RT_List(contents: value.components(separatedBy: separator.value).map { RT_String(value: $0) })
-        default:
-            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-        }
+            .map { RT_Boolean.withValue(rt, value.contains($0.value)) }
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {

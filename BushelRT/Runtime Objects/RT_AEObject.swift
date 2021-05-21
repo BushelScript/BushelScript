@@ -8,8 +8,9 @@ public class RT_AEObject: RT_Object, AEEncodable {
     
     public var descriptor: NSAppleEventDescriptor
     
-    public init(descriptor: NSAppleEventDescriptor) {
+    public init(_ rt: Runtime, descriptor: NSAppleEventDescriptor) {
         self.descriptor = descriptor
+        super.init(rt)
     }
     
     private static let typeInfo_ = TypeInfo(.item, [.dynamic])
@@ -31,7 +32,7 @@ public class RT_AEObject: RT_Object, AEEncodable {
         else {
             return nil
         }
-        return try? RT_Object.fromAEDescriptor(AppData(), coercedDescriptor)
+        return try? RT_Object.fromAEDescriptor(rt, AppData(), coercedDescriptor)
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {

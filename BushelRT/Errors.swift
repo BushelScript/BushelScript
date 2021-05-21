@@ -65,6 +65,17 @@ public struct NoPropertyExists: LocalizedError {
     
 }
 
+public struct NoNumericPropertyExists: LocalizedError {
+    
+    public let type: TypeInfo
+    public let property: PropertyInfo
+    
+    public var errorDescription: String? {
+        "Objects of type \(type) do not have a numeric property named \(property)"
+    }
+    
+}
+
 public struct NoWritablePropertyExists: LocalizedError {
     
     public let type: TypeInfo

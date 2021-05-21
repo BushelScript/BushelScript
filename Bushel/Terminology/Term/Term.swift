@@ -15,21 +15,19 @@ public class Term: Hashable, CustomStringConvertible {
     public var dictionary: TermDictionary
     public let exports: Bool
     
-    public var parameters: ParameterTermDictionary?
-    
     public var resource: Resource?
     
-    public init(_ id: ID, name: Name? = nil, dictionary: TermDictionary = TermDictionary(), exports: Bool = true, parameters: ParameterTermDictionary? = nil, resource: Resource? = nil) {
+    public init(_ id: ID, name: Name? = nil, dictionary: TermDictionary = TermDictionary(), exports: Bool = true, resource: Resource? = nil) {
         self.id = id
         self.name = name
         self.dictionary = dictionary
-        self.exports = exports
-        self.parameters = parameters
+        // Commands should _never_ export (parameter terms are meaningless on their own).
+        self.exports = (id.role == .command) ? false : exports
         self.resource = resource
     }
     
-    public convenience init(_ role: SyntacticRole, _ uri: SemanticURI, name: Name? = nil, dictionary: TermDictionary = TermDictionary(), exports: Bool = true, parameters: ParameterTermDictionary? = nil, resource: Resource? = nil) {
-        self.init(ID(role, uri), name: name, dictionary: dictionary, exports: exports, parameters: parameters, resource: resource)
+    public convenience init(_ role: SyntacticRole, _ uri: SemanticURI, name: Name? = nil, dictionary: TermDictionary = TermDictionary(), exports: Bool = true, resource: Resource? = nil) {
+        self.init(ID(role, uri), name: name, dictionary: dictionary, exports: exports, resource: resource)
     }
     
     public static func == (lhs: Term, rhs: Term) -> Bool {

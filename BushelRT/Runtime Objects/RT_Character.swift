@@ -6,8 +6,9 @@ public class RT_Character: RT_Object, AEEncodable {
     
     public var value: Character
     
-    public init(value: Character) {
+    public init(_ rt: Runtime, value: Character) {
         self.value = value
+        super.init(rt)
     }
     
     public override var description: String {
@@ -27,9 +28,9 @@ public class RT_Character: RT_Object, AEEncodable {
     public override func coerce(to type: TypeInfo) -> RT_Object? {
         switch Types(type.uri) {
         case .string:
-            return RT_String(value: String(value))
+            return RT_String(rt, value: String(value))
         case .integer:
-            return value.unicodeScalars.count == 1 ? RT_Integer(value: Int64(value.unicodeScalars.first!.value)) : nil
+            return value.unicodeScalars.count == 1 ? RT_Integer(rt, value: Int64(value.unicodeScalars.first!.value)) : nil
         default:
             return super.coerce(to: type)
         }
