@@ -76,37 +76,6 @@ public class RT_Integer: RT_Object, AEEncodable {
         }
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        switch Commands(command.id) {
-        case .Math_abs:
-            return RT_Integer(rt, value: abs(self.value))
-        case .Math_sqrt:
-            return RT_Real(rt, value: sqrt(self.numericValue))
-        case .Math_cbrt:
-            return RT_Real(rt, value: cbrt(self.numericValue))
-        case .Math_square:
-            let squared = self.value * self.value
-            return RT_Integer(rt, value: squared)
-        case .Math_cube:
-            // Swift likes taking an egregiously long time to typecheck a
-            // three-way multiplication…
-            // So we split it up to hopefully help matters a little.
-            let squared = self.value * self.value
-            let cubed = squared * self.value
-            return RT_Integer(rt, value: cubed)
-        case .Math_pow:
-            guard let exponentObj = arguments[ParameterInfo(.Math_pow_exponent)] else {
-                throw MissingParameter(command: command, parameter: ParameterInfo(.Math_pow_exponent))
-            }
-            guard let exponent = exponentObj.coerce(to: RT_Real.self) else {
-                throw WrongParameterType(command: command, parameter: ParameterInfo(.Math_pow_exponent), expected: TypeInfo(.number), actual: exponentObj.dynamicTypeInfo)
-            }
-            return RT_Integer(rt, value: Int64(pow(Double(self.value), exponent.value)))
-        default:
-            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-        }
-    }
-    
     public override func coerce(to type: TypeInfo) -> RT_Object? {
         switch Types(type.id) {
         case .real:

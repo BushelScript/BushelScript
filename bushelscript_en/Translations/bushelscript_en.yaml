@@ -162,8 +162,6 @@ translation:
                         - cbrt
                         - cube root
                         - cubic root
-                    square: square
-                    cube: cube
                     pow:
                         - pow
                         - power
@@ -243,10 +241,6 @@ translation:
                     sqrt:
                         .direct: of
                     cbrt:
-                        .direct: of
-                    square:
-                        .direct: of
-                    cube:
                         .direct: of
                     pow:
                         .direct: of

@@ -114,19 +114,6 @@ public class RT_String: RT_Object, AEEncodable {
             .map { RT_Boolean.withValue(rt, value.contains($0.value)) }
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        switch Commands(command.id) {
-        case .String_split:
-            guard let separator = arguments[ParameterInfo(.String_split_by)]?.coerce(to: RT_String.self) else {
-                // TODO: Throw error
-                return nil
-            }
-            return RT_List(rt, contents: value.components(separatedBy: separator.value).map { RT_String(rt, value: $0) })
-        default:
-            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-        }
-    }
-    
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
         NSAppleEventDescriptor(string: value)
     }

@@ -467,8 +467,6 @@ public enum Commands: String, Term.PredefinedID {
     case Math_abs
     case Math_sqrt
     case Math_cbrt
-    case Math_square
-    case Math_cube
     case Math_pow
     case Math_ln
     case Math_log10

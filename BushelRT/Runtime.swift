@@ -241,7 +241,7 @@ public extension Runtime {
         
     }
     
-    func runFunction(_ functionExpression: Expression, actualArguments: [ParameterInfo : RT_Object]) throws -> RT_Object {
+    func runFunction(_ functionExpression: Expression, actualArguments: RT_Arguments) throws -> RT_Object {
         guard case let .function(_, parameters, _, arguments, body) = functionExpression.kind else {
             preconditionFailure("expected function expression but got \(functionExpression)")
         }

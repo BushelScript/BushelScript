@@ -11,7 +11,7 @@ public protocol RT_Module: RT_Object {
 
 extension RT_Module {
     
-    public func runFunction(for command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object? {
+    public func runFunction(for command: CommandInfo, arguments: RT_Arguments) throws -> RT_Object? {
         // Find best-matching function and call it.
         try functions
             .bestMatch(for: command, arguments: arguments)?
@@ -35,7 +35,7 @@ public struct FunctionSet {
         byCommand[command] ?? []
     }
     
-    public func bestMatch(for command: CommandInfo, arguments: [ParameterInfo : RT_Object]) -> RT_Function? {
+    public func bestMatch(for command: CommandInfo, arguments: RT_Arguments) -> RT_Function? {
         let functions = self.functions(for: command)
         guard !functions.isEmpty else {
             return nil
@@ -46,7 +46,7 @@ public struct FunctionSet {
             
             // Ensure each argument maps to a parameter of suitable type.
             var typeScore = 0
-            for (parameter, argument) in arguments {
+            for (parameter, argument) in arguments.contents {
                 guard
                     let parameterType = parameters[parameter],
                     argument.dynamicTypeInfo.isA(parameterType) ||
@@ -62,7 +62,7 @@ public struct FunctionSet {
             }
             
             // -1 point for each additional parameter.
-            let countScore = arguments.count - parameters.count
+            let countScore = arguments.contents.count - parameters.count
             
             if
                 typeScore >= bestSoFar.typeScore ||

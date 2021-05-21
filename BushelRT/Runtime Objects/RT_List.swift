@@ -24,10 +24,6 @@ public class RT_List: RT_Object, AEEncodable {
         !contents.isEmpty
     }
     
-    public func add(_ object: RT_Object) {
-        contents.append(object)
-    }
-    
     public override func concatenating(_ other: RT_Object) -> RT_Object? {
         if let other = other.coerce(to: RT_List.self) {
             return RT_List(rt, contents: self.contents + other.contents)
@@ -127,40 +123,6 @@ public class RT_List: RT_Object, AEEncodable {
         RT_Boolean.withValue(rt, 
             contents.contains { $0.equal(to: other)?.truthy ?? false }
         )
-    }
-    
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        switch Commands(command.id) {
-        case .Sequence_add:
-            guard let new = arguments[ParameterInfo(.direct)] else {
-                throw MissingParameter(command: command, parameter: ParameterInfo(.direct))
-            }
-            contents.append(new)
-            return new
-        case .Sequence_remove:
-            guard let toRemove = arguments[ParameterInfo(.direct)] else {
-                throw MissingParameter(command: command, parameter: ParameterInfo(.direct))
-            }
-            if let index = contents.firstIndex(where: { toRemove.compareEqual(with: $0) }) {
-                let item = contents[index]
-                contents.remove(at: index)
-                return item
-            } else {
-                return rt.null
-            }
-        case .Sequence_join:
-            guard let separator = arguments[ParameterInfo(.Sequence_join_with)]?.coerce(to: RT_String.self) else {
-                // TODO: Throw error
-                return nil
-            }
-            guard let strings = contents.map({ $0.coerce(to: RT_String.self)?.value }) as? [String] else {
-                // TODO: Throw error
-                return nil
-            }
-            return RT_String(rt, value: strings.joined(separator: separator.value))
-        default:
-            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-        }
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
