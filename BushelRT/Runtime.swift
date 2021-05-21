@@ -246,7 +246,7 @@ public extension Runtime {
             preconditionFailure("expected function expression but got \(functionExpression)")
         }
         
-        builtin.frameStack.repush()
+        builtin.frameStack.push([:])
         defer {
             builtin.frameStack.pop()
         }
