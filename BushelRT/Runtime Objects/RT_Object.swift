@@ -387,21 +387,6 @@ import Bushel
         return coerced
     }
     
-    /// Asks this object to perform the specified command.
-    ///
-    /// - Parameters:
-    ///   - command: The command to perform.
-    ///   - arguments: The arguments to the command.
-    ///   - implicitDirect: The implicit direct object argument, if any.
-    ///                     This will, for example, not cause errors if it is
-    ///                     unencodable but specified with a remote event.
-    ///
-    /// - Returns: The result of this object executing the command, or
-    ///            `nil` if the command could not be handled.
-    public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        nil
-    }
-    
     // Most of the following default implementations just return nil.
     
     /// The element of the given type at the given index, or nil if none exists.

@@ -1,7 +1,7 @@
 import Bushel
 import SwiftAutomation
 
-public final class RT_RootSpecifier: RT_Object, RT_SASpecifierConvertible {
+public final class RT_RootSpecifier: RT_Object, RT_AESpecifier {
     
     public enum Kind {
         /// Root of all absolute object specifiers.

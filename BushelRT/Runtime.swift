@@ -265,17 +265,11 @@ public extension Runtime {
             //  l = "hello" even though it's not explicitly specified.
             //  Without this special-case, the call would have to be:
             //     cat l "hello, " with "world"
-            var argumentValue: RT_Object = null
-            if index == 0 {
-                argumentValue =
-                    actualArguments[ParameterInfo(parameter.uri)] ??
-                    actualArguments[ParameterInfo(Parameters.direct)] ??
-                    null
-            } else {
-                argumentValue = actualArguments[ParameterInfo(parameter.uri)] ?? null
+            var argumentValue: RT_Object? = actualArguments[ParameterInfo(parameter.uri)]
+            if index == 0, argumentValue == nil {
+                argumentValue = actualArguments[ParameterInfo(.direct)]
             }
-            
-            builtin[variable: argument] = argumentValue
+            builtin[variable: argument] = argumentValue ?? null
         }
         
         do {
@@ -360,6 +354,11 @@ public extension Runtime {
             let newTargetValue = try runPrimary(newTarget, evaluateSpecifiers: false)
             builtin.targetStack.push(newTargetValue)
             defer { builtin.targetStack.pop() }
+            if let newModuleValue = newTargetValue as? RT_Module {
+                builtin.moduleStack.push(newModuleValue)
+                defer { builtin.moduleStack.pop() }
+                return try runPrimary(to)
+            }
             return try runPrimary(to)
         case .let_(let term, let initialValue): // MARK: .let_
             let initialExprValue = try initialValue.map { try runPrimary($0) } ?? null
@@ -480,7 +479,7 @@ public extension Runtime {
             let implementation = RT_ExpressionImplementation(rt: self, functionExpression: expression)
             
             let function = RT_Function(self, signature: signature, implementation: implementation)
-            builtin.moduleStack.top.functions.add(function)
+            builtin.moduleStack.add(function: function)
                 
             return lastResult
         case .multilineString(_, let body): // MARK: .multilineString

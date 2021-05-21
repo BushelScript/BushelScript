@@ -2,7 +2,7 @@ import Bushel
 import SwiftAutomation
 import Carbon.OpenScripting
 
-public class RT_AppleScript: RT_Object {
+public class RT_AppleScript: RT_Object, RT_Module {
     
     public let name: String
     private let value: NSAppleScript
@@ -22,21 +22,21 @@ public class RT_AppleScript: RT_Object {
         typeInfo_
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        let encodedArguments = try encode(arguments: arguments, implicitDirect: implicitDirect, for: self, appData: AppData())
+    public func handle(_ arguments: RT_Arguments) throws -> RT_Object? {
+        let encodedArguments = try aeEncode(arguments, appData: AppData())
         
         let eventClass: AEEventClass
         let eventID: AEEventID
         var subroutineName: String?
-        if let asidName = command.uri.asidName {
+        if let asidName = arguments.command.uri.asidName {
             eventClass = 0x61736372 /* kASAppleScriptSuite 'ascr' */
             eventID = 0x70736272 /* kASSubroutineEvent 'psbr' */
             subroutineName = asidName
-        } else if let (class: classAE4Code, id: idAE4Code) = command.uri.ae8Code {
+        } else if let (class: classAE4Code, id: idAE4Code) = arguments.command.uri.ae8Code {
             eventClass = classAE4Code
             eventID = idAE4Code
         } else {
-            throw UnsupportedCommand(object: self, command: command)
+            throw UnsupportedCommand(object: self, command: arguments.command)
         }
         
         let event = NSAppleEventDescriptor.appleEvent(

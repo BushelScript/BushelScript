@@ -33,10 +33,6 @@ public class RT_Function: RT_Object {
         "function"
     }
     
-    public func call(arguments: RT_Arguments) throws -> RT_Object {
-        try implementation.run(arguments: arguments)
-    }
-    
 }
 
 public protocol RT_Implementation {

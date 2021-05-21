@@ -1,6 +1,6 @@
 import Bushel
 
-public class RT_Script: RT_Object, RT_Module {
+public class RT_Script: RT_Object, RT_LocalModule {
     
     public var name: String?
     
@@ -25,11 +25,5 @@ public class RT_Script: RT_Object, RT_Module {
     }
     
     public var functions = FunctionSet()
-    
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        try
-            runFunction(for: command, arguments: arguments) ??
-            super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-    }
     
 }

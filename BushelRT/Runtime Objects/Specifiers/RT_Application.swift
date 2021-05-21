@@ -1,7 +1,7 @@
 import Bushel
 import SwiftAutomation
 
-public class RT_Application: RT_Object {
+public class RT_Application: RT_Object, RT_AERootSpecifier {
     
     public let bundle: Bundle?
     public let target: TargetApplication
@@ -61,34 +61,10 @@ public class RT_Application: RT_Object {
         typeInfo_
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
-        try performByAppleEvent(command: command, arguments: arguments, implicitDirect: implicitDirect, target: saSpecifier())
-    }
+    // MARK: RT_AERootSpecifier
     
-}
-
-// MARK: RT_SASpecifierConvertible
-extension RT_Application: RT_SASpecifierConvertible {
-    
-    public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
-        saSpecifier()
-    }
-
-    public func saSpecifier() -> RootSpecifier {
+    public var saRootSpecifier: RootSpecifier {
         RootSpecifier(.application, appData: AppData(target: target))
-    }
-    
-}
-
-// MARK: RT_SpecifierRemoteRoot
-extension RT_Application: RT_SpecifierRemoteRoot {
-    
-    public func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        return try specifier.performByAppleEvent(command: CommandInfo(Commands.get), arguments: [ParameterInfo(.direct): specifier], implicitDirect: nil, target: saSpecifier())
-    }
-    
-    public func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, for specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        try specifier.performByAppleEvent(command: command, arguments: arguments, implicitDirect: implicitDirect, target: saSpecifier())
     }
     
 }

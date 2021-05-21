@@ -49,12 +49,12 @@ public final class RT_TestSpecifier: RT_Object {
             let objectSpecifier: SwiftAutomation.ObjectSpecifier
             let other: RT_Object
             let reverse: Bool
-            if let lhsObjectSpecifier = (lhs as? RT_SASpecifierConvertible)?.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifier {
+            if let lhsObjectSpecifier = (lhs as? RT_AESpecifier)?.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifier {
                 objectSpecifier = lhsObjectSpecifier
                 other = rhs
                 reverse = false
             } else {
-                guard let rhsObjectSpecifier = (rhs as? RT_SASpecifierConvertible)?.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifier else {
+                guard let rhsObjectSpecifier = (rhs as? RT_AESpecifier)?.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifier else {
                     return nil
                 }
                 objectSpecifier = rhsObjectSpecifier

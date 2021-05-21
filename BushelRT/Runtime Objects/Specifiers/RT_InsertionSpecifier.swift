@@ -29,7 +29,7 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
     }
     
     public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
-        guard let parent = self.parent as? RT_SASpecifierConvertible else {
+        guard let parent = self.parent as? RT_AESpecifier else {
             return nil
         }
         guard let parentSpecifier = parent.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifierProtocol else {

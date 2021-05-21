@@ -1,20 +1,13 @@
 import Bushel
 import SwiftAutomation
 
-public protocol RT_HierarchicalSpecifier: RT_SASpecifierConvertible {
+public protocol RT_HierarchicalSpecifier: RT_AESpecifier {
     
     var parent: RT_Object { get set }
     
     func evaluateLocally(on evaluatedParent: RT_Object) throws -> RT_Object
     
     func clone() -> Self
-    
-}
-
-public protocol RT_SpecifierRemoteRoot: RT_Object {
-    
-    func evaluate(specifier: RT_HierarchicalSpecifier) throws -> RT_Object
-    func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?, for specifier: RT_HierarchicalSpecifier) throws -> RT_Object
     
 }
 
@@ -43,7 +36,7 @@ extension RT_HierarchicalSpecifier {
 }
 
 /// An unevaluated object specifier.
-public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
+public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module {
     
     public enum Kind {
         case simple, index, name, id
@@ -139,12 +132,12 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
         return value
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
+    public func handle(_ arguments: RT_Arguments) throws -> RT_Object? {
         switch rootAncestor() {
-        case let root as RT_SpecifierRemoteRoot:
-            return try root.perform(command: command, arguments: arguments, implicitDirect: implicitDirect, for: self)
+        case let root as RT_AERootSpecifier:
+            return try self.handleByAppleEvent(arguments, appData: root.saRootSpecifier.appData)
         default:
-            return try super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+            return nil
         }
     }
     
@@ -153,7 +146,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier {
             return saRootSpecifier()
         }
         
-        guard let parent = self.parent as? RT_SASpecifierConvertible else {
+        guard let parent = self.parent as? RT_AESpecifier else {
             return nil
         }
         guard let parentSpecifier = parent.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifierProtocol else {

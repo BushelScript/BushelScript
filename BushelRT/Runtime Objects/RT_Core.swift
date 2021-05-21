@@ -1,7 +1,7 @@
 import Bushel
 import SwiftAutomation
 
-public class RT_Core: RT_Object, RT_Module {
+public class RT_Core: RT_Object, RT_LocalModule {
     
     private static let typeInfo_ = TypeInfo(.coreObject)
     public override class var typeInfo: TypeInfo {
@@ -17,8 +17,8 @@ public class RT_Core: RT_Object, RT_Module {
     public override init(_ rt: Runtime) {
         super.init(rt)
         
-        functions.add(rt, .set, parameters: [.target: .specifier, .set_to: .item]) { arguments in
-            let specifier = try arguments.for(.target, RT_Specifier.self)
+        functions.add(rt, .set, parameters: [.direct: .specifier, .set_to: .item]) { arguments in
+            let specifier = try arguments.for(.direct, RT_Specifier.self)
             let newValue = try arguments.for(.set_to)
             guard let property = specifier.property else {
                 throw NonPropertyIsNotWritable(specifier: specifier)
@@ -28,7 +28,7 @@ public class RT_Core: RT_Object, RT_Module {
         }
         
         functions.add(rt, .delay, parameters: [.direct: .real]) { arguments in
-            let delaySeconds = arguments[ParameterInfo(.direct), RT_Real.self]?.value ?? 1.0
+            let delaySeconds = arguments[.direct, RT_Real.self]?.value ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)
             return rt.null
         }
@@ -49,81 +49,80 @@ public class RT_Core: RT_Object, RT_Module {
                 return rt.null
             }
         }
-        functions.add(rt, .Sequence_join, parameters: [.target: .list, .Sequence_join_with: .string]) { arguments in
-            let list = try arguments.for(.target, RT_List.self)
+        functions.add(rt, .Sequence_join, parameters: [.direct: .list, .Sequence_join_with: .string]) { arguments in
+            let list = try arguments.for(.direct, RT_List.self)
             let separator = try arguments.for(.Sequence_join_with, RT_String.self)
             let strings = list.contents.map { $0.coerce(to: RT_String.self)?.value ?? String(describing: $0) }
             return RT_String(rt, value: strings.joined(separator: separator.value))
         }
         
-        functions.add(rt, .String_split, parameters: [.target: .string, .String_split_by: .string]) { arguments in
-            let string = try arguments.for(.target, RT_String.self)
+        functions.add(rt, .String_split, parameters: [.direct: .string, .String_split_by: .string]) { arguments in
+            let string = try arguments.for(.direct, RT_String.self)
             let separator = try arguments.for(.String_split_by, RT_String.self)
             return RT_List(rt, contents: string.value.components(separatedBy: separator.value).map { RT_String(rt, value: $0) })
         }
         
-        
-        functions.add(rt, .Math_abs, parameters: [.target: .integer]) { arguments in
-            RT_Integer(rt, value: abs(try arguments.for(.target, RT_Integer.self).value))
+        functions.add(rt, .Math_abs, parameters: [.direct: .integer]) { arguments in
+            RT_Integer(rt, value: abs(try arguments.for(.direct, RT_Integer.self).value))
         }
-        functions.add(rt, .Math_abs, parameters: [.target: .real]) { arguments in
-            RT_Real(rt, value: abs(try arguments.for(.target, RT_Real.self).value))
+        functions.add(rt, .Math_abs, parameters: [.direct: .real]) { arguments in
+            RT_Real(rt, value: abs(try arguments.for(.direct, RT_Real.self).value))
         }
-        functions.add(rt, .Math_sqrt, parameters: [.target: .integer]) { arguments in
-            RT_Real(rt, value: sqrt(Double(try arguments.for(.target, RT_Integer.self).value)))
+        functions.add(rt, .Math_sqrt, parameters: [.direct: .integer]) { arguments in
+            RT_Real(rt, value: sqrt(Double(try arguments.for(.direct, RT_Integer.self).value)))
         }
-        functions.add(rt, .Math_sqrt, parameters: [.target: .real]) { arguments in
-            RT_Real(rt, value: sqrt(try arguments.for(.target, RT_Real.self).value))
+        functions.add(rt, .Math_sqrt, parameters: [.direct: .real]) { arguments in
+            RT_Real(rt, value: sqrt(try arguments.for(.direct, RT_Real.self).value))
         }
-        functions.add(rt, .Math_cbrt, parameters: [.target: .integer]) { arguments in
-            RT_Real(rt, value: cbrt(Double(try arguments.for(.target, RT_Integer.self).value)))
+        functions.add(rt, .Math_cbrt, parameters: [.direct: .integer]) { arguments in
+            RT_Real(rt, value: cbrt(Double(try arguments.for(.direct, RT_Integer.self).value)))
         }
-        functions.add(rt, .Math_cbrt, parameters: [.target: .real]) { arguments in
-            RT_Real(rt, value: cbrt(try arguments.for(.target, RT_Real.self).value))
+        functions.add(rt, .Math_cbrt, parameters: [.direct: .real]) { arguments in
+            RT_Real(rt, value: cbrt(try arguments.for(.direct, RT_Real.self).value))
         }
-        functions.add(rt, .Math_pow, parameters: [.target: .integer, .Math_pow_exponent: .integer]) { arguments in
-            let integer = try arguments.for(.target, RT_Integer.self)
+        functions.add(rt, .Math_pow, parameters: [.direct: .integer, .Math_pow_exponent: .integer]) { arguments in
+            let integer = try arguments.for(.direct, RT_Integer.self)
             let exponent = try arguments.for(.Math_pow_exponent, RT_Integer.self)
             return RT_Integer(rt, value: Int64(pow(Double(integer.value), Double(exponent.value))))
         }
-        functions.add(rt, .Math_pow, parameters: [.target: .integer, .Math_pow_exponent: .real]) { arguments in
-            let integer = try arguments.for(.target, RT_Integer.self)
+        functions.add(rt, .Math_pow, parameters: [.direct: .integer, .Math_pow_exponent: .real]) { arguments in
+            let integer = try arguments.for(.direct, RT_Integer.self)
             let exponent = try arguments.for(.Math_pow_exponent, RT_Real.self)
             return RT_Real(rt, value: pow(Double(integer.value), exponent.value))
         }
-        functions.add(rt, .Math_pow, parameters: [.target: .real, .Math_pow_exponent: .integer]) { arguments in
-            let real = try arguments.for(.target, RT_Real.self)
+        functions.add(rt, .Math_pow, parameters: [.direct: .real, .Math_pow_exponent: .integer]) { arguments in
+            let real = try arguments.for(.direct, RT_Real.self)
             let exponent = try arguments.for(.Math_pow_exponent, RT_Integer.self)
             return RT_Real(rt, value: pow(real.value, Double(exponent.value)))
         }
-        functions.add(rt, .Math_pow, parameters: [.target: .real, .Math_pow_exponent: .real]) { arguments in
-            let real = try arguments.for(.target, RT_Real.self)
+        functions.add(rt, .Math_pow, parameters: [.direct: .real, .Math_pow_exponent: .real]) { arguments in
+            let real = try arguments.for(.direct, RT_Real.self)
             let exponent = try arguments.for(.Math_pow_exponent, RT_Real.self)
             return RT_Real(rt, value: pow(real.value, exponent.value))
         }
-        func elementaryFunction(_ function: (Double) -> Double) -> (_ arguments: RT_Arguments) throws -> RT_Real {
+        func elementaryFunction(_ function: @escaping (Double) -> Double) -> (_ arguments: RT_Arguments) throws -> RT_Real {
             { arguments in
-                let real = try arguments.for(.target, RT_Real.self)
+                let real = try arguments.for(.direct, RT_Real.self)
                 return RT_Real(rt, value: function(real.value))
             }
         }
-        functions.add(rt, .Math_ln, parameters: [.target: .real], implementation: elementaryFunction(log))
-        functions.add(rt, .Math_log10, parameters: [.target: .real], implementation: elementaryFunction(log10))
-        functions.add(rt, .Math_log2, parameters: [.target: .real], implementation: elementaryFunction(log2))
-        functions.add(rt, .Math_sin, parameters: [.target: .real], implementation: elementaryFunction(sin))
-        functions.add(rt, .Math_cos, parameters: [.target: .real], implementation: elementaryFunction(cos))
-        functions.add(rt, .Math_tan, parameters: [.target: .real], implementation: elementaryFunction(tan))
-        functions.add(rt, .Math_asin, parameters: [.target: .real], implementation: elementaryFunction(asin))
-        functions.add(rt, .Math_acos, parameters: [.target: .real], implementation: elementaryFunction(acos))
-        functions.add(rt, .Math_atan, parameters: [.target: .real], implementation: elementaryFunction(atan))
-        functions.add(rt, .Math_atan2, parameters: [.target: .real, .Math_atan2_x: .real]) { arguments in
-            let y = try arguments.for(.target, RT_Real.self)
+        functions.add(rt, .Math_ln, parameters: [.direct: .real], implementation: elementaryFunction(log))
+        functions.add(rt, .Math_log10, parameters: [.direct: .real], implementation: elementaryFunction(log10))
+        functions.add(rt, .Math_log2, parameters: [.direct: .real], implementation: elementaryFunction(log2))
+        functions.add(rt, .Math_sin, parameters: [.direct: .real], implementation: elementaryFunction(sin))
+        functions.add(rt, .Math_cos, parameters: [.direct: .real], implementation: elementaryFunction(cos))
+        functions.add(rt, .Math_tan, parameters: [.direct: .real], implementation: elementaryFunction(tan))
+        functions.add(rt, .Math_asin, parameters: [.direct: .real], implementation: elementaryFunction(asin))
+        functions.add(rt, .Math_acos, parameters: [.direct: .real], implementation: elementaryFunction(acos))
+        functions.add(rt, .Math_atan, parameters: [.direct: .real], implementation: elementaryFunction(atan))
+        functions.add(rt, .Math_atan2, parameters: [.direct: .real, .Math_atan2_x: .real]) { arguments in
+            let y = try arguments.for(.direct, RT_Real.self)
             let x = try arguments.for(.Math_atan2_x, RT_Real.self)
             return RT_Real(rt, value: atan2(y.value, x.value))
         }
-        functions.add(rt, .Math_ln, parameters: [.target: .real], implementation: elementaryFunction(round))
-        functions.add(rt, .Math_ln, parameters: [.target: .real], implementation: elementaryFunction(ceil))
-        functions.add(rt, .Math_ln, parameters: [.target: .real], implementation: elementaryFunction(floor))
+        functions.add(rt, .Math_ln, parameters: [.direct: .real], implementation: elementaryFunction(round))
+        functions.add(rt, .Math_ln, parameters: [.direct: .real], implementation: elementaryFunction(ceil))
+        functions.add(rt, .Math_ln, parameters: [.direct: .real], implementation: elementaryFunction(floor))
 
         functions.add(rt, .CLI_log, parameters: [.direct: .item]) { arguments in
             let message = try arguments.for(.direct)
@@ -132,9 +131,9 @@ public class RT_Core: RT_Object, RT_Module {
         }
     }
     
-    public override func perform(command: CommandInfo, arguments: [ParameterInfo : RT_Object], implicitDirect: RT_Object?) throws -> RT_Object? {
+    public func handle(_ arguments: RT_Arguments) throws -> RT_Object? {
         if
-            let commandClass = command.id.ae8Code?.class,
+            let commandClass = arguments.command.id.ae8Code?.class,
             commandClass == (try! FourCharCode(fourByteString: "bShG"))
         {
             // Run GUIHost command
@@ -144,19 +143,17 @@ public class RT_Core: RT_Object, RT_Module {
             
             var arguments = arguments
             if
-                arguments.first(where: { $0.key.uri.ae4Code == Parameters.GUI_ask_title.ae12Code!.code }) == nil,
+                arguments.contents.first(where: { $0.key.uri.ae4Code == Parameters.GUI_ask_title.ae12Code!.code }) == nil,
                 let scriptName = Optional("")//rt.topScript.name
             // FIXME: fix
             {
-                arguments[ParameterInfo(.GUI_ask_title)] = RT_String(rt, value: scriptName)
+                arguments.contents[ParameterInfo(.GUI_ask_title)] = RT_String(rt, value: scriptName)
             }
             
-            return try RT_Application(rt, bundle: guiHostBundle).perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+            return try RT_Application(rt, bundle: guiHostBundle).handle(arguments)
         }
         
-        return try
-            runFunction(for: command, arguments: arguments) ??
-            super.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
+        return try self.handleByLocalFunction(arguments)
     }
     
     public override func property(_ property: PropertyInfo) throws -> RT_Object? {

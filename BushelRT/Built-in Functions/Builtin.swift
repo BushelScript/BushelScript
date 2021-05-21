@@ -184,50 +184,24 @@ final class Builtin {
     }
     
     func run(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object {
-        var argumentsWithoutDirect = arguments
-        argumentsWithoutDirect.removeValue(forKey: ParameterInfo(.direct))
-        
-        var implicitDirect: RT_Object?
-        if arguments[ParameterInfo(.direct)] == nil {
-            implicitDirect = target
+        var arguments = RT_Arguments(command, arguments)
+        if arguments[.target] == nil {
+            arguments.contents[ParameterInfo(.target)] = target
         }
         
-        func catchingErrors(do action: () throws -> RT_Object?) throws -> RT_Object? {
+        return try propagate(from: arguments[.target] as? RT_Module, up: moduleStack) { (module) -> RT_Object? in
             do {
-                return try action()
+                return try module.handle(arguments)
             } catch let error as Unencodable where error.object is CommandInfo || error.object is ParameterInfo {
                 // Tried to send an inapplicable command to a remote object
                 // Ignore it and fall through to the next target
+                return nil
             } catch let error as RaisedObjectError where error.error.rt !== rt {
                 // This error originates from another file (with a different
                 // source mapping). Its location info is meaningless to us.
                 throw RaisedObjectError(error: error.error, location: rt.currentLocation!)
             }
-            return nil
-        }
-        
-        var directArgTarget = arguments[ParameterInfo(.direct)] ?? implicitDirect
-        var defaultTarget = target
-        if let targetArgument = arguments[ParameterInfo(.target)] {
-            defaultTarget = targetArgument
-            // Don't send the message to the direct argument.
-            directArgTarget = nil
-        }
-        
-        return try
-            catchingErrors {
-                try directArgTarget?.perform(command: command, arguments: argumentsWithoutDirect, implicitDirect: implicitDirect)
-            } ??
-            catchingErrors {
-                directArgTarget == defaultTarget ?
-                    nil :
-                    try defaultTarget.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-            } ??
-            catchingErrors {
-                try propagate(up: moduleStack) { module in
-                    try module.perform(command: command, arguments: arguments, implicitDirect: implicitDirect)
-                }
-            } ?? rt.null
+        } ?? rt.null
     }
     
     func runWeave(_ hashbang: String, _ body: String, _ inputObject: RT_Object) -> RT_Object {
@@ -262,43 +236,6 @@ final class Builtin {
         
         // TODO: readDataToEndOfFile caused problems in defaults-edit, apply the solution used there instead
         return RT_String(rt, value: String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!)
-    }
-    
-}
-
-extension SwiftAutomation.Specifier {
-    
-    func perform(_ rt: Runtime, command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> RT_Object {
-        do {
-            let wrappedResultDescriptor = try sendEvent(for: command, arguments: arguments)
-            guard let resultDescriptor = wrappedResultDescriptor.result else {
-                let errorNumber = wrappedResultDescriptor.errorNumber
-                guard errorNumber == 0 else {
-                    throw AutomationError(code: errorNumber)
-                }
-                // No result returned
-                return rt.null
-            }
-            
-            return try RT_Object.fromAEDescriptor(rt, appData, resultDescriptor)
-        } catch let error as CommandError {
-            throw RemoteCommandError(remoteObject: appData.target, command: command, error: error)
-        } catch let error as AutomationError {
-            if error._code == errAEEventNotPermitted {
-                throw RemoteCommandsDisallowed(remoteObject: appData.target)
-            } else {
-                throw RemoteCommandError(remoteObject: appData.target, command: command, error: error)
-            }
-        } catch let error as UnpackError {
-            throw Undecodable(error: error)
-        }
-    }
-    
-    func sendEvent(for command: CommandInfo, arguments: [OSType : NSAppleEventDescriptor]) throws -> ReplyEventDescriptor {
-        guard let codes = command.id.ae8Code else {
-            throw Unencodable(object: command)
-        }
-        return try self.sendAppleEvent(codes.class, codes.id, arguments)
     }
     
 }
@@ -394,9 +331,11 @@ extension RT_HierarchicalSpecifier {
     
     public func evaluate_() throws -> RT_Object {
         switch rootAncestor() {
-        case let root as RT_SpecifierRemoteRoot:
-            // Let remote root handle evaluation.
-            return try root.evaluate(specifier: self)
+        case let root as RT_AERootSpecifier:
+            return try self.handleByAppleEvent(
+                RT_Arguments(CommandInfo(.get), [ParameterInfo(.direct): self]),
+                appData: root.saRootSpecifier.appData
+            )
         default:
             // Eval as a local specifier.
             func evaluateLocalSpecifier(_ specifier: RT_HierarchicalSpecifier, from root: RT_Object) throws -> RT_Object {
