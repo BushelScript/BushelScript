@@ -104,7 +104,7 @@ public struct RT_ExpressionImplementation: RT_Implementation {
     }
     
     public func run(arguments: RT_Arguments) throws -> RT_Object {
-        rt.builtin.frameStack.push([:])
+        rt.builtin.frameStack.repush()
         defer {
             rt.builtin.frameStack.pop()
         }
@@ -153,7 +153,7 @@ public struct RT_BlockImplementation: RT_Implementation {
     }
     
     public func run(arguments: RT_Arguments) throws -> RT_Object {
-        rt.builtin.frameStack.push([:])
+        rt.builtin.frameStack.repush()
         defer {
             rt.builtin.frameStack.pop()
         }
