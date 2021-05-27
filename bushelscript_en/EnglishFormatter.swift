@@ -324,6 +324,10 @@ public final class EnglishFormatter: SourceFormatter {
                 "##\(bihash.delimiter.isEmpty ? "" : "(\(bihash.delimiter))")\n\(body)\n##"
         case .weave(let hashbang, let body):
             return "#!\(hashbang.invocation)\n\(body.removingTrailingWhitespace(removingNewlines: true))"
+        case .debugInspectTerm(let term, message: _):
+            return "debug_inspect_term \(term)"
+        case .debugInspectLexicon(message: _):
+            return "debug_inspect_lexicon"
         }
     }
     

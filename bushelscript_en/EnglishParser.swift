@@ -179,6 +179,8 @@ public final class EnglishParser: SourceParser {
         Term.Name("ref"): handleRef(Term.Name("ref")),
         Term.Name("get"): handleGet(Term.Name("get")),
         Term.Name("set"): handleSet,
+        Term.Name("debug_inspect_term"): handleDebugInspectTerm,
+        Term.Name("debug_inspect_lexicon"): handleDebugInspectLexicon,
     ]
     
     public lazy var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] = [

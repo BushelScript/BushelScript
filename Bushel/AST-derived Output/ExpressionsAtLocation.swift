@@ -94,6 +94,9 @@ extension Expression {
             return []
         case .weave(_, _):
             return []
+        case .debugInspectTerm(_, _),
+             .debugInspectLexicon(_):
+            return []
         }
     }
     
@@ -117,7 +120,7 @@ extension Expression {
     
     public func term() -> Term? {
         switch kind {
-        case .parentheses, .scoped, .sequence, .empty, .that, .it, .tell, .null, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor:
+        case .parentheses, .scoped, .sequence, .empty, .that, .it, .tell, .null, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
             return nil
         case let .use(term),
              let .resource(term),
@@ -127,7 +130,8 @@ extension Expression {
              let .let_(term, _),
              let .define(term, _),
              let .defining(term, _, _),
-             let .function(term, _, _, _, _):
+             let .function(term, _, _, _, _),
+             let .debugInspectTerm(term, _):
             return term
         }
     }

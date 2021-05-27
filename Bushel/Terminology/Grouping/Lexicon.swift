@@ -2,7 +2,7 @@ import Foundation
 
 /// A stack of dictionaries.
 /// Effectively creates a scoping system for terms.
-public struct Lexicon: ByNameTermLookup {
+public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
     
     /// Default ID of the root term.
     public static let defaultRootTermID = Term.ID(Variables.Script)
@@ -56,7 +56,7 @@ public struct Lexicon: ByNameTermLookup {
         if let pathnameComponents = lastStackTermURI.pathname?.components {
             components.append(contentsOf: pathnameComponents)
         } else {
-            components.append("\(lastStackTermURI.scheme);\(lastStackTermURI.name)")
+            components.append("\(lastStackTermURI)")
         }
         components.append(name.normalized)
         print(Term.SemanticURI.Pathname(components).rawValue)
@@ -104,6 +104,14 @@ public struct Lexicon: ByNameTermLookup {
             add(term)
         }
         return terms
+    }
+    
+    public var debugDescription: String {
+        stack
+            .reversed()
+            .enumerated()
+            .map { "\($0.offset + 1): \($0.element.debugDescription)" }
+            .joined(separator: "\n")
     }
     
 }

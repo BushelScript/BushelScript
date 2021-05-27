@@ -58,6 +58,7 @@ public struct ParseError: ParseErrorProtocol {
             case recordKeyValueSeparatorAfterKey(keyValueSeparator: Term.Name)
             case listAndRecordItemSeparatorOrKeyValueSeparatorOrEndMarker(itemSeparator: Term.Name, keyValueSeparator: Term.Name, endMarker: Term.Name)
             case recordItemSeparatorOrEndMarker(itemSeparator: Term.Name, endMarker: Term.Name)
+            case term
             case type
             case listItem
             case recordItem

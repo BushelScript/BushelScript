@@ -251,6 +251,25 @@ extension SourceParser {
         return .get(expression)
     }
     
+    public func handleDebugInspectTerm() throws -> Expression.Kind? {
+        guard let term = try eatTerm() else {
+            throw ParseError(.missing(.term), at: expressionLocation)
+        }
+        let inspection = term.debugDescriptionLong
+        printDebugMessage(inspection)
+        return .debugInspectTerm(term: term, message: inspection)
+    }
+    
+    public func handleDebugInspectLexicon() throws -> Expression.Kind? {
+        let inspection = lexicon.debugDescription
+        printDebugMessage(inspection)
+        return .debugInspectLexicon(message: inspection)
+    }
+    
+    private func printDebugMessage(_ message: String) {
+        os_log("%@:\n%@", log: log, String(entireSource[expressionLocation.range]), message)
+    }
+    
 }
     
 // MARK: Primary and sequence parsing

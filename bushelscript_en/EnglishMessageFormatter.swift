@@ -38,6 +38,8 @@ public final class EnglishMessageFormatter: MessageFormatter {
                     return "‘\(endMarker)’ to end list, ‘\(itemSeparator)’ to separate additional items or ‘\(keyValueSeparator)’ to make a record"
                 case let .recordItemSeparatorOrEndMarker(itemSeparator, endMarker):
                     return "‘\(endMarker)’ to end record or ‘\(itemSeparator)’ to separate additional items"
+                case .term:
+                    return "term"
                 case .type:
                     return "type"
                 case .listItem:

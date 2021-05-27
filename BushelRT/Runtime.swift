@@ -462,6 +462,10 @@ public extension Runtime {
             } else {
                 return builtin.runWeave(hashbang.invocation, body, lastResult)
             }
+        case .debugInspectTerm(_, let message):
+            return RT_String(self, value: message)
+        case .debugInspectLexicon(let message):
+            return RT_String(self, value: message)
         }
     }
     

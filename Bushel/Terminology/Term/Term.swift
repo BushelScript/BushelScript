@@ -1,6 +1,6 @@
 import Foundation
 
-public class Term: Hashable, CustomStringConvertible {
+public class Term: Hashable, CustomStringConvertible, CustomDebugStringConvertible {
     
     public let id: ID
     public let name: Name?
@@ -48,6 +48,13 @@ public class Term: Hashable, CustomStringConvertible {
         } else {
             return "«\(role) \(uri)»"
         }
+    }
+    
+    public var debugDescription: String {
+        "\(name.map { "name: \($0)" } ?? "no name"), role/uri: \(id), exports: \(exports), \(resource.map { "resource: \($0)" } ?? "no resource"), dictionary: \(dictionary.contents.count) element(s)"
+    }
+    public var debugDescriptionLong: String {
+        "\(name.map { "name: \($0)" } ?? "no name"), role/uri: \(id), exports: \(exports), \(resource.map { "resource: \($0)" } ?? "no resource"), dictionary: \(dictionary)"
     }
     
 }

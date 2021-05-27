@@ -99,7 +99,7 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     }
     
     public var debugDescription: String {
-        return "[TermDictionary:\n\t\(byID)\n]"
+        "\(byID)"
     }
     
 }
