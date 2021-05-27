@@ -56,6 +56,8 @@ public final class EnglishMessageFormatter: MessageFormatter {
                     return "weave delimiter"
                 case .weaveDelimiterEndMarker:
                     return "‘)’ to end weave delimiter"
+                case .blockBody:
+                    return "block body (‘do’)"
                 }
             }()
         case let .unmetResourceRequirement(requirement):

@@ -26,8 +26,6 @@ extension Expression {
             return [expression]
         case let .parentheses(expression):
             return [expression]
-        case let .function(name: _, parameters: _, types, arguments: _, body):
-            return types.compactMap { $0 } + [body]
         case let .try_(body, handle):
             return [body, handle]
         case let .if_(condition, then, `else`):
@@ -45,6 +43,10 @@ extension Expression {
         case .define(_, as: _):
             return []
         case let .defining(_, as: _, body):
+            return [body]
+        case let .function(name: _, parameters: _, types, arguments: _, body):
+            return types.compactMap { $0 } + [body]
+        case let .block(arguments: _, body):
             return [body]
         case let .return_(expression):
             return expression.map { [$0] } ?? []
@@ -115,7 +117,7 @@ extension Expression {
     
     public func term() -> Term? {
         switch kind {
-        case .parentheses, .scoped, .sequence, .empty, .that, .it, .tell, .null, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor:
+        case .parentheses, .scoped, .sequence, .empty, .that, .it, .tell, .null, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor:
             return nil
         case let .use(term),
              let .resource(term),

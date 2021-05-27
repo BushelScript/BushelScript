@@ -146,6 +146,8 @@ public final class EnglishParser: SourceParser {
         Term.Name("end"): handleEnd,
         Term.Name("on"): handleFunctionStart,
         Term.Name("to"): handleFunctionStart,
+        Term.Name("take"): handleBlockArgumentNamesStart,
+        Term.Name("do"): handleBlockBodyStart,
         Term.Name("try"): handleTry,
         Term.Name("if"): handleIf,
         Term.Name("repeat"): handleRepeat(Term.Name("repeat")),
@@ -237,6 +239,43 @@ public final class EnglishParser: SourceParser {
         }
         
         return .function(name: functionNameTerm, parameters: parameters, types: types, arguments: arguments, body: body)
+    }
+    
+    private func handleBlockArgumentNamesStart() throws -> Expression.Kind? {
+        var arguments: [Term] = []
+        while let argumentName = try parseTermNameEagerly(stoppingAt: [",", "do"], styling: .variable) {
+            arguments.append(Term(.variable, .id(Term.SemanticURI.Pathname([argumentName.normalized])), name: argumentName))
+            
+            if !tryEating(prefix: ",", spacing: .right) {
+                break
+            }
+        }
+        
+        guard tryEating(prefix: "do") else {
+            throw ParseError(.missing(.blockBody), at: expressionLocation)
+        }
+        
+        return try parseBlockBody(arguments: arguments)
+    }
+    
+    private func handleBlockBodyStart() throws -> Expression.Kind? {
+        try parseBlockBody(arguments: [])
+    }
+    
+    private func parseBlockBody(arguments: [Term]) throws -> Expression.Kind? {
+        let body = try withScope {
+            lexicon.add(Set(arguments))
+            lexicon.add(Term(Term.ID(Dictionaries.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.dictionary))
+            if tryEating(prefix: "\n") {
+                return try parseSequence()
+            } else {
+                guard let expression = try parsePrimary() else {
+                    throw ParseError(.missing(.blockBody), at: expressionLocation)
+                }
+                return expression
+            }
+        }
+        return .block(arguments: arguments, body: body)
     }
     
     private func handleTry() throws -> Expression.Kind? {

@@ -304,6 +304,21 @@ public final class EnglishFormatter: SourceFormatter {
             
             formatted += "end"
             return formatted
+        case .block(let arguments, let body):
+            var formatted = ""
+            
+            if !arguments.isEmpty {
+                formatted += "take \(arguments.map { "\($0)" }.joined(separator: ", ")) "
+            }
+            
+            formatted += "do"
+            if case .sequence = body.kind {
+                formatted += "\n\(format(body, level: level))end"
+            } else {
+                formatted += "\(format(body, level: level))"
+            }
+            
+            return formatted
         case .multilineString(let bihash, let body):
             return
                 "##\(bihash.delimiter.isEmpty ? "" : "(\(bihash.delimiter))")\n\(body)\n##"

@@ -17,6 +17,11 @@ public class RT_Core: RT_Object, RT_LocalModule {
     public override init(_ rt: Runtime) {
         super.init(rt)
         
+        functions.add(rt, .run, parameters: [.target: .function, .direct: .item]) { arguments in
+            let function = try arguments.for(.target, RT_Function.self)
+            return try function.implementation.run(arguments: arguments)
+        }
+        
         functions.add(rt, .set, parameters: [.direct: .specifier, .set_to: .item]) { arguments in
             let specifier = try arguments.for(.direct, RT_Specifier.self)
             let newValue = try arguments.for(.set_to)

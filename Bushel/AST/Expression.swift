@@ -125,14 +125,34 @@ public struct Expression {
         ///
         /// When evaluated, adds a function with the signature identified by
         /// `name`, `parameters`, and the result of each expression in `types`
-        /// to the current module. Yields the equivalent of `.that`.
+        /// to the current module.
         ///
-        /// `body` is the function definition. When the function is called,
-        /// a function dictionary is pushed to the lexicon, each argument is
-        /// bound to a variable term in `arguments`, `body` is evaluated, the
-        /// function dictionary is popped off the lexicon, and the result of
-        /// `body` is yielded.
+        /// `body` is the function definition.
+        /// An invocation of the function performs the following relevant
+        /// actions:
+        ///  - Binds each argument to its matching variable term in `arguments`.
+        ///  - Evaluates `body` and yields its result.
+        ///
+        /// Yields the equivalent of `.that`.
         case function(name: Term, parameters: [Term], types: [Expression?], arguments: [Term], body: Expression)
+        /// Defines an anonymous function that takes a single parameter of type
+        /// `ae4:list`.
+        /// (Note that this does not add the function to any module.)
+        ///
+        /// `body` is the function definition.
+        /// An invocation of the function performs the following relevant
+        /// actions:
+        ///  - Given direct argument object _O_, coerces _O_ to a list _L_
+        ///    and binds the items in _L_ to each variable term in `arguments`,
+        ///    in order.
+        ///    If _L_ is longer than `arguments`, discards the rest of _L_.
+        ///    If _L_ is shorter than `arguments`, binds null to each of
+        ///    the rest of the variable terms in `arguments`.
+        ///    If no direct argument is given, _O_ is an empty list.
+        ///  - Evaluates `body` and yields its result.
+        ///
+        /// Yields the function object.
+        case block(arguments: [Term], body: Expression)
         /// Evaluates its constituent _C_ if it exists, then returns control
         /// from the current function context.
         /// If _C_ exists, the function yields the result of _C_.
@@ -228,7 +248,7 @@ extension Expression {
         case .empty, .that, .it, .null, .resource, .integer, .double, .string, .variable, .enumerator, .type, .multilineString:
             assert(subexpressions().isEmpty)
             return false
-        case .sequence, .scoped, .parentheses, .function, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
+        case .sequence, .scoped, .parentheses, .function, .block, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
             return subexpressions().contains(where: { $0.hasSideEffects })
         case .use, .prefixOperator, .postfixOperator, .infixOperator, .set, .command, .weave:
             return true
@@ -275,8 +295,6 @@ extension Expression.Kind {
             return ("Scoped block expression", "Provides a local dictionary that pops off the lexicon when the expression ends.")
         case .parentheses:
             return ("Parenthesized expression", "Contains an expression to allow for grouping.")
-        case .function:
-            return ("Function definition", "Defines a custom, reusable function.")
         case .try_:
             return ("Try expression", "Executes the contained block. If an error is raised during that execution, executes its “handle” block.")
         case .if_:
@@ -295,6 +313,10 @@ extension Expression.Kind {
             return ("Define expression", "Defines a new term in the current dictionary.")
         case .defining:
             return ("Defining expression", "Defines a new term in the current dictionary, and elaborates on its contents by opening a block where it is the new current dictionary (i.e., is pushed onto the lexicon).")
+        case .function:
+            return ("Function definition", "Defines a custom, reusable function.")
+        case .block:
+            return ("Block expression", "An anonymous function.")
         case .return_:
             return ("Return expression", "Immediately transfers control out of the current function. The result of the function is that of the specified expression, or “null” if absent.")
         case .raise:

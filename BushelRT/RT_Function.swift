@@ -92,15 +92,98 @@ public struct RT_SwiftImplementation: RT_Implementation {
 public struct RT_ExpressionImplementation: RT_Implementation {
     
     var rt: Runtime
-    var functionExpression: Expression
+    var formalParameters: [Term]
+    var formalArguments: [Term]
+    var body: Expression
     
-    public init(rt: Runtime, functionExpression: Expression) {
+    public init(_ rt: Runtime, formalParameters: [Term], formalArguments: [Term], body: Expression) {
         self.rt = rt
-        self.functionExpression = functionExpression
+        self.formalParameters = formalParameters
+        self.formalArguments = formalArguments
+        self.body = body
     }
     
     public func run(arguments: RT_Arguments) throws -> RT_Object {
-        try rt.runFunction(functionExpression, actualArguments: arguments)
+        rt.builtin.frameStack.push([:])
+        defer {
+            rt.builtin.frameStack.pop()
+        }
+        
+        // Create variables for each of the function's parameters.
+        for (index, (parameter, formalArgument)) in zip(formalParameters, formalArguments).enumerated() {
+            // This special-cases the first argument to allow it to fall back
+            // on the value of the direct parameter.
+            //
+            // e.g.,
+            //     to cat: l, with r
+            //         l & r
+            //     end
+            //     cat "hello, " with "world"
+            //
+            //  l = "hello" even though it's not explicitly specified.
+            //  Without this special-case, the call would have to be:
+            //     cat l "hello, " with "world"
+            var argument: RT_Object? = arguments[ParameterInfo(parameter.uri)]
+            if index == 0, argument == nil {
+                argument = arguments[ParameterInfo(.direct)]
+            }
+            rt.builtin[variable: formalArgument] = argument ?? rt.null
+        }
+        
+        do {
+            rt.lastResult = rt.null
+            return try rt.runPrimary(body)
+        } catch let earlyReturn as Runtime.EarlyReturn {
+            return earlyReturn.value
+        }
+    }
+    
+}
+
+public struct RT_BlockImplementation: RT_Implementation {
+    
+    var rt: Runtime
+    var formalArguments: [Term]
+    var body: Expression
+    
+    public init(_ rt: Runtime, formalArguments: [Term], body: Expression) {
+        self.rt = rt
+        self.formalArguments = formalArguments
+        self.body = body
+    }
+    
+    public func run(arguments: RT_Arguments) throws -> RT_Object {
+        rt.builtin.frameStack.push([:])
+        defer {
+            rt.builtin.frameStack.pop()
+        }
+        
+        // Push exactly what we're given as direct argument.
+        rt.builtin.targetStack.push(arguments[.direct, RT_Object.self] ?? rt.null)
+        defer {
+            rt.builtin.targetStack.pop()
+        }
+        
+        // Convert direct argument to list to do variable binding.
+        let directArgumentList =
+            arguments[.direct, RT_List.self] ??
+            RT_List(rt, contents: arguments[.direct].map { [$0] } ?? [])
+        
+        // Bind the items to variables.
+        let directArguments = directArgumentList.contents
+        for (index, formalArgument) in formalArguments.enumerated() {
+            rt.builtin[variable: formalArgument] =
+                (index < directArguments.count) ?
+                directArguments[index] :
+                rt.null
+        }
+        
+        do {
+            rt.lastResult = rt.null
+            return try rt.runPrimary(body)
+        } catch let earlyReturn as Runtime.EarlyReturn {
+            return earlyReturn.value
+        }
     }
     
 }

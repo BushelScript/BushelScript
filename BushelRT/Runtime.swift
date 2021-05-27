@@ -235,52 +235,13 @@ public extension Runtime {
         return result
     }
     
-    private struct EarlyReturn: Error {
+    struct EarlyReturn: Error {
         
         var value: RT_Object
         
     }
     
-    func runFunction(_ functionExpression: Expression, actualArguments: RT_Arguments) throws -> RT_Object {
-        guard case let .function(_, parameters, _, arguments, body) = functionExpression.kind else {
-            preconditionFailure("expected function expression but got \(functionExpression)")
-        }
-        
-        builtin.frameStack.push([:])
-        defer {
-            builtin.frameStack.pop()
-        }
-        
-        // Create variables for each of the function's parameters.
-        for (index, (parameter, argument)) in zip(parameters, arguments).enumerated() {
-            // This special-cases the first argument to allow it to fall back
-            // on the value of the direct parameter.
-            //
-            // e.g.,
-            //     to cat: l, with r
-            //         l & r
-            //     end
-            //     cat "hello, " with "world"
-            //
-            //  l = "hello" even though it's not explicitly specified.
-            //  Without this special-case, the call would have to be:
-            //     cat l "hello, " with "world"
-            var argumentValue: RT_Object? = actualArguments[ParameterInfo(parameter.uri)]
-            if index == 0, argumentValue == nil {
-                argumentValue = actualArguments[ParameterInfo(.direct)]
-            }
-            builtin[variable: argument] = argumentValue ?? null
-        }
-        
-        do {
-            lastResult = null
-            return try runPrimary(body)
-        } catch let earlyReturn as EarlyReturn {
-            return earlyReturn.value
-        }
-    }
-    
-    private func runPrimary(_ expression: Expression, evaluateSpecifiers: Bool = true) throws -> RT_Object {
+    func runPrimary(_ expression: Expression, evaluateSpecifiers: Bool = true) throws -> RT_Object {
         pushLocation(expression.location)
         defer {
             popLocation()
@@ -463,7 +424,7 @@ public extension Runtime {
                 }
             }()
             return RT_InsertionSpecifier(self, parent: parentValue, kind: insertionSpecifier.kind)
-        case .function(let name, let parameters, let types, _, _): // MARK: .function
+        case .function(let name, let parameters, let types, let arguments, let body): // MARK: .function
             let evaluatedTypes = try types.map { try $0.map { try runPrimary($0) } }
             let typeInfos = evaluatedTypes.map { $0.map { ($0 as? RT_Type)?.value ?? TypeInfo(.item) } ?? TypeInfo(.item) }
             
@@ -476,12 +437,23 @@ public extension Runtime {
             }
             let signature = RT_Function.Signature(command: command(forUID: Term.ID(.command, name.uri)), parameters: parameterSignature)
             
-            let implementation = RT_ExpressionImplementation(rt: self, functionExpression: expression)
+            let implementation = RT_ExpressionImplementation(self, formalParameters: parameters, formalArguments: arguments, body: body)
             
             let function = RT_Function(self, signature: signature, implementation: implementation)
             builtin.moduleStack.add(function: function)
                 
             return lastResult
+        case .block(let arguments, let body): // MARK: .block
+            let blockSignature = RT_Function.Signature(
+                command: CommandInfo(.run),
+                parameters: [ParameterInfo(.direct): TypeInfo(.list)]
+            )
+            let implementation = RT_BlockImplementation(
+                self,
+                formalArguments: arguments,
+                body: body
+            )
+            return RT_Function(self, signature: blockSignature, implementation: implementation)
         case .multilineString(_, let body): // MARK: .multilineString
             return RT_String(self, value: body)
         case .weave(let hashbang, let body): // MARK: .weave
