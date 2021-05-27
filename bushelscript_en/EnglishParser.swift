@@ -193,7 +193,7 @@ public final class EnglishParser: SourceParser {
     ]
     
     private func handleFunctionStart() throws -> Expression.Kind? {
-        guard let termName = try parseTermNameEagerly(stoppingAt: [":"]) else {
+        guard let termName = try parseTermNameEagerly(stoppingAt: [":"], styling: .command) else {
             throw AdHocParseError("expected function name", at: SourceLocation(source.range, source: entireSource))
         }
         let functionNameTerm = Term(.variable, lexicon.makeURI(forName: termName), name: termName)
@@ -202,10 +202,10 @@ public final class EnglishParser: SourceParser {
         var types: [Expression?] = []
         var arguments: [Term] = []
         if tryEating(prefix: ":", spacing: .right) {
-            while let parameterTermName = try parseTermNameLazily() {
+            while let parameterTermName = try parseTermNameLazily(styling: .parameter) {
                 parameters.append(Term(.parameter, .id(Term.SemanticURI.Pathname([parameterTermName.normalized])), name: parameterTermName))
                 
-                var argumentName = try parseTermNameEagerly(stoppingAt: expressionGroupingMarkers.map { $0.begin.normalized } + [","]) ?? parameterTermName
+                var argumentName = try parseTermNameEagerly(stoppingAt: expressionGroupingMarkers.map { $0.begin.normalized } + [","], styling: .variable) ?? parameterTermName
                 if argumentName.words.isEmpty {
                     argumentName = parameterTermName
                 }
