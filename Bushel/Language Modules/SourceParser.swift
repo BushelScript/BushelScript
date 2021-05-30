@@ -175,7 +175,7 @@ extension SourceParser {
         
         var name = Term.Name("")
         if hasName {
-            guard let name_ = try parseTermNameEagerly(stoppingAt: stoppingAt) else {
+            guard let name_ = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .resource) else {
                 throw ParseError(.missing(.resourceName), at: currentLocation)
             }
             name = name_
