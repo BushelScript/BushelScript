@@ -59,7 +59,6 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
             components.append("\(lastStackTermURI)")
         }
         components.append(name.normalized)
-        print(Term.SemanticURI.Pathname(components).rawValue)
         return .id(Term.SemanticURI.Pathname(components))
     }
     /// Constructs a universally unique `SemanticURI` with the `id` scheme.
