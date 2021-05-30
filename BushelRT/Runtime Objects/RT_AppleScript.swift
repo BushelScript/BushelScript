@@ -23,6 +23,15 @@ public class RT_AppleScript: RT_Object, RT_Module {
     }
     
     public func handle(_ arguments: RT_Arguments) throws -> RT_Object? {
+        var arguments = arguments
+        if arguments[.direct] == nil {
+            arguments.contents[ParameterInfo(.direct)] = arguments[.target]
+        }
+        
+        // AppleScript handlers almost certainly do not care about the
+        // AE "subject" attribute, so we can safely leave that off.
+        arguments.contents.removeValue(forKey: ParameterInfo(.target))
+        
         let encodedArguments = try aeEncode(arguments, appData: AppData())
         
         let eventClass: AEEventClass

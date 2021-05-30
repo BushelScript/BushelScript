@@ -18,7 +18,7 @@ extension RT_AESpecifier {
     
     func handleByAppleEvent(_ arguments: RT_Arguments, appData: AppData) throws -> RT_Object {
         // SwiftAutomation's Specifier#sendAppleEvent already adds the "subject"
-        // AE parameter for us, so don't attempt to encode the target argument
+        // AE attribute for us, so don't attempt to encode the target argument
         // (target parameters aren't supported for AE commands;
         // the target must be specified with 'tell' et al.).
         var arguments = arguments
