@@ -16,74 +16,28 @@ public final class EnglishFormatter: SourceFormatter {
         case .parentheses(let expression):
             return "(\(format(expression, level: level)))"
         case let .try_(body, handle):
-            var formatted = "try"
-            if case .sequence = body.kind {
-                formatted += "\n"
-            } else {
-                formatted += " "
-            }
-            formatted += format(body, level: level)
-            
-            formatted += "handle"
-            var needsEnd: Bool = true
-            if case .sequence = handle.kind {
-                formatted += "\n"
-                needsEnd = true
-            } else {
-                formatted += " "
-                needsEnd = false
-            }
-            formatted += format(handle, level: level)
-            
-            if needsEnd {
-                formatted += "end"
-            }
-            return formatted
+            return "try"
+                + format(body, level: level, beginKeyword: " ", endKeyword: "handle")
+                + format(handle, level: level, beginKeyword: " ")
         case let .if_(condition, then, else_):
-            var needsEnd: Bool = true
             var formatted = "if \(format(condition, level: level))"
-            if case .sequence = then.kind {
-                formatted += "\n"
-            } else {
-                formatted += " then "
-                needsEnd = false
-            }
-            formatted += format(then, level: level)
-            
+            formatted += format(then, level: level, beginKeyword: " then ", endKeyword: else_ == nil ? nil : "else")
             if let `else` = else_ {
-                formatted += "else"
-                if case .sequence = `else`.kind {
-                    formatted += "\n"
-                    needsEnd = true
-                } else {
-                    formatted += " "
-                    needsEnd = false
-                }
-                formatted += format(`else`, level: level)
-            }
-            
-            if needsEnd {
-                formatted += "end"
+                formatted += format(`else`, level: level, beginKeyword: " ")
             }
             return formatted
         case let .repeatWhile(condition, repeating):
-            return "repeat while \(format(condition, level: level))\n\(format(repeating, level: level))end"
+            return "repeat while \(format(condition, level: level))\(format(repeating, level: level))"
         case let .repeatTimes(times, repeating):
-            return "repeat \(format(times, level: level)) times\n\(format(repeating, level: level))end"
+            return "repeat \(format(times, level: level)) times\(format(repeating, level: level))"
         case let .repeatFor(variable, container, repeating):
-            return "repeat for \(variable) in \(format(container, level: level))\n\(format(repeating, level: level))end"
-        case .tell(let target, let to):
-            if case .sequence = to.kind {
-                return "tell \(format(target, level: level))\n\(format(to, level: level))end"
-            } else {
-                return "tell \(format(target, level: level)) to \(format(to, level: level))"
-            }
+            return "repeat for \(variable) in \(format(container, level: level))\(format(repeating, level: level))"
+        case .tell(let module, let to):
+            return "tell \(format(module, level: level))"
+                + format(to, level: level, beginKeyword: " to ")
         case .target(let target, let body):
-            if case .sequence = body.kind {
-                return "target \(format(target, level: level))\n\(format(body, level: level))"
-            } else {
-                return "target \(format(target, level: level)) then \(format(body, level: level))"
-            }
+            return "target \(format(target, level: level))"
+                + format(body, level: level, beginKeyword: " then ")
         case .let_(let term, let initialValue):
             var formatted = "let \(term)"
             if let initialValue = initialValue {
@@ -101,7 +55,7 @@ public final class EnglishFormatter: SourceFormatter {
             if let existingTerm = existingTerm {
                 formatted += " as \(existingTerm)"
             }
-            formatted += "\n\(format(body, level: level))end"
+            formatted += format(body, level: level)
             return formatted
         case .return_(let returnValue):
             var formatted = "return"
@@ -306,9 +260,8 @@ public final class EnglishFormatter: SourceFormatter {
                 }
             }
             
-            formatted += "\n\(format(body, level: level))"
+            formatted += "\(format(body, level: level))"
             
-            formatted += "end"
             return formatted
         case .block(let arguments, let body):
             var formatted = ""
@@ -318,11 +271,7 @@ public final class EnglishFormatter: SourceFormatter {
             }
             
             formatted += "do"
-            if case .sequence = body.kind {
-                formatted += "\n\(format(body, level: level))end"
-            } else {
-                formatted += "\(format(body, level: level))"
-            }
+                + format(body, level: level, beginKeyword: " ")
             
             return formatted
         case .multilineString(let bihash, let body):
@@ -335,6 +284,10 @@ public final class EnglishFormatter: SourceFormatter {
         case .debugInspectLexicon(message: _):
             return "debug_inspect_lexicon"
         }
+    }
+    
+    public var defaultEndKeyword: String {
+        "end"
     }
     
 }

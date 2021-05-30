@@ -5,6 +5,8 @@ public protocol SourceFormatter {
     
     func reformat(expression: Expression, level: Int) -> String
     
+    var defaultEndKeyword: String { get }
+    
     init()
     
 }
@@ -15,21 +17,23 @@ extension SourceFormatter {
         return format(expression, level: -1)
     }
     
-    public func format(_ expression: Expression, level: Int) -> String {
+    public func format(_ expression: Expression, level: Int, beginKeyword: String? = nil, endKeyword: String? = nil) -> String {
         if case .sequence(let expressions) = expression.kind {
-            guard !expressions.isEmpty else {
-                return "\(indentation(for: level))"
-            }
-            return expressions
-                .map {
-                    let formatted = format($0, level: level + 1)
-                    return indentation(for: $0.kind.deindent ? level : level + 1) + formatted
-                }
-                .joined(separator: "\n")
-                + (level >= 0 ? "\n\(indentation(for: level))" : "")
+            return
+                (!expressions.isEmpty && level >= 0 ? "\n" : "")
+                + expressions
+                    .map {
+                        let formatted = format($0, level: level + 1)
+                        return indentation(for: $0.kind.deindent ? level : level + 1) + formatted
+                    }
+                    .joined(separator: "\n")
+                + (level >= 0 ? "\n\(indentation(for: level))\(endKeyword ?? defaultEndKeyword)" : "")
         }
         
-        return reformat(expression: expression, level: level)
+        return
+            (beginKeyword ?? "")
+            + reformat(expression: expression, level: level)
+            + (endKeyword == nil ? "" : "\n\(indentation(for: level))\(endKeyword!)")
     }
     
     public func indentation(for level: Int) -> String {
