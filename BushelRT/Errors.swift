@@ -10,7 +10,7 @@ public struct Unencodable: LocalizedError {
     
 }
 
-public struct Undecodable : LocalizedError {
+public struct Undecodable: LocalizedError {
     
     public let error: Error
     
@@ -20,7 +20,7 @@ public struct Undecodable : LocalizedError {
     
 }
 
-public struct RemoteCommandError : LocalizedError {
+public struct RemoteCommandError: LocalizedError {
     
     public let remoteObject: Any
     public let command: CommandInfo
@@ -32,7 +32,7 @@ public struct RemoteCommandError : LocalizedError {
     
 }
 
-public struct RemoteCommandsDisallowed : LocalizedError {
+public struct RemoteCommandsDisallowed: LocalizedError {
     
     public let remoteObject: Any
     
@@ -43,7 +43,17 @@ public struct RemoteCommandsDisallowed : LocalizedError {
     
 }
 
-public struct UnsupportedCommand : LocalizedError {
+public struct NotAModule: LocalizedError {
+    
+    public let object: RT_Object
+    
+    public var errorDescription: String? {
+        "\(object) is not a module, so it cannot handle commands; did you mean to target it instead?"
+    }
+    
+}
+
+public struct UnsupportedCommand: LocalizedError {
     
     public let object: RT_Object
     public let command: CommandInfo

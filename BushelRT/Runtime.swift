@@ -311,16 +311,23 @@ public extension Runtime {
                 repeatResult = try runPrimary(repeating)
             }
             return repeatResult ?? lastResult
-        case .tell(let newTarget, let to): // MARK: .tell
-            let newTargetValue = try runPrimary(newTarget, evaluateSpecifiers: false)
-            builtin.targetStack.push(newTargetValue)
-            defer { builtin.targetStack.pop() }
-            if let newModuleValue = newTargetValue as? RT_Module {
-                builtin.moduleStack.push(newModuleValue)
-                defer { builtin.moduleStack.pop() }
-                return try runPrimary(to)
+        case .tell(let newModule, let to): // MARK: .tell
+            let newModuleObject = try runPrimary(newModule, evaluateSpecifiers: false)
+            guard let newModule = newModuleObject as? RT_Module else {
+                throw NotAModule(object: newModuleObject)
+            }
+            builtin.moduleStack.push(newModule)
+            defer {
+                builtin.moduleStack.pop()
             }
             return try runPrimary(to)
+        case .target(let newTarget, let body): // MARK: .target
+            let newTargetValue = try runPrimary(newTarget, evaluateSpecifiers: false)
+            builtin.targetStack.push(newTargetValue)
+            defer {
+                builtin.targetStack.pop()
+            }
+            return try runPrimary(body)
         case .let_(let term, let initialValue): // MARK: .let_
             let initialExprValue = try initialValue.map { try runPrimary($0) } ?? null
             builtin[variable: term] = initialExprValue

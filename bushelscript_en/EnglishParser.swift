@@ -153,6 +153,7 @@ public final class EnglishParser: SourceParser {
         Term.Name("repeat"): handleRepeat(Term.Name("repeat")),
         Term.Name("repeating"): handleRepeat(Term.Name("repeating")),
         Term.Name("tell"): handleTell,
+        Term.Name("target"): handleTarget,
         Term.Name("let"): handleLet,
         Term.Name("define"): handleDefine,
         Term.Name("defining"): handleDefining,
@@ -417,14 +418,14 @@ public final class EnglishParser: SourceParser {
     
     private func handleTell() throws -> Expression.Kind? {
         guard let target = try parsePrimary() else {
-            throw AdHocParseError("expected target expression after ‘tell’", at: currentLocation)
+            throw ParseError(.missing(.expressionAfterKeyword(keyword: Term.Name(["tell"]))), at: currentLocation)
         }
         
         let toStartIndex = currentIndex
         let foundTo = tryEating(prefix: "to")
         let foundNewline = tryEating(prefix: "\n")
         guard foundTo && !foundNewline || !foundTo && foundNewline else {
-            throw AdHocParseError("expected ‘to’ or line break following target expression to begin ‘tell’-block", at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " to", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
+            throw AdHocParseError("expected ‘to’ or line break after target expression to begin ‘tell’ block", at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " to", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
         }
         
         return try withTerminology(of: target) {
@@ -434,13 +435,39 @@ public final class EnglishParser: SourceParser {
             } else {
                 guard let toExpression = try parsePrimary() else {
                     let toLocation = SourceLocation(toStartIndex..<currentIndex, source: entireSource)
-                    throw AdHocParseError("expected expression after ‘to’ in ‘tell’-expression", at: toLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it with a new target", by: AppendingFix(appending: " <#expression#>", at: currentLocation))])
+                    throw ParseError(.missing(.expressionAfterKeyword(keyword: Term.Name(["then"]))), at: toLocation)
                 }
                 toExpr = toExpression
             }
             
-            return .tell(target: target, to: toExpr)
+            return .tell(module: target, to: toExpr)
         }
+    }
+    
+    private func handleTarget() throws -> Expression.Kind? {
+        guard let target = try parsePrimary() else {
+            throw ParseError(.missing(.expressionAfterKeyword(keyword: Term.Name(["target"]))), at: currentLocation)
+        }
+        
+        let thenStartIndex = currentIndex
+        let foundThen = tryEating(prefix: "then")
+        let foundNewline = tryEating(prefix: "\n")
+        guard foundThen && !foundNewline || !foundThen && foundNewline else {
+            throw AdHocParseError("expected ‘then’ or line break after target expression to begin ‘target’ block", at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " then", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
+        }
+        
+        let thenExpr: Expression
+        if foundNewline {
+            thenExpr = try parseSequence()
+        } else {
+            guard let thenExpression = try parsePrimary() else {
+                let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
+                throw ParseError(.missing(.expressionAfterKeyword(keyword: Term.Name(["then"]))), at: thenLocation)
+            }
+            thenExpr = thenExpression
+        }
+        
+        return .target(target: target, body: thenExpr)
     }
     
     private func handleLet() throws -> Expression.Kind? {

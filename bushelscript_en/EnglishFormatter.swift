@@ -78,6 +78,12 @@ public final class EnglishFormatter: SourceFormatter {
             } else {
                 return "tell \(format(target, level: level)) to \(format(to, level: level))"
             }
+        case .target(let target, let body):
+            if case .sequence = body.kind {
+                return "target \(format(target, level: level))\n\(format(body, level: level))"
+            } else {
+                return "target \(format(target, level: level)) then \(format(body, level: level))"
+            }
         case .let_(let term, let initialValue):
             var formatted = "let \(term)"
             if let initialValue = initialValue {

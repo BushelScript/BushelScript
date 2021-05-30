@@ -9,13 +9,13 @@ public protocol SourceFormatter {
     
 }
 
-public extension SourceFormatter {
+extension SourceFormatter {
     
-    func format(_ expression: Expression) -> String {
+    public func format(_ expression: Expression) -> String {
         return format(expression, level: -1)
     }
     
-    func format(_ expression: Expression, level: Int) -> String {
+    public func format(_ expression: Expression, level: Int) -> String {
         if case .sequence(let expressions) = expression.kind {
             guard !expressions.isEmpty else {
                 return "\(indentation(for: level))"
@@ -32,15 +32,15 @@ public extension SourceFormatter {
         return reformat(expression: expression, level: level)
     }
     
-    func indentation(for level: Int) -> String {
+    public func indentation(for level: Int) -> String {
         return String(repeating: "    ", count: level < 0 ? 0 : level)
     }
     
 }
 
-private extension Expression.Kind {
+extension Expression.Kind {
     
-    var deindent: Bool {
+    fileprivate var deindent: Bool {
         switch self {
         case .weave:
             return true
