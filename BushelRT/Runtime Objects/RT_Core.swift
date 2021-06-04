@@ -181,7 +181,7 @@ public class RT_Core: RT_Object, RT_LocalModule {
     public override func element(_ type: TypeInfo, named name: String) throws -> RT_Object? {
         func element() -> RT_Object? {
             switch Types(type.uri) {
-            case .application:
+            case .app:
                 return RT_Application(rt, named: name)
             case .file:
                 return RT_File(rt, value: URL(fileURLWithPath: (name as NSString).expandingTildeInPath))
@@ -200,7 +200,7 @@ public class RT_Core: RT_Object, RT_LocalModule {
     public override func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object? {
         func element() -> RT_Object? {
             switch Types(type.uri) {
-            case .application:
+            case .app:
                 guard
                     let appBundleID = id.coerce(to: RT_String.self)?.value,
                     let appBundle = Bundle(applicationBundleIdentifier: appBundleID)

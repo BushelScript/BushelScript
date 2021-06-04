@@ -85,6 +85,9 @@ translation:
                     - environment var
                     - env variable
                     - env var
+                applescript:
+                    - applescript
+                    - AppleScript
         property:
             ae4:
                 pALL: properties

@@ -17,7 +17,7 @@ public class RT_AppleScript: RT_Object, RT_Module {
         "AppleScript \"\(name)\""
     }
     
-    private static let typeInfo_ = TypeInfo(.application)
+    private static let typeInfo_ = TypeInfo(.applescript)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }

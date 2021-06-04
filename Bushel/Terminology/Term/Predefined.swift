@@ -183,7 +183,6 @@ public enum Types: String, Term.PredefinedID {
     case document
     case file
     case alias
-    case application
     case specifier
     case comparisonTestSpecifier
     case logicalTestSpecifier
@@ -191,6 +190,8 @@ public enum Types: String, Term.PredefinedID {
     case null
     case coreObject
     case script
+    case app
+    case applescript
     case function
     case system
     case error
@@ -232,8 +233,6 @@ public enum Types: String, Term.PredefinedID {
             return cFile
         case .alias:
             return typeAlias
-        case .application:
-            return cApplication
         case .specifier:
             return cObjectSpecifier
         case .comparisonTestSpecifier:
@@ -246,7 +245,9 @@ public enum Types: String, Term.PredefinedID {
             return pClass
         case .null:
             return try! FourCharCode(fourByteString: "msng")
-        case .coreObject, .script, .function, .system, .error, .environmentVariable:
+        case .app:
+            return cApplication
+        case .coreObject, .script, .applescript, .function, .system, .error, .environmentVariable:
             return nil
         }
     }
@@ -286,7 +287,7 @@ public enum Types: String, Term.PredefinedID {
             case typeAlias:
                 self = .alias
             case cApplication:
-                self = .application
+                self = .app
             case cObjectSpecifier:
                 self = .specifier
             case typeCompDescriptor:

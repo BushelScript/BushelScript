@@ -56,7 +56,7 @@ public class RT_Application: RT_Object, RT_AERootSpecifier {
         }
     }
     
-    private static let typeInfo_ = TypeInfo(.application)
+    private static let typeInfo_ = TypeInfo(.app)
     public override class var typeInfo: TypeInfo {
         typeInfo_
     }
