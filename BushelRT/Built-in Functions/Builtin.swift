@@ -189,7 +189,7 @@ final class Builtin {
             arguments.contents[ParameterInfo(.target)] = target
         }
         
-        return try propagate(from: arguments[.target] as? RT_Module, up: moduleStack) { (module) -> RT_Object? in
+        return try propagate(up: moduleStack) { (module) -> RT_Object? in
             do {
                 return try module.handle(arguments)
             } catch let error as Unencodable where error.object is CommandInfo || error.object is ParameterInfo {
