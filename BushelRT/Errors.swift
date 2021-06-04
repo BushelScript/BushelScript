@@ -53,13 +53,12 @@ public struct NotAModule: LocalizedError {
     
 }
 
-public struct UnsupportedCommand: LocalizedError {
+public struct CommandNotHandled: LocalizedError {
     
-    public let object: RT_Object
     public let command: CommandInfo
     
     public var errorDescription: String? {
-        "\(object) does not support perfoming \(command)"
+        "No module handled the command: \(command)"
     }
     
 }

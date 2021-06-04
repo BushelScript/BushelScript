@@ -201,7 +201,7 @@ final class Builtin {
                 // source mapping). Its location info is meaningless to us.
                 throw RaisedObjectError(error: error.error, location: rt.currentLocation!)
             }
-        } ?? rt.null
+        } ?? { throw CommandNotHandled(command: command) }()
     }
     
     func runWeave(_ hashbang: String, _ body: String, _ inputObject: RT_Object) -> RT_Object {

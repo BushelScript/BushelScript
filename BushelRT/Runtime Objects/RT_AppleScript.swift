@@ -45,7 +45,7 @@ public class RT_AppleScript: RT_Object, RT_Module {
             eventClass = classAE4Code
             eventID = idAE4Code
         } else {
-            throw UnsupportedCommand(object: self, command: arguments.command)
+            return nil
         }
         
         let event = NSAppleEventDescriptor.appleEvent(
