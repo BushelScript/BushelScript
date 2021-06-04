@@ -15,11 +15,6 @@ final class Builtin {
         self.targetStack = targetStack
     }
     
-    func throwError(message: String) throws -> Never {
-        let location = rt.currentLocation ?? SourceLocation(at: "".startIndex, source: "")
-        throw RuntimeError(description: message, location: location)
-    }
-    
     public subscript(variable term: Term) -> RT_Object {
         get {
             frameStack.top[term.uri] ?? rt.null
@@ -45,22 +40,14 @@ final class Builtin {
     }
     
     func getSequenceLength(_ sequence: RT_Object) throws -> Int64 {
-        do {
-            guard let length = try sequence.property(rt.property(forUID: Term.ID(Properties.Sequence_length))) as? RT_Numeric else {
-                throw NoNumericPropertyExists(type: sequence.dynamicTypeInfo, property: PropertyInfo(Properties.Sequence_length))
-            }
-            return Int64(length.numericValue.rounded(.up))
-        } catch {
-            try throwError(message: error.localizedDescription)
+        guard let length = try sequence.property(rt.property(forUID: Term.ID(Properties.Sequence_length))) as? RT_Numeric else {
+            throw NoNumericPropertyExists(type: sequence.dynamicTypeInfo, property: PropertyInfo(Properties.Sequence_length))
         }
+        return Int64(length.numericValue.rounded(.up))
     }
     
     func getFromSequenceAtIndex(_ sequence: RT_Object, _ index: Int64) throws -> RT_Object {
-        do {
-            return try sequence.element(rt.type(forUID: Term.ID(Types.item)), at: index) ?? rt.null
-        } catch {
-            try throwError(message: error.localizedDescription)
-        }
+        return try sequence.element(rt.type(forUID: Term.ID(Types.item)), at: index) ?? rt.null
     }
     
     func unaryOp(_ operation: UnaryOperation, _ operand: RT_Object) -> RT_Object {
@@ -176,10 +163,8 @@ final class Builtin {
     func evaluateSpecifier(_ specifier: RT_Object) throws -> RT_Object {
         do {
             return try specifier.evaluate()
-        } catch let error as InFlightRuntimeError {
-            try throwError(message: "error evaluating specifier ‘\(specifier)’: \(error.description)")
         } catch {
-            try throwError(message: "error evaluating specifier ‘\(specifier)’: \(error.localizedDescription)")
+            throw SpecifierEvaluationFailed(specifier: specifier, reason: error)
         }
     }
     

@@ -70,7 +70,7 @@ public class RT_List: RT_Object, AEEncodable {
         let filteredContents = self.filteredContents(type)
         let zeroBasedIndex = index - 1
         guard filteredContents.indices.contains(Int(zeroBasedIndex)) else {
-            throw InFlightRuntimeError(description: "Index ‘\(index)’ is out of bounds for ‘\(self)’")
+            throw IndexOutOfBounds(index: index, container: self)
         }
         return filteredContents[Int(zeroBasedIndex)]
     }
@@ -95,11 +95,11 @@ public class RT_List: RT_Object, AEEncodable {
     public override func elements(_ type: TypeInfo, from: RT_Object, thru: RT_Object) throws -> RT_Object {
         let filteredContents = self.filteredContents(type)
         
-        guard
-            let fromNum = ((from.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (from.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue,
-            let thruNum = ((thru.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (thru.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue
-        else {
-            throw InFlightRuntimeError(description: "By-range specifiers require numeric indices, not \(from) and \(thru)")
+        guard let fromNum = ((from.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (from.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue else {
+            throw InvalidSpecifierDataType(specifierType: .byRange, specifierData: from)
+        }
+        guard let thruNum = ((thru.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (thru.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue else {
+            throw InvalidSpecifierDataType(specifierType: .byRange, specifierData: thru)
         }
         
         let zeroBasedFrom = Int(fromNum - 1)
@@ -108,7 +108,7 @@ public class RT_List: RT_Object, AEEncodable {
             filteredContents.indices.contains(zeroBasedFrom),
             filteredContents.indices.contains(zeroBasedThru)
         else {
-            throw InFlightRuntimeError(description: "Range ‘(\(zeroBasedFrom + 1)) thru (\(zeroBasedThru + 1))’ is out of bounds for ’\(self)’")
+            throw RangeOutOfBounds(rangeStart: from, rangeEnd: thru, container: self)
         }
         
         return RT_List(rt, contents: Array(filteredContents[zeroBasedFrom...zeroBasedThru]))

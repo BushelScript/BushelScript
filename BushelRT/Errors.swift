@@ -190,6 +190,7 @@ public struct InvalidSpecifierDataType: LocalizedError {
         case byIndex = "by-index"
         case byName = "by-name"
         case simple = "simple"
+        case byRange = "by-range"
         case byTest = "by-test"
         
     }
@@ -230,6 +231,39 @@ public struct MissingResource: LocalizedError {
     
     public var errorDescription: String? {
         "Missing required resource: \(resourceDescription)"
+    }
+    
+}
+
+public struct IndexOutOfBounds: LocalizedError {
+    
+    public let index: Any
+    public let container: RT_Object
+    
+    public var errorDescription: String? {
+        "Index \(index) is out of bounds for \(container)"
+    }
+    
+}
+
+public struct RangeOutOfBounds: LocalizedError {
+    
+    public let rangeStart: Any, rangeEnd: Any
+    public let container: RT_Object
+    
+    public var errorDescription: String? {
+        "Range \(rangeStart) thru \(rangeEnd) is out of bounds for \(container)"
+    }
+    
+}
+
+public struct SpecifierEvaluationFailed: LocalizedError {
+    
+    public let specifier: RT_Object
+    public let reason: Error
+    
+    public var errorDescription: String? {
+        "Failed to evaluate specifier \(specifier): \(reason)"
     }
     
 }
