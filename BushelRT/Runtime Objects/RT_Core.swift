@@ -39,32 +39,29 @@ public class RT_Core: RT_Object, RT_LocalModule {
         }
         
         functions.add(rt, .Sequence_add, parameters: [.target: .list, .direct: .item]) { arguments in
-            let newItem = try arguments.for(.direct)
-            try arguments.for(.target, RT_List.self).contents.append(newItem)
-            return newItem
+            let list = try arguments.for(.target, RT_List.self)
+            let toAdd = try arguments.for(.direct)
+            list.contents.append(toAdd)
+            return list
         }
         functions.add(rt, .Sequence_remove, parameters: [.target: .list, .direct: .item]) { arguments in
             let list = try arguments.for(.target, RT_List.self)
             let toRemove = try arguments.for(.direct)
             if let index = list.contents.firstIndex(where: { toRemove.compareEqual(with: $0) }) {
+                list.contents.remove(at: index)
+            }
+            return list
+        }
+        functions.add(rt, .Sequence_pluck, parameters: [.target: .list, .direct: .item]) { arguments in
+            let list = try arguments.for(.target, RT_List.self)
+            let toTake = try arguments.for(.direct)
+            if let index = list.contents.firstIndex(where: { toTake.compareEqual(with: $0) }) {
                 let item = list.contents[index]
                 list.contents.remove(at: index)
                 return item
             } else {
                 return rt.null
             }
-        }
-        functions.add(rt, .Sequence_join, parameters: [.direct: .list, .Sequence_join_with: .string]) { arguments in
-            let list = try arguments.for(.direct, RT_List.self)
-            let separator = try arguments.for(.Sequence_join_with, RT_String.self)
-            let strings = list.contents.map { $0.coerce(to: RT_String.self)?.value ?? String(describing: $0) }
-            return RT_String(rt, value: strings.joined(separator: separator.value))
-        }
-        
-        functions.add(rt, .String_split, parameters: [.direct: .string, .String_split_by: .string]) { arguments in
-            let string = try arguments.for(.direct, RT_String.self)
-            let separator = try arguments.for(.String_split_by, RT_String.self)
-            return RT_List(rt, contents: string.value.components(separatedBy: separator.value).map { RT_String(rt, value: $0) })
         }
         
         functions.add(rt, .Math_abs, parameters: [.direct: .integer]) { arguments in

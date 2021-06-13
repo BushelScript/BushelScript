@@ -46,7 +46,7 @@ public class RT_String: RT_Object, AEEncodable {
     
     public override func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object? {
         let zeroBasedIndex = index - 1
-        if type.isA(RT_Character.typeInfo) {
+        if RT_Character.typeInfo.isA(type) {
             return RT_Character(rt, value: value[value.index(value.startIndex, offsetBy: Int(zeroBasedIndex))])
         } else {
             return try super.element(type, at: index)
@@ -67,10 +67,29 @@ public class RT_String: RT_Object, AEEncodable {
     }
     
     public override func elements(_ type: TypeInfo) throws -> RT_Object {
-        if type.isA(RT_Character.typeInfo) {
-            return RT_List(rt, contents: value.map { RT_Character(rt, value: $0) })
+        if RT_Character.typeInfo.isA(type) {
+            return self
         } else {
             return try super.elements(type)
+        }
+    }
+    
+    public override func elements(_ type: TypeInfo, from: RT_Object, thru: RT_Object) throws -> RT_Object {
+        if RT_Character.typeInfo.isA(type) {
+            let from = try Int(from.coerceOrThrow(to: RT_Integer.self).value)
+            let thru = try Int(thru.coerceOrThrow(to: RT_Integer.self).value)
+            guard from >= 1, thru <= value.count else {
+                throw RangeOutOfBounds(rangeStart: from, rangeEnd: thru, container: self)
+            }
+            if from > thru {
+                return RT_String(rt, value: "")
+            }
+            let substring = value[
+                value.index(value.startIndex, offsetBy: from - 1)...value.index(value.startIndex, offsetBy: thru - 1)
+            ]
+            return RT_String(rt, value: String(substring))
+        } else {
+            return try super.elements(type, from: from, thru: thru)
         }
     }
     

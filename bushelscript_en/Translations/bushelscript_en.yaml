@@ -204,9 +204,7 @@ translation:
                 Sequence:
                     add: add
                     remove: remove
-                    join: join
-                String:
-                    split: split
+                    pluck: pluck
                 CLI:
                     log: log
         parameter:
@@ -256,13 +254,8 @@ translation:
                         .target: to
                     remove:
                         .target: from
-                    join:
-                        with:
-                            - with
-                            - by
-                String:
-                    split:
-                        by: by
+                    pluck:
+                        .target: from
                 CLI:
                     log:
                         .direct: message

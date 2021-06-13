@@ -485,9 +485,7 @@ public enum Commands: String, Term.PredefinedID {
     
     case Sequence_add
     case Sequence_remove
-    case Sequence_join
-    
-    case String_split
+    case Sequence_pluck
     
     case GUI_notification
     case GUI_alert
