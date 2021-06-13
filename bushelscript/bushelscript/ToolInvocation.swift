@@ -36,7 +36,7 @@ extension ToolInvocation {
         if !files.isEmpty {
             for file in files {
                 let file = String(file)
-                lastResult = run(&state, source: try String(contentsOfFile: file), fileName: file, url: URL(fileURLWithPath: file))
+                lastResult = run(&state, source: try String.read(fromPath: file), fileName: file, url: URL(fileURLWithPath: file))
             }
         }
         if interactive {

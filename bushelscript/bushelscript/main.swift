@@ -51,7 +51,7 @@ NotificationCenter.default.addObserver(forName: NSApplication.didFinishLaunching
     do {
         try invocation.run()
     } catch {
-        print("\(error)")
+        print("\(error.localizedDescription)")
     }
 }
 

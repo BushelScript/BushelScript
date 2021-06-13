@@ -15,6 +15,7 @@
 		3C47424922FA02E8006EEF85 /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47424822FA02E8006EEF85 /* Output.swift */; };
 		3C47424D22FA26D3006EEF85 /* ToolInvocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47424C22FA26D3006EEF85 /* ToolInvocation.swift */; };
 		3C6B75CA2305E0260006C354 /* Versions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C92305E0260006C354 /* Versions.swift */; };
+		3C6DFC99267673550021387E /* IO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6DFC98267673550021387E /* IO.swift */; };
 		3C8CE03A23D4D34900882F76 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8CE03923D4D34900882F76 /* StringExtensions.swift */; };
 /* End PBXBuildFile section */
 
@@ -111,6 +112,7 @@
 		3C6B75C22305D5960006C354 /* BushelScriptEnglish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelScriptEnglish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C6B75C92305E0260006C354 /* Versions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Versions.swift; sourceTree = "<group>"; };
 		3C6B75CB2305F1F90006C354 /* BushelLanguage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelLanguage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C6DFC98267673550021387E /* IO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IO.swift; sourceTree = "<group>"; };
 		3C8CE03923D4D34900882F76 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -169,6 +171,7 @@
 				3C47423B22F9F85E006EEF85 /* main.swift */,
 				3C47424622FA00F7006EEF85 /* ArgumentParsing.swift */,
 				3C47424C22FA26D3006EEF85 /* ToolInvocation.swift */,
+				3C6DFC98267673550021387E /* IO.swift */,
 				3C47424822FA02E8006EEF85 /* Output.swift */,
 				3C6B75C92305E0260006C354 /* Versions.swift */,
 				3C8CE03923D4D34900882F76 /* StringExtensions.swift */,
@@ -317,6 +320,7 @@
 				3C47424922FA02E8006EEF85 /* Output.swift in Sources */,
 				3C47423C22F9F85E006EEF85 /* main.swift in Sources */,
 				3C6B75CA2305E0260006C354 /* Versions.swift in Sources */,
+				3C6DFC99267673550021387E /* IO.swift in Sources */,
 				3C47424D22FA26D3006EEF85 /* ToolInvocation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
