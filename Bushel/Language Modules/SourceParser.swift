@@ -63,6 +63,8 @@ extension SourceParser {
     public init(translations allTranslations: [Translation]) {
         self.init()
         
+        self.entireSource = ""
+        
         // Handle top-level Script and Core terms specially:
         // Push Script, then push Core.
         var translations = allTranslations
@@ -103,40 +105,45 @@ extension SourceParser {
     }
     
     public func parse(source: String, ignoringImports: Set<URL> = []) throws -> Program {
+        self.entireSource = source
+        self.source = Substring(source)
+        self.nativeImports = ignoringImports
+        return try parseDocument()
+    }
+    
+    public func continueParsing(from newSource: String) throws -> Program {
+        let previousSource = self.entireSource
+        self.entireSource += newSource
+        self.source = self.entireSource[self.entireSource.index(self.entireSource.startIndex, offsetBy: previousSource.count)...]
+        return try parseDocument()
+    }
+    
+    private func parseDocument() throws -> Program {
         signpostBegin()
         defer { signpostEnd() }
         
-        self.entireSource = source
-        self.source = Substring(source)
-        self.expressionStartIndex = source.startIndex
         self.sequenceNestingLevel = -1
         self.elements = []
         
-        self.nativeImports = ignoringImports
-        
-        guard !source.isEmpty else {
+        guard !entireSource.isEmpty else {
             return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, rootTerm: lexicon.rootTerm)
         }
         
         buildTraversalTables()
         
-        defer { lexicon.pop() }
+        defer {
+            lexicon.pop()
+        }
         do {
-            return Program(try parseDocument(), elements, source: entireSource, rootTerm: lexicon.rootTerm)
+            let sequence = try parseSequence()
+            eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
+            return Program(sequence, elements, source: entireSource, rootTerm: lexicon.rootTerm)
         } catch var error as ParseErrorProtocol {
             if !entireSource.range.contains(error.location.range.lowerBound) {
                 error.location.range = entireSource.index(before: entireSource.endIndex)..<entireSource.endIndex
             }
             throw messageFormatter.format(error: error)
         }
-    }
-    
-    private func parseDocument() throws -> Expression {
-        let sequence = try parseSequence()
-        
-        eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
-        
-        return sequence
     }
     
     private func buildTraversalTables() {
@@ -354,6 +361,11 @@ extension SourceParser {
     }
     
     public func parsePrimary(lastOperation: BinaryOperation? = nil) throws -> Expression? {
+        expressionStartIndices.append(currentIndex)
+        defer {
+            expressionStartIndices.removeLast()
+        }
+        
         guard var primary = try (parsePrefixOperators() ?? parseUnprocessedPrimary()) else {
             return nil
         }
@@ -407,13 +419,10 @@ extension SourceParser {
             
             eatBinaryOperator()
             
-            let totalExpressionStartIndex = expressionStartIndex
             source.removeLeadingWhitespace()
             guard let rhs = try parsePrimary(lastOperation: operation) else {
                 throw ParseError(.missing(.expressionAfterBinaryOperator), at: currentLocation)
             }
-            
-            expressionStartIndex = totalExpressionStartIndex
             return Expression(.infixOperator(operation: operation, lhs: lhs, rhs: rhs), at: expressionLocation)
         } else if
             lhsPrecedence > rhsPrecedence ||
@@ -472,10 +481,6 @@ extension SourceParser {
     
     private func parseUnprocessedPrimary() throws -> Expression? {
         eatCommentsAndWhitespace()
-        expressionStartIndex = currentIndex
-        defer {
-            expressionStartIndices.removeLast()
-        }
         
         if let bihash = try eatBihash() {
             var body = ""
@@ -1188,12 +1193,7 @@ extension SourceParser {
     }
     
     public var expressionStartIndex: String.Index {
-        get {
-            expressionStartIndices.last ?? entireSource.startIndex
-        }
-        set {
-            expressionStartIndices.append(newValue)
-        }
+        expressionStartIndices.last ?? entireSource.startIndex
     }
     
     public var termNameLocation: SourceLocation {
