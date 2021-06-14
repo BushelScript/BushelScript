@@ -118,23 +118,7 @@ struct BushelScript: ParsableCommand {
     
     private func runFile(_ path: String, fileName: String, url: URL? = nil) throws {
         var source = try String.read(fromPath: path)
-        var language = options.language
-        var firstLine = source.prefix(while: { !$0.isNewline })
-        firstLine.removeLeadingWhitespace()
-        if firstLine.hasPrefix("#!") {
-            let hashbang = String(firstLine)
-            let languageIDRegex = try! NSRegularExpression(pattern: "-l\\s*(\\w+)", options: [])
-            if
-                let match = languageIDRegex.firstMatch(in: hashbang, options: [], range: NSRange(hashbang.range, in: hashbang)),
-                let languageIDRange = Range<String.Index>(match.range(at: 1), in: hashbang)
-            {
-                language = String(hashbang[languageIDRange])
-            }
-            source = String(
-                source[hashbang.endIndex...]
-                .drop(while: { $0.isNewline })
-            )
-        }
+        let language = LanguageModule.takeLanguageFromHashbang(&source) ?? options.language
         return try run(parser: try module(for: language).parser(), rt: Runtime(), source: source, fileName: fileName, url: url)
     }
     
@@ -193,19 +177,9 @@ struct BushelScript: ParsableCommand {
     
 }
 
-private struct NoSuchLanguage: LocalizedError {
-    
-    var language: String
-    
-    var errorDescription: String? {
-        "Language module not found: \(language)"
-    }
-    
-}
-
 private func module(for language: String) throws -> LanguageModule {
     guard let languageModule = LanguageModule(identifier: language) else {
-        throw NoSuchLanguage(language: language)
+        throw NoSuchLanguageModule(languageID: language)
     }
     return languageModule
 }
