@@ -247,7 +247,7 @@ private func printLocationSnippet(for location: SourceLocation, in source: Strin
         let highlightIndentCount = source.distance(from: line.startIndex, to: location.range.lowerBound)
         let highlightIndentation = String(repeating: " ", count: highlightIndentCount)
         
-        print("\(indentation)\(highlightIndentation)\(rangeLength <= 1 ? "^" : String(repeating: "~", count: rangeLength))")
+        print("\(indentation)\(highlightIndentation)\(rangeLength < 1 ? "^" : String(repeating: "~", count: rangeLength))")
         print("\(indentation)\(highlightIndentation)HERE")
     }
 }
