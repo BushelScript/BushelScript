@@ -39,6 +39,25 @@ struct BushelScript: ParsableCommand {
     @OptionGroup
     var mode: Mode
     
+    @Argument(help: "Arguments to pass to the script.")
+    var arguments: [String] = []
+    
+    private var scriptName: String {
+        if mode.interactive {
+            return "<repl>"
+        }
+        if !mode.lines.isEmpty {
+            return "<command-line>"
+        }
+        if let file = mode.scriptFile {
+            return file == "-" ? "<stdin>" : URL(fileURLWithPath: file).lastPathComponent
+        }
+        fatalError("unreachable")
+    }
+    private func runtime() -> Runtime {
+        return Runtime(arguments: arguments, scriptName: scriptName)
+    }
+    
     struct Options: ParsableArguments {
         
         @Option(
@@ -67,7 +86,6 @@ struct BushelScript: ParsableCommand {
         @Option(
             name: [.customShort("e")],
             parsing: ArrayParsingStrategy.unconditionalSingleValue,
-            
             help: ArgumentHelp(
                 "A line of code to be stitched into a script and then run.",
                 discussion: "Multiple -e may be specified, one per line of code.",
@@ -82,19 +100,25 @@ struct BushelScript: ParsableCommand {
         @Flag(name: [.short, .long], help: "Show version information.")
         var version = false
         
-        func validate() throws {
-            if version {
-                return
-            }
-            let modeCount = [interactive, !lines.isEmpty, scriptFile != nil].filter({ $0 }).count
-            guard modeCount != 0 else {
-                throw CleanExit.helpRequest()
-            }
-            guard modeCount == 1 else {
-                throw ValidationError("-i, -e and <script-file> are mutually exclusive.")
-            }
+    }
+    
+    mutating func validate() throws {
+        if mode.version {
+            return
         }
-        
+        if let scriptFile = mode.scriptFile, mode.interactive || !mode.lines.isEmpty {
+            // Hack: Treat as script argument. (I don't know how to make
+            // ArgumentParser treat these as mutually exclusive.)
+            arguments.insert(scriptFile, at: 0)
+            mode.scriptFile = nil
+        }
+        let modeCount = [mode.interactive, !mode.lines.isEmpty, mode.scriptFile != nil].filter({ $0 }).count
+        guard modeCount != 0 else {
+            throw CleanExit.helpRequest()
+        }
+        guard modeCount == 1 else {
+            throw ValidationError("-i, -e and <script-file> are mutually exclusive.")
+        }
     }
     
     func run() throws {
@@ -106,10 +130,10 @@ struct BushelScript: ParsableCommand {
         } else if !mode.lines.isEmpty {
             let source = mode.lines.map { String($0) }.joined(separator: "\n")
             let parser = try LanguageModule(identifier: options.language).parser()
-            try run(parser: parser, rt: Runtime(), source: source, fileName: "<command-line>")
+            try run(parser: parser, rt: runtime(), source: source, fileName: scriptName)
         } else if let file = mode.scriptFile {
             if file == "-" {
-                try runFile(stdin, fileName: "<stdin>")
+                try runFile(stdin, fileName: scriptName)
             } else {
                 try runFile(file, fileName: file, url: URL(fileURLWithPath: file))
             }
@@ -119,7 +143,7 @@ struct BushelScript: ParsableCommand {
     private func runFile(_ path: String, fileName: String, url: URL? = nil) throws {
         var source = try String.read(fromPath: path)
         let language = LanguageModule.takeLanguageFromHashbang(&source) ?? options.language
-        return try run(parser: try LanguageModule(identifier: language).parser(), rt: Runtime(), source: source, fileName: fileName, url: url)
+        return try run(parser: try LanguageModule(identifier: language).parser(), rt: runtime(), source: source, fileName: fileName, url: url)
     }
     
     private func runREPL() throws {
@@ -137,7 +161,7 @@ struct BushelScript: ParsableCommand {
         }
         
         let parser = try LanguageModule(identifier: options.language).parser()
-        let rt = Runtime()
+        let rt = runtime()
         while let line = try prompt() {
             let trimmed = Substring(line).trimmingWhitespace()
             guard !(trimmed == ":exit") else {
@@ -154,7 +178,7 @@ struct BushelScript: ParsableCommand {
                 let result = try rt.run(program)
                 print(result)
             } catch {
-                printError(error, in: parser.entireSource, fileName: "<repl>")
+                printError(error, in: parser.entireSource, fileName: scriptName)
                 parser.entireSource = oldEntireSource + lineBreak
                 continue
             }

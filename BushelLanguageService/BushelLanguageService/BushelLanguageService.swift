@@ -113,11 +113,11 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
         reply(expressions.release(expression))
     }
     
-    func runProgram(_ program: Any, scriptName: String?, currentApplicationID: String?, reply: @escaping (Any?, Any?) -> Void) {
+    func runProgram(_ program: Any, arguments: [String], scriptName: String?, reply: @escaping (Any?, Any?) -> Void) {
         guard let program = programs[program] else {
             return reply(nil, nil)
         }
-        let rt = Runtime(scriptName: scriptName, currentApplicationBundleID: currentApplicationID)
+        let rt = Runtime(arguments: arguments, scriptName: scriptName)
         do {
             let result = try rt.run(program)
             reply(objects.retain(result), nil)

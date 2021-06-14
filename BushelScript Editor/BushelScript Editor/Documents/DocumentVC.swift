@@ -322,7 +322,7 @@ class DocumentVC: NSViewController {
     
     private func run(_ program: ProgramToken, _ service: BushelLanguageServiceProtocol, _ language: LanguageModuleToken, then: @escaping (_ service: BushelLanguageServiceProtocol, _ language: LanguageModuleToken, _ result: Result<RTObjectToken, ErrorToken>) -> Void) {
         pushStatus(.running)
-        service.runProgram(program, scriptName: self.document.displayName, currentApplicationID: Bundle(for: DocumentVC.self).bundleIdentifier!) { result, error in
+        service.runProgram(program, arguments: [], scriptName: self.document.displayName!) { result, error in
             self.popStatus(.running)
             if let error = error as ErrorToken? {
                 then(service, language, .failure(error))

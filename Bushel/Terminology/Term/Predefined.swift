@@ -319,6 +319,7 @@ public enum Properties: String, Term.PredefinedID {
     case index
     
     case topScript
+    case arguments
     
     case currentDate
     

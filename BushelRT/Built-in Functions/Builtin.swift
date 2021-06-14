@@ -132,7 +132,7 @@ final class Builtin {
                     if let libraryRT = nativeLibraryRTs[url] {
                         return libraryRT.topScript
                     } else {
-                        let libraryRT = Runtime(scriptName: term.name!.normalized, currentApplicationBundleID: self.rt.currentApplicationBundleID)
+                        let libraryRT = Runtime(scriptName: term.name!.normalized)
                         
                         _ = try libraryRT.run(program)
                         

@@ -160,6 +160,8 @@ public class RT_Core: RT_Object, RT_LocalModule {
     
     public override func property(_ property: PropertyInfo) throws -> RT_Object? {
         switch Properties(property.id) {
+        case .arguments:
+            return RT_List(rt, contents: rt.arguments.map { RT_String.init(rt, value: $0) })
         case .currentDate:
             return RT_Date(rt, value: Date())
         case .Math_NaN:

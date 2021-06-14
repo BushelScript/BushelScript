@@ -57,12 +57,12 @@ public class Runtime {
         locations.last
     }
     
+    public var arguments: [String] = []
     public var scriptName: String?
-    public var currentApplicationBundleID: String?
     
-    public init(scriptName: String? = nil, currentApplicationBundleID: String? = nil) {
+    public init(arguments: [String] = [], scriptName: String? = nil) {
+        self.arguments = arguments
         self.scriptName = scriptName
-        self.currentApplicationBundleID = currentApplicationBundleID
     }
     
     public lazy var topScript = RT_Script(self, name: scriptName)

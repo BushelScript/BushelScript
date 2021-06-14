@@ -19,14 +19,6 @@ public class RT_Application: RT_Object, RT_AERootSpecifier {
         super.init(rt)
     }
     
-    public convenience init(_ rt: Runtime, currentApplication: ()) {
-        if let bundleID = rt.currentApplicationBundleID {
-            self.init(rt, target: .bundleIdentifier(bundleID, false))
-        } else {
-            self.init(rt, target: .current)
-        }
-    }
-    
     public convenience init?(_ rt: Runtime, named name: String) {
         guard
             let appBundleID = TargetApplication.name(name).bundleIdentifier,

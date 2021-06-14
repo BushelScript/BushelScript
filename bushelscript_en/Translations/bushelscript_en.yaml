@@ -102,6 +102,9 @@ translation:
                 # This would be id:environment variable:value
                 valL: value
             id:
+                arguments:
+                    - args
+                    - arguments
                 current date: current date
                 file:
                     basename:
