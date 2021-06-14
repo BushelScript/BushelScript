@@ -126,7 +126,7 @@ func errorMessage(_ err: Any) -> String {
 // error classes
 
 // base class for all SwiftAutomation-raised errors (not including NSErrors raised by underlying Cocoa APIs)
-public class AutomationError: Error, CustomStringConvertible {
+public class AutomationError: LocalizedError {
     public let _domain = "SwiftAutomation"
     public let _code: Int // the OSStatus if known, or generic error code if not
     public let cause: Error? // the error that triggered this failure, if any
@@ -153,10 +153,11 @@ public class AutomationError: Error, CustomStringConvertible {
         }
         return string
     }
-
-    public var description: String {
-        return self.description(0)
+    
+    public var errorDescription: String? {
+        self.description(0)
     }
+    
 }
 
 
@@ -282,7 +283,7 @@ public class CommandError: AutomationError { // raised whenever an application c
         formatCommand(self.commandInfo, applicationObject: self.appData.application)
     }
     
-    public override var description: String {
+    public override var errorDescription: String? {
         var string = "CommandError \(self._code): \(self.message ?? "")\n\n\t\(self.commandDescription)"
         if let expectedType = self.expectedType { string += "\n\n\tExpected type: \(expectedType)" }
         if let offendingObject = self.offendingObject { string += "\n\n\tOffending object: \(offendingObject)" }

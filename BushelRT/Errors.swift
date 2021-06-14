@@ -15,7 +15,7 @@ public struct Undecodable: LocalizedError {
     public let error: Error
     
     public var errorDescription: String? {
-        "An object couldn’t be decoded from an AppleEvent descriptor: \(error)"
+        "An object couldn’t be decoded from an AppleEvent descriptor: \(error.localizedDescription)"
     }
     
 }
@@ -27,7 +27,7 @@ public struct RemoteCommandError: LocalizedError {
     public let error: Error
     
     public var errorDescription: String? {
-        "Remote object \(remoteObject) got an error performing \(command): \(error)"
+        "From remote object \(remoteObject) handling \(command): \(error.localizedDescription)"
     }
     
 }
@@ -263,7 +263,7 @@ public struct SpecifierEvaluationFailed: LocalizedError {
     public let reason: Error
     
     public var errorDescription: String? {
-        "Failed to evaluate specifier \(specifier): \(reason)"
+        "Failed to evaluate specifier \(specifier): \(reason.localizedDescription)"
     }
     
 }

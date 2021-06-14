@@ -319,7 +319,6 @@
 		3C72CEBD22E1023200A98EC7 /* TypeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeExtensions.swift; sourceTree = "<group>"; };
 		3C72CEBF22E1023200A98EC7 /* AEApplicationGlue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AEApplicationGlue.swift; sourceTree = "<group>"; };
 		3C72CEC022E1023200A98EC7 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
-		3C72CEC222E1023200A98EC7 /* KeywordConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeywordConverter.swift; sourceTree = "<group>"; };
 		3C72CEC322E1023200A98EC7 /* SpecifierFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpecifierFormatter.swift; sourceTree = "<group>"; };
 		3C72CEC422E1023200A98EC7 /* AEConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AEConstants.swift; sourceTree = "<group>"; };
 		3C72CEC522E1023200A98EC7 /* Specifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Specifier.swift; sourceTree = "<group>"; };
@@ -675,7 +674,6 @@
 				3C72CEBD22E1023200A98EC7 /* TypeExtensions.swift */,
 				3C72CEBF22E1023200A98EC7 /* AEApplicationGlue.swift */,
 				3C72CEC022E1023200A98EC7 /* AppData.swift */,
-				3C72CEC222E1023200A98EC7 /* KeywordConverter.swift */,
 				3C72CEC322E1023200A98EC7 /* SpecifierFormatter.swift */,
 				3C72CEC422E1023200A98EC7 /* AEConstants.swift */,
 				3C72CEC522E1023200A98EC7 /* Specifier.swift */,
