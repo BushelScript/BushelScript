@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
+hash xcpretty 2>/dev/null || function xcpretty { cat; }
+
 function get_project_version {
 	xcodebuild -showBuildSettings -workspace Bushel.xcworkspace -scheme BushelScript\ Editor | grep MARKETING_VERSION | head -1 | tr -d '[:alpha:][:space:]_='
 }
@@ -17,22 +19,12 @@ echo "Building to ${INSTALL_DIR}"
 
 # Build everything into the installation directory.
 echo 'Installing.'
-function install {
-	# Includes all language modules.
-	xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT="$INSTALL_DIR" MARKETING_VERSION="$PKG_VERSION"
-	if [ $? -ne 0 ]
-	then
-		echo 'xcodebuild install failed; not creating a pkg.'
-		exit $?
-	fi
-}
-if hash xcpretty 2>/dev/null
+# Includes all language modules.
+xcodebuild install -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT="$INSTALL_DIR" MARKETING_VERSION="$PKG_VERSION" | xcpretty
+if [ $? -ne 0 ]
 then
-	echo 'Using xcpretty'
-	install | xcpretty
-else
-	echo 'No xcpretty found (showing vanilla xcodebuild output)'
-	install
+	echo 'xcodebuild install failed; not creating a pkg.'
+	exit $?
 fi
 
 echo 'Cloning applescript-stdlib into install dir.'
@@ -55,6 +47,6 @@ fi
 # Delete the install directory unless `noclean` is specified.
 if [ "$1" != "noclean" ]
 then
-	echo "Removing build directory $INSTALL_DIR (specify \`noclean\` to disable.)"
-	rm -rf "$INSTALL_DIR"
+	echo "Cleaning (specify \`noclean\` to disable.)"
+	xcodebuild clean -workspace Bushel.xcworkspace -scheme BushelScript\ Editor DSTROOT="$INSTALL_DIR" | xcpretty
 fi
