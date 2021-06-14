@@ -29,6 +29,24 @@
         }
       },
       {
+        "package": "LineNoise",
+        "repositoryURL": "https://github.com/andybest/linenoise-swift",
+        "state": {
+          "branch": null,
+          "revision": "afc897c02b030af7333105c4fedcd843a8339238",
+          "version": "0.0.3"
+        }
+      },
+      {
+        "package": "Nimble",
+        "repositoryURL": "https://github.com/Quick/Nimble.git",
+        "state": {
+          "branch": null,
+          "revision": "e9d769113660769a4d9dd3afb855562c0b7ae7b0",
+          "version": "7.3.4"
+        }
+      },
+      {
         "package": "Regex",
         "repositoryURL": "https://github.com/sharplet/Regex.git",
         "state": {
@@ -44,6 +62,15 @@
           "branch": "master",
           "revision": "1df293adc9d0a60173e2d52d30c608f475844e11",
           "version": null
+        }
+      },
+      {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser",
+        "state": {
+          "branch": null,
+          "revision": "986d191f94cec88f6350056da59c2e59e83d1229",
+          "version": "0.4.3"
         }
       },
       {

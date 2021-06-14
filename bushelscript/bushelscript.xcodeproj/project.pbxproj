@@ -3,19 +3,18 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		3C32B0FC23B147D4002FF795 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424322F9FDF0006EEF85 /* Bushel.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C32B10823B147D7002FF795 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424A22FA0C87006EEF85 /* BushelRT.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C32B11123B15638002FF795 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C32B11023B15638002FF795 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		3C47423C22F9F85E006EEF85 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47423B22F9F85E006EEF85 /* main.swift */; };
-		3C47424722FA00F7006EEF85 /* ArgumentParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47424622FA00F7006EEF85 /* ArgumentParsing.swift */; };
-		3C47424922FA02E8006EEF85 /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47424822FA02E8006EEF85 /* Output.swift */; };
-		3C47424D22FA26D3006EEF85 /* ToolInvocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47424C22FA26D3006EEF85 /* ToolInvocation.swift */; };
-		3C6B75CA2305E0260006C354 /* Versions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C92305E0260006C354 /* Versions.swift */; };
+		3C47423C22F9F85E006EEF85 /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47423B22F9F85E006EEF85 /* CLI.swift */; };
+		3C6B75CA2305E0260006C354 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C92305E0260006C354 /* Version.swift */; };
 		3C6DFC99267673550021387E /* IO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6DFC98267673550021387E /* IO.swift */; };
+		3C6DFCA32676C9D40021387E /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 3C6DFCA22676C9D40021387E /* ArgumentParser */; };
+		3C6DFCA62676E4B10021387E /* LineNoise in Frameworks */ = {isa = PBXBuildFile; productRef = 3C6DFCA52676E4B10021387E /* LineNoise */; };
 		3C8CE03A23D4D34900882F76 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8CE03923D4D34900882F76 /* StringExtensions.swift */; };
 /* End PBXBuildFile section */
 
@@ -102,15 +101,12 @@
 		3C1D24F92306E33300D202FA /* Bushel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Bushel.xcodeproj; path = ../Bushel.xcodeproj; sourceTree = "<group>"; };
 		3C32B11023B15638002FF795 /* SwiftAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C47423822F9F85E006EEF85 /* bushelscript */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bushelscript; sourceTree = BUILT_PRODUCTS_DIR; };
-		3C47423B22F9F85E006EEF85 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		3C47423B22F9F85E006EEF85 /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
 		3C47424322F9FDF0006EEF85 /* Bushel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Bushel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3C47424622FA00F7006EEF85 /* ArgumentParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentParsing.swift; sourceTree = "<group>"; };
-		3C47424822FA02E8006EEF85 /* Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
 		3C47424A22FA0C87006EEF85 /* BushelRT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelRT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3C47424C22FA26D3006EEF85 /* ToolInvocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolInvocation.swift; sourceTree = "<group>"; };
 		3C4897BB2400F858008EE9D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C6B75C22305D5960006C354 /* BushelScriptEnglish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelScriptEnglish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3C6B75C92305E0260006C354 /* Versions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Versions.swift; sourceTree = "<group>"; };
+		3C6B75C92305E0260006C354 /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		3C6B75CB2305F1F90006C354 /* BushelLanguage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BushelLanguage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C6DFC98267673550021387E /* IO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IO.swift; sourceTree = "<group>"; };
 		3C8CE03923D4D34900882F76 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
@@ -123,6 +119,8 @@
 			files = (
 				3C32B11123B15638002FF795 /* SwiftAutomation.framework in Frameworks */,
 				3C32B10823B147D7002FF795 /* BushelRT.framework in Frameworks */,
+				3C6DFCA32676C9D40021387E /* ArgumentParser in Frameworks */,
+				3C6DFCA62676E4B10021387E /* LineNoise in Frameworks */,
 				3C32B0FC23B147D4002FF795 /* Bushel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -168,12 +166,9 @@
 			children = (
 				3C4897BB2400F858008EE9D1 /* Info.plist */,
 				3C10565623E0AC7E00877A5C /* bushelscript.entitlements */,
-				3C47423B22F9F85E006EEF85 /* main.swift */,
-				3C47424622FA00F7006EEF85 /* ArgumentParsing.swift */,
-				3C47424C22FA26D3006EEF85 /* ToolInvocation.swift */,
+				3C47423B22F9F85E006EEF85 /* CLI.swift */,
 				3C6DFC98267673550021387E /* IO.swift */,
-				3C47424822FA02E8006EEF85 /* Output.swift */,
-				3C6B75C92305E0260006C354 /* Versions.swift */,
+				3C6B75C92305E0260006C354 /* Version.swift */,
 				3C8CE03923D4D34900882F76 /* StringExtensions.swift */,
 			);
 			path = bushelscript;
@@ -208,6 +203,10 @@
 				3C1D251E2306E34000D202FA /* PBXTargetDependency */,
 			);
 			name = bushelscript;
+			packageProductDependencies = (
+				3C6DFCA22676C9D40021387E /* ArgumentParser */,
+				3C6DFCA52676E4B10021387E /* LineNoise */,
+			);
 			productName = bushelscript;
 			productReference = 3C47423822F9F85E006EEF85 /* bushelscript */;
 			productType = "com.apple.product-type.tool";
@@ -236,6 +235,10 @@
 				Base,
 			);
 			mainGroup = 3C47422F22F9F85E006EEF85;
+			packageReferences = (
+				3C6DFCA12676C9D40021387E /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+				3C6DFCA42676E4B10021387E /* XCRemoteSwiftPackageReference "linenoise-swift" */,
+			);
 			productRefGroup = 3C47423922F9F85E006EEF85 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -316,12 +319,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C8CE03A23D4D34900882F76 /* StringExtensions.swift in Sources */,
-				3C47424722FA00F7006EEF85 /* ArgumentParsing.swift in Sources */,
-				3C47424922FA02E8006EEF85 /* Output.swift in Sources */,
-				3C47423C22F9F85E006EEF85 /* main.swift in Sources */,
-				3C6B75CA2305E0260006C354 /* Versions.swift in Sources */,
+				3C47423C22F9F85E006EEF85 /* CLI.swift in Sources */,
+				3C6B75CA2305E0260006C354 /* Version.swift in Sources */,
 				3C6DFC99267673550021387E /* IO.swift in Sources */,
-				3C47424D22FA26D3006EEF85 /* ToolInvocation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,6 +583,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3C6DFCA12676C9D40021387E /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.4.3;
+			};
+		};
+		3C6DFCA42676E4B10021387E /* XCRemoteSwiftPackageReference "linenoise-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/andybest/linenoise-swift";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3C6DFCA22676C9D40021387E /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3C6DFCA12676C9D40021387E /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+		3C6DFCA52676E4B10021387E /* LineNoise */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3C6DFCA42676E4B10021387E /* XCRemoteSwiftPackageReference "linenoise-swift" */;
+			productName = LineNoise;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3C47423022F9F85E006EEF85 /* Project object */;
 }
