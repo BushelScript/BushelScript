@@ -32,6 +32,8 @@ extension Term.SemanticURI {
     /// If the scheme uses a 4-byte code, the 4-byte code.
     /// Otherwise, if the URI identifies a direct parameter, the 4-byte code
     /// with MacOSRoman representation `----`.
+    /// Otherwise, if the URI identifies a target parameter, the 4-byte code
+    /// with MacOSRoman representation `subj`.
     /// Otherwise, nil.
     public var ae4Code: OSType? {
         switch self {

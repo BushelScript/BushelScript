@@ -29,7 +29,7 @@ public struct ParseError: ParseErrorProtocol {
     
     public enum Error {
         
-        case missing(SourceElement)
+        case missing([Element], Context? = nil)
         case unmetResourceRequirement(ResourceRequirement)
         case invalidResourceType(validTypes: [Term.Name])
         case terminologyImportFailure(error: Swift.Error)
@@ -38,32 +38,28 @@ public struct ParseError: ParseErrorProtocol {
         case invalidNumber
         case undefinedTerm
         case mismatchedPipe
-        case invalidTermType
-        case rawFormTermNotConstructible
-        case wrongTermTypeForContext
+        case invalidTermRole
+        case wrongTermRoleForContext
         
-        public enum SourceElement {
+        public enum Element {
             
+            case keyword(Term.Name)
+            case termName
             case resourceName
-            case endTagOrLineBreak(endTag: Term.Name)
-            case expressionAfterKeyword(keyword: Term.Name)
-            case lineBreakAfterSequencedExpression
-            case expressionAfterBinaryOperator
-            case expressionAfterPrefixOperator
-            case expressionAfterPostfixOperator
-            case groupedExpressionAfterBeginMarker(beginMarker: Term.Name)
-            case groupedExpressionEndMarker(endMarker: Term.Name)
+            case variableName
+            case functionName
+            case expression
+            case lineBreak
             case recordKeyBeforeKeyValueSeparatorOrEndMarkerAfter(keyValueSeparator: Term.Name, endMarker: Term.Name)
             case listItemSeparatorOrEndMarker(itemSeparator: Term.Name, endMarker: Term.Name)
             case recordKeyValueSeparatorAfterKey(keyValueSeparator: Term.Name)
             case listAndRecordItemSeparatorOrKeyValueSeparatorOrEndMarker(itemSeparator: Term.Name, keyValueSeparator: Term.Name, endMarker: Term.Name)
             case recordItemSeparatorOrEndMarker(itemSeparator: Term.Name, endMarker: Term.Name)
-            case term
-            case type
+            case term(Term.SyntacticRole? = nil)
             case listItem
             case recordItem
             case recordKey
-            case listItemOrRecordKey
+            case termRole
             case termURIAndRawFormEndMarker
             case termURI
             case weaveDelimiter
@@ -72,15 +68,27 @@ public struct ParseError: ParseErrorProtocol {
             
         }
         
-        public enum ResourceRequirement {
+        public enum Context {
             
-            case system(version: String)
-            case applicationByName(name: String)
-            case applicationByBundleID(bundleID: String)
-            case libraryByName(name: String)
-            case applescriptAtPath(path: String)
+            case adHoc(String)
+            case afterKeyword(Term.Name)
+            case afterInfixOperator
+            case afterPrefixOperator
+            case afterPostfixOperator
+            case afterSequencedExpression
+            case toBeginBlock(String)
             
         }
+    }
+    
+    
+    public enum ResourceRequirement {
+        
+        case system(version: String)
+        case applicationByName(name: String)
+        case applicationByBundleID(bundleID: String)
+        case libraryByName(name: String)
+        case applescriptAtPath(path: String)
         
     }
     

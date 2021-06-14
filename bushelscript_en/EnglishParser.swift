@@ -197,7 +197,7 @@ public final class EnglishParser: SourceParser {
     
     private func handleFunctionStart() throws -> Expression.Kind? {
         guard let termName = try parseTermNameEagerly(stoppingAt: [":"], styling: .command) else {
-            throw AdHocParseError("expected function name", at: SourceLocation(source.range, source: entireSource))
+            throw ParseError(.missing([.functionName]), at: SourceLocation(source.range, source: entireSource))
         }
         let functionNameTerm = Term(.variable, lexicon.makeURI(forName: termName), name: termName)
         
@@ -232,9 +232,7 @@ public final class EnglishParser: SourceParser {
         let commandTerm = Term(.command, lexicon.makeURI(forName: termName), name: termName, dictionary: TermDictionary(contents: parameters))
         lexicon.add(commandTerm)
         
-        guard tryEating(prefix: "\n") else {
-            throw AdHocParseError("expected line break to begin function body", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
-        }
+        try eatLineBreakOrThrow(.toBeginBlock("function body"))
         let body = try withScope {
             lexicon.add(Set(arguments))
             lexicon.add(Term(Term.ID(Dictionaries.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.dictionary))
@@ -255,7 +253,7 @@ public final class EnglishParser: SourceParser {
         }
         
         guard tryEating(prefix: "do") else {
-            throw ParseError(.missing(.blockBody), at: expressionLocation)
+            throw ParseError(.missing([.blockBody]), at: expressionLocation)
         }
         
         return try parseBlockBody(arguments: arguments)
@@ -273,7 +271,7 @@ public final class EnglishParser: SourceParser {
                 return try parseSequence()
             } else {
                 guard let expression = try parsePrimary() else {
-                    throw ParseError(.missing(.blockBody), at: expressionLocation)
+                    throw ParseError(.missing([.blockBody]), at: expressionLocation)
                 }
                 return expression
             }
@@ -288,7 +286,7 @@ public final class EnglishParser: SourceParser {
                 return try parseSequence(stoppingAt: ["handle"])
             } else {
                 guard let bodyExpression = try parsePrimary() else {
-                    throw AdHocParseError("expected expression or line break after ‘try’", at: expressionLocation)
+                    throw ParseError(.missing([.expression, .lineBreak], .afterKeyword(Term.Name(["try"]))), at: currentLocation)
                 }
                 return bodyExpression
             }
@@ -296,15 +294,13 @@ public final class EnglishParser: SourceParser {
         
         func parseHandle() throws -> Expression {
             eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
-            guard tryEating(prefix: "handle") else {
-                throw AdHocParseError("expected ‘handle’ after ‘try’-block body to begin ‘handle’-block", at: currentLocation)
-            }
+            try eatOrThrow(prefix: "handle")
             
             if tryEating(prefix: "\n") {
                 return try parseSequence()
             } else {
                 guard let handleExpression = try parsePrimary() else {
-                    throw AdHocParseError("expected expression or line break after ‘handle’", at: currentLocation)
+                    throw ParseError(.missing([.expression, .lineBreak], .afterKeyword(Term.Name(["handle"]))), at: currentLocation)
                 }
                 eatCommentsAndWhitespace()
                 return handleExpression
@@ -315,16 +311,14 @@ public final class EnglishParser: SourceParser {
     }
     
     private func handleIf() throws -> Expression.Kind? {
-        guard let condition = try parsePrimary() else {
-            throw AdHocParseError("expected condition expression after ‘if’", at: currentLocation)
-        }
+        let condition = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["if"])))
         
         func parseThen() throws -> Expression {
             let thenStartIndex = currentIndex
             let foundThen = tryEating(prefix: "then")
             let foundNewline = tryEating(prefix: "\n")
             guard foundThen || foundNewline else {
-                throw AdHocParseError("expected ‘then’ or line break after condition expression to begin ‘if’-block", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
+                throw AdHocParseError("expected ‘then’ or line break after condition expression", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
             }
             
             if foundNewline {
@@ -332,7 +326,7 @@ public final class EnglishParser: SourceParser {
             } else {
                 guard let thenExpression = try parsePrimary() else {
                     let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
-                    throw AdHocParseError("expected expression or line break after ‘then’ to begin ‘if’-block", at: thenLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: thenLocation))])
+                    throw ParseError(.missing([.expression, .lineBreak], .afterKeyword(Term.Name(["then"]))), at: thenLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: thenLocation))])
                 }
                 return thenExpression
             }
@@ -355,7 +349,7 @@ public final class EnglishParser: SourceParser {
             } else {
                 guard let elseExpr = try parsePrimary() else {
                     let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
-                    throw AdHocParseError("expected expression or line break after ‘else’ to begin ‘else’-block", at: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", by: AppendingFix(appending: " <#expression#>", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
+                    throw ParseError(.missing([.expression, .lineBreak], .afterKeyword(Term.Name(["else"]))), at: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is false", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
                 }
                 
                 eatCommentsAndWhitespace()
@@ -375,136 +369,71 @@ public final class EnglishParser: SourceParser {
     
     private func handleRepeat(_ keyword: Term.Name) throws -> Expression.Kind? {
         func parseRepeatBlock() throws -> Expression {
-            guard tryEating(prefix: "\n") else {
-                throw AdHocParseError("expected line break to begin repeat block", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation)])
-            }
+            try eatLineBreakOrThrow(.toBeginBlock("repeat"))
             return try parseSequence()
         }
         
         if tryEating(prefix: "while") {
-            guard let condition = try parsePrimary() else {
-                throw AdHocParseError("expected condition expression after ‘\(keyword) while’", at: currentLocation)
-            }
-            
+            let condition = try parsePrimaryOrThrow(.afterKeyword(Term.Name(keyword.words + ["while"])))
             return .repeatWhile(condition: condition, repeating: try parseRepeatBlock())
         } else if tryEating(prefix: "for") {
-            guard let variableTerm = try parseVariableTerm(stoppingAt: ["in"]) else {
-                throw AdHocParseError("expected variable name after ‘repeat for’", at: currentLocation)
-            }
-            
-            guard tryEating(prefix: "in") else {
-                throw AdHocParseError("expected ‘in’ to begin container expression in ‘repeat for’", at: currentLocation)
-            }
-            
-            guard let expression = try parsePrimary() else {
-                throw AdHocParseError("expected container expression in ‘repeat for’", at: currentLocation)
-            }
-            
+            let variableTerm = try parseVariableTermOrThrow(stoppingAt: ["in"])
+            try eatOrThrow(prefix: "in")
+            let expression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["in"])))
             lexicon.add(variableTerm)
-            
             return .repeatFor(variable: variableTerm, container: expression, repeating: try parseRepeatBlock())
         } else {
-            guard let times = try parsePrimary() else {
-                throw AdHocParseError("expected times expression after ‘\(expressionLocation.snippet(in: entireSource))’", at: currentLocation)
-            }
-            
-            guard tryEating(prefix: "times") else {
-                throw AdHocParseError("expected ‘times’ after times expression", at: currentLocation, fixes: [AppendingFix(appending: " times", at: currentLocation)])
-            }
-            
+            let times = try parsePrimaryOrThrow(.afterKeyword(keyword))
+            try eatOrThrow(prefix: "times")
             return .repeatTimes(times: times, repeating: try parseRepeatBlock())
         }
     }
     
     private func handleTell() throws -> Expression.Kind? {
-        guard let target = try parsePrimary() else {
-            throw ParseError(.missing(.expressionAfterKeyword(keyword: Term.Name(["tell"]))), at: currentLocation)
-        }
+        let target = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["tell"])))
         
-        let toStartIndex = currentIndex
         let foundTo = tryEating(prefix: "to")
         let foundNewline = tryEating(prefix: "\n")
         guard foundTo && !foundNewline || !foundTo && foundNewline else {
-            throw AdHocParseError("expected ‘to’ or line break after target expression to begin ‘tell’ block", at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " to", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
+            throw ParseError(.missing([.expression, .lineBreak], .adHoc("after target expression")), at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " to", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
         }
         
         return try withTerminology(of: target) {
-            let toExpr: Expression
-            if foundNewline {
-                toExpr = try parseSequence()
-            } else {
-                guard let toExpression = try parsePrimary() else {
-                    let toLocation = SourceLocation(toStartIndex..<currentIndex, source: entireSource)
-                    throw ParseError(.missing(.expressionAfterKeyword(keyword: Term.Name(["then"]))), at: toLocation)
-                }
-                toExpr = toExpression
-            }
-            
-            return .tell(module: target, to: toExpr)
+            let toExpression = try foundNewline ? parseSequence() : parsePrimaryOrThrow(.afterKeyword(Term.Name(["then"])))
+            return .tell(module: target, to: toExpression)
         }
     }
     
     private func handleTarget() throws -> Expression.Kind? {
-        guard let target = try parsePrimary() else {
-            throw ParseError(.missing(.expressionAfterKeyword(keyword: Term.Name(["target"]))), at: currentLocation)
-        }
+        let target = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["target"])))
         
-        let thenStartIndex = currentIndex
         let foundThen = tryEating(prefix: "then")
         let foundNewline = tryEating(prefix: "\n")
         guard foundThen && !foundNewline || !foundThen && foundNewline else {
-            throw AdHocParseError("expected ‘then’ or line break after target expression to begin ‘target’ block", at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " then", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
+            throw ParseError(.missing([.keyword(Term.Name(["then"])), .lineBreak]), at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " then", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
         }
         
-        let thenExpr: Expression
-        if foundNewline {
-            thenExpr = try parseSequence()
-        } else {
-            guard let thenExpression = try parsePrimary() else {
-                let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
-                throw ParseError(.missing(.expressionAfterKeyword(keyword: Term.Name(["then"]))), at: thenLocation)
-            }
-            thenExpr = thenExpression
-        }
-        
-        return .target(target: target, body: thenExpr)
+        let thenExpression = try foundNewline ? parseSequence() : try parsePrimaryOrThrow(.afterKeyword(Term.Name(["then"])))
+        return .target(target: target, body: thenExpression)
     }
     
     private func handleLet() throws -> Expression.Kind? {
-        guard let term = try parseVariableTerm(stoppingAt: ["be"]) else {
-            throw AdHocParseError("expected variable name after ‘let’", at: currentLocation)
-        }
-        
-        var initialValue: Expression? = nil
-        if tryEating(prefix: "be") {
-            guard let value = try parsePrimary() else {
-                throw AdHocParseError("expected initial value expression after ‘be’", at: currentLocation)
-            }
-            initialValue = value
-        }
-        
+        let term = try parseVariableTermOrThrow(stoppingAt: ["be"], .afterKeyword(Term.Name(["let"])))
+        let initialValue: Expression? = tryEating(prefix: "be") ? try parsePrimaryOrThrow(.afterKeyword(Term.Name(["be"]))) : nil
         lexicon.add(term)
-        
         return .let_(term, initialValue: initialValue)
     }
     
     private func parseDefineLine() throws -> (term: Term, existingTerm: Term?) {
-        guard let role = parseTermTypeName() else {
-            throw AdHocParseError("expected term type", at: currentLocation)
+        guard let role = parseTermRoleName() else {
+            throw ParseError(.missing([.termRole]), at: currentLocation)
         }
-        
-        guard let termName = try parseTermNameEagerly(stoppingAt: ["as"], styling: styling(for: role)) else {
-            throw AdHocParseError("expected term name", at: currentLocation)
-        }
-        
+        let termName = try parseTermNameEagerlyOrThrow(stoppingAt: ["as"], styling: styling(for: role))
         let existingTerm: Term? = try {
             guard tryEating(prefix: "as") else {
                 return nil
             }
-            guard let existingTerm = try eatTerm() else {
-                throw AdHocParseError("expected a term", at: currentLocation)
-            }
-            return existingTerm
+            return try eatTermOrThrow()
         }()
         
         let term = Term(role, existingTerm?.uri ?? lexicon.makeURI(forName: termName), name: termName)
@@ -589,9 +518,7 @@ public final class EnglishParser: SourceParser {
     }
     
     private func handleUseAppleScript(name: Term.Name) throws -> Term {
-        guard tryEating(prefix: "at") else {
-            throw AdHocParseError("expected ‘at’ followed by path string", at: currentLocation)
-        }
+        try eatOrThrow(prefix: "at")
         
         let pathStartIndex = currentIndex
         guard var (_, path) = try parseString() else {
@@ -609,15 +536,9 @@ public final class EnglishParser: SourceParser {
     }
     
     private func handleSet() throws -> Expression.Kind? {
-        guard let destinationExpression = try parsePrimary() else {
-            throw AdHocParseError("expected destination-expression after ‘set’", at: currentLocation)
-        }
-        guard tryEating(prefix: "to") else {
-            throw AdHocParseError("expected ‘to’ after ‘set’ destination-expression to begin new-value-expression", at: currentLocation)
-        }
-        guard let newValueExpression = try parsePrimary() else {
-            throw AdHocParseError("expected new-value-expression after ‘to’", at: currentLocation)
-        }
+        let destinationExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["set"])))
+        try eatOrThrow(prefix: "to")
+        let newValueExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["to"])))
         return .set(destinationExpression, to: newValueExpression)
     }
     
@@ -659,11 +580,7 @@ public final class EnglishParser: SourceParser {
                 guard let parameterTerm = try eatTerm(from: term.dictionary, role: .parameter) else {
                     return false
                 }
-                
-                guard let parameterValue = try parsePrimary() else {
-                    throw AdHocParseError("expected expression after parameter name, but found end of script", at: currentLocation)
-                }
-                
+                let parameterValue = try parsePrimaryOrThrow(.adHoc("parameter name"))
                 parameters.append((parameterTerm, parameterValue))
                 return true
             }
@@ -697,7 +614,7 @@ public final class EnglishParser: SourceParser {
             
             return result()
         case .parameter: // MARK: .parameter
-            throw AdHocParseError("parameter term outside of a command invocation", at: expressionLocation)
+            throw ParseError(.wrongTermRoleForContext, at: expressionLocation)
         case .variable: // MARK: .variable
             return .variable(term)
         case .resource: // MARK: .resource
@@ -771,16 +688,10 @@ public final class EnglishParser: SourceParser {
     
     public func parseRelativeSpecifierAfterTypeName(_ typeTerm: Term) throws -> Specifier? {
         if tryEating(prefix: "before") {
-            guard let parentExpression = try parsePrimary() else {
-                // e.g., window before
-                throw AdHocParseError("expected expression after ‘before’", at: currentLocation)
-            }
+            let parentExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["before"])))
             return Specifier(term: typeTerm, kind: .previous, parent: parentExpression)
         } else if tryEating(prefix: "after") {
-            guard let parentExpression = try parsePrimary() else {
-                // e.g., window before
-                throw AdHocParseError("expected expression after ‘after’", at: currentLocation)
-            }
+            let parentExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["after"])))
             return Specifier(term: typeTerm, kind: .next, parent: parentExpression)
         } else {
             return nil
@@ -788,11 +699,7 @@ public final class EnglishParser: SourceParser {
     }
     
     public func parseSpecifierAfterQuantifier(kind: Specifier.Kind) throws -> Expression.Kind? {
-        guard let type = try parseTypeTerm() else {
-            throw ParseError(.missing(.type), at: currentLocation)
-        }
-        let specifier = Specifier(term: type, kind: kind)
-        return .specifier(specifier)
+        .specifier(Specifier(term: try parseTypeTermOrThrow(), kind: kind))
     }
     
     public func parseInsertionSpecifierAfterInsertionLocation(kind: InsertionSpecifier.Kind) throws -> Expression.Kind? {
@@ -802,7 +709,7 @@ public final class EnglishParser: SourceParser {
     public func tryParseSpecifierPhrase(chainingTo chainTo: Expression) throws -> Expression.Kind? {
         guard
             let childSpecifier = chainTo.asSpecifier(),
-            tryEating(prefix: "of") || tryEating(prefix: "in")
+            tryEating(prefix: "of")
         else {
             return try tryParseSuffixSpecifier(chainingTo: chainTo)
         }
@@ -811,18 +718,12 @@ public final class EnglishParser: SourceParser {
         // e.g., character 1 of "hello"
         // First expression (chainTo) must be a specifier since it is the child
         
-        guard let parentExpression = try parsePrimary() else {
-            // e.g., character 1 of
-            throw AdHocParseError("expected expression after ‘of’ or ‘in’", at: currentLocation)
-        }
-
+        let parentExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["of"])))
         childSpecifier.setRootAncestor(parentExpression)
-        
         return .specifier(childSpecifier)
     }
     
     public func tryParseSuffixSpecifier(chainingTo chainTo: Expression) throws -> Expression.Kind? {
-        let possessiveStartIndex = currentIndex
         guard tryEating(prefix: "'s") || tryEating(prefix: "’s") else {
             return nil
         }
@@ -832,17 +733,11 @@ public final class EnglishParser: SourceParser {
         // Second expression (the one about to be parsed) must be a specifier since
         // it is the child
         
-        guard let newChildExpression = try parsePrimary() else {
-            // e.g., "hello"'s
-            let possessiveLocation = SourceLocation(possessiveStartIndex..<currentIndex, source: entireSource)
-            throw AdHocParseError("expected specifier after possessive, but found end of script", at: currentLocation, fixes: [DeletingFix(at: possessiveLocation)])
-        }
-        
+        let newChildExpression = try parsePrimaryOrThrow(.adHoc("after possessive"))
         guard let newChildSpecifier = newChildExpression.asSpecifier() else {
             // e.g., "hello"'s 123
             throw AdHocParseError("a non-specifier expression may only come first in a possessive-specifier-phrase", at: newChildExpression.location)
         }
-        
         newChildSpecifier.parent = chainTo
         return .specifier(newChildSpecifier)
     }
