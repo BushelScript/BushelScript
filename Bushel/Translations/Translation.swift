@@ -10,39 +10,59 @@ public struct Translation {
     
     public static let currentFormat = 0.3
     
-    public enum ParseError: Error {
-        case invalidSyntax
-        case noOuterMapping
-        case missingFormat
-        case missingLanguage
-        case invalidFormat
-        case invalidTermRole
-        case invalidURISchemeMapping
-        case invalidURIScheme
-        case invalidURINameMapping
-        case invalidURIName
-        case invalidTermName
+    public struct ParseError: Error {
+        
+        public var error: Error
+        public var path: String?
+        
+        fileprivate init(_ error: Error, path: String? = nil) {
+            self.error = error
+            self.path = path
+        }
+        
+        public enum Error {
+            case invalidSyntax
+            case noOuterMapping
+            case missingFormat
+            case missingLanguage
+            case invalidFormat
+            case invalidTermRole
+            case invalidURISchemeMapping
+            case invalidURIScheme
+            case invalidURINameMapping
+            case invalidURIName
+            case invalidTermName
+        }
+        
     }
     
     public var format: Double
     public var language: String
     public var mappings: [Term.ID : Set<Term.Name>] = [:]
     
+    public init(from url: URL) throws {
+        do {
+            try self.init(source: try String(contentsOf: url))
+        } catch let error as ParseError {
+            throw ParseError(error.error, path: url.path)
+        }
+    }
+    
     public init(source: String) throws {
         guard let yaml = try Yams.compose(yaml: source) else {
-            throw ParseError.invalidSyntax
+            throw ParseError(.invalidSyntax)
         }
         guard
             case .mapping(let outerMapping) = yaml,
             case .mapping(let translation) = outerMapping["translation"]
         else {
-            throw ParseError.noOuterMapping
+            throw ParseError(.noOuterMapping)
         }
         guard case .scalar(let format) = translation["format"] else {
-            throw ParseError.missingFormat
+            throw ParseError(.missingFormat)
         }
         guard case .scalar(let language) = translation["language"] else {
-            throw ParseError.missingLanguage
+            throw ParseError(.missingLanguage)
         }
         self.language = language.string
         
@@ -51,7 +71,7 @@ public struct Translation {
             formatString.removeFirst()
         }
         guard Double(formatString) == Translation.currentFormat else {
-            throw ParseError.invalidFormat
+            throw ParseError(.invalidFormat)
         }
         self.format = Translation.currentFormat
         
@@ -63,24 +83,24 @@ public struct Translation {
                 case .scalar(let termKindScalar) = termKind,
                 let termKind = Term.SyntacticRole(rawValue: termKindScalar.string)
             else {
-                throw ParseError.invalidTermRole
+                throw ParseError(.invalidTermRole)
             }
             guard case .mapping(let uidDomainMapping) = uidDomainMapping else {
-                throw ParseError.invalidURISchemeMapping
+                throw ParseError(.invalidURISchemeMapping)
             }
             for (uidDomain, uidDataMapping) in uidDomainMapping {
                 guard
                     case .scalar(let uidDomainScalar) = uidDomain,
                     let uriScheme = TermURIScheme(rawValue: uidDomainScalar.string)
                 else {
-                    throw ParseError.invalidURIScheme
+                    throw ParseError(.invalidURIScheme)
                 }
                 guard case .mapping(let uidDataMapping) = uidDataMapping else {
-                    throw ParseError.invalidURINameMapping
+                    throw ParseError(.invalidURINameMapping)
                 }
                 for (uidData, valueNode) in uidDataMapping {
                     guard case .scalar(let uidDataScalar) = uidData else {
-                        throw ParseError.invalidURIName
+                        throw ParseError(.invalidURIName)
                     }
                     let uidsAndValueNodes: [(Term.SemanticURI, Yams.Node)] = try {
                         var isRes: Bool = false
@@ -114,7 +134,7 @@ public struct Translation {
                                         try valueMapping.map { kv in
                                             let (nestedUIDDataNode, nestedDataNode) = kv
                                             guard case .scalar(let uidDataNodeScalar) = nestedUIDDataNode else {
-                                                throw ParseError.invalidURIName
+                                                throw ParseError(.invalidURIName)
                                             }
                                             let nestedUIDDataName = Term.Name(uidDataNodeScalar.string)
                                             return (
@@ -144,7 +164,7 @@ public struct Translation {
                             return namesAndNodes.map { (isRes ? Term.SemanticURI.res($0.name.rawValue) : Term.SemanticURI.id($0.name), $0.node) }
                         default:
                             guard let uid = Term.SemanticURI(scheme: uriScheme.rawValue, name: uidDataScalar.string) else {
-                                throw ParseError.invalidURIName
+                                throw ParseError(.invalidURIName)
                             }
                             return [(uid, valueNode)]
                         }
@@ -159,7 +179,7 @@ public struct Translation {
                                     try process(valueNode: synonym, id: id)
                                 }
                             default:
-                                throw ParseError.invalidTermName
+                                throw ParseError(.invalidTermName)
                             }
                         }
                         
@@ -268,30 +288,32 @@ private enum TermURIScheme: String, CaseIterable {
 extension Translation.ParseError: LocalizedError {
     
     public var errorDescription: String? {
-        switch self {
-        case .invalidSyntax:
-            return "The file contains malformed YAML syntax."
-        case .noOuterMapping:
-            return "File does not start with a 'translation:' mapping."
-        case .missingFormat:
-            return "The 'translation' mapping has no 'format:' key. This required field is used to confirm that the file format is readable by this BushelScript version."
-        case .missingLanguage:
-            return "The 'translation' mapping has no 'language' key. This required field declares what language module the translation applies to."
-        case .invalidFormat:
-            return "The file's declared format is unrecognized. The file is malformed or written for a later version of BushelScript."
-        case .invalidTermRole:
-            return "An unrecognized term role was found. Valid values are: \(Term.SyntacticRole.allCases.map { $0.rawValue }.joined(separator: ", "))."
-        case .invalidURISchemeMapping:
-            return "Expected a mapping as the value for a term role, but found a scalar or sequence instead."
-        case .invalidURIScheme:
-            return "An unrecognized term URI scheme was found. Valid values are: \(TermURIScheme.allCases.map { $0.rawValue }.joined(separator: ", "))"
-        case .invalidURINameMapping:
-            return "Expected a mapping as the value for a term URI scheme, but found a scalar or sequence instead."
-        case .invalidURIName:
-            return "Encountered an invalid name for a term URI. For example, the 'ae4' scheme expects a four-character MacRoman string."
-        case .invalidTermName:
-            return "Expected a scalar or sequence for a term name but found a mapping instead."
-        }
+        "Failed to parse translation\(path.map { " at \($0)" } ?? ""): " + {
+            switch error {
+            case .invalidSyntax:
+                return "The file contains malformed YAML syntax."
+            case .noOuterMapping:
+                return "File does not start with a 'translation:' mapping."
+            case .missingFormat:
+                return "The 'translation' mapping has no 'format:' key. This required field is used to confirm that the file format is readable by this BushelScript version."
+            case .missingLanguage:
+                return "The 'translation' mapping has no 'language' key. This required field declares what language module the translation applies to."
+            case .invalidFormat:
+                return "The file's declared format is unrecognized. The file is malformed or written for a later version of BushelScript."
+            case .invalidTermRole:
+                return "An unrecognized term role was found. Valid values are: \(Term.SyntacticRole.allCases.map { $0.rawValue }.joined(separator: ", "))."
+            case .invalidURISchemeMapping:
+                return "Expected a mapping as the value for a term role, but found a scalar or sequence instead."
+            case .invalidURIScheme:
+                return "An unrecognized term URI scheme was found. Valid values are: \(TermURIScheme.allCases.map { $0.rawValue }.joined(separator: ", "))"
+            case .invalidURINameMapping:
+                return "Expected a mapping as the value for a term URI scheme, but found a scalar or sequence instead."
+            case .invalidURIName:
+                return "Encountered an invalid name for a term URI. For example, the 'ae4' scheme expects a four-character MacRoman string."
+            case .invalidTermName:
+                return "Expected a scalar or sequence for a term name but found a mapping instead."
+            }
+        }()
     }
     
 }

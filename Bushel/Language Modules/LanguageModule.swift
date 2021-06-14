@@ -3,12 +3,10 @@ import os
 
 private let log = OSLog(subsystem: logSubsystem, category: "Language module management")
 
-public class LanguageModule {
+public final class LanguageModule {
     
-    public let identifier: String
-    public let name: String
+    public let descriptor: Descriptor
     
-    private var bundle: Bundle
     private let types: Types
     
     private typealias Types = (
@@ -29,39 +27,46 @@ public class LanguageModule {
     
     public let translations: [Translation]
     
-    public init?(identifier: String) {
+    public convenience init(identifier: String) throws {
+        guard let bundle = languageBundle(for: identifier) else {
+            throw NoSuchLanguageModule(languageID: identifier)
+        }
+        try self.init(Descriptor(bundle: bundle))
+    }
+    
+    fileprivate init(_ descriptor: Descriptor) throws {
+        self.descriptor = descriptor
+        
+        let bundle = descriptor.bundle
         guard
-            let bundle = languageBundle(for: identifier),
             let infoDictionary = bundle.infoDictionary,
-            let name = infoDictionary[kCFBundleNameKey as String] as? String,
             let protocolVersion = infoDictionary["BushelLanguageModuleProtocolVersion"] as? [String : Any],
-            let protocolMajorVersion = protocolVersion["Major"],
-            let protocolMinorVersion = protocolVersion["Minor"],
-            bundle.load()
+            let protocolMajorVersion = protocolVersion["Major"] as AnyObject?,
+            let protocolMinorVersion = protocolVersion["Minor"] as AnyObject?
         else {
-            return nil
+            throw LanguageModuleInvalid(descriptor: descriptor, reason: "Failed to read BushelLanguageModuleProtocolVersion")
         }
         
-        self.bundle = bundle
-        self.identifier = identifier
-        self.name = name
+        let expectedMajor = 0, expectedMinor = 3
         
-        guard (protocolMajorVersion as AnyObject).intValue == 0 else {
-            os_log("Could not load language module \"%{public}@\" (identifier \"%{public}@\"): the module's declared protocol major version is incompatible", log: log, type: .info, name, identifier)
-            return nil
+        guard let major: Int = protocolMajorVersion.intValue, major == expectedMajor else {
+            throw LanguageModuleInvalid(descriptor: descriptor, reason: "Incompatible or invalid major protocol version (expecting \(expectedMajor)")
         }
-        // In v1.0 and beyond, this should *not* fail, but for now we consider
-        // every minor version to be ABI-breaking
-        guard (protocolMinorVersion as AnyObject).intValue == 2 else {
-            os_log("Could not load language module \"%{public}@\" (identifier \"%{public}@\"): the module's declared protocol minor version is incompatible", log: log, type: .info, name, identifier)
-            return nil
+        // In v1.0 and beyond, this should only fail if greater than the current minor version,
+        // but for now we consider every minor version to be ABI-breaking.
+        guard let minor: Int = protocolMinorVersion.intValue, minor == expectedMinor else {
+            throw LanguageModuleInvalid(descriptor: descriptor, reason: "Incompatible or invalid minor protocol version (expecting \(expectedMinor)")
         }
         
-        guard
-            let principalClassName = infoDictionary["NSPrincipalClass"] as? String,
-            let entryPoint = NSClassFromString(principalClassName) as? LanguageModuleEntryPoint.Type
-        else {
-            return nil
+        guard bundle.load() else {
+            throw LanguageModuleInvalid(descriptor: descriptor, reason: "Failed to load code")
+        }
+        
+        guard let principalClassName = infoDictionary["NSPrincipalClass"] as? String else {
+            throw LanguageModuleInvalid(descriptor: descriptor, reason: "No NSPrincipalClass declared")
+        }
+        guard let entryPoint = NSClassFromString(principalClassName) as? LanguageModuleEntryPoint.Type else {
+            throw LanguageModuleInvalid(descriptor: descriptor, reason: "Declared NSPrincipalClass is not a LanguageModuleEntryPoint")
         }
         
         let moduleTypes = entryPoint.moduleTypes
@@ -70,8 +75,7 @@ public class LanguageModule {
             let parser = moduleTypes["SourceParser"] as? SourceParser.Type,
             let formatter = moduleTypes["SourceFormatter"] as? SourceFormatter.Type
         else {
-            os_log("Could not load language module \"%{public}@\" (identifier \"%{public}@\"): moduleTypes did not return all required types", log: log, type: .info, name, identifier)
-            return nil
+            throw LanguageModuleInvalid(descriptor: descriptor, reason: "Required interface(s) not implemented (moduleTypes did not return all required types)")
         }
         
         self.types = (
@@ -81,30 +85,19 @@ public class LanguageModule {
         )
         
         self.translations =
-            bundle.urls(forResourcesWithExtension: nil, subdirectory: "Translations").map { translationFileURLs in
-                 translationFileURLs.compactMap { translationFileURL in
-                    do {
-                        let translationContents = try String(contentsOf: translationFileURL)
-                        return try Translation(source: translationContents)
-                    } catch {
-                        os_log("Could not load translation file \"%@\" in language module \"%{public}@\" (identifier \"%{public}@\"): %@", log: log, translationFileURL.absoluteString, name, identifier, error.localizedDescription)
-                        return nil
-                    }
-                }
+            try bundle.urls(forResourcesWithExtension: nil, subdirectory: "Translations").map { translationFileURLs in
+                 try translationFileURLs.map(Translation.init(from:))
             } ?? []
     }
     
-    public struct ModuleDescriptor {
+    public struct Descriptor {
         
+        public var bundle: Bundle
         public var identifier: String
         public var localizedName: String
         
-        // TODO: Add an init to LanguageModule that takes one of these for efficiency
-        //       This property would then be used
-        private var bundleURL: URL
-        
         fileprivate init(bundle: Bundle) {
-            self.bundleURL = bundle.bundleURL
+            self.bundle = bundle
             let identifier = bundle.bundleURL.deletingPathExtension().lastPathComponent
             self.identifier = identifier
             self.localizedName = (bundle.object(forInfoDictionaryKey: kCFBundleNameKey as String) as? String) ?? identifier
@@ -112,8 +105,33 @@ public class LanguageModule {
         
     }
     
-    public static func validModules() -> [ModuleDescriptor] {
-        return allLanguageBundles().map { ModuleDescriptor(bundle: $0) }
+    public static func validModules() -> [Descriptor] {
+        return allLanguageBundles().map { Descriptor(bundle: $0) }
+    }
+    
+}
+
+public struct NoSuchLanguageModule: LocalizedError {
+    
+    public var languageID: String
+    
+    public init(languageID: String) {
+        self.languageID = languageID
+    }
+    
+    public var errorDescription: String? {
+        "No valid language module found for ID \(languageID)"
+    }
+    
+}
+
+public struct LanguageModuleInvalid: LocalizedError {
+    
+    public var descriptor: LanguageModule.Descriptor
+    public var reason: String
+    
+    public var errorDescription: String? {
+        "Invalid language module with ID \(descriptor.identifier) at \(descriptor.bundle.bundlePath): \(reason)"
     }
     
 }

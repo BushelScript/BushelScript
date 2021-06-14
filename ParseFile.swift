@@ -13,10 +13,7 @@ func parse(source: String, at url: URL) throws -> Program {
 func parse(source: String, ignoringImports: Set<URL> = []) throws -> Program {
     var source = source
     let languageID = LanguageModule.takeLanguageFromHashbang(&source) ?? defaultLanguageID
-    guard let languageModule = LanguageModule(identifier: languageID) else {
-        throw NoSuchLanguageModule(languageID: languageID)
-    }
-    return try languageModule.parser().parse(source: source, ignoringImports: ignoringImports)
+    return try LanguageModule(identifier: languageID).parser().parse(source: source, ignoringImports: ignoringImports)
 }
 
 extension LanguageModule {
@@ -43,20 +40,6 @@ extension LanguageModule {
             .drop(while: { $0.isNewline })
         )
         return languageID
-    }
-    
-}
-
-public struct NoSuchLanguageModule: LocalizedError {
-    
-    public var languageID: String
-    
-    public init(languageID: String) {
-        self.languageID = languageID
-    }
-    
-    public var errorDescription: String? {
-        "No valid language module found for ID \(languageID)"
     }
     
 }

@@ -241,7 +241,7 @@ class DocumentVC: NSViewController {
     @IBAction func setLanguage(_ sender: Any?) {
         guard
             let sender = sender,
-            let maybeModuleDescriptor = (sender as AnyObject).representedObject as? LanguageModule.ModuleDescriptor?,
+            let maybeModuleDescriptor = (sender as AnyObject).representedObject as? LanguageModule.Descriptor?,
             let moduleDescriptor = maybeModuleDescriptor
         else {
             return

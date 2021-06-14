@@ -9,7 +9,7 @@ class BushelLanguageService: NSObject, BushelLanguageServiceProtocol {
     private var loadedLanguageModules = StoragePool<LanguageModule>()
     
     func loadLanguageModule(withIdentifier moduleIdentifier: String, reply: @escaping (Any?) -> Void) {
-        guard let module = LanguageModule(identifier: moduleIdentifier) else {
+        guard let module = try? LanguageModule(identifier: moduleIdentifier) else {
             return reply(nil)
         }
         reply(loadedLanguageModules.retain(module))

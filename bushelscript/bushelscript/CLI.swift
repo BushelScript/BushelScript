@@ -105,7 +105,7 @@ struct BushelScript: ParsableCommand {
             try runREPL()
         } else if !mode.lines.isEmpty {
             let source = mode.lines.map { String($0) }.joined(separator: "\n")
-            let parser = try module(for: options.language).parser()
+            let parser = try LanguageModule(identifier: options.language).parser()
             try run(parser: parser, rt: Runtime(), source: source, fileName: "<command-line>")
         } else if let file = mode.scriptFile {
             if file == "-" {
@@ -119,7 +119,7 @@ struct BushelScript: ParsableCommand {
     private func runFile(_ path: String, fileName: String, url: URL? = nil) throws {
         var source = try String.read(fromPath: path)
         let language = LanguageModule.takeLanguageFromHashbang(&source) ?? options.language
-        return try run(parser: try module(for: language).parser(), rt: Runtime(), source: source, fileName: fileName, url: url)
+        return try run(parser: try LanguageModule(identifier: language).parser(), rt: Runtime(), source: source, fileName: fileName, url: url)
     }
     
     private func runREPL() throws {
@@ -136,7 +136,7 @@ struct BushelScript: ParsableCommand {
             return input
         }
         
-        let parser = try module(for: options.language).parser()
+        let parser = try LanguageModule(identifier: options.language).parser()
         let rt = Runtime()
         while let line = try prompt() {
             let trimmed = Substring(line).trimmingWhitespace()
@@ -175,13 +175,6 @@ struct BushelScript: ParsableCommand {
         }
     }
     
-}
-
-private func module(for language: String) throws -> LanguageModule {
-    guard let languageModule = LanguageModule(identifier: language) else {
-        throw NoSuchLanguageModule(languageID: language)
-    }
-    return languageModule
 }
 
 private func printError(_ error: Error, in source: String, fileName: String) {

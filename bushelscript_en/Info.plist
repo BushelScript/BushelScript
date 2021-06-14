@@ -7,7 +7,7 @@
 		<key>Major</key>
 		<string>0</string>
 		<key>Minor</key>
-		<string>2</string>
+		<string>3</string>
 	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
