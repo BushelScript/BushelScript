@@ -585,19 +585,20 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="c8c-NC-wEa" name="enabled" keyPath="isCLTInstalled" id="xoY-2i-MlT">
+                                    <binding destination="c8c-NC-wEa" name="enabled" keyPath="cltInstalledStatus" id="JFZ-vD-jJI">
                                         <dictionary key="options">
-                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                            <string key="NSValueTransformerName">InterpreterPrefsLocationFieldEnabledVT</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="1ih-dA-244" name="value" keyPath="values.CLTInstallPath" id="Nvq-t4-Qj0">
+                                        <dictionary key="options">
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                            <string key="NSNullPlaceholder">/usr/local/bin/bushelscript</string>
                                         </dictionary>
                                     </binding>
                                     <binding destination="EbU-qF-leD" name="font" keyPath="values.SourceCodeFont" id="klt-ts-eld">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">UnarchiveFontVT</string>
-                                        </dictionary>
-                                    </binding>
-                                    <binding destination="1ih-dA-244" name="value" keyPath="values.CLTInstallPath" id="1tp-Fm-FX4">
-                                        <dictionary key="options">
-                                            <string key="NSNullPlaceholder">/usr/local/bin/bushelscript</string>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -618,14 +619,14 @@
                                 </constraints>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSStatusUnavailable" id="MQZ-cB-nD1"/>
                                 <connections>
-                                    <binding destination="c8c-NC-wEa" name="value" keyPath="isCLTInstalled" id="40h-ZU-ASY">
+                                    <binding destination="c8c-NC-wEa" name="value" keyPath="cltInstalledStatus" id="XOO-qg-btU">
                                         <dictionary key="options">
-                                            <string key="NSValueTransformerName">AvailabilityImageVT</string>
+                                            <string key="NSValueTransformerName">InterpreterPrefsInstallStatusAvailabilityImageVT</string>
                                         </dictionary>
                                     </binding>
                                 </connections>
                             </imageView>
-                            <textField horizontalHuggingPriority="253" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LXY-Ml-7c7">
+                            <textField horizontalHuggingPriority="253" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="LXY-Ml-7c7">
                                 <rect key="frame" x="46" y="61" width="386" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Command-line tool not installed" id="FKF-4q-EhP">
                                     <font key="font" metaFont="smallSystem" size="13"/>
@@ -633,7 +634,7 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="c8c-NC-wEa" name="value" keyPath="isCLTInstalled" id="keD-U7-HRd">
+                                    <binding destination="c8c-NC-wEa" name="value" keyPath="cltInstalledStatus" id="hkP-k0-OLx">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">InterpreterPrefsInstallStatusHeadingVT</string>
                                         </dictionary>
@@ -648,7 +649,12 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="toggleInstalled:" target="LAn-p8-PTR" id="7Tx-jh-Her"/>
-                                    <binding destination="c8c-NC-wEa" name="title" keyPath="isCLTInstalled" id="NzF-8o-htM">
+                                    <binding destination="c8c-NC-wEa" name="enabled" keyPath="cltInstalledStatus" id="UOf-YD-YYY">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">InterpreterPrefsToggleInstallButtonEnabledVT</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="c8c-NC-wEa" name="title" keyPath="cltInstalledStatus" id="P7e-dK-Bom">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">InterpreterPrefsInstallButtonTitleVT</string>
                                         </dictionary>
