@@ -1,10 +1,10 @@
 // BushelScript Editor application
-// © 2019-2020 Ian A. Gregory.
+// © 2019-2021 Ian A. Gregory.
 // See file LICENSE.txt for licensing information.
 
 import Cocoa
 import Bushel
-import BushelLanguageServiceConnectionCreation
+import BushelRT
 import Defaults
 
 private func defaultSourceCodeAttributes() -> [NSAttributedString.Key : Any] {
@@ -19,10 +19,8 @@ class DocumentVC: NSViewController {
     @IBOutlet var textView: NSTextView!
     @IBOutlet var progressIndicator: NSProgressIndicator!
     
-    @objc dynamic var resultInspectorPanelWC: ObjectInspectorPanelWC?
-    
-    private lazy var connection: NSXPCConnection? = self.newLanguageServiceConnection()
-    private var connectionInUse: Bool = false
+    private var program: Bushel.Program?
+    private var rt = BushelRT.Runtime()
     
     enum Status {
         
@@ -68,11 +66,7 @@ class DocumentVC: NSViewController {
         didSet {
             DispatchQueue.main.async {
                 let status = self.statusStack.last
-                
                 self.document.isRunning = (status == .running)
-                
-                self.connectionInUse = (status != nil)
-                self.isWorking = self.connectionInUse
                 self.statusText = status?.localizedDescription ?? ""
             }
         }
@@ -92,43 +86,6 @@ class DocumentVC: NSViewController {
     
     func clearStatus() {
         statusStack.removeAll()
-    }
-    
-    private func newLanguageServiceConnection() -> NSXPCConnection {
-        return NSXPCConnection.bushelLanguageServiceConnection(interruptionHandler: { [weak self] in
-            guard
-                let self = self,
-                self.connectionInUse
-            else {
-                return
-            }
-            self.connection = nil
-            self.clearStatus()
-            DispatchQueue.main.async {
-                let alert = NSAlert()
-                alert.messageText = "The Bushel Language Service has crashed."
-                alert.informativeText = "It will be restarted automatically.\n\nIf this recurs, please file a bug report with the BushelLanguageService crash log attached.\n\nSorry for the inconvenience."
-                alert.runModal()
-                self.connection = self.newLanguageServiceConnection()
-            }
-        }, invalidationHandler: { [weak self] in
-            guard
-                let self = self,
-                self.connectionInUse
-            else {
-                return
-            }
-            self.connection = nil
-            DispatchQueue.main.async {
-                let alert = NSAlert()
-                alert.messageText = "Couldn't connect to the Bushel Language Service."
-                alert.informativeText = "There is a problem with your BushelScript installation. Please reinstall BushelScript and try again.\n\nBushelScript Editor will now be quit."
-                alert.alertStyle = .critical
-                alert.addButton(withTitle: "Quit")
-                alert.runModal()
-                NSApplication.shared.terminate(self)
-            }
-        })
     }
     
     private var documentFont: NSFont {
@@ -195,19 +152,6 @@ class DocumentVC: NSViewController {
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        if let window = view.window {
-            NotificationCenter.default.addObserver(self, selector: #selector(repositionSuggestionWindow), name: NSWindow.didMoveNotification, object: window)
-        }
-    }
-    
-    override func viewWillDisappear() {
-        dismissSuggestionList()
-        resultInspectorPanelWC?.close()
-    }
-    
     override var representedObject: Any? {
         didSet {
             if let document = representedObject as? Document {
@@ -232,7 +176,13 @@ class DocumentVC: NSViewController {
                     if let wc = self.view.window?.windowController as? DocumentWC {
                         wc.updateLanguageMenu()
                     }
-                    self.compile(document.sourceCode, then: { _, _, _ in })
+                    DispatchQueue.main.async {
+                        do {
+                            _ = try self.compile(document.sourceCode)
+                        } catch {
+                            self.displayInlineError(error)
+                        }
+                    }
                 }
             }
         }
@@ -251,246 +201,71 @@ class DocumentVC: NSViewController {
     }
     
     @IBAction func runScript(_ sender: Any?) {
-        func runCallback(service: BushelLanguageServiceProtocol, language: LanguageModuleToken, result: Result<RTObjectToken, ErrorToken>) {
-            switch result {
-            case .success(let result):
-                DispatchQueue.main.async {
-                    self.resultInspectorPanelWC?.window?.orderOut(nil)
-                    
-                    let resultWC = self.resultInspectorPanelWC ?? ObjectInspectorPanelWC.instantiate(for: NoSelection())
-                    resultWC.window?.title = "Result\(self.document.displayName.map { " – \($0)" } ?? "")"
-                    resultWC.contentViewController?.representedObject = BushelRTObject(service: service, object: result as RTObjectToken)
-                    
-                    DispatchQueue.main.async {
-                        resultWC.window?.orderFront(nil)
-                        self.resultInspectorPanelWC = resultWC
-                        
-                    }
-                }
-            case .failure(let errorToken):
-                pushStatus(.fetchingData)
-                service.copyNSError(fromError: errorToken) { error in
-                    self.popStatus(.fetchingData)
-//                    DispatchQueue.main.async {
-//                        self.presentError(error)
-                        self.displayInlineError(for: errorToken, source: self.modelSourceCode, via: service)
-//                    }
-                }
-            }
-        }
-        func compileCallback(service: BushelLanguageServiceProtocol, language: LanguageModuleToken, result: Result<ProgramToken, ErrorToken>) {
-            switch result {
-            case .success(let program):
-                run(program, service, language, then: runCallback)
-            case .failure(let error):
-//                pushStatus(.fetchingData)
-//                service.copyNSError(fromError: error) { error in
-//                    self.popStatus(.fetchingData)
-//                    DispatchQueue.main.async {
-//                        self.presentError(error)
-//                    }
-                    self.displayInlineError(for: error, source: self.modelSourceCode, via: service)
-//                }
-            }
-        }
-        
-        let source = modelSourceCode
-        if Defaults[.prettyPrintBeforeRunning] {
-            prettyPrint(source, then: compileCallback)
-        } else {
-            compile(source, then: compileCallback)
+        do {
+            let program = try Defaults[.prettyPrintBeforeRunning] ?
+                prettyPrint(modelSourceCode) :
+                compile(modelSourceCode)
+            let result = try rt.run(program)
+            NotificationCenter.default.post(name: .result, object: document, userInfo: [UserInfo.payload: result])
+        } catch {
+            self.displayInlineError(error)
         }
     }
     
     @IBAction func compileScript( _ sender: Any?) {
-        prettyPrint(modelSourceCode) { service, language, result in
-            switch result {
-            case .success(_):
-                break
-            case .failure(let error):
-//                self.pushStatus(.fetchingData)
-//                service.copyNSError(fromError: error) { error in
-//                    self.popStatus(.fetchingData)
-//                    DispatchQueue.main.async {
-//                        self.presentError(error)
-//                    }
-                self.displayInlineError(for: error, source: self.modelSourceCode, via: service)
-//                }
-            }
+        do {
+            _ = try prettyPrint(modelSourceCode)
+        } catch {
+            displayInlineError(error)
         }
     }
     
-    private func run(_ program: ProgramToken, _ service: BushelLanguageServiceProtocol, _ language: LanguageModuleToken, then: @escaping (_ service: BushelLanguageServiceProtocol, _ language: LanguageModuleToken, _ result: Result<RTObjectToken, ErrorToken>) -> Void) {
-        pushStatus(.running)
-        service.runProgram(program, arguments: [], scriptName: self.document.displayName!) { result, error in
-            self.popStatus(.running)
-            if let error = error as ErrorToken? {
-                then(service, language, .failure(error))
-            } else if let result = result as RTObjectToken? {
-                then(service, language, .success(result))
-            }
-        }
+    private func prettyPrint(_ source: String) throws -> Program {
+        let program = try compile(source)
+        let pretty = Bushel.prettyPrint(program.elements)
+        setModelSourceCodeUndoable(pretty, actionName: "Pretty Print")
+        displayedSourceCode = modelSourceCode
+        return try compile(modelSourceCode)
     }
     
-    private func prettyPrint(_ source: String, then: @escaping (_ service: BushelLanguageServiceProtocol, _ language: LanguageModuleToken, _ result: Result<ProgramToken, ErrorToken>) -> Void) {
-        compile(source) { service, language, result in
-            switch result {
-            case .failure(_):
-                break
-            case .success(let program):
-                self.pushStatus(.prettyPrinting)
-                service.prettyPrintProgram(program) { pretty in
-                    self.popStatus(.prettyPrinting)
-                    guard let pretty = pretty else {
-                        return
-                    }
-                    DispatchQueue.main.sync {
-                        self.setModelSourceCodeUndoable(pretty, actionName: "Pretty Print")
-                        self.displayedSourceCode = self.modelSourceCode
-                        self.compile(self.modelSourceCode, then: { _, _, _ in })
-                    }
-                }
-            }
-            then(service, language, result)
-        }
-    }
-    
-    private enum Result<Success, Failure> {
+    private func compile(_ source: String) throws -> Program {
+        let program = try parse(source)
         
-        case success(Success)
-        case failure(Failure)
+        let highlighted = NSMutableAttributedString(attributedString: highlight(source: Substring(source), program.elements, with: [
+            .comment: CGColor(gray: 0.7, alpha: 1.0),
+            .keyword: CGColor(red: 234 / 255.0, green: 156 / 255.0, blue: 119 / 255.0, alpha: 1.0),
+            .operator: CGColor(red: 234 / 255.0, green: 156 / 255.0, blue: 119 / 255.0, alpha: 1.0),
+            .dictionary: CGColor(red: 200 / 255.0, green: 229 / 255.0, blue: 100 / 255.0, alpha: 1.0),
+            .type: CGColor(red: 177 / 255.0, green: 229 / 255.0, blue: 138 / 255.0, alpha: 1.0),
+            .property: CGColor(red: 224 / 255.0, green: 197 / 255.0, blue: 137 / 255.0, alpha: 1.0),
+            .constant: CGColor(red: 253 / 255.0, green: 143 / 255.0, blue: 63 / 255.0, alpha: 1.0),
+            .command: CGColor(red: 238 / 255.0, green: 223 / 255.0, blue: 112 / 255.0, alpha: 1.0),
+            .parameter: CGColor(red: 207 / 255.0, green: 106 / 255.0, blue: 76 / 255.0, alpha: 1.0),
+            .variable: CGColor(red: 153 / 255.0, green: 202 / 255.0, blue: 255 / 255.0, alpha: 1.0),
+            .resource: CGColor(red: 88 / 255.0, green: 176 / 255.0, blue: 188 / 255.0, alpha: 1.0),
+            .number: CGColor(red: 72 / 255.0, green: 148 / 255.0, blue: 209 / 255.0, alpha: 1.0),
+            .string: CGColor(red: 118 / 255.0, green: 186 / 255.0, blue: 83 / 255.0, alpha: 1.0),
+            .weave: CGColor(gray: 0.9, alpha: 1.0),
+        ]))
         
-    }
-    
-    private func compile(_ source: String, then: @escaping (_ service: BushelLanguageServiceProtocol, _ language: LanguageModuleToken, _ result: Result<ProgramToken, ErrorToken>) -> Void) {
-        func highlightPassthroughThen(service: BushelLanguageServiceProtocol, language: LanguageModuleToken, result: Result<ProgramToken, ErrorToken>) {
-            switch result {
-            case .success(let program):
-                self.pushStatus(.highlighting)
-                service.highlightProgram(program) { prettyData in
-                    self.popStatus(.highlighting)
-                    guard
-                        let prettyData = prettyData,
-                        let pretty = try? NSAttributedString(data: prettyData, options: [.documentType: NSAttributedString.DocumentType.rtf, .defaultAttributes: defaultSourceCodeAttributes()], documentAttributes: nil)
-                    else {
-                        return
-                    }
-                    
-                    let prettyCopy = pretty.mutableCopy() as! NSMutableAttributedString
-                    prettyCopy.addAttribute(.font, value: self.documentFont, range: NSRange(location: 0, length: (prettyCopy.string as NSString).length))
-                    
-                    DispatchQueue.main.sync {
-                        guard source == self.textView.string else {
-                            // Text has changed since this information was generated
-                            return
-                        }
-                        
-                        self.document.undoManager?.disableUndoRegistration()
-                        defer {
-                            self.document.undoManager?.enableUndoRegistration()
-                        }
-                        self.displayedAttributedSourceCode = prettyCopy
-                    }
-                }
-            case .failure(_):
-                break
-            }
-            
-            then(service, language, result)
-        }
+        highlighted.addAttribute(.font, value: self.documentFont, range: NSRange(location: 0, length: (highlighted.string as NSString).length))
         
-        let then = highlightPassthroughThen
+        self.document.undoManager?.disableUndoRegistration()
+        defer {
+            self.document.undoManager?.enableUndoRegistration()
+        }
+        self.displayedAttributedSourceCode = highlighted
         
-        parse(source) { service, language, program, error in
-            guard
-                let service = service,
-                let language = language
-            else {
-                return
-            }
-            
-            if let error = error {
-                then(service, language, .failure(error))
-            } else if let program = program {
-                then(service, language, .success(program))
-                DispatchQueue.main.async {
-                    self.program = (program, source)
-                    self.textViewDidChangeSelection()
-                }
-            }
-        }
+        return program
     }
     
-    private func parse(_ source: String, then: @escaping (_ service: BushelLanguageServiceProtocol?, _ language: LanguageModuleToken?, _ program: ProgramToken?, _ error: ErrorToken?) -> Void) {
-        guard let document = document else {
-            // We don't know what language module to use
-            return
-        }
-        guard let service = self.service else {
-            return then(nil, nil, nil, nil)
-        }
-        
-        pushStatus(.loadingLanguageModule)
-        service.loadLanguageModule(withIdentifier: document.languageID) { language in
-            self.popStatus(.loadingLanguageModule)
-            guard let language = language else {
-                return then(service, nil, nil, nil)
-            }
-            
-            self.pushStatus(.compiling)
-            service.parseSource(source, at: document.fileURL, usingLanguageModule: language) { (program, error) in
-                self.popStatus(.compiling)
-                then(service, language as LanguageModuleToken, program as ProgramToken?, error as ErrorToken?)
-            }
-        }
+    private func parse(_ source: String) throws -> Program {
+        let program = try Bushel.parse(source: source, languageID: document.languageID, ignoringImports: document.fileURL.map { [$0] } ?? [])
+        self.program = program
+        return program
     }
-    
-    private var service: BushelLanguageServiceProtocol? {
-        connection?.remoteObjectProxy as? BushelLanguageServiceProtocol
-    }
-    
-    private var suggestionListWC = SuggestionListWC.instantiate()
-    private var program: (token: ProgramToken, source: String)? {
-        didSet {
-            if let (token, _) = oldValue {
-                service?.releaseProgram(token, reply: { _ in })
-            }
-        }
-    }
-    
-    @objc dynamic var expression: BushelExpression?
     
     @IBOutlet weak var sidebarObjectInspectorView: NSView!
-    
-    @IBSegueAction
-    func embedSidebarObjectInspector(coder: NSCoder) -> NSViewController? {
-        guard let vc = NSViewController(coder: coder) else {
-            return nil
-        }
-        vc.bind(NSBindingName(rawValue: #keyPath(ObjectInspectorVC.representedObject)), to: self, withKeyPath: #keyPath(DocumentVC.expression), options: nil)
-        DispatchQueue.main.async {
-            if let superview = vc.view.superview {
-                // Prevent this autogenerated view's autoresizing mask constraints
-                // from clipping the embedded content.
-                superview.translatesAutoresizingMaskIntoConstraints = false
-                superview.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor).isActive = true
-                superview.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor).isActive = true
-                superview.topAnchor.constraint(equalTo: vc.view.topAnchor).isActive = true
-                superview.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor).isActive = true
-            }
-            
-            if let outerView = self.sidebarObjectInspectorView {
-                // Pin the embedded view to top, leading and trailing, and force
-                // the outer sizing view's height to equal that of the embedded view.
-                vc.view.translatesAutoresizingMaskIntoConstraints = false
-                vc.view.leadingAnchor.constraint(equalTo: outerView.leadingAnchor).isActive = true
-                vc.view.trailingAnchor.constraint(equalTo: outerView.trailingAnchor).isActive = true
-                vc.view.topAnchor.constraint(equalTo: outerView.topAnchor).isActive = true
-                vc.view.heightAnchor.constraint(equalTo: outerView.heightAnchor).isActive = true
-            }
-        }
-        return vc
-    }
     
     private var inlineErrorVC: InlineErrorVC?
     
@@ -504,6 +279,8 @@ extension DocumentVC: NSTextViewDelegate {
     }
     
     private func textDidChange() {
+        removeErrorDisplay()
+        
         let source = textView.string
         modelSourceCode = source
         
@@ -515,107 +292,62 @@ extension DocumentVC: NSTextViewDelegate {
             return
         }
         
-        compile(source) { (service, language, result) in
-            switch result {
-            case .success(_):
-                DispatchQueue.main.async {
-                    // No errors
-                    self.removeErrorDisplay()
-//                    self.dismissSuggestionList()
-                }
-                
-            case .failure(let error):
-                guard Defaults[.liveErrorsEnabled] else {
-                    return
-                }
-                self.displayInlineError(for: error, source: source, via: service)
-            }
+        do {
+            _ = try compile(source)
+        } catch {
+            displayInlineError(error)
         }
     }
     
-    private func displayInlineError(for error: ErrorToken, source: String, via service: BushelLanguageServiceProtocol) {
-        pushStatus(.fetchingData)
-        service.copyNSError(fromError: error) { nsError in
-            service.copySourceCharacterRange(fromError: error, forSource: source) { errorRangeValue in
-                self.popStatus(.fetchingData)
-                if let errorRangeValue = errorRangeValue {
-                    let errorNSRange = errorRangeValue.rangeValue
-                    DispatchQueue.main.sync {
-                        guard source == self.textView.string else {
-                            // Text has changed since this information was generated
-                            return
-                        }
-                        self.removeErrorDisplay()
-                        self.display(error: nsError, at: errorNSRange)
-                    }
-                }
-            }
-//            service.getSourceFixes(fromError: error) { fixes in
-//                self.popStatus(.fetchingData)
-//
-//                guard !fixes.isEmpty else {
-//                    DispatchQueue.main.sync {
-//                        self.showSuggestionList(with: [ErrorSuggestionListItem(error: nsError)])
-//                    }
-//                    return
-//                }
-//
-//                let suggestions =
-//                    [ErrorSuggestionListItem(error: nsError)] +
-//                    fixes.map { AutoFixSuggestionListItem(service: service, fix: $0 as SourceFixToken, source: Substring(source)) } as [SuggestionListItem]
-//                DispatchQueue.main.sync {
-//                    self.showSuggestionList(with: suggestions)
-//                }
-//            }
+    private func displayInlineError(_ error: Error) {
+        guard let location = (error as? Located)?.location else {
+            return
         }
+        removeErrorDisplay()
+        display(error: error, at: location.range)
     }
     
-    private func display(error: Error, at sourceRange: NSRange) {
-        func hightlightError() {
-            guard
-                let textStorage = textView.textStorage,
-                let swiftRange = Range(sourceRange, in: textStorage.string),
-                textStorage.string.range.contains(swiftRange)
-            else {
-                return
-            }
-            textStorage.addAttribute(.backgroundColor, value: NSColor(named: "ErrorHighlightColor")!, range: sourceRange)
-            textView.typingAttributes = defaultSourceCodeAttributes()
+    private func display(error: Error, at sourceRange: Range<String.Index>) {
+        guard
+            let textStorage = textView.textStorage,
+            textStorage.string.range.contains(sourceRange)
+        else {
+            return
         }
-        func addInlineErrorView() {
-            let firstLineScreenRect = textView.firstRect(forCharacterRange: sourceRange, actualRange: nil)
-            guard firstLineScreenRect != .zero else {
-                // Not visible in scroll view
-                return
-            }
-            guard let window = view.window else {
-                return
-            }
-            // Convert from screen coordinates
-            let firstLineRect = window.convertFromScreen(firstLineScreenRect)
-            // Flip coordinates for text view
-            let firstLineFlippedRect = firstLineRect.applying(
-                CGAffineTransform(translationX: 0, y: textView.frame.height)
-                    .scaledBy(x: 1, y: -1)
-            )
-            
-            let inlineErrorVC = InlineErrorVC()
-            self.inlineErrorVC = inlineErrorVC
-            inlineErrorVC.representedObject = error
-            
-            let errorView = inlineErrorVC.view
-            textView.addSubview(errorView)
-            
-            let fontHeightAdjust = documentFont.capHeight * 2.0
-            errorView.frame.origin.y = firstLineFlippedRect.minY + errorView.frame.height + fontHeightAdjust
-            errorView.leadingAnchor.constraint(greaterThanOrEqualTo: textView.leadingAnchor).isActive = true
-            errorView.trailingAnchor.constraint(equalTo: textView.trailingAnchor).isActive = true
-        }
+        let textStorageRange = NSRange(sourceRange, in: textStorage.string)
         
         removeErrorDisplay()
         
-        hightlightError()
-        addInlineErrorView()
+        textStorage.addAttribute(.backgroundColor, value: NSColor(named: "ErrorHighlightColor")!, range: textStorageRange)
+        textView.typingAttributes = defaultSourceCodeAttributes()
+        
+        let firstLineScreenRect = textView.firstRect(forCharacterRange: textStorageRange, actualRange: nil)
+        guard firstLineScreenRect != .zero else {
+            // Not visible in scroll view
+            return
+        }
+        guard let window = view.window else {
+            return
+        }
+        // Convert from screen coordinates
+        let firstLineRect = window.convertFromScreen(firstLineScreenRect)
+        // Flip coordinates for text view
+        let firstLineFlippedRect = firstLineRect.applying(
+            CGAffineTransform(translationX: 0, y: textView.frame.height)
+                .scaledBy(x: 1, y: -1)
+        )
+        
+        let inlineErrorVC = InlineErrorVC()
+        self.inlineErrorVC = inlineErrorVC
+        inlineErrorVC.representedObject = error
+        
+        let errorView = inlineErrorVC.view
+        textView.addSubview(errorView)
+        
+        let fontHeightAdjust = documentFont.capHeight * 2.0
+        errorView.frame.origin.y = firstLineFlippedRect.minY + errorView.frame.height + fontHeightAdjust
+        errorView.leadingAnchor.constraint(greaterThanOrEqualTo: textView.leadingAnchor).isActive = true
+        errorView.trailingAnchor.constraint(equalTo: textView.trailingAnchor).isActive = true
     }
     
     private func removeErrorDisplay() {
@@ -645,22 +377,28 @@ extension DocumentVC: NSTextViewDelegate {
         guard !ranges.isEmpty else {
             return
         }
-
         let nsrange = ranges[0].rangeValue
-        guard nsrange.length == 0 else {
-            return
-        }
-
         let text = textView.string
         guard let range = Range<String.Index>(nsrange, in: text) else {
             return
         }
-
-        updateExpressionInspector(for: range)
+        
+        guard let program = program, modelSourceCode.range.contains(range) else {
+            NotificationCenter.default.post(name: .selection, object: document)
+            return
+        }
+        NotificationCenter.default.post(name: .selection, object: document, userInfo: [UserInfo.payload: range])
+        
+        let expressionsAtLocation = program.expressions(at: SourceLocation(range, source: modelSourceCode))
+        guard !expressionsAtLocation.isEmpty else {
+            return
+        }
+        
+        NotificationCenter.default.post(name: .selectedExpression, object: self.document, userInfo: [UserInfo.payload: expressionsAtLocation.first! as Any])
     }
     
     func textDidEndEditing(_ notification: Notification) {
-        dismissSuggestionList()
+//        dismissSuggestionList()
     }
     
 }
@@ -668,74 +406,48 @@ extension DocumentVC: NSTextViewDelegate {
 // MARK: Suggestion list
 extension DocumentVC {
     
-    private func showSuggestionList(with suggestions: [SuggestionListItem]) {
-        guard !suggestions.isEmpty else {
-            self.dismissSuggestionList()
-            return
-        }
-        
-        let vc = self.suggestionListWC.contentViewController as! SuggestionListVC
-        vc.documentVC = self
-        vc.representedObject = suggestions
-        
-        self.repositionSuggestionWindow()
-        
-        self.suggestionListWC.showWindow(self)
-    }
-    
-    func apply(suggestion: AutoFixSuggestionListItem) {
-        suggestion.service.applyFix(suggestion.fix, toSource: document.sourceCode) { fixedSource in
-            if let fixedSource = fixedSource {
-                DispatchQueue.main.sync {
-                    self.setModelSourceCodeUndoable(fixedSource, actionName: "Apply Fix")
-                    self.displayedSourceCode = self.modelSourceCode
-                }
-            }
-        }
-    }
-    
-    @objc private func repositionSuggestionWindow() {
-        guard
-            let window = suggestionListWC.window,
-            let selectedRange = textView.selectedRanges.first?.rangeValue
-        else {
-            return
-        }
-        
-        var selectionOrigin = textView.firstRect(forCharacterRange: selectedRange, actualRange: nil).origin
-        selectionOrigin.y -= window.frame.height
-        window.setFrameOrigin(selectionOrigin)
-        
-    }
-    
-    private func dismissSuggestionList() {
-        suggestionListWC.close()
-    }
-    
-}
-
-// MARK: Expression inspector
-extension DocumentVC {
-    
-    private func updateExpressionInspector(for selectedRange: Range<String.Index>) {
-        guard
-            let service = service,
-            let (program, source) = program,
-            source.range.contains(selectedRange)
-        else {
-            return
-        }
-        
-        let indexDistance = source.distance(from: source.startIndex, to: selectedRange.lowerBound)
-        
-        service.getExpressionAtLocation(indexDistance, inSourceOfProgram: program) { (expression) in
-            guard let expression = expression else {
-                return
-            }
-            DispatchQueue.main.async {
-                self.expression = BushelExpression(service: service, expression: expression as ExpressionToken)
-            }
-        }
-    }
+//    private func showSuggestionList(with suggestions: [SuggestionListItem]) {
+//        guard !suggestions.isEmpty else {
+//            self.dismissSuggestionList()
+//            return
+//        }
+//
+//        let vc = self.suggestionListWC.contentViewController as! SuggestionListVC
+//        vc.documentVC = self
+//        vc.representedObject = suggestions
+//
+//        self.repositionSuggestionWindow()
+//
+//        self.suggestionListWC.showWindow(self)
+//    }
+//
+//    func apply(suggestion: AutoFixSuggestionListItem) {
+//        suggestion.service.applyFix(suggestion.fix, toSource: document.sourceCode) { fixedSource in
+//            if let fixedSource = fixedSource {
+//                DispatchQueue.main.sync {
+//                    self.setModelSourceCodeUndoable(fixedSource, actionName: "Apply Fix")
+//                    self.displayedSourceCode = self.modelSourceCode
+//                }
+//            }
+//        }
+//    }
+//
+//    @objc private func repositionSuggestionWindow() {
+//        guard
+//            let window = suggestionListWC.window,
+//            let selectedRange = textView.selectedRanges.first?.rangeValue
+//        else {
+//            return
+//        }
+//
+//        var selectionOrigin = textView.firstRect(forCharacterRange: selectedRange, actualRange: nil).origin
+//        selectionOrigin.y -= window.frame.height
+//        window.setFrameOrigin(selectionOrigin)
+//
+//    }
+//
+//    private func dismissSuggestionList() {
+//        suggestionListWC.close()
+//    }
     
 }

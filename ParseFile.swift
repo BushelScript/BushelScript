@@ -2,17 +2,17 @@ import Regex
 
 private var defaultLanguageID = "bushelscript_en"
 
-func parse(from url: URL, ignoringImports: Set<URL> = []) throws -> Program {
+public func parse(from url: URL, ignoringImports: Set<URL> = []) throws -> Program {
     try parse(source: String(contentsOf: url), ignoringImports: ignoringImports.union([url]))
 }
 
-func parse(source: String, at url: URL) throws -> Program {
+public func parse(source: String, at url: URL) throws -> Program {
     try parse(source: source, ignoringImports: [url])
 }
 
-func parse(source: String, ignoringImports: Set<URL> = []) throws -> Program {
+public func parse(source: String, languageID: String? = nil, ignoringImports: Set<URL> = []) throws -> Program {
     var source = source
-    let languageID = LanguageModule.takeLanguageFromHashbang(&source) ?? defaultLanguageID
+    let languageID = LanguageModule.takeLanguageFromHashbang(&source) ?? languageID ?? defaultLanguageID
     return try LanguageModule(identifier: languageID).parser().parse(source: source, ignoringImports: ignoringImports)
 }
 

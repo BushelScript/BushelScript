@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -473,7 +473,7 @@ DQ
                 </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="0.0"/>
+            <point key="canvasLocation" x="75" y="-69"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -482,21 +482,39 @@ DQ
                     <window key="window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="Ckk-yw-fiv">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="196" y="240" width="560" height="345"/>
+                        <rect key="contentRect" x="196" y="240" width="800" height="500"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <value key="minSize" type="size" width="300" height="200"/>
                         <toolbar key="toolbar" implicitIdentifier="C968416B-3A84-43FE-A077-88B3093CFF5A" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="ha4-ky-VRD">
                             <allowedToolbarItems>
+                                <toolbarItem implicitItemIdentifier="84D77855-908B-42F1-915A-2A64B10DABA9" label="Language" paletteLabel="Select Language" autovalidates="NO" id="CqE-M2-9eG">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="200" height="24"/>
+                                    <size key="maxSize" width="200" height="24"/>
+                                    <popUpButton key="view" verticalHuggingPriority="750" id="H5s-eb-60E" userLabel="Pop Up Button">
+                                        <rect key="frame" x="0.0" y="14" width="200" height="24"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wdo-Qz-3pq">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="menu"/>
+                                            <menu key="menu" title="Language" id="r7E-Gw-m7S">
+                                                <connections>
+                                                    <outlet property="delegate" destination="raq-nq-HIZ" id="lOM-Lo-ghQ"/>
+                                                </connections>
+                                            </menu>
+                                        </popUpButtonCell>
+                                    </popUpButton>
+                                </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="12CEB4D7-9654-4757-8DC8-E7FF659957A2" label="Run" paletteLabel="Run" image="SERunScriptTemplate" id="kJ5-50-1Th">
                                     <nil key="toolTip"/>
-                                    <size key="minSize" width="44" height="25"/>
-                                    <size key="maxSize" width="44" height="25"/>
+                                    <size key="minSize" width="36" height="25"/>
+                                    <size key="maxSize" width="44" height="32"/>
                                     <button key="view" verticalHuggingPriority="750" id="BPO-f5-pmU">
-                                        <rect key="frame" x="0.0" y="14" width="44" height="25"/>
+                                        <rect key="frame" x="0.0" y="14" width="36" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="SERunScriptTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8T5-C0-091">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="SERunScriptTemplate" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8T5-C0-091">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem" size="13"/>
                                         </buttonCell>
                                     </button>
                                     <connections>
@@ -512,39 +530,39 @@ DQ
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="SECompileScriptTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="auY-BA-2Az">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem" size="13"/>
                                         </buttonCell>
                                     </button>
                                     <connections>
                                         <action selector="compileScript:" target="6f7-a7-6o1" id="H3j-B8-VOu"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="84D77855-908B-42F1-915A-2A64B10DABA9" label="Language" paletteLabel="Select Language" autovalidates="NO" id="CqE-M2-9eG">
+                                <toolbarItem implicitItemIdentifier="E33B5B42-3F40-46E6-9B3B-420181A6DE60" label="Sidebar" paletteLabel="Toggle Sidebar" image="sidebar.right" catalog="system" bordered="YES" id="Nnz-WS-rd6">
                                     <nil key="toolTip"/>
-                                    <size key="minSize" width="200" height="24"/>
-                                    <size key="maxSize" width="200" height="24"/>
-                                    <popUpButton key="view" verticalHuggingPriority="750" id="H5s-eb-60E" userLabel="Pop Up Button">
-                                        <rect key="frame" x="0.0" y="14" width="200" height="24"/>
+                                    <size key="minSize" width="44" height="25"/>
+                                    <size key="maxSize" width="44" height="25"/>
+                                    <button key="view" verticalHuggingPriority="750" id="EkK-ml-3xN">
+                                        <rect key="frame" x="21" y="14" width="44" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wdo-Qz-3pq">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sidebar.right" catalog="system" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yAz-BA-B5t">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                            <menu key="menu" title="Language" id="r7E-Gw-m7S">
-                                                <connections>
-                                                    <outlet property="delegate" destination="raq-nq-HIZ" id="lOM-Lo-ghQ"/>
-                                                </connections>
-                                            </menu>
-                                        </popUpButtonCell>
-                                    </popUpButton>
+                                            <font key="font" metaFont="smallSystem" size="13"/>
+                                        </buttonCell>
+                                    </button>
+                                    <connections>
+                                        <action selector="toggleSidebar:" target="6f7-a7-6o1" id="Ug3-iP-fAe"/>
+                                    </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="Ke7-Zz-VTH"/>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="hxi-iX-p2h"/>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
+                                <toolbarItem reference="CqE-M2-9eG"/>
+                                <toolbarItem reference="hxi-iX-p2h"/>
                                 <toolbarItem reference="kJ5-50-1Th"/>
                                 <toolbarItem reference="t3d-2e-W0z"/>
                                 <toolbarItem reference="hxi-iX-p2h"/>
-                                <toolbarItem reference="CqE-M2-9eG"/>
+                                <toolbarItem reference="Nnz-WS-rd6"/>
                             </defaultToolbarItems>
                         </toolbar>
                         <connections>
@@ -555,7 +573,7 @@ DQ
                         <outlet property="languageMenuDelegate" destination="raq-nq-HIZ" id="40W-VZ-uYF"/>
                         <outlet property="languagePUB" destination="H5s-eb-60E" id="leU-Fg-l4w"/>
                         <outlet property="languagePUBMenu" destination="r7E-Gw-m7S" id="Wln-Vx-0uc"/>
-                        <segue destination="5gI-5U-AMq" kind="relationship" relationship="window.shadowedContentViewController" id="nsd-lR-9xd"/>
+                        <segue destination="IxW-U4-f4Y" kind="relationship" relationship="window.shadowedContentViewController" id="4TI-s2-Ivh"/>
                     </connections>
                 </windowController>
                 <customObject id="raq-nq-HIZ" customClass="CurrentDocumentLanguageMenuDelegate" customModule="BushelScript_Editor" customModuleProvider="target">
@@ -566,7 +584,7 @@ DQ
                 </customObject>
                 <customObject id="6f7-a7-6o1" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="84" y="434"/>
+            <point key="canvasLocation" x="84" y="337"/>
         </scene>
         <!--Preferences-->
         <scene sceneID="M0A-eC-fXg">
@@ -585,7 +603,7 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ON5-OQ-gHg">
-                                <rect key="frame" x="147" y="259" width="157" height="21"/>
+                                <rect key="frame" x="147" y="259" width="156" height="21"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Assets Attribution" id="e9x-Ik-GfU">
                                     <font key="font" metaFont="systemSemibold" size="18"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -598,7 +616,7 @@ DQ
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="55" id="xCs-HP-290"/>
                                 </constraints>
                                 <textFieldCell key="cell" selectable="YES" id="Fga-4w-KRz">
-                                    <font key="font" metaFont="system"/>
+                                    <font key="font" metaFont="smallSystem" size="13"/>
                                     <string key="title">This project uses some Creative Commons-licensed assets. We attribute the below artists not solely for legal reasons, but because we are grateful they have shared their work for the public good.</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -623,7 +641,7 @@ DQ
 	</string>
                                                     <attributes>
                                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                        <font key="NSFont" metaFont="user"/>
+                                                        <font key="NSFont" usesAppearanceFont="YES"/>
                                                         <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                     </attributes>
                                                 </fragment>
@@ -639,7 +657,7 @@ DQ
 </string>
                                                     <attributes>
                                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                        <font key="NSFont" metaFont="user"/>
+                                                        <font key="NSFont" usesAppearanceFont="YES"/>
                                                         <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                     </attributes>
                                                 </fragment>
@@ -649,7 +667,7 @@ CQ
 </string>
                                                     <attributes>
                                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                        <font key="NSFont" metaFont="user"/>
+                                                        <font key="NSFont" usesAppearanceFont="YES"/>
                                                         <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO"/>
                                                     </attributes>
                                                 </fragment>
@@ -665,7 +683,7 @@ CQ
 	</string>
                                                     <attributes>
                                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                        <font key="NSFont" metaFont="user"/>
+                                                        <font key="NSFont" usesAppearanceFont="YES"/>
                                                         <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO"/>
                                                     </attributes>
                                                 </fragment>
@@ -681,7 +699,7 @@ CQ
 	</string>
                                                     <attributes>
                                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                        <font key="NSFont" metaFont="user"/>
+                                                        <font key="NSFont" usesAppearanceFont="YES"/>
                                                         <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO"/>
                                                     </attributes>
                                                 </fragment>
@@ -697,7 +715,7 @@ CQ
 	</string>
                                                     <attributes>
                                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                        <font key="NSFont" metaFont="user"/>
+                                                        <font key="NSFont" usesAppearanceFont="YES"/>
                                                         <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO"/>
                                                     </attributes>
                                                 </fragment>
@@ -711,7 +729,7 @@ CQ
                                                 <fragment content=" &quot;Download&quot; by unlimicon from thenounproject.com">
                                                     <attributes>
                                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                        <font key="NSFont" metaFont="user"/>
+                                                        <font key="NSFont" usesAppearanceFont="YES"/>
                                                         <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO"/>
                                                     </attributes>
                                                 </fragment>
@@ -773,11 +791,11 @@ CQ
             <objects>
                 <viewController id="5gI-5U-AMq" customClass="DocumentVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ERx-hH-rdd">
-                        <rect key="frame" x="0.0" y="0.0" width="680" height="360"/>
+                        <rect key="frame" x="0.0" y="0.0" width="800" height="500"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="cX1-w8-oNb" userLabel="Status Bar">
-                                <rect key="frame" x="0.0" y="0.0" width="680" height="22"/>
+                                <rect key="frame" x="0.0" y="0.0" width="800" height="22"/>
                                 <subviews>
                                     <progressIndicator wantsLayer="YES" maxValue="1" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="1za-9N-l7c">
                                         <rect key="frame" x="6" y="4" width="16" height="16"/>
@@ -793,52 +811,32 @@ CQ
                                             <binding destination="5gI-5U-AMq" name="value" keyPath="statusText" id="zp7-66-7AU"/>
                                         </connections>
                                     </textField>
-                                    <button toolTip="Toggle Result panel" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ihm-ze-IVU">
-                                        <rect key="frame" x="620" y="0.0" width="40" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="40" id="imB-Wz-eml"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSQuickLookTemplate" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lw5-AZ-xPf">
-                                            <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="5gI-5U-AMq" name="enabled" keyPath="resultInspectorPanelWC" id="tqW-4O-XyY">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSIsNotNil</string>
-                                                </dictionary>
-                                            </binding>
-                                            <binding destination="5gI-5U-AMq" name="value" keyPath="resultInspectorPanelWC.isWindowVisible" id="s2b-pS-BMR"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="OWw-pE-B0h" firstAttribute="centerY" secondItem="1za-9N-l7c" secondAttribute="centerY" id="3iv-hO-g7t"/>
                                     <constraint firstAttribute="bottom" secondItem="1za-9N-l7c" secondAttribute="bottom" constant="4" id="AkG-Pp-O7e"/>
                                     <constraint firstItem="1za-9N-l7c" firstAttribute="leading" secondItem="cX1-w8-oNb" secondAttribute="leading" constant="6" id="B4Z-Zv-dTL"/>
                                     <constraint firstAttribute="height" constant="22" id="Cnq-18-a4u"/>
-                                    <constraint firstItem="ihm-ze-IVU" firstAttribute="centerY" secondItem="OWw-pE-B0h" secondAttribute="centerY" id="VJk-fg-Vyn"/>
-                                    <constraint firstItem="ihm-ze-IVU" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="OWw-pE-B0h" secondAttribute="trailing" constant="8" symbolic="YES" id="aVU-Dg-VJg"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="OWw-pE-B0h" secondAttribute="trailing" constant="20" symbolic="YES" id="ZLD-sH-PJN"/>
                                     <constraint firstItem="OWw-pE-B0h" firstAttribute="leading" secondItem="1za-9N-l7c" secondAttribute="trailing" constant="8" symbolic="YES" id="ksK-Qp-Oju"/>
                                     <constraint firstItem="1za-9N-l7c" firstAttribute="top" secondItem="cX1-w8-oNb" secondAttribute="top" constant="2" id="peP-TI-Re0"/>
-                                    <constraint firstAttribute="trailing" secondItem="ihm-ze-IVU" secondAttribute="trailing" constant="20" symbolic="YES" id="wxw-Ew-Ros"/>
                                 </constraints>
                             </customView>
                             <splitView verticalHuggingPriority="249" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l0q-o3-ggk">
-                                <rect key="frame" x="0.0" y="23" width="680" height="337"/>
+                                <rect key="frame" x="0.0" y="23" width="800" height="477"/>
                                 <subviews>
                                     <scrollView appearanceType="darkAqua" verticalCompressionResistancePriority="1000" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="97e-Pl-npf">
-                                        <rect key="frame" x="0.0" y="0.0" width="496" height="337"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="800" height="477"/>
                                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="maB-Wi-doq">
-                                            <rect key="frame" x="0.0" y="0.0" width="496" height="337"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="800" height="477"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <textView importsGraphics="NO" horizontallyResizable="YES" verticallyResizable="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" textCompletion="NO" smartInsertDelete="YES" id="hPn-VJ-vRi">
-                                                    <rect key="frame" x="0.0" y="60" width="496" height="337"/>
+                                                    <rect key="frame" x="0.0" y="60" width="800" height="477"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <color key="backgroundColor" red="0.10588235294117647" green="0.10588235294117647" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <size key="minSize" width="496" height="337"/>
+                                                    <size key="minSize" width="800" height="477"/>
                                                     <size key="maxSize" width="10000000" height="10000000"/>
                                                     <attributedString key="textStorage">
                                                         <fragment content=" ">
@@ -870,77 +868,17 @@ CQ
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="whd-Mx-xlS">
-                                            <rect key="frame" x="480" y="0.0" width="16" height="337"/>
+                                            <rect key="frame" x="784" y="0.0" width="16" height="477"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                    </scrollView>
-                                    <scrollView fixedFrame="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="Bnq-13-QDF" userLabel="Obj Inspector Scroll View">
-                                        <rect key="frame" x="497" y="0.0" width="183" height="337"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <clipView key="contentView" id="7Qh-le-8b6" userLabel="Obj Inspector Clip View">
-                                            <rect key="frame" x="1" y="1" width="181" height="335"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <subviews>
-                                                <view translatesAutoresizingMaskIntoConstraints="NO" id="zap-gd-biD" userLabel="Obj Inspector Outer View">
-                                                    <rect key="frame" x="0.0" y="0.0" width="181" height="335"/>
-                                                    <subviews>
-                                                        <view translatesAutoresizingMaskIntoConstraints="NO" id="md1-5V-L9M" userLabel="Obj Inspector Inner Sizing View">
-                                                            <rect key="frame" x="0.0" y="0.0" width="181" height="335"/>
-                                                            <subviews>
-                                                                <containerView verticalCompressionResistancePriority="1000" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SnG-SJ-34u" userLabel="Obj Inspector Container View">
-                                                                    <rect key="frame" x="0.0" y="-62" width="181" height="397"/>
-                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                    <accessibility identifier="objInspectorContainerView"/>
-                                                                    <connections>
-                                                                        <segue destination="6cF-ES-M72" kind="embed" destinationCreationSelector="embedSidebarObjectInspectorWithCoder:" id="Cc1-pD-dGp"/>
-                                                                    </connections>
-                                                                </containerView>
-                                                            </subviews>
-                                                            <constraints>
-                                                                <constraint firstAttribute="height" constant="335" placeholder="YES" id="f74-xO-V33"/>
-                                                            </constraints>
-                                                            <accessibility identifier="objInspectorInnerSizingView"/>
-                                                        </view>
-                                                    </subviews>
-                                                    <constraints>
-                                                        <constraint firstAttribute="bottom" secondItem="md1-5V-L9M" secondAttribute="bottom" id="5K2-aZ-tHx"/>
-                                                        <constraint firstAttribute="trailing" secondItem="md1-5V-L9M" secondAttribute="trailing" id="8zl-Dt-rCz"/>
-                                                        <constraint firstItem="md1-5V-L9M" firstAttribute="top" secondItem="zap-gd-biD" secondAttribute="top" id="TfC-kW-1bz"/>
-                                                        <constraint firstItem="md1-5V-L9M" firstAttribute="leading" secondItem="zap-gd-biD" secondAttribute="leading" id="Uag-N9-9ty"/>
-                                                    </constraints>
-                                                    <accessibility identifier="objInspectorOuterView"/>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="zap-gd-biD" firstAttribute="leading" secondItem="7Qh-le-8b6" secondAttribute="leading" id="JK3-B0-43R"/>
-                                                <constraint firstAttribute="trailing" secondItem="zap-gd-biD" secondAttribute="trailing" id="awV-ea-GWc"/>
-                                                <constraint firstItem="zap-gd-biD" firstAttribute="top" secondItem="7Qh-le-8b6" secondAttribute="top" id="jmR-Nb-C24"/>
-                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="zap-gd-biD" secondAttribute="bottom" priority="250" constant="1" id="pnr-xJ-TJY"/>
-                                                <constraint firstItem="zap-gd-biD" firstAttribute="width" secondItem="7Qh-le-8b6" secondAttribute="width" id="ux2-9V-leo"/>
-                                            </constraints>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="flipped" value="YES"/>
-                                            </userDefinedRuntimeAttributes>
-                                            <accessibility identifier="objInspectorClipView"/>
-                                        </clipView>
-                                        <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="NgT-Y4-2BG">
-                                            <rect key="frame" x="1" y="320" width="181" height="16"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="0.967741935483871" horizontal="NO" id="kmu-Yt-waY">
-                                            <rect key="frame" x="166" y="1" width="16" height="335"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                        <accessibility identifier="objInspectorScrollView"/>
                                     </scrollView>
                                 </subviews>
                                 <holdingPriorities>
                                     <real value="250"/>
-                                    <real value="260"/>
                                 </holdingPriorities>
                             </splitView>
                             <box verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="H7Z-cU-gdd">
-                                <rect key="frame" x="0.0" y="18" width="680" height="5"/>
+                                <rect key="frame" x="0.0" y="18" width="800" height="5"/>
                             </box>
                         </subviews>
                         <constraints>
@@ -958,27 +896,84 @@ CQ
                     </view>
                     <connections>
                         <outlet property="progressIndicator" destination="1za-9N-l7c" id="5Yu-Zp-nRy"/>
-                        <outlet property="sidebarObjectInspectorView" destination="md1-5V-L9M" id="Xgw-rd-vND"/>
                         <outlet property="textView" destination="hPn-VJ-vRi" id="VAV-ir-PgQ"/>
                     </connections>
                 </viewController>
                 <customObject id="2Tp-Fl-jBw" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="unH-Oi-by7"/>
             </objects>
-            <point key="canvasLocation" x="84" y="876"/>
+            <point key="canvasLocation" x="-733" y="1410"/>
         </scene>
-        <!--ExpressionInspector-->
+        <!--SidebarVC-->
+        <scene sceneID="xEg-FQ-snh">
+            <objects>
+                <splitViewController id="be1-RD-f6Y" customClass="SidebarVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
+                    <splitViewItems>
+                        <splitViewItem id="zXQ-45-Gwe"/>
+                        <splitViewItem id="cZ4-wR-yCM"/>
+                    </splitViewItems>
+                    <splitView key="splitView" dividerStyle="thin" id="4Mv-IE-KAu">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <connections>
+                            <outlet property="delegate" destination="be1-RD-f6Y" id="Bgi-ul-ilo"/>
+                        </connections>
+                    </splitView>
+                    <connections>
+                        <outlet property="splitView" destination="4Mv-IE-KAu" id="2DS-JF-1Dr"/>
+                        <segue destination="6cF-ES-M72" kind="relationship" relationship="splitItems" id="pqa-t7-0Md"/>
+                        <segue destination="ZMt-MW-Z8n" kind="relationship" relationship="splitItems" id="rCd-th-Om9"/>
+                    </connections>
+                </splitViewController>
+                <customObject id="L85-X3-hbQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="152" y="1397"/>
+        </scene>
+        <!--ResultInspectorVC-->
+        <scene sceneID="Aj4-oV-wAS">
+            <objects>
+                <controllerPlaceholder storyboardName="ObjectInspector2" referencedIdentifier="ResultInspectorVC" id="ZMt-MW-Z8n" sceneMemberID="viewController"/>
+                <customObject id="Q0g-DI-fv2" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="328" y="1696"/>
+        </scene>
+        <!--Main SplitVC-->
+        <scene sceneID="wAF-Ow-aGg">
+            <objects>
+                <splitViewController id="IxW-U4-f4Y" customClass="MainSplitVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
+                    <splitViewItems>
+                        <splitViewItem holdingPriority="251" id="qeD-zL-5AL"/>
+                        <splitViewItem canCollapse="YES" holdingPriority="260" behavior="sidebar" id="VIJ-bX-BAF"/>
+                    </splitViewItems>
+                    <splitView key="splitView" dividerStyle="thin" vertical="YES" id="nUg-dc-u1Q">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <connections>
+                            <outlet property="delegate" destination="IxW-U4-f4Y" id="amy-d3-zhW"/>
+                        </connections>
+                    </splitView>
+                    <connections>
+                        <outlet property="splitView" destination="nUg-dc-u1Q" id="YdR-VC-zsY"/>
+                        <segue destination="5gI-5U-AMq" kind="relationship" relationship="splitItems" id="r7I-1l-1N5"/>
+                        <segue destination="be1-RD-f6Y" kind="relationship" relationship="splitItems" id="r5n-lI-3aX"/>
+                    </connections>
+                </splitViewController>
+                <customObject id="eKL-sX-WB8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="74" y="863"/>
+        </scene>
+        <!--ExpressionInspectorVC-->
         <scene sceneID="Mi7-xb-a5x">
             <objects>
-                <controllerPlaceholder storyboardName="ExpressionInspector" id="6cF-ES-M72" sceneMemberID="viewController"/>
+                <controllerPlaceholder storyboardName="ObjectInspector2" referencedIdentifier="ExpressionInspectorVC" id="6cF-ES-M72" sceneMemberID="viewController"/>
                 <customObject id="OqO-2s-mIK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="487" y="1135"/>
+            <point key="canvasLocation" x="517" y="1482"/>
         </scene>
     </scenes>
     <resources>
-        <image name="NSQuickLookTemplate" width="19" height="12"/>
         <image name="SECompileScriptTemplate" width="18" height="14"/>
         <image name="SERunScriptTemplate" width="18" height="14"/>
+        <image name="sidebar.right" catalog="system" width="18" height="14"/>
     </resources>
 </document>
