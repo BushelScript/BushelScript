@@ -9,6 +9,8 @@ extension Defaults.Keys {
     
     static let hasBushelGUIHostEventPermission = Key<AppVersion?>("HasBushelGUIHostEventPermission", default: nil)
     
+    static let cltInstallPath = Key<String>("CLTInstallPath", default: "/usr/local/bin/bushelscript")
+    
     static let sourceCodeFont = NSSecureCodingKey<NSFont>("SourceCodeFont", default: NSFont(name: "Menlo", size: 12) ?? NSFont.systemFont(ofSize: -1))
     static let prettyPrintBeforeRunning = Key<Bool>("PrettyPrintBeforeRunning", default: false)
     

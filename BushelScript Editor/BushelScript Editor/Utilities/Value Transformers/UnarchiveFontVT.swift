@@ -2,7 +2,7 @@
 // © 2019-2020 Ian A. Gregory.
 // See file LICENSE.txt for licensing information.
 
-import Cocoa
+import AppKit
 
 @objc(UnarchiveFontVT)
 class UnarchiveFontVT: NSSecureUnarchiveFromDataTransformer {
