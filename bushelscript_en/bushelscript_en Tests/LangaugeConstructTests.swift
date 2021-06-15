@@ -4,7 +4,7 @@ import Bushel
 // Protip: ⌥⇧⌘← to fold all methods
 
 internal let moduleID = "bushelscript_en"
-internal let module = LanguageModule(identifier: "bushelscript_en")!
+internal let module = try! LanguageModule(identifier: moduleID)
 
 class LanguageConstructTests: XCTestCase {
     

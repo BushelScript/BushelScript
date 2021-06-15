@@ -30,7 +30,7 @@ translation:
         XCTAssertThrowsError(try Translation(source: translationSource), "A newer translation format should be rejected") { error in
             guard
                 let parseError = error as? Bushel.Translation.ParseError,
-                case .invalidFormat = parseError
+                case .invalidFormat = parseError.error
             else {
                 return XCTFail("Should throw a Translation.ParseError.invalidFormat")
             }
