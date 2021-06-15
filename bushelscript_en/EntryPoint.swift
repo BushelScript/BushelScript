@@ -2,15 +2,11 @@ import Foundation
 import Bushel
 
 @objc(BushelScriptEnEntryPoint)
-public class BushelScriptEnEntryPoint: NSObject, LanguageModuleEntryPoint {
+public final class BushelScriptEnEntryPoint: NSObject, LanguageModuleEntryPoint {
     
-    @objc public static var moduleTypes: [String : Any] {
-        return [
-            "SourceParser": EnglishParser.self,
-            "SourceFormatter": EnglishFormatter.self,
-            "MessageFormatter": EnglishMessageFormatter.self
-        ]
-    }
+    @objc public static let messageFormatterType: Any = EnglishMessageFormatter.self
+    @objc public static let sourceParserType: Any = EnglishParser.self
+    @objc public static let sourceFormatterType: Any = EnglishFormatter.self
     
     @available(*, unavailable)
     override init() {

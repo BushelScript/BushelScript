@@ -301,7 +301,9 @@ extension DocumentVC: NSTextViewDelegate {
     
     private func displayInlineError(_ error: Error) {
         guard let location = (error as? Located)?.location else {
-            return
+            return DispatchQueue.main.async {
+                self.presentError(error)
+            }
         }
         removeErrorDisplay()
         display(error: error, at: location.range)

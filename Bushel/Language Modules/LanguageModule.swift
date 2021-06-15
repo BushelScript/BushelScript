@@ -58,26 +58,20 @@ public final class LanguageModule {
             throw LanguageModuleInvalid(descriptor: descriptor, reason: "Incompatible or invalid minor protocol version (expecting \(expectedMinor)")
         }
         
-        guard bundle.load() else {
+        guard let principalClass = bundle.principalClass else {
             throw LanguageModuleInvalid(descriptor: descriptor, reason: "Failed to load code")
         }
-        
-        guard let principalClassName = infoDictionary["NSPrincipalClass"] as? String else {
-            throw LanguageModuleInvalid(descriptor: descriptor, reason: "No NSPrincipalClass declared")
-        }
-        guard let entryPoint = NSClassFromString(principalClassName) as? LanguageModuleEntryPoint.Type else {
-            throw LanguageModuleInvalid(descriptor: descriptor, reason: "Declared NSPrincipalClass is not a LanguageModuleEntryPoint")
+        guard let entryPoint = principalClass as? LanguageModuleEntryPoint.Type else {
+            throw LanguageModuleInvalid(descriptor: descriptor, reason: "Declared NSPrincipalClass does not conform to LanguageModuleEntryPoint")
         }
         
-        let moduleTypes = entryPoint.moduleTypes
         guard
-            let messageFormatter = moduleTypes["MessageFormatter"] as? MessageFormatter.Type,
-            let parser = moduleTypes["SourceParser"] as? SourceParser.Type,
-            let formatter = moduleTypes["SourceFormatter"] as? SourceFormatter.Type
+            let messageFormatter = entryPoint.messageFormatterType as? MessageFormatter.Type,
+            let parser = entryPoint.sourceParserType as? SourceParser.Type,
+            let formatter = entryPoint.sourceFormatterType as? SourceFormatter.Type
         else {
-            throw LanguageModuleInvalid(descriptor: descriptor, reason: "Required interface(s) not implemented (moduleTypes did not return all required types)")
+            throw LanguageModuleInvalid(descriptor: descriptor, reason: "Required interface(s) not implemented")
         }
-        
         self.types = (
             messageFormatter: messageFormatter,
             parser: parser,
@@ -88,6 +82,10 @@ public final class LanguageModule {
             try bundle.urls(forResourcesWithExtension: nil, subdirectory: "Translations").map { translationFileURLs in
                  try translationFileURLs.map(Translation.init(from:))
             } ?? []
+    }
+    
+    public static func allModuleDescriptors() -> [Descriptor] {
+        return allLanguageBundles().map { Descriptor(bundle: $0) }
     }
     
     public struct Descriptor {
@@ -103,10 +101,6 @@ public final class LanguageModule {
             self.localizedName = (bundle.object(forInfoDictionaryKey: kCFBundleNameKey as String) as? String) ?? identifier
         }
         
-    }
-    
-    public static func validModules() -> [Descriptor] {
-        return allLanguageBundles().map { Descriptor(bundle: $0) }
     }
     
 }
@@ -138,14 +132,15 @@ public struct LanguageModuleInvalid: LocalizedError {
 
 @objc public protocol LanguageModuleEntryPoint {
     
-    static var moduleTypes: [String : Any] { get }
+    @objc static var messageFormatterType: Any { get }
+    @objc static var sourceParserType: Any { get }
+    @objc static var sourceFormatterType: Any { get }
     
 }
 
 private func languageBundle(for identifier: String) -> Bundle? {
-    for bundleDirURL in languageBundleDirectories {
-        let bundleURL = bundleDirURL.appendingPathComponent("\(identifier).bundle", isDirectory: true)
-        if let bundle = Bundle(url: bundleURL) {
+    for bundleDir in languageBundleDirectories() {
+        if let bundle = Bundle(url: bundleDir.appendingPathComponent("\(identifier).bundle")) {
             return bundle
         }
     }
@@ -153,16 +148,25 @@ private func languageBundle(for identifier: String) -> Bundle? {
 }
 
 private func allLanguageBundles() -> [Bundle] {
-    return languageBundleDirectories.flatMap { bundleDirURL in
-        return (try?
-            FileManager.default.contentsOfDirectory(at: bundleDirURL, includingPropertiesForKeys: nil, options: [])
+    languageBundleDirectories().flatMap { bundleDir in
+        (try?
+            FileManager.default.contentsOfDirectory(at: bundleDir, includingPropertiesForKeys: nil, options: [])
             .filter { $0.lastPathComponent.hasSuffix(".bundle") }
             .compactMap { return Bundle(url: $0) }
         ) ?? []
     }
 }
 
-private var languageBundleDirectories: [URL] = {
+private func languageBundleDirectories() -> [URL] {
+    staticLanguageBundleDirectories + wrapperLanguageBundleDirectories()
+}
+
+private func wrapperLanguageBundleDirectories() -> [URL] {
+    Bundle.main.url(forResource: "Languages", withExtension: nil)
+        .map { [$0] } ?? []
+}
+
+private var staticLanguageBundleDirectories: [URL] = {
     let libraryURLs = FileManager.default.urls(for: .libraryDirectory, in: .allDomainsMask)
     let mainLanguageBundleDirectories = libraryURLs.map { url in
         url

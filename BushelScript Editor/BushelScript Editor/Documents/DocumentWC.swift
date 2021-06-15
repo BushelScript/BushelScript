@@ -37,7 +37,7 @@ class CurrentDocumentLanguageMenuDelegate: NSObject, NSMenuDelegate {
         
         var itemTitleToSelect: String?
         
-        for module in LanguageModule.validModules() {
+        for module in LanguageModule.allModuleDescriptors() {
             let item = menu.addItem(withTitle: module.localizedName, action: #selector(DocumentVC.setLanguage(_:)), keyEquivalent: "")
             item.representedObject = module
             if module.identifier == currentDocument?.languageID {

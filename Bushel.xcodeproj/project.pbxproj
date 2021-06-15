@@ -36,6 +36,7 @@
 		3C12EF9E2354E6010057E0CC /* RT_Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12EF9D2354E6010057E0CC /* RT_Core.swift */; };
 		3C187D51257C69F200481DA9 /* RT_InsertionSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C187D50257C69F200481DA9 /* RT_InsertionSpecifier.swift */; };
 		3C187D68257C73E700481DA9 /* InsertionSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C187D67257C73E700481DA9 /* InsertionSpecifier.swift */; };
+		3C2A9CE226793D040084716C /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3C2DD4A823A06E90002FAE57 /* ParameterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */; };
 		3C3065B1230B7ABB00833CE8 /* Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B0230B7ABB00833CE8 /* Name.swift */; };
 		3C3065B3230B7E2000833CE8 /* ByNameTermLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B2230B7E2000833CE8 /* ByNameTermLookup.swift */; };
@@ -72,7 +73,6 @@
 		3C6B75C02305BA270006C354 /* LangaugeConstructTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B752B2304EFF40006C354 /* LangaugeConstructTests.swift */; };
 		3C6B75C82305D8EA0006C354 /* EnglishFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */; };
 		3C70A6A423C5898C00CD5F73 /* RT_TestSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C70A6A323C5898C00CD5F73 /* RT_TestSpecifier.swift */; };
-		3C75066523A1A3BF006E7591 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
 		3C75067223A1A4EF006E7591 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
 		3C8FEEF322DE2B8300C1F1CF /* Builtin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8FEEF222DE2B8300C1F1CF /* Builtin.swift */; };
 		3C906F00231CD30A0099B139 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906EFF231CD30A0099B139 /* Ordering.swift */; };
@@ -417,8 +417,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CF7486F23B825AC00A2F981 /* InAnyCase in Frameworks */,
+				3C2A9CE226793D040084716C /* SwiftAutomation.framework in Frameworks */,
 				3CD18E542620A40600144A3C /* Yams in Frameworks */,
-				3C75066523A1A3BF006E7591 /* SwiftAutomation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1735,7 +1735,7 @@
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.Bushel;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -1868,7 +1868,7 @@
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.Bushel;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Profiling;
@@ -1941,6 +1941,7 @@
 				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.igregory.bushelscript.language.bushelscript-en";
 				PRODUCT_NAME = bushelscript_en;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Profiling;
@@ -1987,7 +1988,7 @@
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelRT;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Profiling;
@@ -2056,6 +2057,7 @@
 				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.igregory.bushelscript.language.bushelscript-en";
 				PRODUCT_NAME = bushelscript_en;
+				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -2083,6 +2085,7 @@
 				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.igregory.bushelscript.language.bushelscript-en";
 				PRODUCT_NAME = bushelscript_en;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -2276,7 +2279,7 @@
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelRT;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
