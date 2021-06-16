@@ -8,9 +8,6 @@
       location = "group:bushelscript/bushelscript.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:BushelLanguageService/BushelLanguageService.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "container:Bushel.xcodeproj">
    </FileRef>
    <Group

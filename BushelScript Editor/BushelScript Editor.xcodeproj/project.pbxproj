@@ -57,27 +57,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		3C0430532315C02E00758339 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C04304F2315C02D00758339 /* BushelLanguageService.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C0430142315ABB900758339;
-			remoteInfo = BushelLanguageService;
-		};
-		3C0430672316124F00758339 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C04304F2315C02D00758339 /* BushelLanguageService.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C04305A2315C12200758339;
-			remoteInfo = BushelLanguageServiceConnectionCreation;
-		};
-		3C04306B2316138500758339 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C04304F2315C02D00758339 /* BushelLanguageService.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C0430132315ABB900758339;
-			remoteInfo = BushelLanguageService;
-		};
 		3C0566BF23135675004CDB1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3C0566A223135673004CDB1A /* Project object */;
@@ -220,7 +199,6 @@
 		3C0430052314BFC100758339 /* BushelScript Editor-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BushelScript Editor-Bridging-Header.h"; sourceTree = "<group>"; };
 		3C0430072314BFC200758339 /* AppDelegate+Swizzling.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Swizzling.m"; sourceTree = "<group>"; };
 		3C0430092314CF7900758339 /* PropagatingTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropagatingTabViewController.swift; sourceTree = "<group>"; };
-		3C04304F2315C02D00758339 /* BushelLanguageService.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BushelLanguageService.xcodeproj; path = ../BushelLanguageService/BushelLanguageService.xcodeproj; sourceTree = "<group>"; };
 		3C04308323199A2800758339 /* Preferences.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Preferences.storyboard; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.xml; };
 		3C0566AA23135673004CDB1A /* BushelScript Editor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BushelScript Editor.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C0566AD23135673004CDB1A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -291,15 +269,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3C0430502315C02D00758339 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3C0430542315C02E00758339 /* BushelLanguageService.xpc */,
-				3C0430682316124F00758339 /* BushelLanguageServiceConnectionCreation.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		3C04308223199A1800758339 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -315,7 +284,6 @@
 			isa = PBXGroup;
 			children = (
 				3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */,
-				3C04304F2315C02D00758339 /* BushelLanguageService.xcodeproj */,
 				3C0566DB23135690004CDB1A /* Bushel.xcodeproj */,
 				3C0566AC23135673004CDB1A /* BushelScript Editor */,
 				3C0566C123135675004CDB1A /* BushelScript EditorTests */,
@@ -529,7 +497,6 @@
 				3C554CB323F7AFE50029E71A /* PBXTargetDependency */,
 				3C906EF1231C7D380099B139 /* PBXTargetDependency */,
 				3C9FD7C023E5455700279945 /* PBXTargetDependency */,
-				3C04306C2316138500758339 /* PBXTargetDependency */,
 				3C9FD7BE23E5455200279945 /* PBXTargetDependency */,
 			);
 			name = "BushelScript Editor";
@@ -598,10 +565,6 @@
 					ProjectRef = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
 				},
 				{
-					ProductGroup = 3C0430502315C02D00758339 /* Products */;
-					ProjectRef = 3C04304F2315C02D00758339 /* BushelLanguageService.xcodeproj */;
-				},
-				{
 					ProductGroup = 3C9FD7B523E53E5500279945 /* Products */;
 					ProjectRef = 3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */;
 				},
@@ -615,20 +578,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		3C0430542315C02E00758339 /* BushelLanguageService.xpc */ = {
-			isa = PBXReferenceProxy;
-			fileType = "wrapper.xpc-service";
-			path = BushelLanguageService.xpc;
-			remoteRef = 3C0430532315C02E00758339 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C0430682316124F00758339 /* BushelLanguageServiceConnectionCreation.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = BushelLanguageServiceConnectionCreation.framework;
-			remoteRef = 3C0430672316124F00758339 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		3C0566EA23135690004CDB1A /* Bushel.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -791,11 +740,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3C04306C2316138500758339 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = BushelLanguageService;
-			targetProxy = 3C04306B2316138500758339 /* PBXContainerItemProxy */;
-		};
 		3C0566C023135675004CDB1A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3C0566A923135673004CDB1A /* BushelScript Editor */;
