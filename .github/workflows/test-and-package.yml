@@ -24,12 +24,9 @@ jobs:
         export VERSION="$(get_project_version)+git.$(git rev-parse --short HEAD)"
         export INSTALL_DIR=install
         ./build.sh
-        file_name="BushelScript.v${VERSION}.zip"
-        zip "$file_name" install/Applications/BushelScript\ Editor.app
-        echo "artifact=$file_name" >> "$GITHUB_ENV"
+        echo "artifact=BushelScript.v${VERSION}" >> "$GITHUB_ENV"
     - name: Upload package
-      if: success()
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: ${{ env.artifact }}
-        path: ${{ github.workspace }}/${{ env.artifact }}
+        path: ${{ github.workspace }}/install/Applications/BushelScript Editor.app
