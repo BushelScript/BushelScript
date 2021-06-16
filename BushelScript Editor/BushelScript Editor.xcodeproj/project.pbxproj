@@ -18,10 +18,10 @@
 		3C056717231359C6004CDB1A /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C056716231359C6004CDB1A /* Errors.swift */; };
 		3C12EFA12354E7640057E0CC /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 3C12EFA02354E7640057E0CC /* Defaults */; };
 		3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C249D472319C1D700F5826E /* PreferencesViewController.swift */; };
-		3C2A9CDE26793CF60084716C /* Bushel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3C2A9CDE26793CF60084716C /* Bushel.framework in Embed Shared Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2A9CDF26793CF60084716C /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
-		3C2A9CE026793CF60084716C /* BushelRT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3C2A9CE626793D5A0084716C /* SwiftAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEF504023529437008603E3 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3C2A9CE026793CF60084716C /* BushelRT.framework in Embed Shared Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3C2A9CE626793D5A0084716C /* SwiftAutomation.framework in Embed Shared Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEF504023529437008603E3 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2A9CE726793D6F0084716C /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; };
 		3C2A9CE826793E690084716C /* BushelGUIHost.app in Resources */ = {isa = PBXBuildFile; fileRef = 3CFA68C623EE300E00A3E87E /* BushelGUIHost.app */; };
 		3C2A9CEA267940360084716C /* bushelscript in Resources */ = {isa = PBXBuildFile; fileRef = 3C9FD7B923E53E5500279945 /* bushelscript */; };
@@ -184,9 +184,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3C2A9CE626793D5A0084716C /* SwiftAutomation.framework in Embed Frameworks */,
-				3C2A9CDE26793CF60084716C /* Bushel.framework in Embed Frameworks */,
-				3C2A9CE026793CF60084716C /* BushelRT.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -200,6 +197,19 @@
 				3C2A9CEC267953450084716C /* bushelscript_en.bundle in Copy Language Modules */,
 			);
 			name = "Copy Language Modules";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3C2A9CF12679890C0084716C /* Embed Shared Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 11;
+			files = (
+				3C2A9CE626793D5A0084716C /* SwiftAutomation.framework in Embed Shared Frameworks */,
+				3C2A9CDE26793CF60084716C /* Bushel.framework in Embed Shared Frameworks */,
+				3C2A9CE026793CF60084716C /* BushelRT.framework in Embed Shared Frameworks */,
+			);
+			name = "Embed Shared Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -505,6 +515,7 @@
 				3C0566A623135673004CDB1A /* Sources */,
 				3C0566A723135673004CDB1A /* Frameworks */,
 				3C0566A823135673004CDB1A /* Resources */,
+				3C2A9CF12679890C0084716C /* Embed Shared Frameworks */,
 				3C2A9CE126793CF60084716C /* Embed Frameworks */,
 				3C2A9CE926793E780084716C /* Copy Language Modules */,
 				3C6D20A023BA7A5500E7E321 /* Copy SPM Dependency Licenses */,
@@ -954,6 +965,7 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+					"@executable_path/../SharedFrameworks",
 				);
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.justcheesy.BushelScript-Editor";
@@ -979,6 +991,7 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+					"@executable_path/../SharedFrameworks",
 				);
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.justcheesy.BushelScript-Editor";
@@ -1099,6 +1112,7 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+					"@executable_path/../SharedFrameworks",
 				);
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.justcheesy.BushelScript-Editor";

@@ -571,11 +571,11 @@
             <objects>
                 <viewController title="Interpreter" id="c8c-NC-wEa" customClass="InterpreterPrefsVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mgM-Zk-MTV">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="97"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="145"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p0W-xV-W7o">
-                                <rect key="frame" x="84" y="20" width="282" height="21"/>
+                                <rect key="frame" x="84" y="68" width="282" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="9SR-Ve-qRs"/>
                                 </constraints>
@@ -604,7 +604,7 @@
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nRs-wI-f6P">
-                                <rect key="frame" x="18" y="23" width="60" height="16"/>
+                                <rect key="frame" x="18" y="71" width="60" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Location:" id="f8s-Mh-fjj">
                                     <font key="font" usesAppearanceFont="YES"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -612,7 +612,7 @@
                                 </textFieldCell>
                             </textField>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9NW-4A-vCx">
-                                <rect key="frame" x="20" y="59" width="20" height="20"/>
+                                <rect key="frame" x="20" y="107" width="20" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="20" id="72E-Es-kKm"/>
                                     <constraint firstAttribute="height" constant="20" id="W7z-rx-PNx"/>
@@ -627,8 +627,8 @@
                                 </connections>
                             </imageView>
                             <textField horizontalHuggingPriority="253" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="LXY-Ml-7c7">
-                                <rect key="frame" x="46" y="61" width="386" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Command-line tool not installed" id="FKF-4q-EhP">
+                                <rect key="frame" x="46" y="109" width="386" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Command line tool not installed" id="FKF-4q-EhP">
                                     <font key="font" metaFont="smallSystem" size="13"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -642,40 +642,51 @@
                                 </connections>
                             </textField>
                             <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lLe-Ys-aDS">
-                                <rect key="frame" x="367" y="13" width="70" height="32"/>
+                                <rect key="frame" x="367" y="61" width="70" height="32"/>
                                 <buttonCell key="cell" type="push" title="Install" bezelStyle="rounded" imagePosition="left" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="tbb-DB-GUI">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem" size="13"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="toggleInstalled:" target="LAn-p8-PTR" id="7Tx-jh-Her"/>
-                                    <binding destination="c8c-NC-wEa" name="enabled" keyPath="cltInstalledStatus" id="UOf-YD-YYY">
-                                        <dictionary key="options">
-                                            <string key="NSValueTransformerName">InterpreterPrefsToggleInstallButtonEnabledVT</string>
-                                        </dictionary>
-                                    </binding>
                                     <binding destination="c8c-NC-wEa" name="title" keyPath="cltInstalledStatus" id="P7e-dK-Bom">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">InterpreterPrefsInstallButtonTitleVT</string>
                                         </dictionary>
                                     </binding>
+                                    <binding destination="c8c-NC-wEa" name="enabled" keyPath="cltInstalledStatus" id="UOf-YD-YYY">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">InterpreterPrefsToggleInstallButtonEnabledVT</string>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </button>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="svp-Ra-DTi">
+                                <rect key="frame" x="18" y="20" width="414" height="28"/>
+                                <textFieldCell key="cell" selectable="YES" title="Please note: If you relocate BushelScript Editor, you will need to reinstall the command line tool." id="99m-SV-f7p">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="svp-Ra-DTi" firstAttribute="leading" secondItem="mgM-Zk-MTV" secondAttribute="leading" constant="20" symbolic="YES" id="3MQ-n0-8fl"/>
+                            <constraint firstItem="LXY-Ml-7c7" firstAttribute="top" secondItem="mgM-Zk-MTV" secondAttribute="top" constant="20" symbolic="YES" id="5NS-uj-JB8"/>
                             <constraint firstItem="nRs-wI-f6P" firstAttribute="leading" secondItem="mgM-Zk-MTV" secondAttribute="leading" constant="20" symbolic="YES" id="89j-s4-IdX"/>
                             <constraint firstItem="9NW-4A-vCx" firstAttribute="leading" secondItem="mgM-Zk-MTV" secondAttribute="leading" constant="20" symbolic="YES" id="B89-LN-qbL"/>
                             <constraint firstItem="lLe-Ys-aDS" firstAttribute="firstBaseline" secondItem="p0W-xV-W7o" secondAttribute="firstBaseline" id="Ebg-h7-fqR"/>
-                            <constraint firstAttribute="bottom" secondItem="p0W-xV-W7o" secondAttribute="bottom" constant="20" symbolic="YES" id="MzN-l2-D0k"/>
+                            <constraint firstItem="svp-Ra-DTi" firstAttribute="top" secondItem="p0W-xV-W7o" secondAttribute="bottom" constant="20" id="GFk-w8-LbO"/>
                             <constraint firstItem="lLe-Ys-aDS" firstAttribute="leading" secondItem="p0W-xV-W7o" secondAttribute="trailing" constant="8" symbolic="YES" id="OLy-fo-3QB"/>
                             <constraint firstItem="9NW-4A-vCx" firstAttribute="centerY" secondItem="LXY-Ml-7c7" secondAttribute="centerY" id="OdH-Ha-EDU"/>
                             <constraint firstItem="p0W-xV-W7o" firstAttribute="centerY" secondItem="nRs-wI-f6P" secondAttribute="centerY" id="Pj5-Qa-miY"/>
                             <constraint firstItem="p0W-xV-W7o" firstAttribute="leading" secondItem="nRs-wI-f6P" secondAttribute="trailing" constant="8" symbolic="YES" id="TUL-Rk-GZn"/>
+                            <constraint firstAttribute="trailing" secondItem="svp-Ra-DTi" secondAttribute="trailing" constant="20" symbolic="YES" id="UIb-a8-izJ"/>
                             <constraint firstAttribute="trailing" secondItem="LXY-Ml-7c7" secondAttribute="trailing" constant="20" symbolic="YES" id="Yhh-TB-fGa"/>
                             <constraint firstAttribute="trailing" secondItem="lLe-Ys-aDS" secondAttribute="trailing" constant="20" symbolic="YES" id="e3D-TT-eFg"/>
                             <constraint firstItem="nRs-wI-f6P" firstAttribute="top" secondItem="LXY-Ml-7c7" secondAttribute="bottom" constant="22" id="eSe-6b-Xu5"/>
                             <constraint firstItem="LXY-Ml-7c7" firstAttribute="leading" secondItem="9NW-4A-vCx" secondAttribute="trailing" constant="8" symbolic="YES" id="gHu-SO-AFT"/>
-                            <constraint firstItem="LXY-Ml-7c7" firstAttribute="top" secondItem="mgM-Zk-MTV" secondAttribute="top" constant="20" symbolic="YES" id="w2c-Fd-VRc"/>
+                            <constraint firstAttribute="bottom" secondItem="svp-Ra-DTi" secondAttribute="bottom" constant="20" symbolic="YES" id="jaN-iJ-Sbf"/>
                         </constraints>
                     </view>
                     <connections>
@@ -692,7 +703,7 @@
     </scenes>
     <resources>
         <image name="EditorPrefs" width="24" height="24"/>
-        <image name="InterpreterPrefs" width="80" height="80"/>
+        <image name="InterpreterPrefs" width="70" height="70"/>
         <image name="NSFontPanel" width="32" height="32"/>
         <image name="NSStatusUnavailable" width="16" height="16"/>
         <image name="PrivacyPrefs" width="600" height="600"/>

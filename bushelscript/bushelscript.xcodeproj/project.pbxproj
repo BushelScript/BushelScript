@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3C32B0FC23B147D4002FF795 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424322F9FDF0006EEF85 /* Bushel.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		3C32B10823B147D7002FF795 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424A22FA0C87006EEF85 /* BushelRT.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		3C32B11123B15638002FF795 /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C32B11023B15638002FF795 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		3C32B0FC23B147D4002FF795 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424322F9FDF0006EEF85 /* Bushel.framework */; };
+		3C32B10823B147D7002FF795 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C47424A22FA0C87006EEF85 /* BushelRT.framework */; };
 		3C47423C22F9F85E006EEF85 /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C47423B22F9F85E006EEF85 /* CLI.swift */; };
 		3C6B75CA2305E0260006C354 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C92305E0260006C354 /* Version.swift */; };
 		3C6DFC99267673550021387E /* IO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6DFC98267673550021387E /* IO.swift */; };
@@ -117,11 +116,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C32B11123B15638002FF795 /* SwiftAutomation.framework in Frameworks */,
+				3C32B0FC23B147D4002FF795 /* Bushel.framework in Frameworks */,
 				3C32B10823B147D7002FF795 /* BushelRT.framework in Frameworks */,
 				3C6DFCA32676C9D40021387E /* ArgumentParser in Frameworks */,
 				3C6DFCA62676E4B10021387E /* LineNoise in Frameworks */,
-				3C32B0FC23B147D4002FF795 /* Bushel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,6 +461,10 @@
 				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../SharedFrameworks",
+				);
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -480,6 +482,10 @@
 				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../SharedFrameworks",
+				);
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -552,6 +558,10 @@
 				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../SharedFrameworks",
+				);
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelScript.tool;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -30,8 +30,8 @@ class InterpreterPrefsVC: NSViewController {
     private func updateInstalledStatus() {
         do {
             if FileManager.default.fileExists(atPath: Defaults[.cltInstallPath]) {
-                let resources = try URL(fileURLWithPath: Defaults[.cltInstallPath]).resourceValues(forKeys: [.isRegularFileKey, .isExecutableKey])
-                if resources.isRegularFile!, resources.isExecutable! {
+                let resources = try URL(fileURLWithPath: Defaults[.cltInstallPath]).resourceValues(forKeys: [.isSymbolicLinkKey, .isExecutableKey])
+                if resources.isSymbolicLink!, resources.isExecutable! {
                     cltInstalledStatus = .true
                 } else {
                     cltInstalledStatus = .obstructed
@@ -54,7 +54,7 @@ class InterpreterPrefsVC: NSViewController {
             switch cltInstalledStatus {
             case .false:
                 let cltPath = Bundle.main.path(forResource: "bushelscript", ofType: nil)!
-                try FileManager.default.linkItem(atPath: cltPath, toPath: Defaults[.cltInstallPath])
+                try FileManager.default.createSymbolicLink(atPath: Defaults[.cltInstallPath], withDestinationPath: cltPath)
             case .true:
                 try FileManager.default.removeItem(atPath: Defaults[.cltInstallPath])
             case .obstructed:
