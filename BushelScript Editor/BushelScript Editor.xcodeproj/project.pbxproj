@@ -28,6 +28,7 @@
 		3C2A9CEC267953450084716C /* bushelscript_en.bundle in Copy Language Modules */ = {isa = PBXBuildFile; fileRef = 3C0566FC23135690004CDB1A /* bushelscript_en.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2A9CF02679665E0084716C /* InterpreterPrefsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2A9CEF2679665E0084716C /* InterpreterPrefsVC.swift */; };
 		3C2A9D012679A6610084716C /* Libraries in Resources */ = {isa = PBXBuildFile; fileRef = 3C2A9D002679A6610084716C /* Libraries */; };
+		3C2A9D1F2679DE3A0084716C /* EditorTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2A9D1E2679DE3A0084716C /* EditorTextView.swift */; };
 		3C2BC9AB23E258E400CB8C20 /* InlineErrorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */; };
 		3C2BC9AC23E258E400CB8C20 /* InlineErrorVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C2BC9AA23E258E400CB8C20 /* InlineErrorVC.xib */; };
 		3C2BC9EC23E27E6200CB8C20 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C0566B523135675004CDB1A /* Main.storyboard */; };
@@ -214,6 +215,7 @@
 		3C249D472319C1D700F5826E /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 		3C2A9CEF2679665E0084716C /* InterpreterPrefsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterpreterPrefsVC.swift; sourceTree = "<group>"; };
 		3C2A9D002679A6610084716C /* Libraries */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Libraries; path = ../../../Libraries; sourceTree = "<group>"; };
+		3C2A9D1E2679DE3A0084716C /* EditorTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTextView.swift; sourceTree = "<group>"; };
 		3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineErrorVC.swift; sourceTree = "<group>"; };
 		3C2BC9AA23E258E400CB8C20 /* InlineErrorVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InlineErrorVC.xib; sourceTree = "<group>"; };
 		3C2E1344231B709000E0EB8E /* NoHashbang.bushel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NoHashbang.bushel; sourceTree = "<group>"; };
@@ -306,6 +308,7 @@
 			isa = PBXGroup;
 			children = (
 				3C0566B523135675004CDB1A /* Main.storyboard */,
+				3C2A9D1E2679DE3A0084716C /* EditorTextView.swift */,
 				3CFEC5112677EFEF001EEF12 /* SidebarVC.swift */,
 				3CFEC51E26781714001EEF12 /* MainSplitVC.swift */,
 				3CFEC52026781BD1001EEF12 /* ObjectInspector2VC.swift */,
@@ -699,6 +702,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CFEC52526781CEC001EEF12 /* ResultInspectorVC.swift in Sources */,
+				3C2A9D1F2679DE3A0084716C /* EditorTextView.swift in Sources */,
 				3CFEC5122677EFEF001EEF12 /* SidebarVC.swift in Sources */,
 				3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */,
 				3CA0F60B2450AB3900EDB1C4 /* AppVersion.swift in Sources */,

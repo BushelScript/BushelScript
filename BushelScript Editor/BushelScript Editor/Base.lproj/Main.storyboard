@@ -171,6 +171,15 @@
                                                 <action selector="delete:" target="Ady-hI-5gd" id="0Mk-Ml-PaM"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Complete" id="HfD-Eo-i8e">
+                                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="complete:" target="Ady-hI-5gd" id="97q-P8-34h"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Select All" keyEquivalent="a" id="Ruw-6m-B2m">
                                             <connections>
                                                 <action selector="selectAll:" target="Ady-hI-5gd" id="VNm-Mi-diN"/>
@@ -883,7 +892,7 @@ CQ
                                             <rect key="frame" x="0.0" y="0.0" width="800" height="477"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <textView importsGraphics="NO" horizontallyResizable="YES" verticallyResizable="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" textCompletion="NO" smartInsertDelete="YES" id="hPn-VJ-vRi">
+                                                <textView importsGraphics="NO" horizontallyResizable="YES" verticallyResizable="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" textCompletion="NO" smartInsertDelete="YES" id="hPn-VJ-vRi" customClass="EditorTextView" customModule="BushelScript_Editor" customModuleProvider="target">
                                                     <rect key="frame" x="0.0" y="60" width="800" height="477"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

@@ -403,6 +403,21 @@ extension DocumentVC: NSTextViewDelegate {
 //        dismissSuggestionList()
     }
     
+    func textView(_ textView: NSTextView, completions words: [String], forPartialWordRange charRange: NSRange, indexOfSelectedItem index: UnsafeMutablePointer<Int>?) -> [String] {
+        if Defaults[.wordCompletionSuggestionsEnabled] {
+            let text = textView.string
+            let range = Range<String.Index>(charRange, in: text)!
+            let partialWord = text[range]
+            let beforePartialWord = text[..<range.lowerBound]
+            let afterPartialWord = text[range.upperBound...]
+            let words = NSMutableOrderedSet(array: beforePartialWord.split { $0.isWhitespace }.reversed())
+            words.union(NSOrderedSet(array: afterPartialWord.split { $0.isWhitespace }))
+            return words.compactMap { ($0 as! Substring).hasPrefix(partialWord) ? String($0 as! Substring) : nil }
+        } else {
+            return []
+        }
+    }
+    
 }
 
 // MARK: Suggestion list
