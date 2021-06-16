@@ -18,7 +18,7 @@ class InterpreterPrefsVC: NSViewController {
     }
     
     @objc enum CLTInstalledStatus: Int {
-        case `false`, `true`, obstructed
+        case `false`, `true`, obstructed, invalid
         
         static func fromObjC(_ value: Any?) -> Self? {
             ((value as? NSNumber)?.intValue).flatMap { Self(rawValue: $0) }
@@ -29,10 +29,14 @@ class InterpreterPrefsVC: NSViewController {
     
     private func updateInstalledStatus() {
         do {
-            if FileManager.default.fileExists(atPath: Defaults[.cltInstallPath]) {
-                let resources = try URL(fileURLWithPath: Defaults[.cltInstallPath]).resourceValues(forKeys: [.isSymbolicLinkKey, .isExecutableKey])
-                if resources.isSymbolicLink!, resources.isExecutable! {
-                    cltInstalledStatus = .true
+            if fileExistsAtCLTInstallPath() {
+                let values = try URL(fileURLWithPath: Defaults[.cltInstallPath]).resourceValues(forKeys: [.isSymbolicLinkKey, .isWritableKey])
+                if values.isSymbolicLink!, values.isWritable! {
+                    if FileManager.default.isExecutableFile(atPath: Defaults[.cltInstallPath]) {
+                        cltInstalledStatus = .true
+                    } else {
+                        cltInstalledStatus = .invalid
+                    }
                 } else {
                     cltInstalledStatus = .obstructed
                 }
@@ -52,20 +56,29 @@ class InterpreterPrefsVC: NSViewController {
         updateInstalledStatus()
         do {
             switch cltInstalledStatus {
-            case .false:
+            case .false, .invalid:
+                // Remove old version if applicable.
+                if fileExistsAtCLTInstallPath() {
+                    try FileManager.default.removeItem(atPath: Defaults[.cltInstallPath])
+                }
+                
                 let cltPath = Bundle.main.path(forResource: "bushelscript", ofType: nil)!
                 try FileManager.default.createSymbolicLink(atPath: Defaults[.cltInstallPath], withDestinationPath: cltPath)
             case .true:
                 try FileManager.default.removeItem(atPath: Defaults[.cltInstallPath])
             case .obstructed:
                 return
-            default:
+            @unknown default:
                 return
             }
         } catch {
             presentError(error)
         }
         updateInstalledStatus()
+    }
+    
+    private func fileExistsAtCLTInstallPath() -> Bool {
+        (try? URL(fileURLWithPath: Defaults[.cltInstallPath]).resourceValues(forKeys: [.fileResourceTypeKey])) != nil
     }
     
 }
@@ -80,9 +93,11 @@ class InterpreterPrefsInstallStatusAvailabilityImageVT: ValueTransformer {
                 return NSImage.statusPartiallyAvailableName
             case .true:
                 return NSImage.statusAvailableName
-            case .obstructed:
+            case .obstructed, .invalid:
                 return NSImage.statusUnavailableName
-            default:
+            case nil:
+                fallthrough
+            @unknown default:
                 return NSImage.statusNoneName
             }
         }())
@@ -101,7 +116,11 @@ class InterpreterPrefsInstallStatusHeadingVT: ValueTransformer {
             return "Command line tool installed"
         case .obstructed:
             return "Install location is obstructed, please change the location or remove the obstruction"
-        default:
+        case .invalid:
+            return "Installation is invalid (BushelScript Editor may have been relocated), please reinstall"
+        case nil:
+            fallthrough
+        @unknown default:
             return nil
         }
     }
@@ -119,7 +138,11 @@ class InterpreterPrefsInstallButtonTitleVT: ValueTransformer {
             return "Uninstall"
         case .obstructed:
             return "Obstructed"
-        default:
+        case .invalid:
+            return "Reinstall"
+        case nil:
+            fallthrough
+        @unknown default:
             return nil
         }
     }
@@ -131,13 +154,13 @@ class InterpreterPrefsToggleInstallButtonEnabledVT: ValueTransformer {
     
     override func transformedValue(_ value: Any?) -> Any? {
         switch InterpreterPrefsVC.CLTInstalledStatus.fromObjC(value) {
-        case .false:
-            return true
-        case .true:
+        case .false, .true, .invalid:
             return true
         case .obstructed:
             return false
-        default:
+        case nil:
+            fallthrough
+        @unknown default:
             return false
         }
     }
@@ -149,13 +172,13 @@ class InterpreterPrefsLocationFieldEnabledVT: ValueTransformer {
     
     override func transformedValue(_ value: Any?) -> Any? {
         switch InterpreterPrefsVC.CLTInstalledStatus.fromObjC(value) {
-        case .false:
+        case .false, .obstructed, .invalid:
             return true
         case .true:
             return false
-        case .obstructed:
-            return true
-        default:
+        case nil:
+            fallthrough
+        @unknown default:
             return true
         }
     }

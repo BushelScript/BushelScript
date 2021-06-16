@@ -648,7 +648,7 @@
                                     <font key="font" metaFont="smallSystem" size="13"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toggleInstalled:" target="LAn-p8-PTR" id="7Tx-jh-Her"/>
+                                    <action selector="toggleInstalled:" target="c8c-NC-wEa" id="Les-7C-dUU"/>
                                     <binding destination="c8c-NC-wEa" name="title" keyPath="cltInstalledStatus" id="P7e-dK-Bom">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">InterpreterPrefsInstallButtonTitleVT</string>
