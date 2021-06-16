@@ -24,9 +24,10 @@ jobs:
         export VERSION="$(get_project_version)+git.$(git rev-parse --short HEAD)"
         export INSTALL_DIR=install
         ./build.sh
+        tar -cvf BushelScript.tar install/Applications/
         echo "artifact=BushelScript.v${VERSION}" >> "$GITHUB_ENV"
     - name: Upload package
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.artifact }}
-        path: ${{ github.workspace }}/install/Applications/
+        path: ${{ github.workspace }}/BushelScript.tar
