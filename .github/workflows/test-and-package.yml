@@ -18,10 +18,18 @@ jobs:
     - name: Package
       run: |
         cd "$GITHUB_WORKSPACE"
-        ./make-pkg.sh
+        function get_project_version {
+          xcodebuild -showBuildSettings -workspace Bushel.xcworkspace -scheme BushelScript\ Editor | grep MARKETING_VERSION | head -1 | tr -d '[:alpha:][:space:]_='
+        }
+        export VERSION="$(get_project_version)+git.$(git rev-parse --short HEAD)"
+        export INSTALL_DIR=install
+        ./build.sh
+        file_name="BushelScript.v$(VERSION).zip"
+        zip "$file_name" install/Applications/BushelScript.app
+        echo "artifact=$file_name" >> "$GITHUB_ENV"
     - name: Upload package
       if: success()
       uses: actions/upload-artifact@v1
       with:
-        name: BushelScript.pkg
-        path: ${{ github.workspace }}/BushelScript.pkg
+        name: ${{ env.artifact }}
+        path: ${{ github.workspace }}/install/Applications/BushelScript.app

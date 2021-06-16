@@ -63,7 +63,7 @@
          location = "container:"
          name = "Command-line build scripts">
          <FileRef
-            location = "group:make-pkg.sh">
+            location = "group:/Users/ian/GitHub/BushelScript/build.sh">
          </FileRef>
          <FileRef
             location = "group:test.sh">
