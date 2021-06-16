@@ -24,7 +24,7 @@ jobs:
         export VERSION="$(get_project_version)+git.$(git rev-parse --short HEAD)"
         export INSTALL_DIR=install
         ./build.sh
-        file_name="BushelScript.v$(VERSION).zip"
+        file_name="BushelScript.v${VERSION}.zip"
         zip "$file_name" install/Applications/BushelScript.app
         echo "artifact=$file_name" >> "$GITHUB_ENV"
     - name: Upload package
