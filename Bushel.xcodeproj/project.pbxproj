@@ -362,8 +362,6 @@
 		3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermDictionary.swift; sourceTree = "<group>"; };
 		3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lexicon.swift; sourceTree = "<group>"; };
 		3CACF80B24184443002E1A52 /* TermNameSearchingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermNameSearchingTests.swift; sourceTree = "<group>"; };
-		3CB253AD240087A3005DD807 /* Installation.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Installation.xcconfig; sourceTree = "<group>"; };
-		3CB253AE240087A3005DD807 /* Installation-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Installation-Debug.xcconfig"; sourceTree = "<group>"; };
 		3CB328E523EDAD4C003BF646 /* BushelGUIHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BushelGUIHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CB328E723EDAD4C003BF646 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CB328E923EDAD50003BF646 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -572,7 +570,6 @@
 			isa = PBXGroup;
 			children = (
 				3CD18E8D2620A9C300144A3C /* ParseFile.swift */,
-				3CB253AC240087A3005DD807 /* Config */,
 				3C35A5BD22C81DE7002D4582 /* Bushel */,
 				3C94570323E8FBC200D59C2C /* BushelLanguageTestingTools */,
 				3C6B75992305B5980006C354 /* bushelscript_en */,
@@ -776,15 +773,6 @@
 				3C9456F623E8F7DE00D59C2C /* FormatterTests.swift */,
 			);
 			path = Formatter;
-			sourceTree = "<group>";
-		};
-		3CB253AC240087A3005DD807 /* Config */ = {
-			isa = PBXGroup;
-			children = (
-				3CB253AD240087A3005DD807 /* Installation.xcconfig */,
-				3CB253AE240087A3005DD807 /* Installation-Debug.xcconfig */,
-			);
-			path = Config;
 			sourceTree = "<group>";
 		};
 		3CB328E623EDAD4C003BF646 /* BushelGUIHost */ = {
