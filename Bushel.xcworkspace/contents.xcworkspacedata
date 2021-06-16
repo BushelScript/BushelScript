@@ -43,16 +43,6 @@
          </Group>
       </Group>
       <Group
-         location = "group:/Users/ian/Documents/Bushel/Config"
-         name = "Config">
-         <FileRef
-            location = "group:Installation.xcconfig">
-         </FileRef>
-         <FileRef
-            location = "group:Installation-Debug.xcconfig">
-         </FileRef>
-      </Group>
-      <Group
          location = "group:BuildScripts"
          name = "BuildScripts">
          <FileRef

@@ -1,8 +1,0 @@
-// Configuration settings file format documentation can be found at:
-// https://help.apple.com/xcode/#/dev745c5c974
-
-BUSHELSCRIPT_ROOT_DIR = $(USER_LIBRARY_DIR)/BushelScript
-
-BUSHELSCRIPT_CORE_DIR = $(BUSHELSCRIPT_ROOT_DIR)/Core
-BUSHELSCRIPT_LANGUAGES_DIR = $(BUSHELSCRIPT_ROOT_DIR)/Languages/DevEnvironment
-BUSHELSCRIPT_APPLICATIONS_DIR = $(BUSHELSCRIPT_ROOT_DIR)/Applications

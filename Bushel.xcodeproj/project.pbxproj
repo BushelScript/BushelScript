@@ -1572,7 +1572,6 @@
 /* Begin XCBuildConfiguration section */
 		3C35A5CD22C81DE7002D4582 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3CB253AE240087A3005DD807 /* Installation-Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1640,7 +1639,6 @@
 		};
 		3C35A5CE22C81DE7002D4582 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3CB253AD240087A3005DD807 /* Installation.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1800,7 +1798,6 @@
 		};
 		3C48979224008B87008EE9D1 /* Profiling */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3CB253AE240087A3005DD807 /* Installation-Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
