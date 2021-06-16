@@ -27,15 +27,6 @@ then
 	exit $?
 fi
 
-echo 'Cloning applescript-stdlib into install dir.'
-APPLESCRIPT_STDLIB_INSTALL_DIR="${INSTALL_DIR}/Library/BushelScript/Libraries"
-APPLESCRIPT_STDLIB_CLONE_DIR="${INSTALL_DIR}/applescript-stdlib"
-rm -rf "$APPLESCRIPT_STDLIB_CLONE_DIR"
-git clone --depth=1 'https://github.com/BushelScript/applescript-stdlib.git' "$APPLESCRIPT_STDLIB_CLONE_DIR"
-mkdir -p "$APPLESCRIPT_STDLIB_INSTALL_DIR"
-cp -r "$APPLESCRIPT_STDLIB_CLONE_DIR"/*.scptd "$APPLESCRIPT_STDLIB_INSTALL_DIR"
-rm -rf "$APPLESCRIPT_STDLIB_CLONE_DIR"
-
 # Make the installer package.
 pkgbuild --root "$INSTALL_DIR" --identifier "$PKG_IDENTIFIER" --version "$PKG_VERSION" "$PKG_FILENAME"
 if [ $? -ne 0 ]

@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary>
+	
+	<!--
+
+Regular Expression documentation is adapted from NSRegularExpression Class Reference documentation (https://developer.apple.com/library/mac/documentation/Foundation/Reference/NSRegularExpression_Class), which includes the following:
+
+ICU License
+
+Table 1, Table 2, Table 3, Table 4 are reproduced from the ICU User Guide, Copyright (c) 2000 - 2009 IBM and Others, which are licensed under the following terms:
+
+COPYRIGHT AND PERMISSION NOTICE
+
+Copyright (c) 1995-2009 International Business Machines Corporation and others. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, provided that the above copyright notice(s) and this permission notice appear in all copies of the Software and that both the above copyright notice(s) and this permission notice appear in supporting documentation.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+Except as contained in this notice, the name of a copyright holder shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization of the copyright holder.
+
+All trademarks and registered trademarks mentioned herein are the property of their respective owners. 
+	
+	-->
+	
+	
+	<!-- Note that while ‘verb noun’-style command names (e.g. `split text`) are strongly discouraged in application dictionaries, their use is recommended in library dictionaries to minimize the risk of collisions with user identifiers and other imported keywords (e.g. `split list`) when SDEF-based libraries are imported via global ‘use’ statements. -->
+	
+	<suite name="Modify Text" code="****">
+		
+		<command name="uppercase text" code="Txt:UppT" description="convert all alphabetical characters to uppercase">
+			<direct-parameter type="text"/>
+			<parameter name="for locale" code="Loca" type="text" optional="yes" description="a locale identifier, e.g. “en_US”, or “current” or “none” (default: “none”)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>uppercase text "foø bår" → "FOØ BÅR"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		<command name="lowercase text" code="Txt:LowT" description="convert all alphabetical letters to lowercase">
+			<direct-parameter type="text"/>
+			<parameter name="for locale" code="Loca" type="text" optional="yes" description="a locale identifier, e.g. “en_US”, or “current” or “none” (default: “none”)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>lowercase text "FOØ BÅR" → "foø bår"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		<command name="capitalize text" code="Txt:CapT" description="capitalize all words">
+			<direct-parameter type="text"/>
+			<parameter name="for locale" code="Loca" type="text" optional="yes" description="a locale identifier, e.g. “en_US”, or “current” or “none” (default: “none”)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>capitalize text "FOØ bår" → "Foø Bår"</code></pre>
+
+<p>Be aware this command has only a rudimentary understanding of the complex capitalization rules used in natural languages, so results may not be as good or correct as manually capitalized text.</p>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="format text" code="Txt:FTxt" description="insert a list of values into a text template">
+			<direct-parameter type="text" description="the template into which to insert each item of the list"/>
+			<parameter name="using" code="Usin" optional="yes" description="a list of values to insert (default: {}), or a script object containing a ‘getItem’ handler that takes a text-based key as its sole parameter and returns the corresponding value; each value must be text or coercible to text">
+				<type type="text" list="yes"/>
+				<type type="script"/>
+			</parameter>
+			<result type="text"/>
+						
+			<documentation>
+				<html><![CDATA[
+<p>For example, to substitute numbered placeholders (<code>\4</code>, <code>\1</code>, <code>\3</code>) using the correspondingly indexed items from a list:</p>
+
+<pre><code>format text "\\u00AB\\4, \\1 \\3!\\u00BB" using {"Dr", "John", "Singh", "Bonjour"}
+→ "«Bonjour, Dr Singh!»"</code></pre>
+
+<p>(When writing templates as literal text, remember AppleScript already uses the backslash character, “<code>\</code>”, to escape double quotes (e.g. <code>"You say \"Hello!\""</code>), so all backslash characters must themselves be backslash-escaped (e.g. “<code>\1</code>” → “<code>\\1</code>”) otherwise the script will not compile correctly.)</p>
+
+<p>The following script demonstrates how to substitute named placeholders (<code>\{greeting}</code>, <code>\{title}</code>, <code>\{last name}</code>) using identically named values from a <code>dictionary collection</code> object:</p>
+
+<pre><code>use script "Text"
+use script "Objects"
+
+set infoDict to dictionary collection
+infoDict's addItem("title", "Dr")
+infoDict's addItem("first name", "John")
+infoDict's addItem("last name", "Singh")
+infoDict's addItem("greeting", "Aloha")
+
+format text "\\u00AB\\{greeting}, \\{title} \\{last name}!\\u00BB" using infoDict
+→ "«Aloha, Dr Singh!»"</code></pre>
+
+<p>See Template Text Syntax for a full list of special character sequences.</p>
+
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="pad text" code="Txt:PadT" description="pad the text to a minimum length">
+			<direct-parameter type="text"/>
+			<parameter name="to places" code="toPl" type="integer" description="the minimum number of characters that will appear in the returned text"/>
+			<parameter name="using" code="Char" type="text" optional="yes" description="the character(s) with which to pad (default: space)"/>
+			<parameter name="adding" code="From" type="LeTr" optional="yes" description="(default: leading characters only)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>For example:</p>
+
+<pre><code>pad text "Bob" to places 8
+→ "     Bob"
+
+pad text "Mary Smith" to places 60 using ". " adding leading and trailing characters
+→ ". . . . . . . . . . . . .Mary Smith . . . . . . . . . . . . "</code></pre>
+
+<p>If the text is longer than the number of places, no padding is added:</p>
+
+<pre><code>pad text "Robert Smith" to places 8
+→ "Robert Smith"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		<enumeration name="LeTr" code="LeTr">
+			<enumerator name="leading characters only" code="LCha"/>
+			<enumerator name="trailing characters only" code="TCha"/>
+			<enumerator name="leading and trailing characters" code="BCha"/>
+		</enumeration>
+		
+		
+		<command name="slice text" code="Txt:SliT" description="get the section of text between the specified start and/or end indexes">
+			<direct-parameter type="text"/>
+			<parameter name="from" code="FIdx" type="integer" optional="yes" description="character index"/>
+			<parameter name="to" code="TIdx" type="integer" optional="yes" description="character index"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>For example:</p>
+
+<pre><code>slice text "Once upon a time" from 8
+→ "on a time"
+
+slice text "Once upon a time" from 5 to 15
+→ " upon a tim"
+
+slice text "Once upon a time" from -9 to -2
+→ "on a tim"</code></pre>
+
+<p>A <code>slice text <var>someText</var> from <var>i</var> to <var>j</var></code> command works much like getting a <code>text <var>i</var> thru <var>j</var> of <var>someText</var></code> specifier, except that it returns an empty text value if the end index is before the start index, and doesn’t throw an error if an index is out of range:</p>
+
+<pre><code>slice text "Once upon a time" from 10 to 2
+→ ""
+
+slice text "Once upon a time" to 25
+→ "Once upon a time"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="trim text" code="Txt:TrmT" description="trim white space characters (space, tab, return, etc.) from the start and/or end of text">
+			<direct-parameter type="text"/>
+			<parameter name="removing" code="From" type="LeTr" optional="yes" description="(default: leading and trailing characters)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>trim text "\tWho, What, and Why? \n\n"
+→ "Who, what, and why?"
+
+trim text "\tWho, What, and Why? \n\n" removing trailing characters only
+→ "\tWho, what, and why?"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="transform text" code="Txt:Norm" description="convert, standardize, or remove distinctions between certain characters">
+			<direct-parameter type="text"/>
+			<parameter name="using" code="NoFo" optional="yes" description="the normalizations to apply (default: OS X line breaks)">
+				<type type="NoFo" list="yes"/>
+			</parameter>
+			<parameter name="for locale" code="Loca" type="text" optional="yes" description="a locale identifier, e.g. “en_US”, or “current” or “none” (default: “none”)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>For example, to convert all line breaks to OS X-style linefeed characters (the default behavior):</p>
+
+<pre><code>set theText to transform text theText</code></pre>
+
+
+<p>Or to tidy up white space and prettify punctuation:</p>
+
+<pre><code>set theText to transform text theText ¬
+    using {normalized white space, smart punctuation, OS X line breaks}</code></pre>
+
+
+<p>The <code>using</code> parameter is a list of constants, containing:</p>
+
+<ol>
+	<li>
+		</p>none, some, or all of the following character conversions:</p>
+		<ul>
+			<li><code>normalized case</code> – eliminates distinction between uppercase and lowercase characters (by lowercasing all characters)</li>
+			<li><code>normalized diacriticals</code> – eliminates distinction between accented and unaccented characters (by removing all accents)</li>
+			<li><code>normalized width</code> – eliminates distinction between half-width and full-width characters (as used in some Asian character sets)</li>
+			<li><code>normalized white space</code> – eliminates variations in white space by removing white space from the start and end of text and replacing runs of white space within it with single space character. If a ‘line breaks’ option is also given, white space runs that also contain line breaks are replaced with a single line break character instead of a space.</li>
+		</ul>
+	</li>
+	<li>
+		</p>none or one of the following character conversions:</p>
+		<ul>
+			<li><code>smart punctuation</code> – converts straight quotes to typographer’s quotes, double hypens to em-dashes, etc.</li>
+			<li><code>typewriter punctuation</code> –  converts typographer’s quotes to straight quotes, em-dashes to double hypens, etc.</li>
+			<li><code>printable ASCII only</code> – converts non-ASCII characters to ASCII wherever possible, replacing any unconverted or control characters with “?”</li>
+		</ul>
+	</li>
+	<li>
+		</p>none or one of the following line break styles:</p>
+		<ul>
+			<li><code>OS X line breaks</code> – each line break is represented by a single linefeed character (LF, or ASCII 10)</li>
+			<li><code>Windows line breaks</code> – each line break is represented by a carriage return character followed by a linefeed character (CRLF, or ASCII 13+ ASCII10)</li>
+			<li><code>classic Mac line breaks</code> – each line break is represented by a single carriage return character (CR, or ASCII 13)</li>
+		</ul>
+	</li>
+	<li>
+		</p>none or one of the following Unicode normalization forms:</p>
+		<ul>
+			<li><code>precomposed canonical form</code> – (C)</li>
+			<li><code>decomposed canonical form</code> – (D)</li>
+			<li><code>precomposed compatibility form</code> – (KC)</li>
+			<li><code>decomposed compatibility form</code> – (KD)</li>
+		</ul>
+	</li>
+</ol>
+
+<p>If given, the <code>for locale</code> parameter affects character normalization. For example, for the Turkish locale, <code>normalize case</code> converts “I” to “ı” (Unicode code point U+0131, Latin Small Dotless I), not the normal “i” character.</p>
+
+<!-- TO DO: example of `normalized case` would be to implement case-insensitive dictionary object -->
+				]]></html>
+			</documentation>
+		</command>
+		
+		<enumeration name="NoFo" code="NoFo">
+			<enumerator name="normalized case" code="NoCa"/>
+			<enumerator name="normalized diacriticals" code="NoDi"/>
+			<enumerator name="normalized width" code="NoWi"/> <!-- TO DO: how useful is this option in practice? -->
+			<enumerator name="normalized white space" code="NoSp"/>
+			<enumerator name="smart punctuation" code="NoSP"/>
+			<enumerator name="typewriter punctuation" code="NoTP"/>
+			<enumerator name="printable ASCII only" code="NoAO"/>
+			<enumerator name="OS X line breaks" code="LiOX"/>
+			<enumerator name="Windows line breaks" code="LiWi"/>
+			<enumerator name="classic Mac line breaks" code="LiCM"/>
+			<enumerator name="precomposed canonical form" code="No_C"/>
+			<enumerator name="decomposed canonical form" code="No_D"/>
+			<enumerator name="precomposed compatibility form" code="NoKC"/>
+			<enumerator name="decomposed compatibility form" code="NoKD"/>
+		</enumeration>
+		
+	</suite>
+	
+	
+	
+	
+	<suite name="Split and Join" code="****">
+	
+		<command name="split text" code="Txt:SplT" description="split text using the specified separator(s)">
+			<direct-parameter type="text"/>
+			<parameter name="at" code="Sepa" optional="yes" description="the separator(s) upon which to split; if omitted, leading and trailing white space is trimmed and the remaining text split on contiguous white space characters">
+				<type type="text"/>
+				<type type="text" list="yes"/>
+			</parameter>
+			<parameter name="using" code="Usin" type="SerE" optional="yes" description="search using AppleScript (considering/ignoring) text comparison or ICU (regular expression) pattern matching? (default: case insensitivity)"/>
+			<result>
+				<type type="text" list="yes"/>
+			</result>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>split text "Bob,Joe,Mary,Sue" at ","
+→ {"Bob", "Joe", "Mary", "Sue"}
+
+split text "Bob, Joe;Mary:  Sue" at "[.,;:]\\s*" using pattern matching
+→ {"Bob", "Joe", "Mary", "Sue"}</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		<command name="join text" code="Txt:JoiT" description="join list of text using the specified separator">
+			<direct-parameter>
+				<type type="text" list="yes"/>
+			</direct-parameter>
+			<parameter name="using" code="Sepa" type="text" optional="yes" description="the separator(s) upon which to split (default: &quot;&quot;)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>join text {"Bob", "Joe", "Mary", "Sue"}
+→ "BobJoeMarySue"
+
+join text {"Bob", "Joe", "Mary", "Sue"} using ", "
+→ "Bob, Joe, Mary, Sue"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+
+		<command name="split paragraphs" code="Txt:SplP" description="split text into a list of paragraphs">
+			<direct-parameter type="text"/>
+			<result>
+				<type type="text" list="yes"/>
+			</result>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>split paragraphs "Bob\nJoe\rMary\r\nSue"
+→ {"Bob", "Joe", "Mary", "Sue"}</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+
+		<command name="join paragraphs" code="Txt:JoiP" description="join list of paragraphs">
+			<direct-parameter>
+				<type type="text" list="yes"/>
+			</direct-parameter>
+			<parameter name="using" code="LiBr" type="LiBr" optional="yes" description="the line break format (default: OS X line breaks)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>join paragraphs {"Bob", "Joe", "Mary", "Sue"}
+→ "Bob\nJoe\nMary\nSue"
+
+join paragraphs {"Bob", "Joe", "Mary", "Sue"} using Windows line breaks
+→ "Bob\r\nJoe\r\nMary\r\nSue"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		<enumeration name="LiBr" code="LiBr">
+			<enumerator name="OS X line breaks" code="LiOX"/>
+			<enumerator name="Windows line breaks" code="LiWi"/>
+			<enumerator name="classic Mac line breaks" code="LiCM"/>
+		</enumeration>
+
+	</suite>
+	
+	
+	
+	
+	<suite name="Find and Replace" code="****">
+	
+		<command name="search text" code="Txt:Srch" description="search for the specified text or pattern">
+		
+			<direct-parameter type="text" description="the text to search"/>
+			<parameter name="for" code="For_" type="text" description="the text/pattern to find"/>
+			<parameter name="replacing with" code="Repl" optional="yes" description="the replacement text/template">
+				<type type="text"/>
+				<type type="script"/>
+			</parameter>
+			
+			<parameter name="using" code="Usin" type="SerE" optional="yes" description="search using AppleScript (considering/ignoring) text comparison or ICU (regular expression) pattern matching? (default: case insensitivity)"/>
+			
+			<parameter name="returning" code="Retu" type="RetE" optional="yes" description="if the ‘replacing with’ parameter is omitted, the type(s) of description records to return (default: matching text)"/>
+			
+			<result description="the modified text if the ‘replacing with’ parameter is given, otherwise a list of ‘unmatched text’ and/or ‘matched text’ records">
+					<type type="text"/>
+					<type type="record" list="yes"/>
+			</result>
+			
+			<documentation>
+				<html><![CDATA[
+<p>The <code>search text</code> command can be used to find the position(s) at which a given piece of text appears:</p>
+
+<pre><code>search text "Hello Elegant" for "el"
+→ {{class:matched text, startIndex:2, endIndex:3, foundText:"el", foundGroups:{}}, 
+   {class:matched text, startIndex:7, endIndex:8, foundText:"El", foundGroups:{}}}</code></pre>
+
+<p>or to replace one piece of text with another:</p>
+
+<pre><code>search text "Hello Elegant" for "el" replacing with "*"
+→ "H*lo *egant"</code></pre>
+
+
+<h3>Customizing how text is matched</h3>
+
+<p>By default, text is matched exactly except for differences in case, thus searching for “el” matches both “el” and “El” in the above example. To consider case as well, use <code>exact matching</code> as the command’s <code>using</code> parameter:</p>
+
+<pre><code>search text "Hello Elegant" for "el" using exact matching
+→ {{class:matched text, startIndex:2, endIndex:3, foundText:"el", foundGroups:{}}}
+
+search text "Hello Elegant" for "el" using exact matching replacing with "*"
+→ "H*lo Elegant"</code></pre>
+
+
+
+[[TO DO: pattern matching with template text and groups, e.g. format phone numbers]]
+
+
+set theText to "Some line.
+
+Another line.
+  Yet another line."
+
+search text theText for "\\n(?:s\\s*)+" using pattern matching replacing with "\\n"
+
+
+search text theText for "^\\s*(.+)\\s*$" using pattern matching replacing with "•\\t\\1"
+
+
+<h3>Customizing how text is replaced</h3>
+				
+<p>When finding and replacing plain text, the ‘replacing with’ parameter can be one of the following:</p>
+<ul>
+	<li>a replacement text value to be inserted as-is</li>
+
+	<li>a script object containing a <code>replaceText(foundText)</code> handler that takes a single parameter – the found text – and returns the text value to insert as its result.</li> 
+</ul>
+
+<!-- TO DO: e.g. example script could change a bullet list to numbered list -->
+
+
+<p>When finding and replacing text patterns, the ‘replacing with’ parameter can be one of the following:</p>
+<ul>
+	<li>a text-based template describing the text to insert; text matched by parenthesized groups can be referred to as <code>\1</code>, <code>\2</code>, etc. </li>
+
+	<li>a script object containing a <code>replacePattern(foundText, foundGroups)</code>handler that takes two parameters – the found text and a list of text values matched by parenthesized groups, if any – and returns the text value to insert as its result.</li>
+</ul>
+
+
+(Caution: if the ‘replacing with’ parameter is arbitrary text supplied by a variable, apply the <code>escape template</code> command to it first to prevent any backslashes within it being accidentally substituted.) See Template Text Syntax for a full list of special character sequences.)
+
+
+
+<pre><code>script UppercaseMatchedText
+  to replacePattern(foundText, foundGroups)
+    return uppercase text foundText
+  end replacePattern
+end script
+
+search text "abcdefghijk" for "[aeiou]" ¬
+    replacing with UppercaseMatchedText using pattern matching
+→ "AbcdEfghIjk"</code></pre>
+
+<!-- TO DO: need an example using foundGroups -->
+				]]></html>
+			</documentation>
+
+		</command>
+		
+		
+		<enumeration name="SerE" code="SerE">
+			<!-- caution: List library defines the same enums for use in its `text comparator` command, so names and codes must match exactly to avoid terminology conflicts -->
+			<enumerator name="exact matching" code="CmpE"/> <!-- consider everything except numeric strings (numeric strings are matched exactly) -->
+			<enumerator name="case insensitivity" code="CmpI"/> <!-- ignore case and numeric strings and consider everything else -->
+			<enumerator name="current considerations" code="CmpD"/> <!-- use whatever considering/ignoring settings are in effect when `search text`/`sort list` is called -->
+			
+			<!-- Text library also defines an enum for pattern matching -->
+			<enumerator name="pattern matching" code="CmpP"/> <!-- use ICU regular expression pattern matching -->
+		</enumeration>
+
+		<enumeration name="RetE" code="RetE">
+			<enumerator name="matched text only" code="MatT"/>
+			<enumerator name="unmatched text only" code="UmaT"/>
+			<enumerator name="matched and unmatched text" code="AllT"/>
+		</enumeration>
+		
+		
+		<command name="escape pattern" code="Txt:EPat" description="escape any pattern matching operator characters in the text so that they only match as literal characters when used in ‘search text’s ‘for’ parameter">
+			<direct-parameter type="text"/>
+			<result type="text"/>
+		</command>
+		
+		<command name="escape template" code="Txt:ETem" description="escape any backslash characters in the text so that they are not interpreted as template substitutions by the ‘search text’s ‘replacing with’ parameter when pattern matching is used">
+			<direct-parameter type="text"/>
+			<result type="text"/>
+		</command>
+		
+		
+		<!-- record structures returned by `search text` are defined here for documentation purposes
+		
+			note: only the record’s type names are defined as keywords (Script Editor/OSAKit choke when displaying records that contain `class` properties whose value isn’t a type class, e.g. `{property class:"foo"}`); other properties use standard AS identifiers so can be safely used anywhere, not just inside `tell script "TextLib"...` blocks (since the record’s class property is really only included for informational purposes, e.g. when testing and debugging, it doesn’t particularly matter if its corresponding keyword isn’t always available) -->
+		
+		<record-type name="unmatched text" code="TxtU" description="record type used by the ‘search text’ command to describe an unmatched text range">
+			<documentation>
+				<html><![CDATA[
+<pre><code>{ class : unmatched text,
+  startIndex : <var>integer</var>,
+  endIndex : <var>integer</var>,
+  foundText : <var>text</var> }</code></pre>
+				]]></html>
+			</documentation>
+		</record-type>
+		
+		<record-type name="matched text" code="TxtM" description="record type used by the ‘search text’ command to describe a matched text range">
+			<documentation>
+				<html><![CDATA[
+<pre><code>{ class : matched text,
+  startIndex : <var>integer</var>,
+  endIndex : <var>integer</var>,
+  foundText : <var>text</var>,
+  foundGroups : <var>list of record</var> }</code></pre>
+				]]></html>
+			</documentation>
+		</record-type>
+		
+		<record-type name="matched group" code="TxtG" description="record type used by a ‘matched text’ record’s ‘foundGroups’ property to describe the text matched by a parenthesized group within the matched pattern">
+			<documentation>
+				<html><![CDATA[
+<pre><code>{ class : matched group,
+  startIndex : <var>integer</var>,
+  endIndex : <var>integer</var>,
+  foundText : <var>text</var> }</code></pre>
+				]]></html>
+			</documentation>
+		</record-type>
+		
+	</suite>
+	
+	
+	
+	<suite name="Regular Expression Metacharacters" code="****">
+		
+		
+		<documentation>
+			<html><![CDATA[
+
+[[TO DO: also check Python's `re` module documentation for alternative wordings]]
+
+[[TO DO: note that this table is trimmed from original for length (e.g. metachars for most control codes are omitted); could probably do with trimming further if practical (), and including link to NSRegularExpression docs for any users who need the complete list]]
+
+[[TO DO: note rarely used metacharacters - e.g. ASCII control characters - are omitted for length; see NSRegularExpression docs for complete list]]
+			
+<table width="100%" style="text-align:left; margin:1em;">
+	<thead>
+		<tr>
+			<th>Character</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>\A</code></td>
+			<td>Match at the beginning of the input. Differs from <code>^</code> in that <code>\A</code> will not match after a new line within the input.</td>
+		</tr>
+		<tr>
+			<td><code>\b</code></td>
+			<td>Match if the current position is a word boundary. (When used outside of <code>[...]</code> groups.) Word boundaries are found according to the definitions of word found in Unicode UAX 29, Text Boundaries.</td>
+		</tr>
+		<tr>
+			<td><code>\B</code></td>
+			<td>Match if the current position is not a word boundary.</td>
+		</tr>
+		<tr>
+			<td><code>\d</code></td>
+			<td>Match any character with the Unicode General Category of Nd (Number, Decimal Digit.)</td>
+		</tr>
+		<tr>
+			<td><code>\D</code></td>
+			<td>Match any character that is not a decimal digit.</td>
+		</tr>
+		<tr>
+			<td><code>\n</code></td>
+			<td>Match a line feed, <code>\u000A</code>.</td>
+		</tr>
+		<tr>
+			<td><code>\N{</code><var>CHARACTER&nbsp;NAME</var><code>}</code></td>
+			<td>Match the named Unicode Character.</td>
+		</tr>
+		<tr>
+			<td><code>\p{</code><var>PROPERTY&nbsp;NAME</var><code>}</code></td>
+			<td>Match any character with the specified Unicode Property.</td>
+		</tr>
+		<tr>
+			<td><code>\P{</code><var>PROPERTY&nbsp;NAME</var><code>}</code></td>
+			<td>Match any character not having the specified Unicode Property.</td>
+		</tr>
+		<tr>
+			<td><code>\Q</code> … <code>\E</code></td>
+			<td>Quotes all characters between <code>\Q</code> and <code>\E</code>.</td>
+		</tr>
+		<tr>
+			<td><code>\r</code></td>
+			<td>Match a carriage return, \u000D.</td>
+		</tr>
+		<tr>
+			<td><code>\s</code></td>
+			<td>Match a white space character. White space is defined as <code>[\t\n\f\r\p{Z}]</code>.</td>
+		</tr>
+		<tr>
+			<td><code>\S</code></td>
+			<td>Match a non-white space character.</td>
+		</tr>
+		<tr>
+			<td><code>\t</code></td>
+			<td>Match a horizontal tab, <code>\u0009</code>.</td>
+		</tr>
+		<tr>
+			<td><code>\u</code><var>hhhh</var></td>
+			<td>Match the character with the hex value <var>hhhh</var>.</td>
+		</tr>
+		<tr>
+			<td><code>\U</code><var>hhhhhhhh</var></td>
+			<td>Match the character with the hex value <var>hhhhhhhh</var>. Exactly eight hex digits must be provided, even though the largest Unicode code point is <code>\U0010ffff</code>.</td>
+		</tr>
+		<tr>
+			<td><code>\w</code></td>
+			<td>Match a word character. Word characters are <code>[\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}]</code>.</td>
+		</tr>
+		<tr>
+			<td><code>\W</code></td>
+			<td>Match a non-word character.</td>
+		</tr>
+		<!--tr>
+			<td><code>\x{</code><var>hhhh</var><code>}</code></td>
+			<td>Match the character with hex value <var>hhhh</var>. From one to six hex digits may be supplied.</td>
+		</tr>
+		<tr>
+			<td><code>\x</code><var>hh</var></td>
+			<td>Match the character with two digit hex value <var>hh</var>.</td>
+		</tr>
+		<tr>
+			<td><code>\X</code></td>
+			<td>Match a Grapheme Cluster.</td>
+		</tr-->
+		<tr>
+			<td><code>\Z</code></td>
+			<td>Match if the current position is at the end of input, but before the final line terminator, if one exists.</td>
+		</tr>
+		<tr>
+			<td><code>\z</code></td>
+			<td>Match if the current position is at the end of input.</td>
+		</tr>
+		<tr>
+			<td><code>\1</code>, <code>\2</code>, … <code>\</code><var>n</var></td>
+			<td>Back Reference. Match whatever the <var>n</var>th capturing group matched. The number must be between 1 and the total number of capture groups in the pattern.</td>
+		</tr>
+		<tr>
+			<td><code>\</code></td>
+			<td>Quotes the following character. Characters that must be quoted to be treated as literals are <code>* ? + [ ( ) { } ^ $ | \ . /</code></td>
+		</tr>
+	</tbody>
+</table>
+
+			]]></html>
+		</documentation>
+	</suite>
+	
+	
+	
+	<suite name="Regular Expression Operators" code="****">
+
+		<documentation>
+			<html><![CDATA[
+			
+			[[TO DO: note rarely used patterns - possessive matching, lookahead/behind assertions - are omitted for length; see NSRegularExpression docs for complete list]]
+
+<table width="100%" style="text-align:left; margin:1em;">
+	<thead>
+		<tr>
+			<th>Operator</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>.</code></td>
+			<td>Match any character. (The exact matching behavior can be modified <a href="#flag-option-s">using the <code>s</code> flag</a>.)</td>
+		</tr>
+		<tr>
+			<td><code>[</code> … <code>]</code></td>
+			<td>Match any one character from the group. (TO DO: note about using ranges, hyphens inside brackets)</td>
+		</tr>
+		<tr>
+			<td><code>[^</code> … <code>]</code></td>
+			<td>Match any one character not from the group.</td>
+		</tr>
+		<tr>
+			<td><code>^</code></td>
+			<td>Match at the beginning of a line. (The exact matching behavior can be modified <a href="#flag-option-m">using the <code>m</code> flag</a>.)</td>
+		</tr>
+		<tr>
+			<td><code>$</code></td>
+			<td>Match at the end of a line. (The exact matching behavior can be modified <a href="#flag-option-m">using the <code>m</code> flag</a>.)</td>
+		</tr>
+		<tr>
+			<td><code>|</code></td>
+			<td>Alternation. <var>A</var><code>|</code><var>B</var> matches either <var>A</var> or <var>B</var>.</td>
+		</tr>
+		<tr>
+			<td><code>*</code></td>
+			<td>Match <code>0</code> or more times. Match as many times as possible.</td>
+		</tr>
+		<tr>
+			<td><code>+</code></td>
+			<td>Match <code>1</code> or more times. Match as many times as possible.</td>
+		</tr>
+		<tr>
+			<td><code>?</code></td>
+			<td>Match zero or one times. Prefer one.</td>
+		</tr>
+		<tr>
+			<td><code>{</code><var>n</var><code>}</code></td>
+			<td>Match exactly <var>n</var> times.</td>
+		</tr>
+		<tr>
+			<td><code>{</code><var>n</var><code>,}</code></td>
+			<td>Match at least <var>n</var> times. Match as many times as possible.</td>
+		</tr>
+		<tr>
+			<td><code>{</code><var>n</var><code>,</code><var>m</var><code>}</code></td>
+			<td>Match between <var>n</var> and <var>m</var> times. Match as many times as possible, but not more than <var>m</var>.</td>
+		</tr>
+		<tr>
+			<td><code>*?</code></td>
+			<td>Match <code>0</code> or more times. Match as few times as possible.</td>
+		</tr>
+		<tr>
+			<td><code>+?</code></td>
+			<td>Match 1 or more times. Match as few times as possible.</td>
+		</tr>
+		<tr>
+			<td><code>??</code></td>
+			<td>Match zero or one times. Prefer zero.</td>
+		</tr>
+		<tr>
+			<td><code>{</code><var>n</var><code>}?</code></td>
+			<td>Match exactly <var>n</var> times.</td>
+		</tr>
+		<tr>
+			<td><code>{</code><var>n</var><code>,}?</code></td>
+			<td>Match at least <var>n</var> times, but no more than required for an overall pattern match.</td>
+		</tr>
+		<tr>
+			<td><code>{</code><var>n</var><code>,</code><var>m</var><code>}?</code></td>
+			<td>Match between <var>n</var> and <var>m</var> times. Match as few times as possible, but not less than <var>n</var>.</td>
+		</tr>
+		<tr>
+			<td><code>(</code></code> … <code><code>)</code></td>
+			<td>Capturing parentheses. Range of input that matched the parenthesized subexpression is available after the match.</td>
+		</tr>
+		<tr>
+			<td><code>(?:</code></code> … <code><code>)</code></td>
+			<td>Non-capturing parentheses. Groups the included pattern, but does not provide capturing of matching text. Somewhat more efficient than capturing parentheses.</td>
+		</tr>
+		<tr>
+			<td><code>(?#</code> … <code>)</code></td>
+			<td>Free-format comment.</td>
+		</tr>
+		<tr>
+			<td><code>(?ismwx-ismwx:</code> …<code>)</code></td>
+			<td>Flag settings. Evaluate the parenthesized expression with the specified flags enabled or -disabled. The flags are defined in Regular Expression Flags.</td>
+		</tr>
+		<tr>
+			<td><code>(?ismwx-ismwx)</code></td>
+			<td>Flag settings. Change the flag settings. Changes apply to the portion of the pattern following the setting. For example, <code>(?i)</code> changes to a case insensitive match.The flags are defined in Regular Expression Flags.</td>
+		</tr>
+	</tbody>
+</table>
+	
+			]]></html>
+		</documentation>
+	</suite>
+	
+	
+	
+	<suite name="Regular Expression Flags" code="****">
+
+		<documentation>
+			<html><![CDATA[
+
+[TO DO: note that, for convenience, <code>(?imsw)</code> is used by default]
+
+<table width="100%" style="text-align:left; margin:1em;">
+	<thead>
+		<tr>
+			<th>Flag</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>i</code></td>
+			<td>By default, matching will take place in a case-insensitive manner. Disable this option, e.g. by adding &quot;<code>(?-i)</code>&quot; to the start of the pattern text, to consider case.</td>
+		</tr>
+		<tr>
+			<td><a id="flag-option-m"></a><code>m</code></td>
+			<td>Control the behavior of &quot;<code>^</code>&quot; and &quot;<code>$</code>&quot; in a pattern. By default, &quot;<code>^</code>&quot; and &quot;<code>$</code>&quot; will match at the start and end of each line within the input text. Disable this option to make them match the start and end of the input text only. (Alternatively, use <code>\A</code> and <code>\Z</code>/<code>\z</code> to match the start and end of the input text.)</td>
+		</tr>
+		<tr>
+			<td><a id="flag-option-s"></a><code>s</code></td>
+			<td>By default, a &quot;<code>.</code>&quot; in a pattern will match any character in the input text. Disable this option to prevent it matching line terminator characters. (Also note that a <code>return</code>+<code>linefeed</code> pair representing a Windows-style line break in text is treated as a single line terminator, and will match a single &quot;<code>.</code>&quot; in a regular expression pattern.)</td>
+		</tr>
+		<tr>
+			<td><code>w</code></td>
+			<td>By default, word boundaries are found according to the definitions of word found in Unicode UAX 29, Text Boundaries. Disable this option to identify word boundaries by means of a simple classification of characters as either “word” or “non-word”, which approximates traditional regular expression behavior. The results obtained with the two options can be quite different in runs of spaces and other non-word characters.</td>
+		</tr>
+		<tr>
+			<td><code>x</code></td>
+			<td>By default, white space characters within patterns are matched exactly. Enable this option to use white space and #comments within patterns for presentation purposes only. (White space in the input text can still be matched normally by using the corresponding metacharacters: <code>\t</code> for TAB, <code>\u0020</code> for SPACE, <code>\s</code> for any white space character, etc.)</td>
+		</tr>
+	</tbody>
+</table>
+
+			]]></html>
+		</documentation>
+	</suite>
+	
+	
+	
+	<suite name="Template Text Syntax" code="****">
+
+		<documentation>
+			<html><![CDATA[
+			
+<table width="100%" style="text-align:left; margin:1em;">
+	<thead>
+		<tr>
+			<th>Character</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+			<tr>
+			<td><code>\n</code></td>
+			<td>Insert a line feed, <code>\u000A</code>.</td>
+		</tr>
+		<tr>
+			<td><code>\N{</code><var>CHARACTER&nbsp;NAME</var><code>}</code></td>
+			<td>Insert the named Unicode Character.</td>
+		</tr>
+		<tr>
+			<td><code>\r</code></td>
+			<td>Insert a carriage return, \u000D.</td>
+		</tr>
+		<tr>
+			<td><code>\t</code></td>
+			<td>Insert a horizontal tab, <code>\u0009</code>.</td>
+		</tr>
+		<tr>
+			<td><code>\u</code><var>hhhh</var></td>
+			<td>Insert the character with the hex value <var>hhhh</var>.</td>
+		</tr>
+		<tr>
+			<td><code>\U</code><var>hhhhhhhh</var></td>
+			<td>Insert the character with the hex value <var>hhhhhhhh</var>. Exactly eight hex digits must be provided, even though the largest Unicode code point is <code>\U0010ffff</code>.</td>
+		</tr>
+		<tr>
+			<td><code>\1</code>, <code>\2</code>, … <code>\</code><var>n</var></td>
+			<td>Simple back reference. Insert the <var>n</var>th of the given list (<code>format text</code>) or whatever the <var>n</var>th capturing group matched (<code>search text</code>). The number must be between 1 and 9 or the total number of list items/capture groups, whichever is less.</td>
+		</tr>
+		<tr>
+			<td><code>\{</code> … <code>}</code></td>
+			<td>Extended back reference. Unlike the simple back reference, this is not limited to numbers 1 to 9; e.g. <code>\{13}</code> refers to the 13th list item/capturing group. In addition, if the <code>format text</code> command’s <code>using</code> parameter is a dictionary-like object, the braces can contain any text-based key, e.g. <code>\{first name}</code>, not just a number. (The only limitation is that the key text cannot itself include brace or backslash characters.)</td>
+		</tr>
+	</tbody>
+</table>
+
+			]]></html>
+		</documentation>
+	</suite>
+	
+	
+</dictionary>
+

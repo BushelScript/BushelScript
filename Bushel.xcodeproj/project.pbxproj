@@ -2022,9 +2022,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = /;
 				INFOPLIST_FILE = BushelGUIHost/Info.plist;
-				INSTALL_PATH = "$(BUSHELSCRIPT_APPLICATIONS_DIR)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2032,6 +2030,7 @@
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelGUIHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Profiling;
@@ -2191,9 +2190,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = /;
 				INFOPLIST_FILE = BushelGUIHost/Info.plist;
-				INSTALL_PATH = "$(BUSHELSCRIPT_APPLICATIONS_DIR)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2201,6 +2198,7 @@
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelGUIHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -2215,9 +2213,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = /;
 				INFOPLIST_FILE = BushelGUIHost/Info.plist;
-				INSTALL_PATH = "$(BUSHELSCRIPT_APPLICATIONS_DIR)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2225,6 +2221,7 @@
 				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.justcheesy.BushelGUIHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

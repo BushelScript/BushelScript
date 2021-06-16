@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary>
+
+	
+	
+	<suite name="Manipulate URLs" code="****">
+		
+		<command name="split URL" code="Web:SplU" description="">
+			<direct-parameter type="text"/>
+			<parameter name="network location record" code="NeLo" type="boolean" optional="yes" description="if true, the result’s ‘networkLocation’ property will contain a network location record; if false, the network location is given as a single text value (default: false)"/>
+			<result type="URL component record"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>For example:</p>
+
+<pre><code>split url "http://jsmith@example.com/some/path?x=1&y=2"
+
+→ { urlScheme:"http", 
+    networkLocation:"jsmith@example.com", 
+    resourcePath:"/some/path", 
+    parameterString:"", 
+    queryString:"x=1&y=2", fragmentIdentifier:"" }</code></pre>
+				]]></html>
+			</documentation>
+			
+		</command>
+		
+		<command name="join URL" code="Web:JoiU" description="">
+			<direct-parameter type="URL component record"/>
+			<parameter name="using base URL" code="Base" type="text" optional="yes" description=""/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>For example:</p>
+
+<pre><code>join url { urlScheme:"http", ¬
+    networkLocation:"jsmith@example.com", ¬
+    resourcePath:"/some/path", ¬
+    queryString:"x=1&y=2" }
+
+→ "http://jsmith@example.com/some/path?x=1&y=2"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<record-type name="URL component record" code="WebC" description="">
+			<documentation>
+				<html><![CDATA[
+<pre><code>{ urlScheme : <var>text</var>,
+  networkLocation : <var>text or network location record</var>,
+  resourcePath : <var>text</var>,
+  parameterString : <var>text</var>,
+  queryString : <var>text</var>,
+  fragmentIdentifier : <var>text</var> }</code></pre>
+				]]></html>
+			</documentation>
+		</record-type>
+	
+		
+		<record-type name="network location record" code="WebL" description="">
+			<documentation>
+				<html><![CDATA[
+<pre><code>{ userName : <var>text</var>,
+  userPassword : <var>text</var>,
+  hostName : <var>text</var>,
+  portNumber : <var>text</var> }</code></pre>
+				]]></html>
+			</documentation>
+		</record-type>
+		
+		
+		<command name="encode URL characters" code="Web:EscU" description="Replace “non-safe” characters in a text value with the corresponding “%XX” escapes suitable for use in a URL">
+			<direct-parameter type="text"/>
+			<parameter name="preserving" code="Safe" type="text" description="any additional ASCII characters that should not be escaped (default: &quot;&quot;)"/>
+			<result type="text"/>
+			<documentation>
+				<html><![CDATA[
+<p>By default, this converts all characters except <code>A-Za-z0-9_.-</code> to UTF8-based <code>%<var>XX</var></code> escape codes. For example, to escape a resource path, preserving path separators:</p>
+
+<pre><code>encode URL characters "/foo bar/ø.txt" preserving "/" → "/foo%20bar/%C3%B8.txt"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="decode URL characters" code="Web:UneU" description="Replace “%XX” escapes in a text value with the corresponding characters">
+			<direct-parameter type="text"/>
+			<result type="text"/>
+			<documentation>
+				<html><![CDATA[
+<p>All UTF8-based <code>%<var>XX</var></code> escape codes will be automatically replaced with the corresponding characters. If an escape sequence does not represent a valid UTF8 codepoint, an error is raised instead. For example:</p>
+
+<pre><code>decode URL characters "/foo%20bar/%C3%B8.txt" → "/foo bar/ø.txt"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+
+		
+		<command name="split URL query string" code="Web:SplQ" description="Split a URL query string into a list of key-value pairs">
+			<direct-parameter type="text" description="a query string of form &quot;key1=value1&amp;key2=value2&amp;…&quot;"/>
+			<result type="list" description="a list of form {{key1,value1}, {key2,value2}, …}"/>
+			<documentation>
+				<html><![CDATA[
+<p>Keys and values will be text values. All UTF8-based <code>%<var>XX</var></code> escape codes will be automatically replaced with the corresponding characters. For example:</p>
+
+<pre><code>split URL query string "age=23&name=Jan+M%C3%BCller"
+→ {{"age", "23"}, {"name", "Jan Müller"}}</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+
+		<command name="join URL query string" code="Web:JoiQ" description="Join a list of key-value pairs into a URL query string">
+			<direct-parameter type="list" description="a list of form {{key1,value1}, {key2,value2}, …}"/>
+			<result type="text" description="a query string of form &quot;key1=value1&amp;key2=value2&amp;…&quot;"/>
+			<documentation>
+				<html><![CDATA[
+<p>Keys and values must be text values (e.g. numbers should be converted to numeric text using Number library's ‘format number’ command to avoid localization issues). All characters except <code>A-Za-z0-9_.-</code> will be automatically replaced with UTF8-based <code>%<var>XX</var></code> escape codes. For example:</p>
+
+<pre><code>join URL query string {{"age", "23"}, {"name", "Jan Müller"}}
+→ "age=23&name=Jan+M%C3%BCller"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+	</suite>
+	
+	
+	
+	<suite name="Convert Data" code="****">
+		
+		<command name="decode Base64" code="Web:PB64" description="Convert text from Base64 encoding">
+			<direct-parameter type="text"/>
+			<result type="text"/>
+		</command>
+		
+		<command name="encode Base64" code="Web:FB64" description="Convert text to Base64 encoding">
+			<direct-parameter type="text"/>
+			<result type="text"/>
+		</command>
+		
+		<command name="decode JSON" code="Web:PJSN" description="Convert JSON text to an AppleScript value">
+			<direct-parameter type="text"/>
+			<parameter name="fragments allowed" code="Frag" type="boolean" optional="yes" description="(default: false)"/>
+			<result type="any"/>
+		</command>
+		
+		<command name="encode JSON" code="Web:FJSN" description="Convert an AppleScript value to JSON text">
+			<direct-parameter type="any"/>
+			<parameter name="extra white space" code="EWSp" type="boolean" optional="yes" description="(default: false)"/>
+			<result type="text"/>
+		</command>
+		
+	</suite>
+	
+	
+	
+	<suite name="Web Access" code="****">
+		
+		<command name="send HTTP request" code="Web:ReqH" description="Send an HTTP request to a web server and return its response">
+			<parameter name="to" code="Dest" type="text" description="the destination URL"/>
+			<parameter name="method" code="Meth" type="text" optional="yes" description="the HTTP method name: “GET”, “POST”, “PUT”, “DELETE”, “OPTIONS”, etc. (default: &quot;GET&quot;)"/>
+			<parameter name="headers" code="Head" optional="yes" description="zero or more header lines to include in the request">
+				<type type="HTTP header record" list="yes"/>
+			</parameter>
+			<parameter name="body" code="Body" optional="yes" description="the body data for a POST/PUT request; if any (default: missing value)">
+				<type type="text"/>
+				<type type="NSData"/>
+				<type type="missing value"/>
+			</parameter>
+			<parameter name="timeout" code="TimO" type="integer" optional="yes" description="the number of seconds to wait for a response before timing out (default: 60)"/>
+			<parameter name="returning" code="Type" type="type" optional="yes" description="use ‘text’ to decode the HTTP response’s body as text (assuming its ‘Content-Type’ header specifies a supported charset: “utf-8”, “iso-8859-1”, etc); use ‘data’ to return the response’s body as an NSData object; use ‘missing value’ to ignore the response’s body, if any (default: text)"/>
+			<result type="HTTP response record"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>For example, to request a document and automatically decode it to text (assuming the HTTP response contains a recognized <code>Content-Type</code> header):</p>
+
+<pre><code>send HTTP request to "http://apple.com/index.html"</code></pre>
+
+<p>To download the document to file without any automatic decoding:</p>
+
+<pre><code>set filePath to "<var>/path/to/file.html</var>"
+
+set httpResponse to send HTTP request to "http://apple.com/index.html" returning data
+
+-- on success, the returned record's `responseBody` property contains an NSData object
+if httpResponse's statusCode div 100 = 2 then -- 2xx status indicates success (e.g. 200)
+  set {didSucceed, asocError} to httpResponse's responseBody's writeToFile:filePath ¬
+      options:(current application's NSDataWritingAtomic) |error|:(specifier)
+  -- confirm file was written successfully
+  if not didSucceed then error (asocError's localizedDescription()) number (asocError's code())
+else
+  -- deal with other status codes (e.g. 3xx, 4xx, 5xx) here...
+end if</code></pre>
+
+<p>HTTP headers can be added to the HTTP request via the <code>send HTTP request</code> command's <code>headers</code> parameter. For example, the following list of HTTP header records tells the web server that your script wants either HTML (preferred) or plain text, encoded as UTF8 (preferred) or Latin1, in response:</p>
+
+<pre>{{headerName:"Accept", headerValue:"text/html, text/plain;q=0.5"}, 
+ {headerName:"Accept-Charset", headerValue:"utf-8, iso-8859-1;q=0.5"}}</pre>
+ 
+<p>By default, <code>send HTTP request</code> sends a <code>GET</code> request to the web server. Other HTTP methods (<code>POST</code>, <code>PUT</code>, <code>DELETE</code> etc.) can be specified via the <code>method</code> parameter. For example, to send a <code>POST</code> request with UTF8-encoded JSON data as the request body and ask for UTF8-encoded JSON data in response:</p>
+
+<pre><code>set requestData to {someKey:101, anotherKey:"hello"}
+
+set httpResponse to send HTTP request to "http://example.org/some-path" ¬
+    method "POST" ¬
+    headers {{headerName:"Accept", headerValue:"application/json"}, ¬
+             {headerName:"Accept-Charset", headerValue:"utf-8"}, ¬
+             {headerName:"Content-Type", headerValue:"application/json;charset=utf-8"}} ¬
+    body (encode JSON requestData)
+
+if (httpResponse's statusCode) div 100 ≠ 2 then -- non-2xx status = failure (e.g. 403)
+  error (HTTP status name httpResponse's statusCode) number httpResponse's statusCode
+end if
+
+set responseData to decode JSON httpResponse's responseBody</code></pre>
+
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<record-type name="HTTP header record" code="WebH" description="A record describing a single header line in an HTTP request or response">
+			<documentation>
+				<html><![CDATA[
+<pre><code>{ headerName:<var>text</var>,
+  headerValue:<var>text</var> }</code></pre>
+
+<p>For example:</p>
+
+<pre><code>{headerName:"Content-Type", headerValue:"application/json; charset=utf-8"}</code></pre>
+				]]></html>
+			</documentation>
+		</record-type>
+		
+		
+		<record-type name="HTTP response record" code="WebR" description="A record describing an HTTP response">
+			<documentation>
+				<html><![CDATA[
+<pre><code>{ statusCode:<var>integer</var>,
+  responseHeaders:<var>list of HTTP header record</var>,
+  responseBody:<var>text, NSData, or missing value</var> }</code></pre>
+				]]></html>
+			</documentation>
+		</record-type>
+		
+			
+		<command name="HTTP status name" code="Web:DStC" description="Get a short description of the given HTTP status code">
+			<direct-parameter type="integer"/>
+			<result type="text"/>
+			<documentation>
+				<html><![CDATA[
+<p>For example:</p>
+
+<pre><code>HTTP status name 404 → “not found”</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+	</suite>
+	
+</dictionary>

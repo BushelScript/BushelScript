@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary title="">
+
+	
+	
+	<suite name="Collections" code="****">
+			
+		<command name="dictionary collection" code="Obj:Dict" description="returns a new DictionaryCollection">
+			<result type="script"/>
+			<documentation>
+				<html><![CDATA[
+
+<p>Unlike AppleScript records, which are predefined groups of properties whose values are identified by keyword or identifier, dictionary objects are dynamic collections of key-value pairs that can be added and removed at any time. Dictionary keys can be text, numbers, dates, and/or type and constant symbols.</p>
+
+
+<h3>Examples</h3>
+
+<p>The following script uses a dictionary to store and retrieve RGB color values by name:</p>
+
+<pre><code>use script "Objects"
+
+-- create a new dictionary
+set obj to dictionary collection
+
+-- add some key-value pairs
+obj's addItem("red", {255, 0, 0})
+obj's addItem("yellow", {255, 255, 0})
+obj's addItem("green", {0, 255, 0})
+obj's addItem("blue", {0, 0, 255})
+
+-- get the number of items in the collection
+log obj's countItems() --> 4
+
+-- get the value that is currently stored under the key "green"
+log obj's getItem("green") --> {0, 255, 0}
+
+-- attempting to get or remove a non-existent item raises an error
+log obj's getItem("banana") -- Error -1728: "Item not found."</code></pre>
+
+
+<h3>Object Commands</h3>
+
+<p><code>DictionaryCollection</code> script objects recognize the following commands:</p>
+
+<dl>
+
+<dt><code>countItems()</code></dt>
+<dd><p>Count the number of key-value pairs in the collection</p>
+<ul>
+	<li>Result: <tt>integer</tt></i>
+</ul>
+</dd>
+
+<dt><code>containsItem(<var>theKey</var>)</code></dt>
+<dd><p>Does the collection contain a key-value pair with the specified key?</p>
+<ul>
+	<li><var>theKey</var> : <tt>text, number, date, type or constant</tt></li>
+	<li>Result: <tt>boolean</tt></li>
+</ul>
+</dd>
+
+<dt><code>addItem(<var>theKey</var>, <var>theValue</var>)</code></dt>
+<dd><p>Add a key-value pair to the collection</p>
+<ul>
+	<li><var>theKey</var> : <tt>text, number, date, type or constant</tt></li>
+	<li><var>theValue</var> : <tt>anything</tt></li>
+</ul>
+</dd>
+
+<dt><code>removeItem(<var>theKey</var>)</code></dt>
+<dd><p>Remove a key-value pair from the collection</p>
+<ul>
+	<li><var>theKey</var> : <tt>text, number, date, type or constant</tt></li>
+	<li>Result: <tt>anything</tt> – the removed value</li>
+</ul>
+</dd>
+
+<dt><code>getItem(<var>theKey</var>)</code></dt>
+<dd><p>Get the value for the given key from the collection</p>
+<ul>
+	<li><var>theKey</var> : <tt>text, number, date, type or constant</tt></li>
+	<li>Result: <tt>anything</tt> – the removed value</li>
+</ul>
+</dd>
+
+
+<dt><code>addDictionary(<var>theDictionary</var>)</code></dt>
+<dd><p>Add another DictionaryObject's key-value pairs to the collection</p>
+<ul>
+	<li><var>theDictionary</var> : <tt>script</tt> – the DictionaryObject whose keys and values are to be added</li>
+</ul>
+</dd>
+
+<dt><code>addKeysAndValues(<var>keyValueList</var>)</code></dt>
+<dd><p>Add a list of key-value pairs to the collection</p>
+<ul>
+	<li><var>keyValueList</var> : <tt>list of list</tt> – a list of form: <code>{{<var>KEY</var>, <var>VALUE</var>},...}</code></li>
+</ul>
+</dd>
+
+<dt><code>getKeysAndValues()</code></dt>
+<dd><p>Get a list of key-value pairs from the collection</p>
+<ul>
+	<li>Result: <tt>list of list</tt> – a list of form: <code>{{<var>KEY</var>, <var>VALUE</var>},...}</code></li>
+</ul>
+</dd>
+
+<dt><code>getKeys()</code></dt>
+<dd><p>Get a list of keys from the collection</p>
+<ul>
+	<li>Result: <tt>list of anything</tt></li>
+</ul>
+</dd>
+
+<dt><code>getValues()</code></dt>
+<dd><p>Get a list of values from the collection</p>
+<ul>
+	<li>Result: <tt>list of anything</tt></li>
+</ul>
+</dd>
+
+
+<dt><code>deleteAllItems()</code>
+<dd><p>Delete all key-value pairs from the collection</p></dd>
+
+
+<dt><code>copyObject()</code></dt>
+<dd><p>Returns a shallow copy of the object</p>
+<ul>
+	<li>Result: <tt>script</tt> – a new DictionaryObject containing the same keys and values</li>
+</ul>
+</dd>
+
+<dt><code>objectDescription()</code></dt>
+<dd><p>Returns a brief description of the object</p>
+<ul>
+	<li>Result: <tt>text</tt></li>
+</ul>
+</dd>
+
+</dl>
+
+<h3>Notes</h3>
+
+<p>Numeric keys are compared for numeric equality (e.g. <code>1</code> and <code>1.0</code> are the same). Other types of keys, including text-based keys, are compared exactly (e.g. <code>"foo"</code> and <code>"Foo"</code> are different).</p>
+
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		
+		<command name="queue collection" code="Obj:Queu" description="returns a new QueueCollection (a.k.a. First-In-First-Out sequence)">
+			<result type="script"/>
+			<documentation>
+				<html><![CDATA[
+
+<p>Unlike a list, where any item can be accessed at any time, a queue is an ordered sequence of items where items can only be added (“pushed”) to the back of the queue and retrieved/removed (“pulled”) from the front – i.e. items are returned in the exact same order as they were added.</p>
+
+
+<h3>Examples</h3>
+
+<pre><code>use script "Objects"
+
+set obj to queue collection
+
+obj's addItem("a")
+obj's addItem("b")
+obj's addItem("c")
+log obj's removeItem() --> "a"
+
+obj's addItem("d")
+log obj's removeItem() --> "b"
+log obj's removeItem() --> "c"
+log obj's removeItem() --> "d"
+
+log obj's countItems() --> 0
+log obj's removeItem() -- Error -1728: "Queue is empty."</code></pre>
+
+
+<h3>Object Commands</h3>
+
+<p><code>QueueCollection</code> script objects recognize the following commands:</p>
+
+<dl>
+
+<dt><code>countItems()</code></dt>
+<dd><p>Count the number of items in the collection</p>
+<ul>
+	<li>Result: <tt>integer</tt></i>
+</ul>
+</dd>
+
+<dt><code>addItem(<var>theValue</var>)</code></dt>
+<dd><p>Push an item onto the back of the queue</p>
+<ul>
+	<li><var>theValue</var> : <tt>anything</tt></li>
+</ul>
+</dd>
+
+<dt><code>removeItem()</code></dt>
+<dd><p>Pull an item from the front of the queue</p>
+<ul>
+	<li>Result: <tt>anything</tt></li>
+</ul>
+</dd>
+
+<dt><code>getItem()</code></dt>
+<dd><p>Return the item at the front of the queue <em>without</em> removing it</p>
+<ul>
+	<li>Result: <tt>anything</tt></li>
+</ul>
+</dd>
+
+<dt><code>deleteAllItems()</code>
+<dd><p>Delete all items from the collection</p></dd>
+
+
+<dt><code>copyObject()</code></dt>
+<dd><p>Returns a shallow copy of the object</p>
+<ul>
+	<li>Result: <tt>script</tt></li>
+</ul>
+</dd>
+
+<dt><code>objectDescription()</code></dt>
+<dd><p>Returns a brief description of the object</p>
+<ul>
+	<li>Result: <tt>text</tt></li>
+</ul>
+</dd>
+
+</dl>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		
+		<command name="stack collection" code="Obj:Stac" description="returns a new StackCollection (a.k.a. Last-In-First-Out sequence)">
+			<result type="script"/>
+			<documentation>
+				<html><![CDATA[
+
+<p>Unlike a list, where any item can be accessed at any time, a stack is an ordered sequence of items where items can only be added (“pushed”) and retrieved/removed (“popped”) from the top of the stack – i.e. the most recently added item is returned first, and the oldest added item returned last.</p>
+
+
+<h3>Examples</h3>
+
+<pre><code>use script "Objects"
+
+set obj to stack collection
+
+obj's addItem("a")
+obj's addItem("b")
+obj's addItem("c")
+log obj's removeItem() --> "c"
+
+obj's addItem("d")
+log obj's removeItem() --> "d"
+log obj's removeItem() --> "b"
+log obj's removeItem() --> "a"
+
+log obj's countItems() --> 0
+log obj's removeItem() -- Error -1728: "Stack is empty."</code></pre>
+
+
+<h3>Object Commands</h3>
+
+<p><code>StackCollection</code> script objects recognize the following commands:</p>
+
+<dl>
+
+<dt><code>countItems()</code></dt>
+<dd><p>Count the number of items in the collection</p>
+<ul>
+	<li>Result: <tt>integer</tt></i>
+</ul>
+</dd>
+
+<dt><code>addItem(<var>theValue</var>)</code></dt>
+<dd><p>Push an item onto the top of the stack</p>
+<ul>
+	<li><var>theValue</var> : <tt>anything</tt></li>
+</ul>
+</dd>
+
+<dt><code>removeItem()</code></dt>
+<dd><p>Pop an item from the top of the stack</p>
+<ul>
+	<li>Result: <tt>anything</tt></li>
+</ul>
+</dd>
+
+<dt><code>getItem()</code></dt>
+<dd><p>Return the item at the top of the stack <em>without</em> removing it</p>
+<ul>
+	<li>Result: <tt>anything</tt></li>
+</ul>
+</dd>
+
+<dt><code>deleteAllItems()</code>
+<dd><p>Delete all items from the collection</p></dd>
+
+
+<dt><code>copyObject()</code></dt>
+<dd><p>Returns a shallow copy of the object</p>
+<ul>
+	<li>Result: <tt>script</tt></li>
+</ul>
+</dd>
+
+<dt><code>objectDescription()</code></dt>
+<dd><p>Returns a brief description of the object</p>
+<ul>
+	<li>Result: <tt>text</tt></li>
+</ul>
+</dd>
+
+</dl>
+				]]></html>
+			</documentation>
+		</command>
+		
+	</suite>
+	
+	
+	
+
+	<suite name="Timing" code="****">
+		
+		<command name="timer object" code="Obj:Time" description="returns a new TimerObject">
+			<parameter name="named" code="Name" type="text" optional="yes" description="an optional name, for reference (default: &quot;&quot;)"/>
+			<result type="script"/>
+			
+			<documentation>
+				<html><![CDATA[
+
+<h3>Examples</h3>
+
+<p>The following script uses a timer object to measure the time it takes to create 1000 random numbers:</p>
+
+<pre><code>use script "Objects"
+use scripting additions
+
+set theTimer to timer object
+
+set n to 1000
+theTimer's startTimer()
+repeat n times
+	random number from -99999 to 99999
+end repeat
+theTimer's stopTimer()
+
+set millisecs to theTimer's totalTime() * 1000 div 1
+display alert "Created " & n & " random numbers in " & millisecs & "ms." </code></pre>
+
+
+<h3>Object Commands</h3>
+
+<p><code>TimerObject</code> script objects recognize the following commands:</p>
+
+<dl>
+
+<dt><code>timerName()</code></dt>
+<dd><p>the timer name, if given</p>
+<ul>
+	<li>Result: <tt>text</tt></li>
+</ul>
+</dd>
+
+<dt><code>startTimer()</code></dt>
+<dd><p>[re]start the timer (this does nothing if the timer is currently running)</p>
+<ul>
+	<li>Result: <tt>script</tt> – the TimerObject returns itself, allowing timer creation and start commands to be chained for convenience, e.g. <code>(timer object)'s startTimer()</code></li>
+</ul>
+</dd>
+
+<dt><code>stopTimer()</code></dt>
+<dd><p>stop the timer (this does nothing if the timer is already stopped)</p>
+<ul>
+	<li>Result: <tt>real</tt> – the number of seconds elapsed since timer was last started</li>
+</ul>
+</dd>
+
+<dt><code>elapsedTime()</code></dt>
+<dd><p>returns the number of seconds since running timer was last started</p>
+<ul>
+	<li>Result: <tt>real</tt></li>
+</ul>
+</dd>
+
+<dt><code>totalTime()</code></dt>
+<dd><p>returns the total number of seconds the timer has been running</p>
+<ul>
+	<li>Result: <tt>real</tt></li>
+</ul>
+</dd>
+
+
+<dt><code>copyObject()</code></dt>
+<dd><p>Returns a shallow copy of the object</p>
+<ul>
+	<li>Result: <tt>script</tt></li>
+</ul>
+</dd>
+
+<dt><code>objectDescription()</code></dt>
+<dd><p>Returns a brief description of the object</p>
+<ul>
+	<li>Result: <tt>text</tt></li>
+</ul>
+</dd>
+
+</dl>
+				]]></html>
+			</documentation>
+		</command>
+		
+	</suite>
+	
+	
+</dictionary>

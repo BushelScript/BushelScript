@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary>
+    
+    <suite name="Modify" code="****">
+        
+        <command name="insert into list" code="Lst:Inst" description="insert an item (or items) into the given list, returning a new list">
+            <direct-parameter type="list"/>
+            <parameter name="value" code="Valu" type="anything"/>
+            <parameter name="before item" code="Befo" type="integer" optional="yes"/>
+            <parameter name="after item" code="Afte" type="integer" optional="yes" description="(default: -1)"/>
+            <parameter name="concatenation" code="Conc" type="boolean" optional="yes" description="if true and the ‘value’ parameter is a list, concatenate it instead of inserting it"/>
+            <result type="list"/>
+            <documentation>
+                <html><![CDATA[
+<p>To insert a value (or values) at a specific point in the list, either the <code>before item</code> <em>or</em> <code>after item</code> parameter should be given. For example:</p>
+
+<pre><code>insert into list {1, 2, 3} value 8 before item 2 → {1, 8, 2, 3}
+
+insert into list {1, 2, 3} value 8 after item -3 → {1, 8, 2, 3}
+
+insert into list {1, 2, 3} value {7, 8, 9} after item 2 → {1, 2, {7, 8, 9}, 3}
+
+insert into list {1, 2, 3} value {7, 8, 9} after item 2 with concatenation → {1, 2, 7, 8, 9, 3}</code></pre>
+
+<p>If neither <code>before item</code> nor <code>after item</code> parameters are given, the <code>insert into list</code> automatically appends the new value(s) to the end of the list:</p>
+
+<pre><code>insert into list {1, 2, 3} value 4 → {1, 2, 3, 4}</code></pre>
+
+<p>The <code>before item</code> or <code>after item</code> parameter must be a valid index, with the following special exceptions:</p>
+
+<ul>
+	<li>
+<p>To make the <code>after item</code> parameter insert the new value(s) before the first item in the list, use <code>after item 0</code> or <code>after item -<var>N</var></code> where N = the number of items in list + 1:</p>
+
+<pre><code>insert into list {1, 2, 3} value 8 after item 0 → {8, 1, 2, 3}
+insert into list {1, 2, 3} value 8 after item -4 → {8, 1, 2, 3}</code></pre>
+	</li>
+
+	<li>
+<p>To make the <code>before item</code> parameter insert the new value(s) after the last item in the list, use <code>before item 0</code> or <code>after item <var>N</var></code> where N = the number of items in list + 1:</p>
+
+<pre><code>insert into list {1, 2, 3} value 8 before item 0 → {1, 2, 3, 8}
+insert into list {1, 2, 3} value 8 before item 4 → {1, 2, 3, 8}</code></pre>
+	</li>
+</ul>
+
+<p>Any other out-of-range index will result in error -1728.</p>
+                ]]></html>
+            </documentation>
+        </command>
+        
+        
+        <command name="delete from list" code="Lst:Dele" description="delete an item (or items) from the given list, returning a new list">
+            <direct-parameter type="list"/>
+            <parameter name="item" code="Indx" type="integer" optional="yes" description="(default: -1)"/>
+            <parameter name="from item" code="FIdx" type="integer" optional="yes"/>
+            <parameter name="to item" code="TIdx" type="integer" optional="yes"/>
+            <result type="list"/>
+            <documentation>
+                <html><![CDATA[
+<p>To delete a single item from the list, pass its index via the <code>item</code> parameter:</p>
+
+<pre><code>delete from list {1, 2, 3, 4, 5} item 1 → {2, 3, 4, 5}
+
+delete from list {1, 2, 3, 4, 5} item -2 → {1, 2, 3, 5}</code></pre>
+
+<p>(Tip: You can also use <code>get rest of <var>theList</var></code> to remove the first item from a list.)</p>
+
+<p>To delete a range of items from the list, use the <code>from item</code> and/or <code>to item</code> parameters:</p>
+
+<pre><code>delete from list {1, 2, 3, 4, 5} from item 2 to item 4 → {1, 5}
+
+delete from list {1, 2, 3, 4, 5} to item 3 → {4, 5}</code></pre>
+
+<p>If no index is specified, the last item in the list is automatically removed:</p>
+
+<pre><code>delete from list {1, 2, 3, 4, 5} → {1, 2, 3, 4}</code></pre>
+
+<p>If the start index is greater than the end index, the list is copied but no items are removed:</p>
+
+<pre><code>delete from list {1, 2, 3, 4, 5} from item 4 to item 2 → {1, 2, 3, 4, 5}</code></pre>
+
+<p>If the list is empty or an index is out of range, error -1728 will occur.</p>
+                ]]></html>
+            </documentation>
+        </command>
+		
+        
+        <command name="map list" code="Lst:Map_" description="convert each item in the given list, returning a new list containing the converted values">
+            <direct-parameter type="list"/>
+            <parameter name="using" code="Usin" type="script"/>
+            <result type="list"/>
+            <documentation>
+                <html><![CDATA[
+<p>The <code>using</code> parameter's script object must implement a handler named <code>mapItem</code> that takes a value as its input and returns a new value as its output.  The following example demonstrates how to map a list of numbers to create a new list where each item is the square of its original value:</p>
+
+<pre><code>script SquareNumbers
+  to mapItem(aValue)
+    return aValue ^ 2
+  end mapItem
+end script
+
+map list {1, 2, 3, 4, 5} using SquareNumbers → {1, 4, 9, 16, 25}</code></pre>
+                ]]></html>
+            </documentation>
+        </command>
+        
+        
+        <command name="reduce list" code="Lst:Redu" description="convert each item in the given list, returning a new list containing the converted values">
+            <direct-parameter type="list"/>
+            <parameter name="using" code="Usin" type="script"/>
+            <result type="list"/>
+            <documentation>
+                <html><![CDATA[
+<p>The <code>using</code> parameter's script object must implement a handler named <code>reduceItem</code> that takes two values as its input and returns a new value as its output. The following example demonstrates how to reduce a list of numbers to the sum of all its items:</p>
+
+<pre><code>script SumNumbers
+  to reduceItem(partialResult, aValue)
+    return partialResult + aValue
+  end reduceItem
+end script
+
+reduce list {5, 1, 9, 3} using SumNumbers → 18</code></pre>
+                ]]></html>
+            </documentation>
+        </command>
+        
+		
+		<command name="remove duplicates from list" code="Lst:RDuL" description="remove duplicate items from the list, returning a new list">
+			<direct-parameter type="list"/>
+			<result type="list"/>
+			<documentation>
+				<html><![CDATA[
+<p>For example:</p>
+
+<pre><code>remove duplicates from list {"A", "b", "c", B", "E", "b"} → {"A", "b", "c", "E"}</code></pre>
+				
+<p>Be aware that this command uses AppleScript’s standard <code>is in</code> operator to check if each item has previously appeared in the list. When working with lists of text, for example, you may want to wrap the <code>remove duplicates from list</code> command in an appropriate <code>considering</code>/<code>ignoring</code> block to ensure predictable behavior whenever that code is executed. For example, wrapping the previous command in a <code>considering case</code> block alters the way in which text items are compared:</p>
+
+<pre><code>considering case
+  remove duplicates from list {"A", "b", "c", B", "E", "b"} → {"A", "b", "c", "B", "E"}
+end considering</code></pre>
+
+<p>(Similarly, when working with lists of real numbers, be aware that two fractional numbers that appear identical can sometimes compare as <code>false</code> due to the limited accuracy of that data type. For example, <code>0.7 * 0.7 ≠ 0.49</code>(!) due to tiny imprecisions in the CPU’s floating point math calculations.)</p>
+				]]></html>
+			</documentation>
+		</command>
+        
+		
+		<command name="slice list" code="Lst:SliL" description="get the list items between the specified start and/or end indexes">
+			<direct-parameter type="list"/>
+			<parameter name="from item" code="FIdx" type="integer" optional="yes"/>
+			<parameter name="to item" code="TIdx" type="integer" optional="yes"/>
+			<result type="text"/>
+			<documentation>
+				<html><![CDATA[
+<p>This command works much like <code>get items <var>i</var> thru <var>j</var> of <var>theList</var></code>, except that it returns an empty list if the start index is greater than the end index, and doesn’t throw an error if an index is out of range. (Index 0 still raises error -1728 though as it is not a valid AppleScript list index.) For example:</p>
+
+<pre><code>slice list {"a", "b", "c", "d", "e"} from item 4 → {"d", "e"}
+
+slice list {"a", "b", "c", "d", "e"} from item 2 to item -2 → {"b", "c", "d"}
+
+slice list {"a", "b", "c", "d", "e"} from item 3 to item 3 → {"c"}
+
+slice list {"a", "b", "c", "d", "e"} to item 2 → {"a", "b"}
+
+slice list {"a", "b", "c", "d", "e"} from item 10 to item 15 → {}
+
+slice list {"a", "b", "c", "d", "e"} from item 4 to item 3 → {}</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+        
+        
+        <command name="transpose list" code="Lst:Tran" description="rearrange a list of lists, returning a new list as result">
+            <direct-parameter>
+                <type type="list" list="yes"/>
+            </direct-parameter>
+            <parameter name="by" code="Whil" type="LTrh" optional="yes" description="if lists are uneven lengths, pad the shorter lists, trim the longer lists, or treat as error? (default: treat as error)"/>
+            <parameter name="padding with" code="PadI" type="anything" optional="yes" description="when ‘padding uneven lists’, the pad value to use (default: missing value)"/>
+            <result>
+                <type type="list" list="yes"/>
+            </result>
+            <documentation>
+                <html><![CDATA[
+<p>The <code>transpose list</code> command treats a list of lists as a 2D matrix, rearranging it so that rows become columns and columns become rows.</p>
+
+<pre><code>transpose list {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}} → {{1, 4, 7}, {2, 5, 8}, {3, 6, 9}}</code></pre>
+
+<p>This command is particularly useful when getting large amounts of data from scriptable applications, as it is much quicker to ask the application to <code>get <var>property</var> of every <var>element</var></code> than to get every element, then iterate over the returned list of references asking for each element’s properties one at a time. For example, to obtain name, album, and artist information for every track in iTunes, then rearrange it into an easier-to-use form:</p>
+
+<pre><code>tell application "iTunes"
+  tell every track
+    set allNames to its name
+    set allAlbums to its album
+    set allArtists to its artist
+  end tell
+end tell
+set trackInfo to {allNames, allAlbum, allArtists}
+-- trackInfo is a list of form {{name, name, ...}, {album, album, ...}, {artist, artist, ...}}
+
+set trackInfo to transpose list trackInfo
+-- trackInfo is now a list of form {{name, album, artist}, {name, album, artist}, ...}</code></pre>
+                ]]></html>
+            </documentation>
+        </command>
+        
+        
+        <enumeration name="LTrh" code="LTrh">
+            <enumerator name="padding uneven lists" code="LTrP"/>
+            <enumerator name="trimming uneven lists" code="LTrT"/>
+            <enumerator name="rejecting uneven lists" code="LTrR"/>
+        </enumeration>
+        
+        
+        <command name="unsort list" code="Lst:LiUS" description="randomly rearrange the items in a list, returning a new list as result">
+            <direct-parameter type="list"/>
+            <result type="list"/>
+            <documentation>
+                <html><![CDATA[
+<p>For example, to create a list containing numbers 1 to 100 in random order:</p>
+
+<pre><code>set orderedList to {}
+repeat with i from 1 to 100
+  set end of orderedList to i
+end repeat
+
+set unorderedList to unsort list orderedList</code></pre>
+                ]]></html>
+            </documentation>
+        </command>
+        
+    </suite>
+    
+    
+    
+    <suite name="Search" code="****">
+    
+        <command name="filter list" code="Lst:Filt" description="check each item in the given list, returning a new list containing only those items that pass the test">
+            <direct-parameter type="list"/>
+            <parameter name="using" code="Usin" type="script"/>
+            <result type="list"/>
+            <documentation>
+                <html><![CDATA[
+<p>The <code>using</code> parameter's script object must implement a handler named <code>filterItem</code> that takes a value as its input and returns <code>true</code> or <code>false</code> indicating whether or not the item should appear in the output list. The following example demonstrates how to filter a list of numbers to obtain a new list containing only the items that are greater than 18:</p>
+
+<pre><code>script IsOverEighteen
+  to filterItem(aValue)
+    return aValue > 18
+  end filterItem
+end script
+
+filter list {12, 23, 17, 22, 14} using IsOverEighteen → {23, 22}</code></pre>
+                ]]></html>
+            </documentation>
+        </command>
+        
+        
+        <command name="find in list" code="Lst:Find" description="return the index(es) of the specified value in a list">
+            <direct-parameter type="list"/>
+            <parameter name="value" code="Valu" type="anything" optional="yes" description="the value to find (default: missing value)"/>
+            <parameter name="using" code="Usin" type="script" optional="yes" definition="the test to perform on each item; if given, the ‘value’ parameter is ignored"/>
+            <parameter name="returning" code="Retu" type="LFWh" optional="yes" description="(default: all occurences)"/>
+            <result>
+                <type type="integer" list="yes" description="a list of item index(es), or an empty list if no matches are found"/>
+            </result>
+            <documentation>
+                <html><![CDATA[
+<pre><code>find in list {"A", "b", "c", B", "E", "b"} value "b" → {2, 4, 6}
+
+find in list {"A", "b", "c", B", "E", "b"} value "b" returning first occurrence → {2}
+
+find in list {"A", "b", "c", B", "E", "b"} value "b" returning first occurrence → {2}</code></pre>
+
+<p>The <code>value</code> parameter uses AppleScript’s standard <code>is equal to</code> operator to compare each list item to the specified value, adding the item’s index to the result list if true. As with <code>remove duplicates from list</code>, remember that AppleScript’s <code>is equal to</code> operation is subject to additional rules and restrictions when comparing certain types. For example, wrapping the previous command in a <code>considering case</code> block alters the way in which text items are compared:</p>
+
+<pre><code>considering case
+  find in list {"A", "b", "c", B", "E", "b"} value "b" → {2, 6}
+end considering</code></pre>
+
+<p>For more complex tests than simple comparison, the <code>using</code> parameter can be used to supply a custom matching handler. Like the <code>filter list</code> command’s <code>using</code> parameter, this takes a script object containing a <code>filterItem</code> handler that takes the item to check as its sole parameter and returns <code>true</code> or <code>false</code> to indicate a match or non-match. For example:</p>
+
+<pre><code>script IsOverEighteen
+  to filterItem(aValue)
+    return aValue > 18
+  end filterItem
+end script
+
+find in list {12, 23, 17, 22, 14} using IsOverEighteen returning last occurrence → {4}</code></pre>
+                ]]></html>
+            </documentation>
+        </command>
+        
+        <enumeration name="LFWh" code="LFWh">
+            <enumerator name="first occurrence" code="LFWF"/>
+            <enumerator name="last occurrence" code="LFWL"/>
+            <enumerator name="all occurrences" code="LFWA"/>
+        </enumeration>
+        
+    </suite>
+    
+    
+    
+    <suite name="Sort" code="****">
+        
+        <command name="sort list" code="Lst:Sort" description="sort a list of comparable items">
+            <direct-parameter type="list" description="the items to sort; if items cannot be directly compared against each other (e.g. if the list contains a mixture of text and numbers, or is a list of lists/records/scripts), the appropriate ‘using’ parameter must also be given"/>
+            <parameter name="using" code="Comp" type="script" optional="yes" description="a ‘sort comparator’ object that implements ‘makeKey’ and ‘compareKeys’ handlers, used to compare list items (default: default comparator)"/>
+            <result type="list"/>
+            <documentation>
+                <html><![CDATA[
+<p>By default, the <code>sort list</code> command sorts a list of numbers, text, <em>or</em> dates and returns a new list of values in ascending order; for example:</p>
+
+<pre><code>sort list {2, 7, 4, 1, 9, 4} → {1, 2, 4, 4, 7, 9}
+
+sort list {"Mary White", "Bob Green", "Sue Black"} → {"Bob Green", "Mary White", "Sue Black"}</code></pre>
+
+<p>The <code>sort list</code> command’s sorting behavior can be customized by supplying a ‘sort comparator’ script object as its <code>using</code> parameter. A sort comparator must define the following handlers:</p>
+
+<dl>
+
+<dt><code>makeKey(<var>anItem</var>)</code></dt>
+<dd><p>Given an item from the list to be sorted, this handler should convert it into a form suitable for use in the object’s <code>compareKeys</code> handler, and return the result. Called once for each item in the list.</p>
+<ul>
+	<li><var>anItem</var> : <tt>anything</tt></li>
+	<li>Result: <tt>anything</tt></li>
+</ul>
+</dd>
+
+<dt><code>compareKeys(<var>key1</var>, <var>key2</var>)</code></dt>
+<dd><p>Given any two keys previously generated by the <code>makeKey</code> handler above, compare them against each other as appropriate and return a negative, zero, or positive number that indicates the order in which they should appear. The corresponding items in the original list are then reordered the same way.</p>
+<ul>
+	<li><var>key1</var> : <tt>anything</tt></li>
+	<li><var>key2</var> : <tt>anything</tt></li>
+	<li>Result: <tt>integer</tt> – return -1 (or other negative number) to indicate key 1 comes <em>before</em> key 2, +1 (or other positive number) to indicate key 1 comes <em>after</em> key 2, or 0 to indicate both keys are equivalent</li>
+</ul>
+</dd>
+</dl>
+
+<p>The List library includes commands for constructing a variety of basic sort comparator objects, or you can define your own as needed. For example, to sort a list of playing card values, aces (“A”) low:</p>
+
+<pre><code>use script "List"
+use script "Number"
+
+script PlayingCardComparator
+	
+  property _rank : {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
+  
+  to makeKey(anItem)
+    -- return a number indicating the given card’s rank
+    return find in list _rank value (anItem as text) returning first occurrence
+  end makeKey
+  
+  to compareKeys(key1, key2)
+    -- use the  Number library’s ‘cmp’ command to compare any two card rank numbers
+    return cmp {key1, key2} -- returns -1, 0, or +1 to indicate ordering
+  end compareKeys
+end script
+
+
+sort list {"3", "Q", "10", "K", "2", "4", "J", "A"} using PlayingCardComparator
+
+→ {"A", "2", "3", "4", "10", "J", "Q", "K"}</code></pre>
+                ]]></html>
+            </documentation>
+        </command>
+        
+    
+        <command name="default comparator" code="Lst:DeSo" description="returns a ‘DefaultComparator’ object, suitable for use in ‘sort list’s ‘using’ parameter when sorting a list containing only numbers OR text OR dates">
+            <result type="script"/>
+            <documentation>
+                <html><![CDATA[
+<p>When sorting a list of values, it is essential that all values are compared against each other in the same way as the rules by which AppleScript, say, compares two text values are very different to the rules by which it compares two numbers.</p>
+
+
+[TO DO: finish documenting behavior: default comparator used by `sort list` and usually sufficient for simple sorting ops; given a list of all number/all text/all date items, it sorts them using standard < and > operators: text will be ordered according to standard Unicode ordering rules, subject to current considering/ignoring options; numbers and dates from lowest to highest; mixed type lists are rejected (as there's no way to know e.g. if a number and a text value should both be compared as numbers or as sequences of characters) - to sort those as a specific type, use one of the others]
+
+<p>When creating a default comparator in your own code, avoid reusing it across multiple sorts, as once it is used to sort a list of one type (e.g. list of text), it cannot be used to sort a list of another (e.g. list of number).</p>
+                ]]></html>
+            </documentation>
+        </command>
+    
+        <command name="date comparator" code="Lst:DaSo" description="returns a ‘DateComparator’ object, suitable for use in ‘sort list’s ‘using’ parameter when sorting a list of date items">
+            <result type="script"/>
+            <documentation>
+                <html><![CDATA[
+<p>Sort a list that contains date objects.</p>
+
+[TO DO: finish]
+                ]]></html>
+            </documentation>
+        </command>
+    
+        <command name="number comparator" code="Lst:NuSo" description="returns a ‘NumberComparator’ object, suitable for use in ‘sort list’s ‘using’ parameter when sorting a list of numbers (integers and/or reals) or values that can be coerced to numbers">
+            <result type="script"/>
+            <documentation>
+                <html><![CDATA[
+<p>For example:</p>
+
+<pre><code>sort list {7.4, -25, 0.03, 912, 0, -0.01} using (number comparator)
+→ {-25, -0.01, 0, 0.03, 7.4, 912}</code></pre>
+
+<p>When given a list of numerical text values, the number comparator coerces each item to a number before comparing them, ensuring that the resulting list is ordered numerically rather than by character order:</code>
+
+<pre><code>sort list {"22", "5", "17", "-6", "-9"} -- sort by comparing characters
+→ {"-6", "-9", "17", "22", "5"}
+
+sort list {"22", "5", "17", "-6", "-9"} using (number comparator) -- sort by comparing numeric values
+→ {"-9", "-6", "5", "17", "22"}</code></pre>
+
+<p>Be aware that when given a list of decimal text values to sort, e.g. <code>{"3.14", "-1.2", "0.09", ...}</code>, AppleScript coerces each text item to a number according to the <em>current user’s localization settings</em>. For example, a US-localized machine expects numerical text to use periods as decimal separators, e.g. <code>"3.14"</code>, whereas a German-localized machine uses commas, e.g. <code>"3,14"</code>, so will fail if given <code>"3.14"</code> instead. If you need precise control of text-to-number conversions, use the Number library’s <code>parse number</code> command, for example, to sort a list of German-style numerical text:</p>
+
+<pre><code>use script "List"
+use script "Number"
+
+to makeNumericalTextComparator(decimalSeparator)
+  script NumericalTextComparator
+    property parent : number comparator
+    
+    to makeKey(anItem)
+      if anItem's class is text then
+        -- use Number library to parse real numbers consistently
+        return parse number anItem using ¬
+            {basicFormat:decimal format, decimalSeparator:decimalSeparator}
+      else
+        return continue makeKey(anItem)
+      end if
+    end makeKey
+  end script
+end makeNumericalTextComparator
+
+
+sort list {"3,14", "99", "4,2", "-0,01"} using my makeNumericalTextComparator(",")
+→ {"-0,01", "3,14", "4,2", "99"}</code></pre>
+                ]]></html>
+            </documentation>
+        </command>
+    
+        <command name="text comparator" code="Lst:TeSo" description="returns a ‘TextComparator’ object, suitable for use in ‘sort list’s ‘using’ parameter when sorting a list of text items, or values that can be coerced to text">
+            <parameter name="for" code="Cons" type="SrtE" optional="yes" description="(default: case insensitive ordering)"/>
+            <result type="script"/>
+            <documentation>
+                <html><![CDATA[
+<p>This command returns an object that controls how the ‘sort list’ command sorts a list of text values. This object performs two operations when ‘sort list’ is called:</p>
+<ol>
+<li>It coerces each item in the list to <code>text</code>. If any item cannot be coerced to text, the `sort list` command will report a coercion error (-1700). This value is only used to determine sorting order; it will not appear in the final list.</li>
+<li>It compares a pair of text keys to determine which item should come first, and rearranges the items in the original list as needed.</li>
+</ol>
+
+<p>The optional <code>for</code> parameter can customize text comparison behavior as follows:</p>
+<ul>
+<li><code>exact ordering</code> – Case, diacriticals, hyphens, punctuation, and white space are all considered, while numeric strings are ignored (i.e. matched character for character).</li>
+<li><code>case insensitive ordering</code> – Case and numeric strings are ignored, while all other attributes are  considered.</li>
+<li><code>current ordering</code> – Text is sorted using whatever considering/ignoring settings are currently applied when <code>sort list</code> is called. (By default, AppleScript ignores case and numeric strings, and considers diacriticals, hyphens, punctuation, and white space. To alter these settings – or to guarantee predictable sorting at all times – wrap your <code>sort list</code> command in the appropriate <code>considering</code> and/or <code>ignoring</code> block.)</li>
+</ul>
+
+<p>For example:</p>
+
+<pre><code>sort list {"Fu", "Foo", "FOO", "foo", "fOO", "fu", "FU"} ¬
+    using (text comparator for exact ordering)
+→ {"foo", "fOO", "Foo", "FOO", "fu", "Fu", "FU"}</code></pre>
+
+<p>(Be aware that text values are ordered intelligently according to standard Unicode rules; thus text items that are identical except for case are grouped together, with lowercase characters coming first.)</p>
+
+<p>Be aware that when AppleScript coerces numbers and dates to text, the results can vary according to the current user’s localization settings; coercing lists to text likewise produces different results depending on AppleScript’s current text item delimiters. This may affect sorting order when sorting lists of mixed types, e.g. <code>sort list {"3.1.4", 3.2} using text comparator</code> will return {3.2, "3.1.4"} on systems that use commas as decimal separators, as <code>3.2</code> coerces to <code>"3,2"</code>, and comma characters are ordered before periods. If this is a concern, define a custom comparator object whose <code>makeKey</code> handler converts non-text values to text in a consistent format, for example:</p>
+
+<pre><code>script MixedTextAndNumberComparator
+  property parent : text comparator
+  
+  to makeKey(anItem)
+    if anItem's class is real then
+      -- use Number library to format real numbers consistently
+      return format number anItem using decimal format
+    else
+      return continue makeKey(anItem)
+    end if
+  end makeKey
+end script</code></pre>
+                ]]></html>
+            </documentation>
+
+        </command>
+        
+        
+        <enumeration name="SrtE" code="SrtE">
+            <!-- caution: Text library defines the same enums for use in its `search text` command, so names and codes must match exactly to avoid terminology conflicts -->
+			<enumerator name="exact ordering" code="SrtM"/> <!-- consider everything except numeric strings -->
+			<enumerator name="case insensitive ordering" code="SrtI"/> <!-- ignore case and numeric strings, and consider everything else -->
+			<enumerator name="current ordering" code="SrtD"/> <!-- use whatever considering/ignoring settings are in effect when `search text`/`sort list` is called -->
+        </enumeration>
+        
+            
+        <command name="list comparator" code="Lst:LiSo" description="returns a ‘ListComparator’ object, suitable for use in ‘sort list’s ‘using’ parameter when sorting a list of lists">
+            <parameter name="for" code="Comp" optional="yes" description="a single comparator for comparing all items of an arbitrary-length list, or a list of ‘item comparator record’ records for comparing specific items in each list (default: default comparator)">
+                <type type="script"/>
+                <type type="item comparator record" list="yes"/>
+            </parameter>
+            <result type="script"/>
+            <documentation>
+                <html><![CDATA[
+<p>For example, to sort a list of lists of uniform type, in this case numbers:</p>
+
+<pre><code>sort list {{3}, {1, 1, 5}, {}, {2, 1}, {2}, {1, 3}, {1, 2}} ¬
+    using (list comparator for number comparator)
+→ {{}, {1, 1, 5}, {1, 2}, {1, 3}, {2}, {2, 1}, {3}}</code></pre>
+  
+<p>It is also possible to sort a list of lists of mixed types by specifying exactly which items to sort on and how each one should be compared. For example, consider the following list where each sublist is of form <code>{<var>name</var>, <var>married</var>, <var>age</var>}</code>:</p>
+
+<pre><code>set myList to { ¬
+    {"Bob", false, 33}, ¬
+    {"Jane", true, 25}, ¬
+    {"Andi", true, 33}}</code></pre>
+        
+To sort this first by comparing item 3 of each sublist numerically, then by comparing item 1 of each sublist as text:</p>
+
+<pre><code>sort list myList using (list comparator for { ¬
+    {itemIndex:3, itemComparator: number comparator}, ¬
+    {itemIndex:1, itemComparator: text comparator}})</code></pre>        
+
+<p>The resulting list of lists is ordered first by ages then by names:</p>
+
+<pre><code>→ {{"Jane", true, 25}, {"Andi", true, 33}, {"Bob", false, 33}}</code></pre>
+
+<p>A <code>ListComparator</code> object can also be used to sort a list of records by extending its standard <code>makeKey</code> handler to first extract the property values on which to sort into a list:</p>
+
+<pre><code>script AgeAndNameComparator
+  (* Comparator object for sorting a list of records of form: 
+  
+       {{name:TEXT, ..., age:NUMBER}, ...},
+     
+     Records are ordered first by age, then by name. 
+     
+     Any other properties are ignored.
+  *)
+
+  -- Create a list comparator that orders on a 2-item key list of form {NUMBER, TEXT}...
+  property parent : list comparator for {number comparator, text comparator}
+    
+  to makeKey(aRecord)
+    -- ... then extend its existing `makeKey` handler to extract each  record’s
+    -- age and name properties into the corresponding {NUMBER, TEXT} key list:
+    return continue makeKey({age, name} of aRecord)
+  end makeKey
+    
+end script
+
+
+set myList to { ¬
+    {name:"Bob", married:false, age:33}, ¬
+    {name:"Jane", married:true, age:25}, ¬
+    {name:"Andi", married:true, age:33}}
+
+sort list myList using AgeAndNameComparator
+
+→ {{name:"Jane", married:true, age:25}, 
+    {name:"Andi", married:true, age:33}, 
+    {name:"Bob", married:false, age:33}}</code></pre>
+                ]]></html>
+            </documentation>
+        </command>
+        
+        
+        <record-type name="item comparator record" code="LstC" description="used by ‘list comparator’ to sort a list of sublists on a particular sublist item">
+            <documentation>
+                <html><![CDATA[
+<pre><code>{ itemIndex : <var>integer</var>,
+  itemComparator: <var>script</var> }</code></pre>
+                ]]></html>
+            </documentation>
+        </record-type>
+    	
+    	
+        <command name="reverse comparator" code="Lst:ReSo" description="returns a ‘ReverseComparator’ object, suitable for use in ‘sort list’s ‘using’ parameter when sorting items in descending order">
+			<parameter name="for" code="Comp" type="script" optional="yes" description="the comparator object whose sorting order should be reversed (default: default comparator)"/>
+            <result type="script"/>
+            <documentation>
+                <html><![CDATA[
+<p>For example, to sort a list of numbers in descending order:</p>
+
+<pre><code>sort list {2, 7, 4, 1, 9, 4} using (reverse comparator for number comparator)
+→ {9, 7, 4, 4, 2, 1}</code></pre>
+                ]]></html>
+            </documentation>
+        </command>
+        
+    </suite>  
+    
+</dictionary>

@@ -103,22 +103,21 @@ public func findAppleScriptLibrary(named libraryName: String) -> (url: URL, libr
 }
 
 private var scriptLibraryDirectories: [URL] = {
+    let appBundleLibraryDirs = LanguageModule.appBundle?
+        .url(forResource: "Libraries", withExtension: nil)
+        .map { [$0] } ?? []
     let libraryURLs = FileManager.default.urls(for: .libraryDirectory, in: .allDomainsMask)
-    return libraryURLs.flatMap { url in
-        [
-            url
-                .appendingPathComponent("BushelScript", isDirectory: true)
-                .appendingPathComponent("Libraries", isDirectory: true),
-        ]
+    return appBundleLibraryDirs + libraryURLs.map { url in
+        url
+            .appendingPathComponent("BushelScript", isDirectory: true)
+            .appendingPathComponent("Libraries", isDirectory: true)
     }
 }()
     
 private var applescriptLibraryDirectories: [URL] = {
     let libraryURLs = FileManager.default.urls(for: .libraryDirectory, in: .allDomainsMask)
-    return scriptLibraryDirectories + libraryURLs.flatMap { url in
-        [
-            url
-                .appendingPathComponent("Script Libraries", isDirectory: true)
-        ]
+    return scriptLibraryDirectories + libraryURLs.map { url in
+        url
+            .appendingPathComponent("Script Libraries", isDirectory: true)
     }
 }()

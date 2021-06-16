@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary>
+	
+	<suite name="Path Manipulation" code="****" description="Split, join, expand, and convert POSIX path strings">
+		
+		<command name="convert path" code="Fil:ConP" description="Convert file identifiers between various path formats and object types">
+			<direct-parameter documentation="the file path or object to convert">
+				<type type="text"/>
+				<type type="file"/>
+			</direct-parameter>
+			<parameter name="from" code="From" type="FLCF" optional="yes" description="the direct parameter’s path format (default: POSIX file format); ignored when direct parameter is an alias/file object"/>
+			<parameter name="to" code="To__" type="FLCT" optional="yes" description="the result's path format or type (default: POSIX file format)"/>
+			<result documentation="the new file identifier">
+				<type type="text"/>
+				<type type="file"/>
+			</result>
+			
+			<documentation>
+				<html><![CDATA[
+<p>Examples:</p>
+
+<pre><code>convert path "/Users/jsmith/User Guide.txt" to HFS path format
+→ "Macintosh HD:Users:jsmith:User Guide.txt"
+
+convert path "Macintosh HD:Users:jsmith:User Guide.txt" from HFS path format
+→ "/Users/jsmith/User Guide.txt"
+
+convert path "/Users/jsmith/User Guide.txt" to alias file object
+→ alias "Macintosh HD:Users:jsmith:User Guide.txt"
+
+set theFile to POSIX file "/Users/jsmith/User Guide.txt"
+convert path theFile to file URL format <i>-- (a ‘from’ parameter isn't needed here)</i>
+→ "file:///Users/jsmith/User%20Guide.txt"</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<enumeration name="FLCF" code="FLCF">
+			<enumerator name="POSIX path format" code="FLCP"/>
+			<enumerator name="HFS path format" code="FLCH"/>
+			<enumerator name="file URL format" code="FLCU"/>
+		</enumeration>
+		
+		<enumeration name="FLCT" code="FLCT">
+			<enumerator name="POSIX path format" code="FLCP"/>
+			<enumerator name="HFS path format" code="FLCH"/>
+			<enumerator name="file URL format" code="FLCU"/>
+			<enumerator name="alias file object" code="FLCA"/>
+			<enumerator name="POSIX file object" code="FLCX"/>
+			<enumerator name="file specifier object" code="FLCS"/>
+		</enumeration>
+		
+
+		<command name="normalize path" code="Fil:NorP" description="Expand and/or tidy a POSIX path">
+			<direct-parameter type="text"/>
+			<parameter name="tilde expansion" code="ExpT" type="boolean" optional="yes" description="if true, shell-style tilde expressions at the start of paths are automatically expanded (default: false)"/>
+			<parameter name="absolute expansion" code="ExpR" type="boolean" optional="yes" description="if true, relative paths are automatically expanded to absolute paths relative to the current working directory (default: false)"/>
+			<parameter name="link expansion" code="ExpA" type="boolean" optional="yes" description="if true, symbolic links within existing paths
+			 are automatically expanded (default: false)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>Examples:</p>
+
+<pre><code>normalize path "/Users/jsmith/Pictures//./../Movies/"
+→ "/Users/jsmith/Movies"
+
+normalize path "~/Movies/" with tilde expansion
+→ "/Users/jsmith/Movies"
+
+normalize path "Applications" with absolute expansion
+→ "/Applications" (the exact result depends on the current working directory)
+
+normalize path "./Music/iTunes/"
+→ "Music/iTunes"</code></pre>
+
+<p>This command normalizes a path by performing the following steps as needed:</p>
+
+<ul>
+<li>expanding the initial tilde expression, if <code>tilde expansion</code> is true</li>
+
+<li>expanding a relative path to an absolute path relative to the current working directory, if <code>absolute expansion</code> is true</li>
+
+<li>removing the initial component of “/private/var/automount”, “/var/automount”, or “/private” from the path, if the result still indicates an existing file or folder (checked by consulting the file system)</li>
+
+<li>reducing empty components and references to the current folder (that is, the sequences “//” and “/./”) to single path separators</li>
+
+<li>removing the trailing slash from the last component.</li>
+</ul>
+
+<p>For absolute paths, it also resolves references to the parent folder (that is, the component “..”) to the real parent folder if possible. For relative paths, references to the parent folder are left in place.</p>
+
+<p>If a relative path is given and <code>absolute expansion</code> is true but the current working directory is unknown, an error (-1728) will occur.</p> 
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="join path" code="Fil:JoiP" description="Given a list of path components (and/or a file name extension), joins them together to form a POSIX path">
+			<direct-parameter description="the POSIX path components to join">
+				<type type="text" list="yes"/>
+			</direct-parameter>
+			<parameter name="using file extension" code="Exte" type="text" optional="yes" description="a file name extension to append to the path (default: &quot;&quot;)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>Examples:</p>
+
+<pre><code>join path {"/", "Users", "jsmith", "Desktop"} 
+→ "/Users/jsmith/Desktop"
+
+join path {"Documents", "ReadMe"} using file extension "txt" 
+→ "Documents/ReadMe.txt"
+
+join path {POSIX file "/Users/jsmith", "Documents/ReadMe.txt"} 
+→ "/Users/jsmith/Documents/ReadMe.txt"</code></pre>
+
+<p>To construct an absolute path, the first item should be/start with &quot;/&quot; (the first item may also be an alias or file object); the remaining items are always treated as relative paths.</p>
+
+<p>If the <code>using file extension</code> parameter is not empty, it will be added to the end of the last path component, ignoring any trailing slashes. A period separator (<code>.</code>) will be inserted automatically; do not supply it yourself.</p>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="split path" code="Fil:SplP" description="Splits a POSIX path into its component parts">
+			<direct-parameter type="text" description="the POSIX path to split (an alias or file object is also acceptable)"/>
+			<parameter name="at" code="Upon" type="FLSP" optional="yes" description="(default: last component)"/>
+			<result>
+				<type type="text" list="yes"/>
+			</result>
+			<documentation>
+				<html><![CDATA[
+<p>Examples:</p>
+<pre><code>set {folderPath, fileName} to split path "/Users/jsmith/Documents/ReadMe.txt"
+→ {"/Users/jsmith/Documents", "ReadMe.txt"}
+
+split path (POSIX file "/Users/jsmith/Documents/ReadMe.txt") at all components 
+→ {"/", "Users", "jsmith", "Documents", "ReadMe.txt"}
+
+split path "/Users/jsmith/Documents/ReadMe.txt" at file extension 
+→ {"/Users/jsmith/Documents/ReadMe", "txt"}</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<enumeration name="FLSP" code="FLSP">
+			<enumerator name="file extension" code="FLSE"/>
+			<enumerator name="last component" code="FLSL"/>
+			<enumerator name="all components" code="FLSA"/>
+		</enumeration>
+		
+		
+	</suite>
+	
+	
+	<suite name="Read/Write File" code="****" description="Convenience commands for reading/writing plain text and AppleScript data files">
+
+		<command name="read from file" code="Fil:Read" description="Read a file as plain text or an AppleScript value">
+			<direct-parameter type="file"/>
+			<parameter name="as" code="Type" type="type" optional="yes" description="(default: text)"/>
+			<parameter name="using" code="Enco" type="FEnc" optional="yes" description="when reading a plain text file, the encoding to use (default: UTF8 encoding); ignored if the file's BOM or metadata already specifies an encoding"/>
+			<result type="anything"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>For example, to read a UTF8-encoded plain text file:</p>
+
+<pre><code>read from file (alias "Macintosh HD:Users:jsmith:Documents:welcome.txt")
+→ "Hello!"</code></pre>
+
+<p>For convenience, the <code>read from file</code> command also accepts a POSIX path string as its direct parameter:</p>
+
+<pre><code>read from file "/Users/jsmith/Documents/welcome.txt"</code></pre>
+
+<p>While nowadays UTF8 is the preferred encoding for plain text files, the <code>read from file</code> command can also read plain text files written in a variety of older legacy encodings. For example, to read a plain text file that was written in the legacy MacOSRoman encoding:</p>
+
+<pre><code>read from file myFile using MacOSRoman encoding</code></pre>
+
+<p>Or to read the file using the host machine's default legacy encoding (equivalent to Standard Additions' <code>read myFile as string</code>):
+
+<pre><code>read from file myFile using primary encoding</code></pre>
+
+<p>The <code>read from file</code> command can also be used to read AppleScript values previously written to file using <code>write to file</code> or Standard Additions' <code>write</code> command. For example, to read a data file containing an AppleScript record:</p>
+
+<pre><code>read from file "/Users/jsmith/script.data" as record
+→ {name: "Bob", age:42}</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+	
+		<command name="write to file" code="Fil:Writ" description="Write plain text or an AppleScript value to a file">
+			<direct-parameter type="file"/>
+			<parameter name="data" code="Data" type="anything"/>
+			<parameter name="as" code="Type" type="type" optional="yes" description="(default: text)"/>
+			<parameter name="using" code="Enco" type="FEnc" optional="yes" description="when writing a plain text file, the encoding to use (default: UTF8 encoding)"/>
+			<result type="anything"/>
+			
+			
+			<documentation>
+				<html><![CDATA[
+<p>For example, to write a UTF8-encoded plain text file:</p>
+
+<pre><code>write to file (alias "Macintosh HD:Users:jsmith:Documents:welcome.txt") data "Hello!"</code></pre>
+
+<p>For convenience, the <code>write to file</code> command also accepts a POSIX path string as its direct parameter:</p>
+
+<pre><code>write to file "/Users/jsmith/Documents/welcome.txt" data "Hello!"</code></pre>
+
+<p>The <code>read from file</code> command can also write plain text files in a variety of legacy text encodings. For example, to write a plain text file in the legacy MacOSRoman encoding:</p>
+
+<pre><code>write file myFile data theText using MacOSRoman encoding</code></pre>
+
+<p>Or to write the file using the host machine's default legacy encoding (equivalent to Standard Additions' <code>write theText to myFile as string</code>):
+
+<pre><code>write to file myFile data theText using primary encoding</code></pre>
+
+<p>The <code>write to file</code> command can also be used as a convenient shortcut for Standard Additions' <code>write</code> command to write AppleScript values to file. For example, to write a data file containing an AppleScript record:</p>
+
+<pre><code>write to file "/Users/jsmith/script.data" data {name: "Bob", age:42} as record</code></pre>
+
+				]]></html>
+			</documentation>
+		</command>
+		
+				
+		<!-- note: when defining enumerations, it is better to use a generic single-word parameter name and specific multi-word enumerator names, e.g. `using [UTF8 encoding]` rather than `using encoding [UTF8]`; since the parameter name is already scoped to the command it doesn't need to be particularly distinctive or unique, but enumerator names will be visible throughout the code so need to minimize risk of clashing with any other terminology -->
+		
+		<enumeration name="FEnc" code="FEnc">
+			
+			<!-- Unicode encodings -->
+			<enumerator name="UTF8 encoding" code="FE01"/>
+			
+			<enumerator name="UTF16 encoding" code="FE02"/>
+			<enumerator name="UTF16BE encoding" code="FE03"/>
+			<enumerator name="UTF16LE encoding" code="FE04"/>
+			
+			<enumerator name="UTF32 encoding" code="FE05"/>
+			<enumerator name="UTF32BE encoding" code="FE06"/>
+			<enumerator name="UTF32LE encoding" code="FE07"/>
+			
+			<!-- legacy encodings -->
+			<enumerator name="ASCII encoding" code="FE11"/>
+			<enumerator name="ISO2022JP encoding" code="FE12"/>
+			<enumerator name="ISOLatin1 encoding" code="FE13"/>
+			<enumerator name="ISOLatin2 encoding" code="FE14"/>
+			<enumerator name="JapaneseEUC encoding" code="FE15"/>
+			<enumerator name="MacOSRoman encoding" code="FE16"/>
+			<enumerator name="NonLossyASCII encoding" code="FE17"/>
+			<enumerator name="ShiftJIS encoding" code="FE18"/>
+			<enumerator name="Symbol encoding" code="FE19"/>
+			
+			<enumerator name="WindowsCP1250 encoding" code="FE50"/>
+			<enumerator name="WindowsCP1251 encoding" code="FE51"/>
+			<enumerator name="WindowsCP1252 encoding" code="FE52"/>
+			<enumerator name="WindowsCP1253 encoding" code="FE53"/>
+			<enumerator name="WindowsCP1254 encoding" code="FE54"/>
+			
+			<enumerator name="primary encoding" code="FEPE"/>
+		</enumeration>
+	
+	</suite>
+	
+	
+		
+	<suite name="Shell Script Support" code="****" description="Commands used in AppleScript-based shell scripts">
+		
+		<command name="current working directory" code="Fil:CurF" description="Returns the host shell’s current working folder, if known">
+			<result type="file"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>Useful in AppleScript-based shell scripts to obtain the shell's current working directory. For example, the following shell script processes one or more file paths supplied as arguments or, if no arguments are given, the current working directory’s path instead:</p>
+
+<pre><code>#!/usr/bin/osascript
+
+use script "File"
+
+to run pathsList
+  if pathsList is {} then set pathsList to {(current working directory)'s POSIX path}
+  repeat with pathRef in pathsList
+    set aFile to (normalize path pathRef's contents with ¬
+        tilde expansion, absolute expansion and link expansion) as POSIX file
+    -- process the file...
+  end repeat
+end run</code></pre>
+
+<p>Throws error number -1728 if the current working directory is unknown.</p> 
+				]]></html>
+			</documentation>
+			
+		</command>
+		
+		
+		<command name="environment variables" code="Fil:EnVa" description="Returns the host shell’s environment variables">
+			<result type="record"/>
+		</command>
+		
+		
+		<command name="read from standard input" code="Fil:RSIn" description="Read the shell script’s standard input (“stdin”) as UTF8-encoded text">
+			<parameter name="with prompt" code="Prmt" type="text" optional="yes" description="if ‘user interaction’ is true, the interactive line prompt to display (default: &quot;&gt;&gt; &quot;)"/>
+			<parameter name="user interaction" code="ReTo" type="boolean" optional="yes" description="read a single line of text from stdin (for interactive user input), or read all stdin data (for non-interactive input from another process or file) (default: false)"/>
+			<result>
+				<type type="text"/>
+				<type type="missing value"/>
+			</result>
+			<documentation>
+				<html><![CDATA[
+<p>If the <code>user interaction</code> option is false, the command will wait until the previous process has finished writing to the script’s stdin before returning. If it is true, it will return a line of text (minus the trailing linefeed) as soon as the Return key is pressed, or ‘missing value’ if there is no more text to be read.</p>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="write to standard output" code="Fil:WSOu" description="Write UTF8-encoded text to the shell script’s standard output (“stdout”)">
+			<direct-parameter type="text" description="the text to write"/>
+			<parameter name="normalized line breaks" code="SLiB" type="boolean" optional="yes" description="if true, automatically converts any Windows- or classic Mac-style line breaks to Unix/OS X-style linefeeds (default: true)"/>
+			<parameter name="automatic line ending" code="ALiE" type="boolean" optional="yes" description="if the text does not end with a linefeed character, add one automatically? (default: true)"/>
+			<documentation>
+				<html><![CDATA[
+<p>Here is a simple demonstration of an interactive shell script, written in AppleScript:</p>
+
+<pre><code>#!/usr/bin/osascript
+
+use script "File"
+
+write to standard output "What is your name?"
+set userName to read from standard input with user interaction
+if userName is "" then set userName to "stranger"
+write to standard output "Hello, " &amp; userName &amp; ". How are you feeling today?"
+set userMood to read from standard input with user interaction
+if userMood contains "happy" or userMood contains "good" then
+  write to standard output "I’m delighted to hear that."
+else
+  write to standard output "C’est la vie."
+end if</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="parse command line arguments" code="Fil:Argv" description="Convert the shell command’s raw arguments (“argv”) into ready-to-use option and argument values">
+			<direct-parameter description="the list of arguments passed to the script’s ‘run’ handler by ‘osascript’">
+				<type type="text" list="yes"/>
+			</direct-parameter>
+			<parameter name="options" code="OpsD" optional="yes" description="a list of ‘command line option definition’ records (default: {})">
+				<type type="command line option definition" list="yes"/>
+			</parameter>
+			<parameter name="arguments" code="OpsA" optional="yes" description="a list of ‘command line argument definition’ records (default: {{propertyName:&quot;argumentsList&quot;,valueType:text, isList:true}})">
+				<type type="command line argument definition" list="yes"/>
+			</parameter>
+			<parameter name="default options" code="DefO" type="boolean" optional="yes" description="if true, default ‘-h’ (‘--help’) and ‘-v’ (‘--version’) options will be added automatically if not already defined (default: true)"/>
+			<result type="record" description="a custom record containing all of the properties specified by the ‘options’ and ‘arguments’ parameters"/>
+			
+						<documentation>
+				<html><![CDATA[
+<p>The following basic example demonstrates how <code>parse command line arguments</code> works:</p>
+
+<pre><code>set argv to {"-f", "plain", "-r", "/Users/jsmith/file1.rtf", "~/file2.rtf"}
+
+parse command line arguments argv ¬
+    options {¬
+      {propertyName:"fileFormat", shortName:"f"}, ¬
+      {propertyName:"outputFolder", shortName:"o", valueType:file, defaultValue:missing value}, ¬
+      {propertyName:"replacesExistingFiles", shortName:"r", valueType:boolean}} ¬
+    arguments {¬
+      {propertyName:"fileList", valueType:file, isList:true}}</code></pre>
+
+<p>Given a list of shell command arguments (<code>argv</code>), <code>parse command line arguments</code> reads each item in the list, initially checking it against a list of supported options (in this case <code>-f</code>, <code>-o</code>, and <code>-r</code>), then against a list of supported arguments once all of the given options have been processed. On completion, the result is a record of all supported options and arguments, with the supplied values converted to the correct types and default values provided when optional options/arguments are omitted:</p>
+
+<pre><code>{ fileFormat:"plain", 
+  outputFolder:missing value,
+  replacesExistingFiles:true, 
+  fileList:{file "Macintosh HD:Users:jsmith:file1.rtf",
+            file "Macintosh HD:Users:jsmith:file2.rtf"}, 
+  |help|:false, 
+  |version|:false}</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="format command line help" code="Fil:FHlp" description="Generates help text suitable for logging to standard error when the ‘-h’ (‘--help’) option is given">
+			<parameter name="name" code="Name" type="text" optional="yes" description="the name of the script (default: the script’s name is obtained from ‘environment variables’, if available, otherwise &quot;COMMAND&quot; is used as a placeholder)"/>
+			<parameter name="summary" code="Summ" type="text" optional="yes" description="a one-line description of the command’s purpose (default: &quot;&quot;)"/>
+			<parameter name="synopsis" code="Usag" optional="yes" description="one or more one-line summaries of the command’s name, options and/or arguments; if omitted, this is generated automatically (default: {})">
+				<type type="text" list="yes"/>
+			</parameter>
+			<parameter name="options" code="OpsD" optional="yes" description="a list of ‘command line option definition’ records (default: {})">
+				<type type="command line option definition" list="yes"/>
+			</parameter>
+			<parameter name="arguments" code="OpsA" optional="yes" description="a list of ‘command line argument definition’ records (default: {{propertyName:&quot;argumentsList&quot;,valueType:text, isList:true}})">
+				<type type="command line argument definition" list="yes"/>
+			</parameter>
+			<parameter name="description" code="Docu" type="text" optional="yes" description="any additional documentation to be displayed (default: &quot;&quot;)"/>
+			<parameter name="terminal styles" code="VFmt" type="boolean" optional="yes" description="if true, the returned text will include special formatting codes (bold, underline) to improve presentation in Terminal.app and other VT100 emulators; use false if you intend to use this text elsewhere (default: true)"/>
+			<parameter name="default options" code="DefO" type="boolean" optional="yes" description="if true, default ‘-h’ (‘--help’) and ‘-v’ (‘--version’) options will be added automatically if not already defined (default: true)"/>
+			<result type="text"/>
+		</command>
+		
+		
+		<record-type name="command line option definition" code="FOpD" description="The record type used by the ‘read command line arguments’ command to describe a command option">
+			<documentation>
+				<html><![CDATA[
+<p>Each option definition consists of two or more the following record properties:</p>
+
+<pre><code>{ propertyName : <var>text</var>,
+  shortName : <var>text</var>,
+  longName : <var>text</var>,
+  valueType : <var>type or list of text</var>,
+  isList : <var>boolean</var>,
+  defaultValue : <var>any</var>,
+  valuePlaceholder : <var>type</var>,
+  valueDescription : <var>text</var> }</code></pre>
+
+<p>The record must contain a <code>propertyName</code> property, plus a <code>shortName</code> and/or <code>longName</code> property. All other properties are optional.</p>
+
+<dl>
+<dt><code>propertyName</code></dt>
+<dd>The name of the property that will appear in the generated options record. Property names must be unique.</dd>
+<dt><code>shortName</code></dt>
+<dd>A single character to be used as the option’s short name. Do not include a leading hyphen as this will be added automatically. Short names must be unique.</dd>
+<dt><code>longName</code></dt>
+<dd>A single word to be used as the option’s long name (camelCase words and hypenated-words are also acceptable). Do not include leading hyphens as these will be added automatically. Long names must be unique.</dd>
+<dt><code>valueType</code></dt>
+<dd>If the option is given, the type of its value (default: text). This should be one of: <code>boolean</code>, <code>integer</code>, <code>real</code>, <code>number</code>, <code>text</code>, <code>alias</code>, <code>file</code>. If <code>boolean</code> is used, the option does not take a value but instead changes the option’s value from false to true (or the opposite of <code>defaultValue</code>, if given). Alternatively, if a list of text values is given (e.g. <code>{&quot;play&quot;, &quot;pause&quot;, &quot;skip&quot;}</code>), this is treated as an enumeration of allowed values, in which case the given option must be one of the values in this list.</dd>
+<dt><code>isList</code></dt>
+<dd>If true, the option may appear any number of times and will appear in the options record as a list of the specified type. If false, a user error will be reported if the same option appears more than once. (default: false)</dd>
+<dt><code>defaultValue</code></dt>
+<dd>The default value that will be added to the generated options record if the option is not given; this may be <code>missing value</code> or any of the supported value types. If omitted, and the option is not a boolean flag, a user error will be reported indicating the value is required. (default: error)</dd> <!-- note: because option definition records are stored in an NSDictionary, the default value must be an AS type that will cross the ASObjC bridge reliably, so complex types such as records, references, and script objects should be avoided; however, it's simplest and safest just to limit the user to explicitly supported types -->
+<dt><code>valuePlaceholder</code></dt>
+<dd>If given, a single all-uppercase word that will appear in the option description generated by <code>format command line help</code>. If omitted, a default placeholder is chosen according to <code>valueType</code> (<code>INT</code>, <code>NUM</code>, <code>TEXT</code>, <code>FILE</code>). Used by <code>format command line help</code> only.</dd>
+<dt><code>valueDescription</code></dt>
+<dd>If given, a single paragraph of text that will appear in the option description generated by <code>format command line help</code>. Used by <code>format command line help</code> only.</dd>
+</dl>
+
+<p>If the <code>options</code> parameter doesn’t include <code>-h</code>/<code>--help</code> and/or <code>-v</code>/<code>--version</code> definitions, default definitions will be added automatically.</p>
+				]]></html>
+			</documentation>
+		</record-type>
+		
+		
+		<record-type name="command line argument definition" code="FArD" description="The record type used by the ‘read command line arguments’ command to describe a matched text range">
+			<documentation>
+				<html><![CDATA[
+<p>Each argument definition consists of one or more of the following record properties:</p>
+
+<pre><code>{ propertyName : <var>text</var>,
+  valueType : <var>type or list of text</var>,
+  isList : <var>boolean</var>,
+  defaultValue : <var>any</var>,
+  valuePlaceholder : <var>type</var>,
+  valueDescription : <var>text</var> }</code></pre>
+
+<p>Argument definition properties have the same meaning as those in option definition records, except that they apply to any arguments that remain after the options have been parsed. The <code>propertyName</code> property is required, and should be different to the property names used by the option definitions. If the last argument definition record has an <code>isList:true</code> property, a list of all remaining arguments is assigned to that property.</p>
+				]]></html>
+			</documentation>
+		</record-type>
+		
+	
+	</suite>
+	
+	
+	
+	<suite name="Writing an AppleScript-based Shell Script" code="****">
+		<documentation>
+			<html><![CDATA[
+
+<h3>How an AppleScript-based shell script works</h3>
+
+<p>An AppleScript-based shell script is normally saved as an uncompiled plain text file without an <code>.applescript</code> extension, made executable by running a <code>chmod +x <var>SCRIPT</var></code> on it, and placed into a directory that appears on the user’s <code>$PATH</code> (e.g. <code>/usr/local/bin</code>) so that it can be executed as a shell command directly from Terminal.</p>
+
+<p>For convenience, here is a standard template for creating AppleScript-based shell scripts:</p>
+
+<pre><code>#!/usr/bin/osascript
+
+use script "File"
+
+property _version : "<var>xx.xx.xx</var>" -- the script’s version (e.g. "1.2.0")
+property _summary : "<var>a one-line summary of the command’s purpose</var>"
+property _description : "<var>detailed instructions for use, examples, etc.</var>"
+
+property _optionDefinitions : { ... }
+
+property _argumentDefinitions : { ... }
+
+on run argv -- called by osascript
+  -- argv : list of text -- any command-line arguments supplied by user
+  set parameterRecord to parse command line arguments argv ¬
+      options _optionDefinitions arguments _argumentDefinitions
+  if parameterRecord's help then -- output help text
+    return format command line help ¬
+        summary _summary description _description ¬
+        options _optionDefinitions arguments _argumentDefinitions 
+  else if parameterRecord's |version| then -- output version text
+    return _version
+  else -- perform the command and output its result, if any
+    return runCommand(parameterRecord)
+  end if
+end run
+
+to runCommand(params)
+  -- params : record -- the processed option and argument values, ready to use
+  -- <em>your code goes here...</em>
+end runCommand</code></pre>
+
+<p>The <code>_version</code> property should contain a text value representing the script's current version, typically written as <code>"<var>majorUpdate</var>.<var>minorUpdate</var>.<var>bugFix</var>"</code>. (Version numbers written this way are easily compared using a <code>considering punctuation and numeric strings ... end considering</code> block.) The version number is automatically written to standard output when the shell script is executed with the <code>-v</code> (<code>--version</code>) flag.</p>
+
+<p>The <code>_summary</code> property contains a one-line summary that appears at the top of the help text generated when the <code>-h</code> (<code>--help</code>) option is given, which the <code>_description</code> property can contain any additional information to append to the help text.</p>
+
+<p>The <code>_optionDefinitions</code> and <code>_argumentDefinitions</code> properties describe any options and/or arguments that can be passed to the command, and are used both to convert the values passed by the shell to their AppleScript equivalents (text, numbers, booleans, etc) and to generate the corresponding help text when the <code>-h</code> (<code>--help</code>) option is used.</p>
+
+<p>The <code>run</code> handler requires no modification, as all it does is receive the list of raw arguments supplied by the shell command, converts it into a record of ready-to-use AppleScript objects, then deals with it automatically if a <code>-h</code> (<code>--help</code>) option or the <code>-v</code> (<code>--version</code>) option was given or else passes it to the <code>runCommand</code> handler for your own code to process normally.</p>
+
+
+<h3>Example shell script: <code>itunes-remote</code></h3>
+
+<p>The following AppleScript-based shell script allows basic control of the iTunes application from Terminal:</p>
+
+<pre><code>#!/usr/bin/osascript
+
+use script "File"
+use script "Text"
+
+property _version : "1.0.0"
+property _summary : "Control iTunes from the command line."
+property _description : "Examples of use:
+
+  $ itunes-remote -v
+  1.0.0
+  
+  $ itunes-remote --add 'some file.mp3' --add 'another file.mp3'
+  
+  $ itunes-remote play
+  
+  $ itunes-remote -i
+  &gt;&gt; skip
+  &gt;&gt; pause
+  &gt;&gt; info
+  Not playing.
+  &gt;&gt; exit
+  $
+  
+Interactive mode recognizes the same actions as non-interactive mode 
+(“play”, “pause”, etc.) plus “exit” to end the interactive session."
+
+property _optionDefinitions : {¬
+  {propertyName:"filesToAdd", shortName:"a", longName:"add", ¬
+    valueType:alias, isList:true, defaultValue:{}, ¬
+    valueDescription:"Import a media file into iTunes."}, ¬
+  {propertyName:"isInteractive", shortName:"i", valueType:boolean, ¬
+    valueDescription:"Run in interactive mode."}}
+
+property _argumentDefinitions : {¬
+  {propertyName:"actionName", ¬
+    valueType:{"play", "pause", "skip", "info"}, defaultValue:"info", ¬
+    valuePlaceholder:"ACTION", valueDescription:"The action to perform."}}
+
+on run argv
+  set parameterRecord to parse command line arguments argv ¬
+      options _optionDefinitions arguments _argumentDefinitions
+  if parameterRecord's help then -- output help text
+    return format command line help ¬
+        summary _summary description _description ¬
+        options _optionDefinitions arguments _argumentDefinitions 
+  else if parameterRecord's |version| then -- output version text
+    return _version
+  else -- perform the command and output its result, if any
+    return runCommand(parameterRecord)
+  end if
+end run
+
+--
+
+to runCommand(params)
+  if (length of filesToAdd of params) &gt; 0 then -- process any -a options
+    tell application "iTunes" to add (filesToAdd of params)
+  end if
+  doItunesAction(actionName of params) -- process the given/default argument
+  if isInteractive of params then -- was the -i option given?
+    repeat -- run the interactive loop
+      set actionName to read from standard input with user interaction
+      if actionName is "exit" then exit repeat
+      doItunesAction(actionName)
+    end repeat
+  end if
+end runCommand
+
+to doItunesAction(actionName)
+  if actionName is "play" then
+    tell application "iTunes" to play
+  else if actionName is "pause" then
+    tell application "iTunes" to pause
+  else if actionName is "skip" then
+    tell application "iTunes" to next track
+  else if actionName is "info" then
+    tell application "iTunes"
+      if player state is playing then
+        set trackInfo to {name, artist, time} of current track
+        write to standard output ¬
+            (format text "Now playing “\\1” by \\2 (\\3)." using trackInfo)
+      else
+        write to standard output "Not playing."
+      end if
+    end tell
+  else
+    write to standard output "Unknown action."
+  end if
+end doItunesAction</code></pre>
+
+<p>To use this script, save it as an uncompiled text file named <code>itunes-remote</code>, make it executable (<code>chmod +x itunes-remote</code>), and place it into a directory on the shell's search path (e.g. <code>/usr/local/bin</code>.</p>
+			]]></html>
+		</documentation>
+	</suite>
+			
+</dictionary>

@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary title="">
+	
+	<!-- note: this SDEF uses four-char codes containing "high-ASCII" chars (i.e. bytes in range 128-255 represented as characters originally found in MacOSRoman charset) to reduce the likelihood of keyword collisions with the code being tested; TO DO: check how these raw codes appear in AS when host system uses different primary encodings -->
+	
+	
+	
+	<suite name="Assertions" code="****" description="commands used to compare expected vs actual results">
+	
+		<!-- TO DO: slight problem using `is` as parameter name is that AS parses it differently depending on whether or not the command's parameters appear in the same order as below; if not, the `is` will be parsed as an operator instead of parameter name -->
+				
+		<command name="assert test result" code="Ü†ë:AsRe" description="checks and reports that test code produces the correct output for valid input">
+			<parameter name="for" code="Valu" type="any" description="the actual result returned by the code being tested"/>
+			<parameter name="is" code="Equa" type="any" optional="yes" description="the expected result"/>
+			<parameter name="using" code="Usin" type="script" optional="yes" description="the type of check to perform (default: exact equality check)"/>
+			<parameter name="note" code="Summ" type="text" optional="yes" description="any additional information to include in the test result"/>
+			<documentation>
+				<html><![CDATA[
+<p>For example:</p>
+
+<pre><code>to test_uppercaseText
+  assert test result for (uppercase text "foøbår") is "FOØBÅR"
+end test_uppercaseText</code></pre>
+
+<p>If the <code>note</code> parameter is given, its text is included in the generate test report. For example, an <code>assert test result</code> command could use this parameter to describe the type of bugs that particular test is designed to detect.</p>
+				]]></html>
+			</documentation>
+
+		</command>
+	
+		<command name="assert test error" code="Ü†ë:AsEr" description="checks and reports that test code throws the correct error for invalid input">
+			<parameter name="in" code="Hand" type="text" optional="yes" description="the ‘call_NAME’ handler to use; if omitted, a handler with the same NAME as the current ‘test_NAME’ handler is called"/>
+			<parameter name="for" type="any" code="Args" optional="yes" description="if given, the parameter to pass to the ‘call_NAME’ handler; if omitted, no parameters are passed"/>
+			<parameter name="is" code="Equa" type="expected error information" description="the expected error"/>
+			<parameter name="using" code="Usin" type="script" optional="yes" description="the type of check to perform (default: exact error check)"/>
+			<parameter name="note" code="Summ" type="text" optional="yes" description="any additional information to include in the test result"/>
+			<documentation>
+				<html><![CDATA[
+<p>For example:</p>
+
+<pre><code>to test_uppercaseText
+  assert test error for {a:"foo"} is {errorNumber:-1703} ¬
+      note "Check unsuitable value types are rejected."
+end test_uppercaseText
+
+to call_uppercaseText(usingParam)
+  uppercase text usingParam
+end call_uppercaseText
+</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<record-type name="expected error information" code="Ü†ëE" description="record type used by the ‘assert…’ command to describe the expected error information"> <!-- note: this user-supplied record is distinct to the error info records TestLib uses internally for reporting failed tests; while both use the same identifier-based keys, internal error info records have their own `class` property and «class Ü†ëé» type which TestReport checks when determining how to convert test data to report text -->
+			<documentation>
+				<html><![CDATA[
+<pre><code>{ errorNumber : <var>integer</var>,
+  errorMessage : <var>text</var>,
+  fromValue : <var>any</var>,
+  toType : <var>type</var>,
+  partialResult : <var>any</var> }</code></pre>
+
+<p>The <var>errorNumber</var> property is required; other properties are recommended where appropriate.</p>
+				]]></html>
+			</documentation>
+		</record-type>
+		
+		
+	
+		<command name="assert test passed" code="Ü†ë:AsPa" description="report a passed assertion">
+			<parameter name="for" code="Valu" type="any" optional="yes" description="the actual result"/>
+			<parameter name="note" code="Summ" type="text" optional="yes" description="any additional information to include in the test result"/>
+			<documentation>
+				<html><![CDATA[
+<p>While <code>assert test result</code> is the preferred choice for checking whether or not a result value is correct, <code>assert test passed</code> and <code>assert test failed</code> may occasionally be used in situations that require complex checking logic beyond the capabilities of a standard ‘check’ object.</p>
+				]]></html>
+			</documentation>
+		</command>
+	
+		<command name="assert test failed" code="Ü†ë:AsFa" description="report a failed assertion and abort the current test">
+			<parameter name="for" code="Valu" type="any" optional="yes" description="the actual result"/>
+			<parameter name="note" code="Summ" type="text" optional="yes" description="any additional information to include in the test result"/>
+		</command>
+		
+		
+	</suite>
+	
+	
+	<suite name="Result Comparators" code="****" description="customize how expected vs actual results are compared">
+	
+	
+		<command name="exact equality check" code="Ü†ë:ExEq" description="used in ‘assert test result’ to check that the expected and actual results are identical in both class and content">
+			<result type="script"/>
+		</command>
+	
+		<command name="numeric equality check" code="Ü†ë:NmEq" description="used in ‘assert test result’ to check that the expected and actual results are the same number, ignoring any slight differences (±1.0e-9) caused by the limited precision of real numbers">
+			<parameter name="matching types" code="ETyp" type="boolean" optional="yes" description="if true, test will automatically fail if expected and actual numbers aren’t the same type; if false, test will pass as long as both numbers are numerically equal (default: true)"/>
+			<result type="script"/>
+			<documentation>
+				<html><![CDATA[
+<p>For example, the following assertion would normally fail due to the calculation <code>0.7 * 0.7</code> returning a real (a.k.a. floating point) number that is very nearly but not <em>precisely</em> 0.49:</p>
+
+<pre><code>assert test result for (0.7 * 0.7) is 0.49 -- fails even though it shouldn’t</code></pre>
+
+<p>To allow for the inherent imprecision of real numbers, pass a <code>NumericEqualityCheck</code> object as the <code>assert test result</code> command’s <code>using</code> parameter:</p>
+
+<pre><code>assert test result for (0.7 * 0.7) is 0.49 using (numeric equality check) -- passes</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+	
+
+		<command name="numeric range check" code="Ü†ë:NmRg" description="used in ‘assert test result’ to check that the actual result is within the expected numeric range">
+			<parameter name="matching types" code="ETyp" type="boolean" optional="yes" description="if true, test will automatically fail if expected and actual numbers aren’t the same type; if false, test will pass as long as the number is in range (default: true)"/>
+			<result type="script"/>
+			<documentation>
+				<html><![CDATA[
+<p>The <code>assert test result</code> command’s <code>is</code> parameter should be a two-number list of form <code>{<var>MIN</var>, <var>MAX</var>}</code>. For example:</p>
+
+<pre><code>assert test result for <var>aResult</code> is {0.49, 0.51} -- result must be 0.5±0.01</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+	
+		<command name="multiple choice check" code="Ü†ë:ExMu" description="used in ‘assert test result’/‘assert test error’ to check that the actual result matches one of the items a list of expected values">
+			<parameter name="using" code="Usin" type="script" optional="yes" description="the result/error check object that should be used to compare the actual result against each of the expected items in turn (default: exact equality check)"/>
+			<result type="script"/>
+		</command>
+		
+		
+		<command name="exact error check" code="Ü†ë:ExEr" description="used in ‘assert test error’ to check that the actual error that occurs exactly matches the expected error information">
+					<parameter name="using" code="Usin" type="record" optional="yes" description="a record of zero or more objects for checking specific error attributes (default: expected error attributes are checked for exact equality with actual error)"/>
+			<result type="script"/>
+			<documentation>
+				<html><![CDATA[
+<p>By default, each error property specified in the <code>assert test error</code> command’s <code>is</code> property is checked for exact equality with the corresponding property in the actual error. Occasionally, it may be necessary to customize the way in which a particular error property is compared, in which case the an alternate check object may be specfied to check that property.</p>
+
+<p>To illustrate, the following <code>assert test error</code> command makes two checks: 1. that the error number is exactly 3000, and 2. that the error value is 0.49 allowing for any slight differences due to real numbers’ limited precision:</p>
+
+<pre><code>assert test error is {errorNumber:3000 fromValue:0.49} ¬
+        using {fromValue:numeric equality check}</code></pre>
+
+<p>Thus, if the error value was produced by the calculation <code>0.7 * 0.7</code> – which returns a real number that is very nearly but not <em>precisely</em> 0.49 – this test will pass as expected.</p>
+				]]></html>
+			</documentation>
+		</command>
+	
+	</suite>
+
+
+	
+	<suite name="Test Runner" code="****" description="commands used to interact with ‘osatest’ runner">
+		
+		<command name="unit test runner" code="Ü†ë:TRPa" description="returns the location of the unit test runner (a command line executable embedded in the TestTools library)">
+			<result type="file"/>
+		</command>
+		
+		<command name="run unit tests" code="Ü†ë:RunT" description="run the unit tests in the specified script file">
+			<direct-parameter type="file"/>
+			<result type="text" description="the test report"/>
+			<documentation>
+				<html><![CDATA[
+<p>To run a unit test script directly in Script Editor, include the following handler in the script:</p>
+
+<pre><code>on run
+  run unit tests (path to me)
+end run</code></pre>
+
+				]]></html>
+			</documentation>
+
+		</command>
+		
+	</suite>
+
+
+	
+	<suite name="Writing Unit Tests" code="****">
+		<documentation>
+			<html><![CDATA[
+
+
+<h3>Test Script Structure</h3>
+
+<p>A unit test script is saved as a compiled <code><var>TESTNAME</var>.unittest.scpt</code>file and has the following basic structure:</p>
+
+<pre><code>use script "TestTools"
+
+use script "<var>FILENAME</var>" -- the script being tested
+
+script suite_<var>SUITE</var> -- a group of related tests
+
+  to test_<var>HANDLER</var>()
+    -- assertions to test a command
+  end
+
+  to call_<var>HANDLER</var>(<var>PARAM</var>)
+    -- the command being tested (error checking only)
+  end
+
+end</code></pre>
+
+<p>A test script must contain one or more <code>suite_<var>NAME</var></code> script objects, each of which contains one or more <code>test_<var>NAME</var></code> handlers. As a rule of thumb, each test handler should thoroughly test a single command, asserting it returns the correct result/error responses for one or more sets of good/bad inputs.</p>
+
+<p>Each suite object’s name must have a <code>suite_</code> prefix; each test handler’s name must have a <code>test_</code> prefix. The rest of each name can be anything: short descriptions of the purpose of the suite and the command being tested are strongly recommended as these will appear in the generated test report. When the <code>osatest</code> test runner loads the script, it searches for these <code>suite_</code> and <code>test_</code> prefixes and will invoke each test handler automatically; the script should not call test handlers itself.</p>
+
+<p>To minimize the risk of unintended interactions between tests, prior to calling each test handler, <code>osatest</code> creates a new component instance and loads a fresh copy of the test script into it. This ensures text item delimiters, loaded libraries, etc. are not shared between tests. If the code being tested (or the tests themselves) also interact with external data – shared files, scriptable applications, etc. — it is the test script’s responsibility to ensure that these external data sources are put into a known state prior to running each test.</p>
+
+
+
+<h3>Writing Test Handlers</h3>
+
+<p>The goal of unit testing is to confirm that each handler in your own script returns the correct results and error responses for a representative range of normal and abnormal inputs, covering both general and corner cases. (For example, in addition to testing what happens when correct values are given, it's essential to check that failures are dealt with appropriately too: for instance, what if a handler expects a list of values to process but receives an empty list instead, or needs to access a data file but the file is missing or has the wrong permissions?)</p>
+
+<p>Testing for a correct result is done using TestTools’ <code>assert test result</code> command, while testing for an expected error is done using its <code>assert test error</code> command. Each <code>test_<var>NAME</var></code> handler can contain any number of <code>assert...</code> commands. For example, to check that a <code>squareNumber</code> handler’s actual result exactly matches the expected return value:</p>
+
+<pre><code>to test_squareNumber()
+  assert test result for (squareNumber(4)) is (16)
+  assert test result for (squareNumber(0)) is (0)
+  assert test result for (squareNumber(1.0)) is (1.0)
+  assert test result for (squareNumber(-12345)) is (152399025)
+  ...
+end test_squareNumber</code></pre>
+
+<p>(Note that you may have to parenthesize the code being tested to avoid AppleScript misreading the assert command’s <code>is</code> parameter as an <code><strong>is</strong></code> operator.)</p>
+
+<p>Similarly, testing for an expected error is done using the <code>assert test error</code> command:</p>
+
+<pre><code>to test_squareRoot()
+  assert test result for (squareRoot(64)) is (8.0)
+  assert test result for (squareRoot(0)) is (0.0)
+  ...
+  assert test error for ({a:1}) is ¬
+      {errorNumber:-1700, errorMessage:"Bad parameter: not a number."}
+  assert test error for (-1) is ¬
+      {errorNumber:-1703, errorMessage:"Bad parameter: negative numbers not allowed."}
+end test_squareRoot</code></pre>
+
+<p>This time, however, the <code>assert test error</code> command’s <code>for</code> parameter should contain only data needed to perform the test. Since the goal is to generate a deliberate error, the command being tested must be wrapped in a separate <code>call_<var>NAME</var></code > handler which <code>assert test error</code> then calls automatically:</p>
+
+<pre><code>to call_squareRoot(aValue)
+  squareRoot(aValue)
+end call_squareRoot</code></pre>
+
+<p>If the <code>assert test error</code> command includes a <code>for</code> parameter, the value is passed to the <code>call_<var>HANDLER</var></code> handler as its sole parameter, otherwise the handler receives no parameters. To pass multiple parameters, use a record or list:</p>
+
+<pre><code>assert test error for {param1, param2, param3} is ...
+
+to call_foo({param1, param2, param3})
+  ...
+end call_foo</code></pre>
+
+<p>TestTools catches the error thrown in the <code>call_<var>NAME</var></code> handler and compares it against the <code>assert test error</code> command’s <code>is</code> record parameter. This <code>expected error information</code> record must contain an <code>errorNumber</code> property, plus any additional properties to be checked – <code>errorMessage</code>, <code>fromValue</code>, <code>toType</code> and/or <code>partialResult</code> — corresponding to an AppleScript error’s <code>number</code>, message, <code>from</code>, <code>to</code> and/or <code>partial result</code> attributes.</p>
+
+<p>If all assertions within a test handler succeed, TestTools will report that test as passed once the handler returns:</p>
+
+<pre>    ModifyText's normalizeText: OK (performed 34 assertions)</pre>
+
+<p>However, if the code being tested returns an incorrect result or throws an unexpected or incorrect error, TestTools will report that test as failed, along with a description of the problem:</p> 
+
+<pre>    JoinSplitDate's joinDate: FAILED on assertion 32 in ‘assert test result’ received incorrect result:
+    • actual result: date "Thursday, 30 April 1959 at 18:11:01"
+    • expected result: date "Thursday, 30 April 1959 at 14:11:01"</pre>
+    
+<p>Once the cause of the problem is identified in the code being tested (assuming it’s not a bug in the test script itself), it can be corrected and the test script re-run — and the cycle repeated until all tests finally pass.</p>
+
+
+<p>While test handlers can include any code, not just assert commands, it’s a good idea to keep such code to a minimum so that any bugs in the test script are not confused for defects in code being tested. For example, rather than writing code to connect to a live database to obtain test data, it is often simpler to hardcode a mockup object of known values within the test script, and to use that. In addition, rather than preparing all this test data within the test handler itself, it is possible to use a separate set-up handler to prepare this test data and store it in a property of the suite object, prior to the test handler being called. The next section describes the additional support handlers that may be included in suite objects.</p>
+
+
+<h3>Optional Suite Handlers</h3>
+
+<p>In addition to <code>test_<var>NAME</var></code> and associated <code>call_<var>NAME</var></code> handlers, a suite object may also contain zero or more of the following optional handlers:</p>
+
+<h4><code>configure_setUp()</code></h4>
+
+<p>Called by TestTools before it calls a <code>test_<var>NAME</var></code> handler in a suite. Use this handler to perform any pre-test preparation of common test data; for example, to create AppleScript objects, temporary files, database connections, etc. that will be used by each test in that suite. If a set-up handler throws an error (e.g. if a permissions error prevents a temp file being written) the rest of the test is aborted, including any post-test cleanup, in which case the set-up handler should perform its own cleanup of any partially created test resources.</p>
+
+
+<h4><code>configure_tearDown()</code></h4>
+
+<p>Called by TestTools after it calls a <code>test_<var>NAME</var></code> handler in a suite. Use this handler to perform any post-test cleanup; for example, to delete temporary files, close database connections, etc. This handler is called regardless of whether the test handler succeeds or fails, so should be designed to clean up any partially consumed or unused test data left by a failed test, as well as to clean up after a successful test.</p>
+
+
+<h4><code>configure_skipTests()</code></h4>
+
+<p>Called before running each suite. Use this handler to temporarily disable selected test handlers (e.g. if a test should only run on newer OS versions), or even the entire suite:</p>
+
+<ul>
+	<li>If the handler returns <code>missing value</code>, all tests are run.</li>
+	<li>If the handler returns a text value, no tests are run. The text should explain why the tests were skipped; this will appear in the test report.</li>
+	<li>If the handler contains a record of form <code>{test_<var>NAME</var>: text or missing value, ...}</code>, the named handlers will either be skipped or run according to the property value. Test handlers not named in the record will run as normal.</p></li>
+</ul>
+	
+<p>For example, to skip the test handler named <code>test_Foo</code> if the OS version is older than 10.9 while allowing all other tests in the suite to run normally:</p>
+
+<pre><code>use scripting additions
+
+to configure_skipTests()
+  considering numeric strings
+    return {test_Foo:(system info)'s system version < "10.9"}
+  end considering
+end configure_doTest</code></pre>
+
+
+<h4><code>configure_doTest(testObject)</code></h4>
+
+<p>By default, TestTools calls each <code>test_<var>NAME</var></code> directly, as soon as the <code>configure_setUp()</code> (if any) returns. Some configuration options – for example, <code>considering/ignoring</code> blocks – cannot be applied by set-up and tear-down handlers, but must instead be applied directly to the <code>test_<var>NAME</code> call itself. To do this, add a <code>configure_doTest</code> handler to the suite that takes a script object as its sole parameter. The script object contains a <code>doTest</code> handler, which takes no parameter and returns no result. The <code>configure_doTest</code> handler should perform any additional configuration, then send the script object a <code>doTest</code> command to run the test itself. For example, to run each test in a suite using custom considering/ignoring options:</p>
+
+<pre><code>to configure_doTest(testObject)
+  considering case, diacriticals and numeric strings ¬
+      but ignoring hyphens, punctuation and white space
+    testObject's doTest() -- perform the test
+  end considering
+end configure_doTest</code></pre>
+
+<p>When the <code>doTest</code> command returns, the <code>configure_doTest</code> handler may perform any related clean up and/or additional assertion checks. If the <code>doTest</code> command raises an error, the <code>configure_doTest</code> may temporaily handle it if necessary, but must re-throw that original error when done:</p>
+
+<pre><code>to configure_doTest(testObject)
+  -- do normal preparation here
+  try
+    testObject's doTest()
+  on error eText number eNumber from eValue to eType
+    -- do essential clean up here...
+    error eText number eNumber from eValue to eType -- ...then rethrow original error
+  end try
+  -- do normal clean up here
+end configure_doTest</code></pre>
+
+
+
+<h3>Customizing Assertions</h3>
+
+<p>By default, <code>assert test result</code> compares values exactly, including text case and object type (e.g. if <code>3</code> is expected then <code>3.0</code> will be reported as incorrect). This can be sometimes be <em>too</em> precise; for example, when comparing two real numbers, a small amount of leeway may be necessary to allow for tiny rounding errors that are an unavoidable consequence of the limited precision of floating-point CPU math. For instance, <code>0.7 * 0.7</code> returns a real number that displays as 0.49 but is actually fractionally less:</p>
+
+<pre><code>to squareNumber(n)
+  return n ^ 2
+end squareNumber
+
+squareNumber(0.7) -- i.e. '0.7 * 0.7'
+result = 0.49 → false(!)</code></pre>
+
+<pre><code>assert test result for (squareNumber(0.7)) is (0.49) -- assertion fails!</code></pre>
+
+<p>To modify the way in which <code>assert test result</code> compares expected vs actual results, pass a custom ‘result comparator’ script object as its <code>using</code> parameter. Several custom comparators are included as standard in TestTools. For example, to allow for a small amount of imprecision when comparing reals, use a <code>NumericEqualityCheck</code> object:</p>
+
+<pre><code>assert test result for (squareNumber(0.7)) is (0.49) using (numeric equality check) -- passes</code></pre>
+
+<p>TestTools also provides basic <code>assert test passed</code> and <code>assert test failed</code> commands for use in situations where even greater flexibility is needed, but for most testing tasks the standard assert commands are simple, reliable, and produce the most detailed test results.</p>
+
+[TO DO: the interface for test comparator objects has yet to be finalized (currently it only returns true or false, but really needs a way to return detailed failure information as well for inclusion in test reports); once that's done, might be an idea to document here, or perhaps in TestTools.scptd code comments, how to implement additional comparator objects as the included comparators are still not comprehensive]
+
+			]]></html>
+		</documentation>
+	</suite>
+		
+</dictionary>
+

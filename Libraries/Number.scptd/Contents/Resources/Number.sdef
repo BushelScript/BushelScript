@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary>
+
+
+	
+	<suite name="Number Conversion" code="****">
+		
+		<command name="format number" code="Mth:FNum" description="format a number as text">
+			<direct-parameter type="number"/>
+			<parameter name="using" code="Usin" optional="yes" description="(default: canonical number format)">
+				<type type="number format enumeration"/>
+				<type type="number format record"/>
+				<type type="text"/>
+			</parameter>
+			<parameter name="for locale" code="Loca" type="text" optional="yes" description="a locale identifier, e.g. “en_US”, or “current” or “none” (default: “none”)"/>
+			<result type="text"/>
+
+			<documentation>
+				<html><![CDATA[
+<p>By default, the <code>format number</code> command converts an integer/real number to numeric text in canonical format. Unlike coercing an integer or real value to <code>text</code>, which formats the text according to the current user’s localization settings, <code>format number</code> <em>always</em> uses the same numerical syntax as the AppleScript language, unless additional formatting and/or locale settings are explicitly given.</p>
+
+<p>For example, on a US-localized system, coercing <code>3.14</code> to text produces <code>"3.14"</code>:</p>
+
+<pre><code>3.14 as text → "3.14" (localized conversion)
+
+format number 3.14 → "3.14" (canonical conversion)</code></pre>
+
+<p>On a German system, however, the same number-to-text coercion uses a comma instead of a period as the decimal separator:</p>
+
+<pre><code>3.14 as text → <strong>"3,14"</strong> (localized conversion)
+
+format number 3.14 → "3.14" (canonical conversion)</code></pre>
+
+<p>Using the <code>format number</code> command instead of coercing the number to text ensures a consistent result, no matter where the script is run.</p>
+
+<p>For information on formatting numbers using custom formats, see the <a href="#customizing-number-formats">Customizing Number Formats</a> section below.</p>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="parse number" code="Mth:PNum" description="parse text as a number">
+			<direct-parameter type="text"/>
+			<parameter name="using" code="Usin" optional="yes" description="(default: canonical number format)">
+				<type type="number format enumeration"/>
+				<type type="number format record"/>
+				<type type="text"/>
+			</parameter>
+			<parameter name="for locale" code="Loca" type="text" optional="yes" description="a locale identifier, e.g. “en_US”, or “current” or “none” (default: “none”)"/>
+			<result type="number"/>
+
+			<documentation>
+				<html><![CDATA[
+<p>By default, the <code>parse number</code> command converts numeric text in canonical format to an integer/real number. Unlike coercing a text value to <code>number</code>, which parses the text according to the current user’s localization settings, <code>format number</code> <em>always</em> uses the same numerical syntax as the AppleScript language, unless additional formatting and/or locale settings are explicitly given.</p>
+
+<p>For example, on a US-localized system, coercing <code>"3.14"</code> to a number produces <code>3.14</code>:</p>
+
+<pre><code>"3.14" as number → 3.14 (localized conversion)
+
+parse number "3.14" → 3.14 (canonical conversion)</code></pre>
+
+<p>On a German system, however, the same text-to-number coercion requires the decimal separator to be a comma, not a period:</p>
+
+<pre><code>"3.14" as number → Error: Can’t make "3.14" into type number.
+
+<strong>"3,14"</strong> as number → 3.14 (localized conversion)
+
+parse number "3.14" → 3.14 (canonical conversion)</code></pre>
+
+<p>Using the <code>parse number</code> command instead of coercing the number to text ensures a consistent result, no matter where the script is run.</p>
+
+<p>For information on parsing numbers using custom formats, see the <a href="#customizing-number-formats">Customizing Number Formats</a> section below.</p>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<record-type name="number format record" code="MthR">
+			<documentation>
+				<html><![CDATA[
+<pre><code>{ class : number format record,
+  basicFormat : <var>constant or text</var>,
+  minimumDecimalPlaces : <var>integer</var>,
+  maximumDecimalPlaces : <var>integer</var>,
+  minimumSignificantDigits : <var>integer</var>,
+  maximumSignificantDigits : <var>integer</var>,
+  decimalSeparator : <var>text</var>,
+  groupingSeparator : <var>text</var>,
+  roundingBehavior : <var>constant</var> }</code></pre>
+
+<p>The <code>basicFormat</code> property is required and should be one of the format constants accepted by the <code>format number</code> and <code>parse number</code> commands (<code>canonical number format</code>, <code>integer format</code>, etc) or format text. All other properties are optional. The <code>roundingBehavior</code> property accepts the same rounding constants used in the <code>round number</code> command (<code>rounding up</code>, <code>rounding down</code>, etc).</p>
+
+[TO DO: examples?]
+
+				]]></html>
+			</documentation>
+		</record-type>
+		
+		
+		<enumeration name="number format enumeration" code="MthZ">
+			<enumerator name="canonical number format" code="Mth0"/> <!-- equivalent to AppleScript's own number formatting behavior -->
+			<enumerator name="integer format" code="Mth1"/>
+			<enumerator name="decimal format" code="Mth2"/>
+			<enumerator name="scientific format" code="Mth3"/>
+			<enumerator name="percent format" code="Mth4"/>
+			<enumerator name="currency format" code="Mth5"/>
+			<enumerator name="word format" code="Mth6"/>
+		</enumeration>
+		
+				
+		<command name="format hex" code="Mth:NuHe" description="convert an integer, or list of integers, to hexadecimal text">
+			<direct-parameter>
+				<type type="integer"/>
+				<type type="integer" list="yes"/>
+			</direct-parameter>
+			<parameter name="width" code="Plac" type="integer" optional="yes" description="if greater than 0, the width of the resulting hexadecimal text, or each chunk if a list of numbers is given, not including sign or prefix (default: 0)"/>
+			<parameter name="prefix" code="Pref" type="boolean" optional="yes" description="include “0x” prefix in result? (default: false)"/>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>For example:</p>
+
+<pre><code>format hex 526 width 4 with prefix → "0x020E"
+
+format hex {1, 11, 6, 13, 0, 8} width 2 → "010B060D0008"</code></pre>
+
+<p>If the ‘width’ parameter is given, the hexadecimal value will be padded to that number of digits (not including sign or prefix) unless the number is too large to represent within that number of hexadecimal digits, in which case an error is raised instead:</p>
+
+<pre><code>format hex 526 width 2 with prefix
+→ error: Number is too large to represent as 2-digit hexadecimal text 
+   (not between -256 and 255).</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		<command name="parse hex" code="Mth:HeNu" description="convert hexadecimal text to an integer, or list of integers">
+			<direct-parameter type="text"/>
+			<parameter name="width" code="Plac" type="integer" optional="yes" description="if greater than 0, the hexadecimal text is split into chunks of the specified width and converted to a list of numbers (default: 0)"/>
+			<parameter name="precision loss" code="Prec" type="boolean" optional="yes" description="if false, report an error if the hexadecimal number is too large to be converted to an AppleScript number without losing precision; if true, allow conversion to any real number even if some precision will be lost (default: false)"/>
+			<result>
+				<type type="integer"/>
+				<type type="integer" list="yes"/>
+			</result>
+			
+			<documentation>
+				<html><![CDATA[
+<p>For example:</p>
+
+<pre><code>parse hex "-0x020E" → -526
+
+parse hex "010B060D0008" width 2 → {1, 11, 6, 13, 0, 8}</code></pre>
+
+<p>The <code>parse text</code> will return a non-fractional real number if a hexadecimal value is too large to represent using AppleScript’s native 30-bit integer type, normally raising an error if it can’t be accurately represented as a real number either (although this may be overridden if some loss of precision is acceptable):</p>
+
+<pre><code>parse hex "0xFFFF" -- 2^16-1
+→ 65535
+
+parse hex "0xFFFFFFFF" -- 2^32-1 
+→- 4.294967295E+9
+
+parse hex "0xFFFFFFFFFFFFFFFF" -- 2^64-1 
+→ error: Hexadecimal text is too large to convert to number without losing precision.
+
+parse hex "0xFFFFFFFFFFFFFFFF" with precision loss 
+→ 1.84467440737096E+19 (approximate only)</code></pre>
+
+				]]></html>
+			</documentation>
+		</command>
+	
+	</suite>
+	
+	
+	
+	<suite name="General Operations" code="****">
+		
+		<command name="deg2rad" code="Mth:DeRa" description="convert an angle from degrees to radians">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		<command name="rad2deg" code="Mth:RaDe" description="convert an angle from radians to degrees">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		
+		<command name="abs" code="Mth:Abs_" description="get absolute (non-negative) value of a number">
+			<direct-parameter type="number"/>
+			<result type="number"/>
+			<documentation>
+				<html><![CDATA[
+				
+<p>Examples:</p>
+<pre><code>abs 3.1 → 3.1
+
+abs -3.1 → 3.1</code></pre>
+
+				]]></html>
+			</documentation>
+		</command>
+		
+		<command name="cmp" code="Mth:CmpN" description="compare two numbers">
+			<direct-parameter description="a list of two numbers">
+				<type type="real" list="yes"/>
+			</direct-parameter>
+			<result type="integer" description="returns -1 if first number is lower, 0 if both numbers are about equal, or +1 if first number is higher"/>
+			<documentation>
+				<html><![CDATA[
+				
+<p>Unlike AppleScript's ‘<code>=</code>’ operator, which compares two numbers for <em>exact</em> equality, the <code>cmp</code> command allows a small margin of error (±1.0e-9), so ignores any slight differences due to the limited precision of real (a.k.a. floating point) numbers. For example:</p>
+
+<pre><code>(0.7 * 0.7) = 0.49 → false (probably not what you wanted!)
+
+cmp {(0.7 * 0.7), 0.49} → 0 (i.e. the numbers are "equal")</code></pre>
+
+				]]></html>
+			</documentation>
+		</command>
+		
+		<command name="max" code="Mth:MaxN" description="find the highest number in a list of numbers">
+			<direct-parameter>
+				<type type="number" list="yes"/>
+			</direct-parameter>
+			<result type="number"/>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>max {5, 1, 3, -8, 5, 4, -2} → 5</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		<command name="min" code="Mth:MinN" description="find the lowest number in a list of numbers">
+			<direct-parameter>
+				<type type="number" list="yes"/>
+			</direct-parameter>
+			<result type="number"/>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>min {5, 1, 3, -8, 5, 4, -2} → -8</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="round number" code="Mth:RouN" description="round a number to the specified number of places">
+			<direct-parameter type="number"/>
+			<parameter name="to places" code="Plac" type="integer" optional="yes" description="The maximum number of decimal places that can appear in the result (default: 0). If 0, the result is an integer; if greater than 0, the number's least significant digits are also rounded."/>
+			<parameter name="by" code="Dire" type="MRnd" optional="yes" description="the rounding direction (default: rounding halves to even)"/>
+			<result type="number"/>
+			
+			<documentation>
+				<html><![CDATA[
+<pre><code>round number 4.145 to places 2 → 4.14
+
+round number -8.51 to places 1 → -8.6 by rounding away from zero
+
+round number 7949.0 to places -2 → 7900</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<enumeration name="MRnd" code="MRnd">
+			<enumerator name="rounding up" code="RN_U"/>
+			<enumerator name="rounding down" code="RN_D"/>
+			<enumerator name="rounding toward zero" code="RN_T"/>
+			<enumerator name="rounding away from zero" code="RN_F"/>
+			<enumerator name="rounding halves toward zero" code="RNhT"/>
+			<enumerator name="rounding halves away from zero" code="RNhF"/>
+			<enumerator name="rounding halves to even" code="RNhE"/>
+		</enumeration>
+		
+	</suite>
+	
+	
+	
+	<suite name="Logarithms" code="****">
+		
+		<command name="logn" code="Mth:Logn" description="natural logarithm (inverse of ‘e ^ n’)">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		<command name="log10" code="Mth:Lo10" description="base-10 logarithm (inverse of ‘10 ^ n’)">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		<command name="logb" code="Mth:Logb" description="logarithm using the specified base (inverse of ‘base ^ n’)">
+			<direct-parameter type="real"/>
+			<parameter name="base" code="Base" type="real"/>
+			<result type="real"/>
+		</command>
+		
+	</suite>	
+	
+	
+	
+	<suite name="Trigonometry" code="****" description="(all angles are degrees)">
+		
+		<command name="sin" code="Mth:Sin_" description="sine">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		<command name="cos" code="Mth:Cos_" description="cosine">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		<command name="tan" code="Mth:Tan_" description="tangent">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		
+		<command name="asin" code="Mth:Sina" description="arc sine (inverse of sine)">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		<command name="acos" code="Mth:Cosa" description="arc cosine (inverse of cosine)">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		<command name="atan" code="Mth:Tana" description="arc tangent (inverse of tangent)">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		
+		<command name="asinh" code="Mth:Sinh" description="hyperbolic sine">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		<command name="acosh" code="Mth:Cosh" description="hyperbolic cosine">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+		<command name="atanh" code="Mth:Tanh" description="hyperbolic tangent">
+			<direct-parameter type="real"/>
+			<result type="real"/>
+		</command>
+		
+	</suite>
+	
+	
+	<suite name="Customizing Number Formats" code="****">
+		
+		<documentation>
+			<html><![CDATA[
+	<p><a id="customizing-number-formats"></a>In addition to parsing and formatting numeric text in canonical AppleScript-style format, the <code>parse number</code> and <code>format number</code> commands allow custom formats to be specified via their optional <code>using</code> parameters. These parameters accept either a text value containing special character-based number format patterns, a predefined constant representing a commonly used format, or a <code>number format record</code> containing a predefined format constant plus additional customizations.</p>
+	
+<p>For a full explanation of pattern syntax, see <a href="http://www.unicode.org/reports/tr35/tr35-31/tr35-numbers.html#Number_Format_Patterns">Part 3: Numbers</a> of Unicode Technical Standard #35. Recognized patterns are listed below for convenience.</p>
+
+
+<table width="100%" style="text-align:left; margin:1em;">
+	<thead>
+		<tr><th>Value/Position</th><th>Format</th><th>Pattern</th><th>Notes</th></tr>
+	</thead>
+	<tbody>
+		<tr><td>number</td>		<td>any digit</td>						<td>0</td></tr>
+		<tr><td>number</td>		<td>digit; zero is omitted</td>		<td>#</td></tr>
+		<tr><td>number</td>		<td>digit with rounding</td>		<td>1–9</td></tr>
+		<tr><td>number</td>		<td>significant digit</td>				<td>@</td><td>[1]</td></tr>
+		<tr><td>number</td>		<td>decimal separator</td>		<td>.</td></tr>
+		<tr><td>number</td>		<td>grouping separator</td>		<td>,</td></tr>
+		<tr><td>number</td>		<td>minus sign</td>					<td>-</td></tr>
+		<tr>
+			<td>number</td>		
+			<td>separates mantissa and exponent in scientific notation</td>
+			<td>E</td>
+			<td>[2]</td>
+		</tr>
+		<tr>
+			<td>exponent</td>
+			<td>prefix positive exponents with localized plus sign</td>
+			<td>+</td>
+			<td>[2]</td>
+		</tr>
+		<tr>
+			<td>prefix or suffix</td>
+			<td>multiply by 100 and show as percentage</td>
+			<td>%</td>
+		</tr>
+		<tr>
+			<td>prefix or suffix</td>
+			<td>multiply by 1000 and show as per mille</td>
+			<td>‰</td>
+			<td>(\u2030)</td>
+		</tr>
+		<tr>
+			<td>prefix or suffix</td>
+			<td>currency symbol</td>
+			<td>¤</td>
+			<td>(\u00A4) [3]</td>
+		</tr>
+		<tr>
+			<td>prefix or suffix</td>
+			<td>quote-escape special characters</td>
+			<td>'</td>
+			<td>e.g. “'#'”, “o''clock”</td>
+		</tr>
+		<tr>
+			<td>prefix or suffix boundary</td>
+			<td>precedes a pad character</td>
+			<td>*</td>
+			<td>e.g. “*&nbsp;###0”</td>
+		</tr>
+		<tr>
+			<td>subpattern boundary</td>
+			<td>separates positive and negative subpatterns</td>
+			<td>;</td>
+		</tr>
+	</tbody>
+</table>
+	
+	
+<p>[1] For example, “@@” will display a number to 2-significant digits, e.g. “12345” → “12000”. When given, the “0” and “.” patterns are not allowed.</p>
+	
+<p>[2] The “E” and “+” characters do need not be quote-escaped when they appear in a prefix or suffix.</p>
+	
+<p>[3] Use “¤” for currency symbol, “¤¤” for international currency symbol, or “¤¤¤” for the long form of the decimal symbol. If given, monetary decimal and grouping separators (if available) are used instead of the numeric ones.</p>
+	
+
+		[TO DO: include summary of template text syntax plus examples]
+				]]></html>
+		</documentation>
+	
+	</suite>
+
+</dictionary>

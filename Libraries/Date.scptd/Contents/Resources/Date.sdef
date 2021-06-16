@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary title="">
+	
+	
+	<suite name="Convert Dates" code="****">
+				
+		<command name="format date" code="Dat:FDat" description="convert a date object to text">
+			<direct-parameter type="date"/>
+			<parameter name="using" code="Usin" optional="yes" description="the template text or predefined date and/or time formats to use (default: canonical date format)">
+				<type type="text"/>
+				<type type="FDSt" list="yes"/>
+			</parameter>
+			<parameter name="for locale" code="Loca" type="text" optional="yes" description="a locale identifier, e.g. “en_US”, or “current” or “none” (default: “none”)"/>
+			<parameter name="time zone" code="TZon" optional="yes" description="if given, the date is formatted for the specified time zone ID or GMT offset (default: “current”)">
+				<type type="text"/>
+				<type type="integer"/>
+			</parameter>
+			<result type="text"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>By default, the <code>format date</code> command converts a date object to canonical ISO8601-formatted text, for example:</p>
+
+<pre><code>format date (date "Thursday, 7 January 2016 at 01:41:34")
+→ "2016-01-07T01:41:34Z"</code></pre>
+
+<p>Unlike the date text used by AppleScript’s <code>date <var>TEXT</var></code> specifier, where the language and format changes according to each user’s current locale and time zone settings, ISO8601-formatted date text has a standard structure that is widely recognized and does not vary, making it highly portable. This allows ISO8601-style date text to be safely stored as plain text, sent to users in other countries, and converted back to a date object anywhere at any time, without risk of errors or incorrect results due to language differences, ambiguous ordering, or unknown time zone.</p>
+
+<p>By default, dates are formatted for Universal Time (a.k.a. GMT). If the <code>time zone</code> parameter is given, the date is formatted for that time zone instead:</p>
+
+<pre><code>format date (date "Thursday, 7 January 2016 at 01:41:34") time zone (5 * hours) 
+→ "2016-01-07T06:41:34+05:00"
+
+format date (date "Thursday, 7 January 2016 at 01:41:34") time zone "Africa/Addis_Ababa"
+→ "2016-01-07T04:41:34+03:00"</code></pre>
+
+<p>To format a date for the host machine’s local time zone, use the <code>current time zone</code> command to retrieve the local time zone’s name first:</p>
+
+<pre><code>format date (current date) time zone (current time zone)</code></pre>
+
+<p>For information on formatting dates using custom formats, see the <a href="#customizing-date-formats">Customizing Date Formats</a> section below.</p>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="parse date" code="Dat:PDat" description="convert text to a date object">
+			<direct-parameter type="text"/>
+			<parameter name="using" code="Usin" optional="yes" description="the template text or predefined date and/or time formats to use (default: canonical date format)">
+				<type type="text"/>
+				<type type="FDSt" list="yes"/>
+			</parameter>
+			<parameter name="for locale" code="Loca" type="text" optional="yes" description="a locale identifier, e.g. “en_US”, or “current” or “none” (default: “none”)"/>
+			<parameter name="time zone" code="TZon" optional="yes" description="the date’s time zone ID or GMT offset, if not already specified by the date text (default: “current”)">
+				<type type="text"/>
+				<type type="integer"/>
+			</parameter>
+			<result type="date"/>
+			
+			<documentation>
+				<html><![CDATA[
+<p>By default, the <code>parse date</code> command creates a date object from canonical ISO8601-formatted text, for example (assuming the user’s current time zone is GMT):</p>
+				
+<pre><code>parse date "2016-01-07T00:41:34-0800"
+→ date "Thursday, 7 January 2016 at 08:41:34" (note: AS dates always display local time)</code></pre>
+
+<p>For information on formatting dates using custom formats, see the <a href="#customizing-date-formats">Customizing Date Formats</a> section below.</p>
+				]]></html>
+			</documentation>
+
+		</command>
+		
+		
+		<enumeration name="FDSt" code="FDSt">
+			<enumerator name="canonical date format" code="FDS0"/> <!-- i.e. ISO8601 -->
+			<enumerator name="short date format" code="FDS1"/>
+			<enumerator name="medium date format" code="FDS2"/>
+			<enumerator name="long date format" code="FDS3"/>
+			<enumerator name="full date format" code="FDS4"/>
+			<enumerator name="short time format" code="FDS6"/>
+			<enumerator name="medium time format" code="FDS7"/>
+			<enumerator name="long time format" code="FDS8"/>
+			<enumerator name="full time format" code="FDS9"/>
+		</enumeration>
+		
+		
+		
+		
+		<command name="split date" code="Dat:SDat" description="convert a date object to a record containing date and time information">
+			<direct-parameter type="date" description="(default: midnight of 1 January 2001)"/>
+			<parameter name="time zone" code="TZon" optional="yes" description="the time zone ID or GMT offset to be used by the date component record (default: “current”)">
+				<type type="text"/>
+				<type type="integer"/>
+			</parameter>
+			<result type="date component record"/>
+			<documentation>
+				<html><![CDATA[
+<p>For example, to split a date object into a date component record using the current time zone (which for these examples is assumed to be “America/New_York”):</p>
+
+<pre><code>split date (date "Friday, 1 January 2016 at 12:00:00")
+→ {class:date component record, year:2016, month:January, day:1, hours:0, minutes:0, seconds:0, timezone:"America/New_York"}</code></pre>
+
+<p>To split the date into a record that describes the same date and time information using Greenwich Mean Time (which is 5 hours ahead of America/New_York):</p>
+
+<pre><code>split date (date "Friday, 1 January 2016 at 12:00:00") time zone "GMT"
+→ {class:date component record, year:2016, month:1, day:1, hours:5, minutes:0, seconds:0, timezone:"GMT"}</code></pre>
+
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="join date" code="Dat:JDat" description="convert a record containing date and/or time information to a date object">
+			<direct-parameter type="date component record" description="all properties are optional; if omitted, default values are used instead (default: midnight of 1 January 2001)"/>
+			<parameter name="time zone" code="TZon" optional="yes" description="the time zone ID or GMT offset (default: “current”); ignored if the date component record includes its own ‘timezone’ property">
+				<type type="text"/>
+				<type type="integer"/>
+			</parameter>
+			<result type="date"/>
+			<documentation>
+				<html><![CDATA[
+<p>The following command creates a date object describing 7:45am, New York time, on June 15, 1990:</code>
+
+<pre><code>join date {year:1990, month:June, day:15, hours:7, minutes:45, seconds:0, timezone:"America/New_York"}
+→ date "Friday, 15 June 1990 at 07:45:00" (assuming the current time zone is GMT+5)</code></pre>
+
+<p>All record properties are optional, thus the following creates a date object describing midnight local time on January 1, 2016:</p>
+
+<pre><code>join date {year:2016} 
+→ date "Friday, 1 January 2016 at 00:00:00"</code></pre>
+
+<p>If the date components record does not contain a <code>timezone</code> property then it is interpreted as local time by default. The optional <code>time zone</code> parameter can be used to specify a different default time zone if necessary. The following example creates a date object describing midnight in New York on January 1, 2016:</p>
+
+<pre><code>join date {year:2016} time zone "America/New_York"</code></pre>
+
+<p>If the local time zone is “GMT”, AppleScript will display the resulting date object as follows:</p>
+
+<pre><code>→ date "Friday, 1 January 2016 at 05:00:00" (GMT is 5 hours ahead of New York)</code></pre>
+
+<p>Or, if the local time zone is “America/Los_Angeles”:</p>
+
+<pre><code>→ date "Thursday, 31 December 2015 at 17:00:00" (Los Angeles is 3 hours behind New York)</code></pre>
+
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<record-type name="date component record" code="DatR">
+			<documentation>
+				<html><![CDATA[
+<pre><code>{ class : date component record,
+  year : <var>integer</var>,
+  month : <var>integer or constant</var>,
+  day : <var>integer</var>,
+  hours : <var>integer</var>,
+  minutes : <var>integer</var>,
+  seconds : <var>integer</var>
+  timezone: <var>text or integer</var> }</code></pre>
+  
+<p>All properties are optional. The <code>month</code> property can be a month constant (<code>January</code>, <code>February</code>, etc) or integer. The <code>timezone</code> property should be a time zone ID or offset to GMT in seconds. Other properties must be integers.</p>
+				]]></html>
+			</documentation>
+		</record-type>
+		
+	</suite>
+	
+	
+	
+	<suite name="Date Constants" code="****">
+			
+		<command name="month names" code="Dat:Mths" description="returns a list of AppleScript month constants">
+			<result>
+				<type type="type" list="yes"/>
+			</result>
+		</command>
+		
+		<command name="weekday names" code="Dat:Wkds" description="returns a list of AppleScript weekday constants">
+			<result>
+				<type type="type" list="yes"/>
+			</result>
+		</command>
+			
+	</suite>
+	
+	
+	
+	<suite name="Localization Support" code="****">
+				
+		<command name="locale IDs" code="Dat:LLoc" description="lists the available locale identifiers">
+			<result description="e.g. {&quot;af&quot;, &quot;af_NA&quot;, &quot;af_ZA&quot;, &quot;agq&quot;, …, &quot;zu_ZA&quot;}">
+				<type type="text" list="yes"/>
+			</result>
+		</command>
+		
+		
+		<command name="current locale ID" code="Dat:CLoc" description="returns the locale identifier for the host machine's current locale">
+			<result type="text" description="e.g. &quot;en_US&quot;"/>
+		</command>
+		
+		
+		<command name="locale info" code="Dat:LoIn" description="returns a record describing the specified locale">
+			<parameter name="for" type="text" code="For_" optional="yes" description="the locale’s identifier, e.g. &quot;en_US&quot; if omitted, the current locale is used"/>
+			<parameter name="in language" code="Loca" type="text" optional="yes" description="a locale identifier, e.g. “de_DE”, indicating the language in which the result should be given, or “current” or “none” (default: “none”)"/>
+			<result type="record"/>
+		
+			<documentation>
+				<html><![CDATA[
+<pre><code>locale info for "en_GB" in language "de_DE"
+→ { localeIdentifier:"en_GB", 
+    localeName:"Englisch (Vereinigtes Königreich)", 
+    languageCode:"en", 
+    countryCode:"GB"}</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+
+		
+		
+		<command name="time zone IDs" code="Dat:LiTz" description="lists the available time zone identifiers">
+			<result description="e.g. {&quot;Africa/Abidjan&quot;, &quot;Africa/Accra&quot;, &quot;Africa/Addis_Ababa&quot;, …, &quot;Pacific/Wallis&quot;}">
+				<type type="text" list="yes"/>
+			</result>
+		</command>
+		
+		
+		<command name="current time zone ID" code="Dat:CuTz" description="returns the identifier for the local time zone">
+			<result type="text" description="e.g. &quot;America/Los_Angeles&quot;"/>
+		</command>
+
+		
+		<command name="time zone info" code="Dat:TzIn" description="returns a record describing the specified time zone">
+			<parameter name="for" type="text" code="For_" optional="yes" description="the time zone’s identifier, e.g. &quot;Africa/Addis_Ababa&quot; if omitted, the current time zone is used"/>
+			<parameter name="in language" code="Loca" type="text" optional="yes" description="a locale identifier, e.g. “de_DE”, indicating the language in which the result should be given, or “current” or “none” (default: “none”)"/>
+			<result type="record"/>
+		
+			<documentation>
+				<html><![CDATA[
+<pre><code>time zone info for "GMT" in language "de_DE"
+→ { timeZoneID:"Europe/London", 
+    secondsToGMT:0, 
+    standardName:"Mittlere Greenwich-Zeit", 
+    standardAbbreviation:"GMT", 
+    daylightSavingName:"Britische Sommerzeit", 
+    daylightSavingAbbreviation:"BST", 
+    isDaylightSaving:false, 
+    daylightSavingOffset:0, 
+    nextDaylightSavingTransition:date "Sunday, 27 March 2016 at 02:00:00" }</code></pre>
+				]]></html>
+			</documentation>
+		</command>
+		
+		
+		<command name="time zone offset" code="Dat:TzOf" description="returns the number of seconds between two time zones">
+			<parameter name="from" code="From" optional="yes" description="if given, a time zone identifier, e.g. &quot;Africa/Addis_Ababa&quot;, or offset from GMT in seconds (default: missing value)">
+				<type type="text"/>
+				<type type="integer"/>
+				<type type="missing value"/>
+			</parameter>
+			<parameter name="to" code="To__" optional="yes" description="if given, a time zone identifier, e.g. &quot;America/Los_Angeles&quot;, or offset from GMT in seconds (default: missing value)">
+				<type type="text"/>
+				<type type="integer"/>
+				<type type="missing value"/>
+			</parameter>
+			<result type="integer"/>
+		
+			<documentation>
+				<html><![CDATA[
+<p>The <code>time zone offset</code> command returns different results depending on whether none, one, or both parameters are given:</p>
+
+<ul>
+<li><p>If no parameters are given (i.e. both are <code>missing value</code>), the result is the number of seconds between the current time zone and GMT (equivalent to <code>time zone offset to "GMT"</code>):</p>
+
+<pre><code>(time zone offset) / hours → 3.0</code></pre></li>
+
+<li><p>If one parameter is given, the result is the number of seconds between that time zone and the current time zone. For example, if the current time zone is “Africa/Addis_Ababa”:</p>
+
+<pre><code>(time zone offset from "Asia/Shanghai") / hours → 5.0
+
+(time zone offset from "America/New_York") / hours → -8.0
+
+(time zone offset to "America/New_York") / hours → 8.0</code></pre></li>
+
+<li><p>If both parameters are given, the result is the number of seconds between the two time zones:</p>
+
+<pre><code>(time zone offset from "Africa/Addis_Ababa" to "GMT") / hours 
+→ 3.0 (Addis Ababa is 3 hours, or 10800 seconds, ahead of Greenwich Mean Time)
+
+(time zone offset from "America/New_York" to "Africa/Addis_Ababa") / hours
+→ -8.0 (New York is 8 hours behind Addis Ababa)</code></pre></li>
+</ul>
+
+<p>Time zones can also be given as offsets to GMT in seconds (e.g. Central Europe is 1 hour, or 3600 seconds, ahead of GMT):</p>
+
+<pre><code>(time zone offset from (1 * hours) to "America/New_York") / hours → 6.0</code></pre>
+
+				]]></html>
+			</documentation>
+		</command>
+
+	</suite>
+	
+	
+	
+	
+	<suite name="Customizing Date Formats" code="****">
+		
+			<documentation>
+				<html><![CDATA[
+<p><a id="customizing-date-formats"></a>In addition to parsing and formatting ISO8601-style date text, the <code>parse date</code> and <code>format date</code> commands allow custom formats to be specified via their optional <code>using</code> parameters. These parameters accept either a text value containing special character-based date format patterns, or one or a pair of predefined constants representing commonly used formats.</p>
+
+<p>For example, the default ISO8601 date format is defined by the pattern “yyyy-MM-dd'T'HH:mm:ssZZ”, where each letter sequence describes a particular date field, except for the “T” letter which is wrapped in single quotes (the escape character) so appears unchanged.</p>
+
+<p>For a complete list of supported patterns, see <a href="http://unicode.org/reports/tr35/tr35-4.html#Date_Format_Patterns">Appendix F: Date Format Patterns</a> of Unicode Technical Standard #35. Commonly used patterns are listed below for convenience.</p>
+
+<table width="100%" style="text-align:left; margin:1em;">
+	<thead>
+		<tr><th>Value</th><th>Format</th><th>Pattern</th><th>Example</th><th>Notes</th></tr>
+	</thead>
+	<tbody>
+		<tr><td>year</td>		<td>number</td>					<td>y</td>		<td>2016</td></tr>
+		<tr><td>year</td>		<td>2-digit number</td>			<td>yy</td>		<td>16</td></tr>
+		<tr><td>year</td>		<td>4-digit number</td>			<td>yyyy</td>	<td>2016</td></tr>
+		<tr><td>month</td>		<td>number</td>					<td>M</td>		<td>9</td></tr>
+		<tr><td>month</td>		<td>2-digit number</td>			<td>MM</td>		<td>09</td></tr>
+		<tr><td>month</td>		<td>abbreviated name</td>		<td>MMM</td>	<td>Sept</td>					<td>[<a href="#note-1">1</a>]</td></tr>
+		<tr><td>month</td>		<td>full name</td>				<td>MMMM</td>	<td>September</td>				<td>[<a href="#note-1">1</a>]</td></tr>
+		<tr><td>day</td>  		<td>number</td>					<td>d</td>		<td>6</td></tr>
+		<tr><td>day</td>		<td>2-digit number</td>			<td>dd</td>		<td>06</td></tr>
+		<tr><td>weekday</td>	<td>abbreviated name</td>		<td>eee</td>	<td>Tues</td>					<td>[<a href="#note-1">2</a>]</td></tr>
+		<tr><td>weekday</td>	<td>full name</td>				<td>eeee</td>	<td>Tuesday</td>				<td>[<a href="#note-1">2</a>]</td></tr>
+		<tr><td>hour</td>		<td>number (1-12)</td>			<td>h</td>		<td>7</td></tr>
+		<tr><td>hour</td>		<td>2-digit number (01-12)</td>	<td>hh</td>		<td>07</td></tr>
+		<tr><td>hour</td>		<td>2-digit number (00-23)</td>	<td>HH</td>		<td>07</td></tr>
+		<tr><td>minute</td>		<td>number</td>					<td>m</td>		<td>5</td></tr>
+		<tr><td>minute</td>		<td>2-digit number</td>			<td>mm</td>		<td>05</td></tr>
+		<tr><td>second</td>		<td>number</td>					<td>s</td>		<td>0</td></tr>
+		<tr><td>second</td>		<td>2-digit number</td>			<td>ss</td>		<td>00</td></tr>
+		<tr><td>period</td>		<td>AM or PM</td>				<td>a</td>		<td>AM</td></tr>
+		<tr><td>timezone</td>	<td>number</td>					<td>ZZ</td>		<td>-0800</td></tr>
+		<tr><td>timezone</td>	<td>full name</td>				<td>zzzz</td>	<td>Pacific Daylight Time</td>	<td>[<a href="#note-1">2</a>]</td></tr>
+	</tbody>
+</table>
+
+<p><a id="note-1"></a>[1] If the <code>parse date</code> or <code>format date</code> command’s <code>for locale</code> parameter is “none” (the default), the “MMM” and “MMMM” patterns will use a generic “M<var>nn</var>” representation instead of the month’s actual name, e.g. “M09” instead of “September”. To parse/format the month name using a particular language, pass the appropriate locale ID via the <code>for locale</code> parameter. For example, pass “current” to use the language specified by the user’s current locale, “en_US” for US English, “fr_FR” for French, and so on.</p>
+
+<p><a id="note-2"></a>[2] As with month names, to parse and format weekday and time zone names using a particular language, use the <code>for locale</code> parameter to specify the appropriate locale.</p>
+
+<p>The <code>parse date</code> and <code>format date</code> commands also accept the following predefined constants which are convenient when presenting date information to users:</p>
+
+<table width="100%" style="text-align:left; margin:1em;">
+	<thead>
+		<tr><th>Constant</th><th>Basic Pattern [<a href="#note-3">3</a>]</th><th>Example</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>canonical date format</code></td>	<td>yyyy-MM-dd'T'HH:mm:ssZZ</td>	<td>2016-09-06T070109-0800</td></tr>
+		<tr><td><code>short date format</code></td>		<td>dd/MM/y</td>					<td>06/09/2016</td></tr>
+		<tr><td><code>medium date format</code></td>	<td>d MMM y</td>					<td>6 Sept 2016</td></tr>
+		<tr><td><code>long date format</code></td>		<td>d MMMM y</td>					<td>6 September 2016</td></tr>
+		<tr><td><code>full date format</code></td>		<td>EEEE, d MMMM y</td>				<td>Tuesday, 6 September 2016</td></tr>
+		<tr><td><code>short time format</code></td>		<td>HH:mm</td>						<td>07:05</td></tr>
+		<tr><td><code>medium time format</code></td>	<td>HH:mm:ss</td>					<td>07:05:00</td></tr>
+		<tr><td><code>long time format</code></td>		<td>HH:mm:ss z</td>					<td>07:05:00 PT</td></tr>
+		<tr><td><code>full time format</code></td>		<td>HH:mm:ss zzzz</td>				<td>07:05:00 Pacific Daylight Time</td></tr>
+	</tbody>
+</table>
+
+<p><a id="note-3"></a>[3] Except for <code>canonical date format</code>, which is locale- and language-independent, the exact pattern and language used automatically adjusts for the specified locale. For example, if the locale is “none” (the default), the <code>short date format</code> uses the pattern “yyyy-MM-dd” (e.g. 2016-09-06); if the locale is “en_US” then it uses a US-style pattern, “M/d/y” (e.g. 9/6/16); if it is “en_GB” then “dd/MM/y” is used (as shown above); and so on.</p>
+
+
+[TO DO: examples of use]
+
+				]]></html>
+			</documentation>
+		
+	</suite>
+	
+	
+	
+	
+</dictionary>
