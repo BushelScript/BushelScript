@@ -31,7 +31,7 @@
             <objects>
                 <tabViewController selectedTabViewItemIndex="0" tabStyle="toolbar" id="imV-Ii-MB7" customClass="PreferencesViewController" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <tabViewItems>
-                        <tabViewItem id="dsy-zM-OGs"/>
+                        <tabViewItem image="InterpreterPrefs" id="dsy-zM-OGs"/>
                         <tabViewItem image="EditorPrefs" id="k1k-xO-cQx"/>
                         <tabViewItem identifier="" image="SuggestionsPrefs" id="Eyd-3q-QAg"/>
                         <tabViewItem image="SavingPrefs" id="Rpy-Iy-lAn"/>
@@ -692,6 +692,7 @@
     </scenes>
     <resources>
         <image name="EditorPrefs" width="24" height="24"/>
+        <image name="InterpreterPrefs" width="80" height="80"/>
         <image name="NSFontPanel" width="32" height="32"/>
         <image name="NSStatusUnavailable" width="16" height="16"/>
         <image name="PrivacyPrefs" width="600" height="600"/>
