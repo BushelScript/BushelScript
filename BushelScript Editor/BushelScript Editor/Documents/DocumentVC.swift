@@ -288,14 +288,14 @@ extension DocumentVC: NSTextViewDelegate {
             program = nil
         }
         
-        guard Defaults[.liveParsingEnabled] else {
-            return
-        }
-        
-        do {
-            _ = try compile(source)
-        } catch {
-            displayInlineError(error)
+        if Defaults[.liveParsingEnabled] {
+            do {
+                _ = try compile(source)
+            } catch {
+                if Defaults[.liveErrorsEnabled] {
+                    displayInlineError(error)
+                }
+            }
         }
     }
     
