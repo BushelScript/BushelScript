@@ -25,11 +25,11 @@ jobs:
         export INSTALL_DIR=install
         ./build.sh
         file_name="BushelScript.v${VERSION}.zip"
-        zip "$file_name" install/Applications/BushelScript.app
+        zip "$file_name" install/Applications/BushelScript\ Editor.app
         echo "artifact=$file_name" >> "$GITHUB_ENV"
     - name: Upload package
       if: success()
       uses: actions/upload-artifact@v1
       with:
         name: ${{ env.artifact }}
-        path: ${{ github.workspace }}/install/Applications/BushelScript.app
+        path: ${{ github.workspace }}/${{ env.artifact }}
