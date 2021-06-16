@@ -122,6 +122,27 @@ struct BushelScript: ParsableCommand {
     }
     
     func run() throws {
+        Bundle.main.executablePath!.withCString {
+            guard let ourPathCString = realpath($0, nil) else {
+                FileHandle.standardError.write(Data("Warning: Failed to find path to own executable. Language modules installed in the app bundle will not be available.".utf8))
+                return
+            }
+            defer {
+                free(ourPathCString)
+            }
+            
+            let us = URL(fileURLWithPath: String(cString: ourPathCString))
+            LanguageModule.appBundle = Bundle(url:
+                us
+                    .deletingLastPathComponent() // bushelscript
+                    .deletingLastPathComponent() // Resources
+                    .deletingLastPathComponent() // Contents
+            )
+            if LanguageModule.appBundle == nil {
+                FileHandle.standardError.write(Data("Warning: Failed to find app bundle from path to own executable. Language modules installed in the app bundle will not be available.".utf8))
+            }
+        }
+        
         if mode.version {
             printVersion()
             return

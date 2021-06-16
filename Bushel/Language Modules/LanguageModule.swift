@@ -5,6 +5,10 @@ private let log = OSLog(subsystem: logSubsystem, category: "Language module mana
 
 public final class LanguageModule {
     
+    /// The app bundle containing built-in language modules.
+    /// This must be set for any such modules to be found.
+    public static var appBundle: Bundle?
+    
     public let descriptor: Descriptor
     
     private let types: Types
@@ -162,7 +166,8 @@ private func languageBundleDirectories() -> [URL] {
 }
 
 private func wrapperLanguageBundleDirectories() -> [URL] {
-    Bundle.main.url(forResource: "Languages", withExtension: nil)
+    LanguageModule.appBundle?
+        .url(forResource: "Languages", withExtension: nil)
         .map { [$0] } ?? []
 }
 

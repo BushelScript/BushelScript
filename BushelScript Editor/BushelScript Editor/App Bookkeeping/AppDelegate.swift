@@ -14,9 +14,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private var defaultsObservations: [DefaultsObservation] = []
     
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        LanguageModule.appBundle = Bundle.main
+    }
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
-        
         DispatchQueue.main.async {
             self.verifyAEPermission()
         }
