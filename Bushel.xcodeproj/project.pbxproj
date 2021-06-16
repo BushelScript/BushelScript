@@ -37,6 +37,8 @@
 		3C187D51257C69F200481DA9 /* RT_InsertionSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C187D50257C69F200481DA9 /* RT_InsertionSpecifier.swift */; };
 		3C187D68257C73E700481DA9 /* InsertionSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C187D67257C73E700481DA9 /* InsertionSpecifier.swift */; };
 		3C2A9CE226793D040084716C /* SwiftAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C72CF1122E12A3A00A98EC7 /* SwiftAutomation.framework */; };
+		3C2A9D032679BA550084716C /* bushelscript_en.bundle in Copy Language Module */ = {isa = PBXBuildFile; fileRef = 3C6B75982305B5980006C354 /* bushelscript_en.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3C2A9D062679BB140084716C /* Module.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2A9D042679BB100084716C /* Module.swift */; };
 		3C2DD4A823A06E90002FAE57 /* ParameterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */; };
 		3C3065B1230B7ABB00833CE8 /* Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B0230B7ABB00833CE8 /* Name.swift */; };
 		3C3065B3230B7E2000833CE8 /* ByNameTermLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3065B2230B7E2000833CE8 /* ByNameTermLookup.swift */; };
@@ -227,6 +229,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		3C2A9D022679BA440084716C /* Copy Language Module */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Languages;
+			dstSubfolderSpec = 7;
+			files = (
+				3C2A9D032679BA550084716C /* bushelscript_en.bundle in Copy Language Module */,
+			);
+			name = "Copy Language Module";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3C554CB623F7B1A10029E71A /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -269,6 +282,7 @@
 		3C12EF9D2354E6010057E0CC /* RT_Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Core.swift; sourceTree = "<group>"; };
 		3C187D50257C69F200481DA9 /* RT_InsertionSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_InsertionSpecifier.swift; sourceTree = "<group>"; };
 		3C187D67257C73E700481DA9 /* InsertionSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsertionSpecifier.swift; sourceTree = "<group>"; };
+		3C2A9D042679BB100084716C /* Module.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Module.swift; sourceTree = "<group>"; };
 		3C2DD4A723A06E90002FAE57 /* ParameterInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterInfo.swift; sourceTree = "<group>"; };
 		3C3065B0230B7ABB00833CE8 /* Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Name.swift; sourceTree = "<group>"; };
 		3C3065B2230B7E2000833CE8 /* ByNameTermLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByNameTermLookup.swift; sourceTree = "<group>"; };
@@ -660,6 +674,7 @@
 		3C6B75A62305B5990006C354 /* bushelscript_en Tests */ = {
 			isa = PBXGroup;
 			children = (
+				3C2A9D042679BB100084716C /* Module.swift */,
 				3C94571423E90D5C00D59C2C /* Formatter */,
 				3C6B752B2304EFF40006C354 /* LangaugeConstructTests.swift */,
 				3C6B75A92305B5990006C354 /* Info.plist */,
@@ -1025,6 +1040,7 @@
 				3C6B759C2305B5990006C354 /* Sources */,
 				3C6B759D2305B5990006C354 /* Frameworks */,
 				3C6B759E2305B5990006C354 /* Resources */,
+				3C2A9D022679BA440084716C /* Copy Language Module */,
 			);
 			buildRules = (
 			);
@@ -1405,6 +1421,7 @@
 			files = (
 				3C9456F823E8F7DE00D59C2C /* FormatterTests.swift in Sources */,
 				3C6B75C02305BA270006C354 /* LangaugeConstructTests.swift in Sources */,
+				3C2A9D062679BB140084716C /* Module.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
