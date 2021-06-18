@@ -569,7 +569,6 @@
 		3C35A5B122C81DE7002D4582 = {
 			isa = PBXGroup;
 			children = (
-				3CD18E8D2620A9C300144A3C /* ParseFile.swift */,
 				3C35A5BD22C81DE7002D4582 /* Bushel */,
 				3C94570323E8FBC200D59C2C /* BushelLanguageTestingTools */,
 				3C6B75992305B5980006C354 /* bushelscript_en */,
@@ -599,6 +598,7 @@
 		3C35A5BD22C81DE7002D4582 /* Bushel */ = {
 			isa = PBXGroup;
 			children = (
+				3CD18E8D2620A9C300144A3C /* ParseFile.swift */,
 				3CC224A12391FB4A00448D25 /* Language Modules */,
 				3CD8397B23DD2419000F2516 /* Translations */,
 				3CCB8A79244B990F003EBCD2 /* ParseError.swift */,
