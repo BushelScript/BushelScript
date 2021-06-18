@@ -1,5 +1,5 @@
 // BushelScript command-line interface.
-// See file main.swift for copyright and licensing information.
+// See file CLI.swift for copyright and licensing information.
 
 import Foundation
 

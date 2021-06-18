@@ -29,7 +29,7 @@
             location = "group:HOW_TO_UNINSTALL.md">
          </FileRef>
          <FileRef
-            location = "group:LICENSING.txt">
+            location = "group:/Users/ian/GitHub/BushelScript/LICENSE.txt">
          </FileRef>
          <Group
             location = "group:Images"
