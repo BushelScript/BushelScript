@@ -1,19 +1,18 @@
 # Components of a BushelScript installation
 
-A standard BushelScript installation consists of the following components:
+BushelScript components are installed in `BushelScript` folders in any standard `Library` folder, i.e., `/Users/you/Library`, `/Library`, and `/Network/Library`. As of v0.4.0, a BushelScript installation is a self-contained `.app` package. The `Resources` folder of this package acts like a `Library/BushelScript` folder to a certain degree.
 
-- Shared components: `/Library/BushelScript/`
-  - Core frameworks: `Core/`
+You can currently add the following types of components to `Library/BushelScript` folders: 
+  - Language modules, in `Languages/`
+  - Libraries (BushelScript or AppleScript), in `Libraries/`
+
+The app package contains the following core components:
+  - Core frameworks: `SharedFrameworks/`
     - AppleEvent support: `SwiftAutomation.framework`
-    - Common structure (including AST) definitions, language module (parser and formatter) API: `Bushel.framework`
+    - Common structure (including AST) definitions, language module API: `Bushel.framework`
     - Runtime: `BushelRT.framework`
-    - XPC service consumer API: `BushelLanguageServiceConnectionCreation.framework/`:
-      - XPC service: `XPCServices/BushelLanguageService.xpc`
   - Language modules: `Languages/`
     - `bushelscript_en.bundle`
-    - …any other installed language modules…
-  - Internal applications: `Applications/`
-    - Background app responsible for GUI commands: `BushelGUIHost.app`
   - Libraries: `Libraries/`
     - [AppleScript "standard" libraries][AppleScript-stdlib]:
       - `Date.scptd`
@@ -25,9 +24,8 @@ A standard BushelScript installation consists of the following components:
       - `TypeSupport.scptd`
       - `Web.scptd`
     - …any other installed libraries…
-- Applications: `/Applications/`
-  - BushelScript Editor: `BushelScript Editor.app`
-- Command-line programs: `/usr/local/bin/`
-  - Script runner and REPL: `bushelscript`
+  - Background app responsible for GUI commands: `BushelGUIHost.app`
+  - Command line tool (script runner and REPL): `bushelscript`
+    - This is symlinked into the appropriate location when the user installs it in Preferences
 
 [AppleScript-stdlib]: https://github.com/BushelScript/applescript-stdlib

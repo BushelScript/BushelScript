@@ -13,16 +13,16 @@ Complete these steps before proceeding:
 
 To set up a BushelScript development environment:
 
-1. Open the `xcworkspace` bundle in Xcode.
-2. Select a scheme to build. Note that the BushelScript Editor scheme will build everything except the command-line tool.
+1. Open the `xcworkspace` package in Xcode.
+2. Select a scheme to build. Note that the BushelScript Editor scheme will build everything.
 3. Hack away.
 
 ## Release
 
-To create an installer package for BushelScript:
+To create a release build:
 
-1. In the directory to which you downloaded the code, run `./make-pkg.sh`.
-2. If the build succeeds, it will have created the installer package `BushelScript.pkg`. You can run or distribute this as you wish.
+1. In the directory to which you downloaded the code, run `./build.sh`.
+2. If the build succeeds, it will have created `install/Applications/BushelScript Editor.app` in the current directory. You can run or distribute this as you wish.
 
 ## Something broke
 
