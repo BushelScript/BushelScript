@@ -39,8 +39,8 @@ class Document: NSDocument {
         guard
             let selector = shouldCloseSelector,
             let context = contextInfo,
-            let delegate = delegate as? NSObject,
-            let imp = class_getMethodImplementation(type(of: delegate), selector)
+            let target = delegate as? NSObject,
+            let imp = class_getMethodImplementation(type(of: target), selector)
         else {
             return super.canClose(withDelegate: delegate, shouldClose: shouldCloseSelector, contextInfo: contextInfo)
         }
@@ -57,10 +57,10 @@ class Document: NSDocument {
             alert.addButton(withTitle: "Cancel")
             alert.beginSheetModal(for: windowForSheet) { response in
                 let canClose = (response == .alertFirstButtonReturn)
-                impFn(delegate, selector, self, canClose, context)
+                impFn(target, selector, self, canClose, context)
             }
         } else {
-            impFn(delegate, selector, self, true, context)
+            impFn(target, selector, self, true, context)
         }
     }
     
