@@ -1,5 +1,5 @@
 // BushelScript Editor application
-// © 2019-2020 Ian A. Gregory.
+// © 2019-2021 Ian Gregory.
 // See file LICENSE.txt for licensing information.
 
 import Foundation
