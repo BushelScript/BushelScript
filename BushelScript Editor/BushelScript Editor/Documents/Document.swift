@@ -10,11 +10,7 @@ private let log = OSLog(subsystem: logSubsystem, category: "Document read/write"
 
 class Document: NSDocument {
     
-    @objc var sourceCode: String = "" {
-        didSet {
-            updateChangeCount(.changeDone)
-        }
-    }
+    @objc var sourceCode: String = ""
     @objc dynamic var languageID: String = "bushelscript_en"
     
     var isRunning: Bool = false
