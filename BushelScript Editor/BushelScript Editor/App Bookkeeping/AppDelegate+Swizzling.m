@@ -5,7 +5,6 @@
 #import <Cocoa/Cocoa.h>
 
 #import "BushelScript_Editor-Swift.h"
-#import "OSADictionaryWindowController.h"
 
 @class AppDelegate;
 
