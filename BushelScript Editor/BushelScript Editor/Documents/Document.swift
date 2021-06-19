@@ -17,7 +17,7 @@ class Document: NSDocument {
     
     var rt = BushelRT.Runtime()
     
-    var isRunning: Bool = false {
+    @objc dynamic var isRunning: Bool = false {
         didSet {
             let ad = NSApplication.shared.delegate as! AppDelegate
             if isRunning {

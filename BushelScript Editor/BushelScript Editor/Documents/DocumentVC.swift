@@ -14,7 +14,7 @@ private func defaultSourceCodeAttributes() -> [NSAttributedString.Key : Any] {
     ]
 }
 
-class DocumentVC: NSViewController {
+class DocumentVC: NSViewController, NSUserInterfaceValidations {
     
     @IBOutlet var textView: NSTextView!
     @IBOutlet var progressIndicator: NSProgressIndicator!
@@ -148,7 +148,7 @@ class DocumentVC: NSViewController {
     
     private var documentLanguageIDObservation: Any?
     
-    private var document: Document! {
+    @objc private var document: Document! {
         didSet {
             document.undoManager?.disableUndoRegistration()
             defer {
@@ -186,6 +186,17 @@ class DocumentVC: NSViewController {
         program = nil
     }
     
+    @objc func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+        switch item.action {
+        case #selector(runScript(_:)):
+            return !document.isRunning
+        case #selector(terminateScript(_:)):
+            return document.isRunning
+        default:
+            return true
+        }
+    }
+    
     @IBAction func runScript(_ sender: Any?) {
         let program: Program
         do {
@@ -204,10 +215,17 @@ class DocumentVC: NSViewController {
             do {
                 let result = try self.document.rt.run(program)
                 NotificationCenter.default.post(name: .result, object: self.document, userInfo: [UserInfo.payload: result])
+                DispatchQueue.main.async {
+                    self.removeErrorDisplay()
+                }
             } catch {
                 self.displayInlineError(error)
             }
         }
+    }
+    
+    @IBAction func terminateScript(_ sender: Any?) {
+        document.rt.shouldTerminate = true
     }
     
     @IBAction func compileScript( _ sender: Any?) {
@@ -303,12 +321,13 @@ extension DocumentVC: NSTextViewDelegate {
                 self.presentError(error)
                 return
             }
-            self.removeErrorDisplay()
             self.display(error: error, at: location.range)
         }
     }
     
     private func display(error: Error, at sourceRange: Range<String.Index>) {
+        self.removeErrorDisplay()
+        
         guard
             let textStorage = textView.textStorage,
             textStorage.string.range.contains(sourceRange)
@@ -316,8 +335,6 @@ extension DocumentVC: NSTextViewDelegate {
             return
         }
         let textStorageRange = NSRange(sourceRange, in: textStorage.string)
-        
-        removeErrorDisplay()
         
         textStorage.addAttribute(.backgroundColor, value: NSColor(named: "ErrorHighlightColor")!, range: textStorageRange)
         textView.typingAttributes = defaultSourceCodeAttributes()
@@ -364,7 +381,6 @@ extension DocumentVC: NSTextViewDelegate {
             self.inlineErrorVC = nil
             oldInlineErrorVC.view.removeFromSuperview()
         }
-        
         clearErrorHighlighting()
         removeInlineErrorView()
     }

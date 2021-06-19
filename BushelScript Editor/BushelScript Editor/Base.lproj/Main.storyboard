@@ -322,6 +322,11 @@ DQ
                                                 <action selector="runScript:" target="Ady-hI-5gd" id="O01-KE-U7V"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Stop" keyEquivalent="." id="3hm-6b-gW2">
+                                            <connections>
+                                                <action selector="terminateScript:" target="Ady-hI-5gd" id="74y-wb-7eI"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="1Hd-d6-r02"/>
                                         <menuItem title="Pretty Print" keyEquivalent="k" id="xgq-nk-h4r">
                                             <connections>
@@ -528,6 +533,28 @@ DQ
                                     </button>
                                     <connections>
                                         <action selector="runScript:" target="6f7-a7-6o1" id="W4u-GS-rXx"/>
+                                        <binding destination="jGA-0Y-lOj" name="enabled" keyPath="document.isRunning" id="Vbp-CT-1bt">
+                                            <dictionary key="options">
+                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                            </dictionary>
+                                        </binding>
+                                    </connections>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="FC7C033E-EDE1-47C0-A165-C3CEA4292CD7" label="Stop" paletteLabel="Stop" image="stop.fill" catalog="system" bordered="YES" id="ihv-Bv-x4Q">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="36" height="25"/>
+                                    <size key="maxSize" width="44" height="32"/>
+                                    <button key="view" verticalHuggingPriority="750" id="fxw-99-Icd">
+                                        <rect key="frame" x="0.0" y="14" width="36" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="stop.fill" catalog="system" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="D5g-xB-Zfr">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="smallSystem" size="13"/>
+                                        </buttonCell>
+                                    </button>
+                                    <connections>
+                                        <action selector="terminateScript:" target="6f7-a7-6o1" id="PKj-uM-jW1"/>
+                                        <binding destination="jGA-0Y-lOj" name="enabled" keyPath="document.isRunning" id="ei6-9M-QdC"/>
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="97B94677-A3D8-4D64-B0A0-0C76230228D5" label="Pretty Print" paletteLabel="Pretty Print" image="SECompileScriptTemplate" id="t3d-2e-W0z">
@@ -569,6 +596,7 @@ DQ
                                 <toolbarItem reference="CqE-M2-9eG"/>
                                 <toolbarItem reference="hxi-iX-p2h"/>
                                 <toolbarItem reference="kJ5-50-1Th"/>
+                                <toolbarItem reference="ihv-Bv-x4Q"/>
                                 <toolbarItem reference="t3d-2e-W0z"/>
                                 <toolbarItem reference="hxi-iX-p2h"/>
                                 <toolbarItem reference="Nnz-WS-rd6"/>
@@ -1036,5 +1064,6 @@ CQ
         <image name="SECompileScriptTemplate" width="18" height="14"/>
         <image name="SERunScriptTemplate" width="18" height="14"/>
         <image name="sidebar.right" catalog="system" width="18" height="14"/>
+        <image name="stop.fill" catalog="system" width="14" height="13"/>
     </resources>
 </document>
