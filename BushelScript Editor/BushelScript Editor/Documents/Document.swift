@@ -13,7 +13,51 @@ class Document: NSDocument {
     @objc var sourceCode: String = ""
     @objc dynamic var languageID: String = "bushelscript_en"
     
-    var isRunning: Bool = false
+    var isRunning: Bool = false {
+        didSet {
+            let ad = NSApplication.shared.delegate as! AppDelegate
+            if isRunning {
+                ad.runningDocuments.insert(self)
+            } else {
+                ad.runningDocuments.remove(self)
+            }
+        }
+    }
+    
+    override func close() {
+        (NSApplication.shared.delegate as? AppDelegate)?.runningDocuments.remove(self)
+        super.close()
+    }
+    
+    // Thank you to https://gist.github.com/keith/a0388486714ca91c27e1848b2f6b8306
+    override func canClose(withDelegate delegate: Any, shouldClose shouldCloseSelector: Selector?, contextInfo: UnsafeMutableRawPointer?) {
+        guard
+            let selector = shouldCloseSelector,
+            let context = contextInfo,
+            let delegate = delegate as? NSObject,
+            let imp = class_getMethodImplementation(type(of: delegate), selector)
+        else {
+            return super.canClose(withDelegate: delegate, shouldClose: shouldCloseSelector, contextInfo: contextInfo)
+        }
+        
+        typealias DelegateMethodImp = @convention(c) (NSObject, Selector, NSDocument, Bool, UnsafeMutableRawPointer) -> Void
+        let impFn = unsafeBitCast(imp, to: DelegateMethodImp.self)
+        
+        if isRunning, let windowForSheet = windowForSheet {
+            let alert = NSAlert()
+            alert.alertStyle = .informational
+            alert.messageText = "Close and terminate script?"
+            alert.informativeText = "This will terminate the running script."
+            alert.addButton(withTitle: "Close and Terminate")
+            alert.addButton(withTitle: "Cancel")
+            alert.beginSheetModal(for: windowForSheet) { response in
+                let canClose = (response == .alertFirstButtonReturn)
+                impFn(delegate, selector, self, canClose, context)
+            }
+        } else {
+            impFn(delegate, selector, self, true, context)
+        }
+    }
     
     /// The hashbang string the document had when it was opened.
     /// If "Add hashbang on save" is disabled, this is used instead.
