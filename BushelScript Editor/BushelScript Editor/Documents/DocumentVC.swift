@@ -19,6 +19,8 @@ class DocumentVC: NSViewController {
     @IBOutlet var textView: NSTextView!
     @IBOutlet var progressIndicator: NSProgressIndicator!
     
+    private var runQueue = DispatchQueue(label: "Run program", qos: .userInitiated)
+    
     private var program: Bushel.Program?
     private var rt = BushelRT.Runtime()
     
@@ -68,24 +70,9 @@ class DocumentVC: NSViewController {
                 let status = self.statusStack.last
                 self.document.isRunning = (status == .running)
                 self.statusText = status?.localizedDescription ?? ""
+                self.isWorking = (status != nil)
             }
         }
-    }
-    
-    var status: Status? {
-        statusStack.last
-    }
-    
-    func pushStatus(_ status: Status) {
-        statusStack.append(status)
-    }
-    
-    func popStatus(_ status: Status) {
-        statusStack.removeAll { $0 == status }
-    }
-    
-    func clearStatus() {
-        statusStack.removeAll()
     }
     
     private var documentFont: NSFont {
@@ -201,14 +188,26 @@ class DocumentVC: NSViewController {
     }
     
     @IBAction func runScript(_ sender: Any?) {
+        let program: Program
         do {
-            let program = try Defaults[.prettyPrintBeforeRunning] ?
-                prettyPrint(modelSourceCode) :
-                compile(modelSourceCode)
-            let result = try rt.run(program)
-            NotificationCenter.default.post(name: .result, object: document, userInfo: [UserInfo.payload: result])
+            program = try Defaults[.prettyPrintBeforeRunning] ?
+                self.prettyPrint(self.modelSourceCode) :
+                self.compile(self.modelSourceCode)
         } catch {
             self.displayInlineError(error)
+            return
+        }
+        runQueue.async {
+            self.statusStack.append(.running)
+            defer {
+                self.statusStack.removeLast()
+            }
+            do {
+                let result = try self.rt.run(program)
+                NotificationCenter.default.post(name: .result, object: self.document, userInfo: [UserInfo.payload: result])
+            } catch {
+                self.displayInlineError(error)
+            }
         }
     }
     
@@ -300,13 +299,14 @@ extension DocumentVC: NSTextViewDelegate {
     }
     
     private func displayInlineError(_ error: Error) {
-        guard let location = (error as? Located)?.location else {
-            return DispatchQueue.main.async {
+        DispatchQueue.main.async {
+            guard let location = (error as? Located)?.location else {
                 self.presentError(error)
+                return
             }
+            self.removeErrorDisplay()
+            self.display(error: error, at: location.range)
         }
-        removeErrorDisplay()
-        display(error: error, at: location.range)
     }
     
     private func display(error: Error, at sourceRange: Range<String.Index>) {
