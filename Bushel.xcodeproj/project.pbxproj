@@ -108,6 +108,7 @@
 		3CC224982391E08800448D25 /* Predefined.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224972391E08800448D25 /* Predefined.swift */; };
 		3CC3E5F22647904800516559 /* RT_Module.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC3E5F12647904800516559 /* RT_Module.swift */; };
 		3CC3E6052647930600516559 /* RT_Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC3E6042647930600516559 /* RT_Function.swift */; };
+		3CC5E80B267E6747002E2562 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC5E807267E6747002E2562 /* Atomic.swift */; };
 		3CC774812414270E00EC1E3B /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC774802414270E00EC1E3B /* Formatting.swift */; };
 		3CCA1C7E235D0C010037058C /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCA1C7B235D0C010037058C /* Logging.swift */; };
 		3CCB8A75244B91C7003EBCD2 /* EnglishMessageFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCB8A74244B91C7003EBCD2 /* EnglishMessageFormatter.swift */; };
@@ -383,6 +384,7 @@
 		3CC2249D2391F6A100448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC3E5F12647904800516559 /* RT_Module.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Module.swift; sourceTree = "<group>"; };
 		3CC3E6042647930600516559 /* RT_Function.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Function.swift; sourceTree = "<group>"; };
+		3CC5E807267E6747002E2562 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		3CC774802414270E00EC1E3B /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		3CCA1C7B235D0C010037058C /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3CCB8A74244B91C7003EBCD2 /* EnglishMessageFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnglishMessageFormatter.swift; sourceTree = "<group>"; };
@@ -830,6 +832,7 @@
 		3CC2249F2391F9CE00448D25 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				3CC5E807267E6747002E2562 /* Atomic.swift */,
 				3CCA1C7B235D0C010037058C /* Logging.swift */,
 			);
 			path = Utility;
@@ -1455,6 +1458,7 @@
 				3C12EF7B2354E29B0057E0CC /* RT_Integer.swift in Sources */,
 				3CE3B225265761D9005BB4DA /* AEEncoding.swift in Sources */,
 				3C12EF852354E32C0057E0CC /* RT_String.swift in Sources */,
+				3CC5E80B267E6747002E2562 /* Atomic.swift in Sources */,
 				3CDEAF5F23B31D26001D5A6D /* RT_Script.swift in Sources */,
 				3CA2699023F9F09F009E1944 /* RT_System.swift in Sources */,
 				3CC224892391CFF300448D25 /* PropertyInfo.swift in Sources */,

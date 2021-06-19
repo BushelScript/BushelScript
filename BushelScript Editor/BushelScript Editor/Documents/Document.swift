@@ -2,8 +2,10 @@
 // © 2019-2021 Ian Gregory.
 // See file LICENSE.txt for licensing information.
 
-import Cocoa
+import AppKit
 import Defaults
+import Bushel
+import BushelRT
 import os
 
 private let log = OSLog(subsystem: logSubsystem, category: "Document read/write")
@@ -12,6 +14,8 @@ class Document: NSDocument {
     
     @objc var sourceCode: String = ""
     @objc dynamic var languageID: String = "bushelscript_en"
+    
+    var rt = BushelRT.Runtime()
     
     var isRunning: Bool = false {
         didSet {
@@ -25,6 +29,7 @@ class Document: NSDocument {
     }
     
     override func close() {
+        rt.shouldTerminate = true
         (NSApplication.shared.delegate as? AppDelegate)?.runningDocuments.remove(self)
         super.close()
     }

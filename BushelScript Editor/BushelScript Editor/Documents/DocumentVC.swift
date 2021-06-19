@@ -22,7 +22,6 @@ class DocumentVC: NSViewController {
     private var runQueue = DispatchQueue(label: "Run program", qos: .userInitiated)
     
     private var program: Bushel.Program?
-    private var rt = BushelRT.Runtime()
     
     enum Status {
         
@@ -203,7 +202,7 @@ class DocumentVC: NSViewController {
                 self.statusStack.removeLast()
             }
             do {
-                let result = try self.rt.run(program)
+                let result = try self.document.rt.run(program)
                 NotificationCenter.default.post(name: .result, object: self.document, userInfo: [UserInfo.payload: result])
             } catch {
                 self.displayInlineError(error)

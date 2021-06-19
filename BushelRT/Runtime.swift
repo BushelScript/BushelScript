@@ -34,6 +34,11 @@ public struct RaisedObjectError: CodableLocalizedError, Located {
 
 public class Runtime {
     
+    @Atomic
+    public var isRunning = false
+    @Atomic
+    public var shouldTerminate = false
+    
     var builtin: Builtin!
     
     /// The result of the last expression executed in sequence.
@@ -215,6 +220,12 @@ public extension Runtime {
     }
     
     func run(_ expression: Expression) throws -> RT_Object {
+        shouldTerminate = false
+        isRunning = true
+        defer {
+            isRunning = false
+        }
+        
         let result: RT_Object
         do {
             result = try runPrimary(expression)
@@ -226,6 +237,14 @@ public extension Runtime {
         return result
     }
     
+    struct Terminated: LocalizedError {
+        
+        public var errorDescription: String? {
+            "Script terminated by request."
+        }
+        
+    }
+    
     struct EarlyReturn: Error {
         
         var value: RT_Object
@@ -233,6 +252,9 @@ public extension Runtime {
     }
     
     func runPrimary(_ expression: Expression, evaluateSpecifiers: Bool = true) throws -> RT_Object {
+        guard !shouldTerminate else {
+            throw Terminated()
+        }
         pushLocation(expression.location)
         defer {
             popLocation()
