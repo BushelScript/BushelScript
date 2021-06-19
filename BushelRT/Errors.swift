@@ -58,7 +58,7 @@ public struct CommandNotHandled: LocalizedError {
     public let command: CommandInfo
     
     public var errorDescription: String? {
-        "No module handled the command: \(command)"
+        "No module handled '\(command)' with the given arguments"
     }
     
 }
