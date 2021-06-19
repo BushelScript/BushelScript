@@ -33,13 +33,21 @@ public class RT_Core: RT_Object, RT_LocalModule {
         }
         
         functions.add(rt, .delay, parameters: [.direct: .integer]) { arguments in
-            let delaySeconds = arguments[.direct, RT_Real.self]?.value ?? 1.0
-            Thread.sleep(forTimeInterval: delaySeconds)
+            var delaySeconds = arguments[.direct, RT_Real.self]?.value ?? 1.0
+            while delaySeconds > 0 {
+                try rt.terminateIfNeeded()
+                Thread.sleep(forTimeInterval: min(2.0, delaySeconds))
+                delaySeconds -= 2.0
+            }
             return rt.lastResult
         }
         functions.add(rt, .delay, parameters: [.direct: .real]) { arguments in
-            let delaySeconds = arguments[.direct, RT_Real.self]?.value ?? 1.0
-            Thread.sleep(forTimeInterval: delaySeconds)
+            var delaySeconds = arguments[.direct, RT_Real.self]?.value ?? 1.0
+            while delaySeconds > 0 {
+                try rt.terminateIfNeeded()
+                Thread.sleep(forTimeInterval: min(2.0, delaySeconds))
+                delaySeconds -= 2.0
+            }
             return rt.lastResult
         }
         
