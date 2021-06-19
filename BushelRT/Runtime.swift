@@ -205,6 +205,12 @@ public class Runtime {
 
 public extension Runtime {
     
+    func terminateIfNeeded() throws {
+        if shouldTerminate {
+            throw Terminated()
+        }
+    }
+    
     func run(_ program: Program) throws -> RT_Object {
         injectTerms(from: program.rootTerm)
         builtin = Builtin(
@@ -252,15 +258,13 @@ public extension Runtime {
     }
     
     func runPrimary(_ expression: Expression, evaluateSpecifiers: Bool = true) throws -> RT_Object {
-        guard !shouldTerminate else {
-            throw Terminated()
-        }
         pushLocation(expression.location)
         defer {
             popLocation()
         }
         
         do {
+            try terminateIfNeeded()
             switch expression.kind {
             case .empty: // MARK: .empty
                 return lastResult
