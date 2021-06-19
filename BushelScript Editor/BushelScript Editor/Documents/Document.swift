@@ -57,10 +57,14 @@ class Document: NSDocument {
             alert.addButton(withTitle: "Cancel")
             alert.beginSheetModal(for: windowForSheet) { response in
                 let canClose = (response == .alertFirstButtonReturn)
-                impFn(target, selector, self, canClose, context)
+                if canClose {
+                    return super.canClose(withDelegate: delegate, shouldClose: shouldCloseSelector, contextInfo: contextInfo)
+                } else {
+                    impFn(target, selector, self, false, context)
+                }
             }
         } else {
-            impFn(target, selector, self, true, context)
+            return super.canClose(withDelegate: delegate, shouldClose: shouldCloseSelector, contextInfo: contextInfo)
         }
     }
     
