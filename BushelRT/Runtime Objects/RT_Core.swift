@@ -32,10 +32,15 @@ public class RT_Core: RT_Object, RT_LocalModule {
             return newValue
         }
         
+        functions.add(rt, .delay, parameters: [.direct: .integer]) { arguments in
+            let delaySeconds = arguments[.direct, RT_Real.self]?.value ?? 1.0
+            Thread.sleep(forTimeInterval: delaySeconds)
+            return rt.lastResult
+        }
         functions.add(rt, .delay, parameters: [.direct: .real]) { arguments in
             let delaySeconds = arguments[.direct, RT_Real.self]?.value ?? 1.0
             Thread.sleep(forTimeInterval: delaySeconds)
-            return rt.null
+            return rt.lastResult
         }
         
         functions.add(rt, .Sequence_add, parameters: [.target: .list, .direct: .item]) { arguments in
