@@ -1,0 +1,78 @@
+<!-- Thanks to https://github.com/noah-nuebling/mac-mouse-fix/tree/update-feed -->
+<style>
+
+    /* Following this tutorial: https://devilgate.org/blog/2012/07/02/tip-using-pandoc-to-create-truly-standalone-html-files/ */
+
+    :root {
+        font-size: 10px; /* 1 rem is this much */
+    }
+
+    body {
+        background-color: transparent;
+        margin: 1.2rem 1.2rem;
+        padding: 0rem;
+        font-family: -apple-system;
+        font-size: 1.3rem;
+
+        line-height: 1.15em;
+    }
+
+    h1 {
+        font-size: 2.0rem;
+    }
+
+    h2 {
+        font-size: 1.7rem;
+    }
+
+    h3 {
+        font-size: 1.3rem;
+    }
+
+    ul {
+        padding-left: 2.0rem;
+        margin-top: 0rem;
+        margin-bottom: 2.0rem;
+    }
+    li, p {
+
+        margin-left: 0;
+        margin-top: 0;
+        margin-bottom: 0.8rem;
+
+        font-size: 1.1rem
+    }
+    .annotation {
+        font-size: 1.1rem;
+    }
+
+    @media (prefers-color-scheme: light) {
+
+        h1 {
+            color: #272727;
+        }
+
+        a {
+            color: #0948be;
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+
+        body {
+            background-color: #1e1e1e; 
+            /* ^ Sparkle background is still bright when we have `background-color: transparent` even with darkmode active. 
+                This is the color of the text field background in Apple Mail on macOS 11 BigSur */
+
+            color: #D9D9D9; /* For headers */
+        }
+
+        li, p {
+            color:#FFFFFF;
+        }
+        a {
+            color: #3586FF;
+        }
+    }
+
+</style>
