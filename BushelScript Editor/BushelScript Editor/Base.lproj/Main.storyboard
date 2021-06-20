@@ -28,6 +28,12 @@
                                                 <segue destination="Y4s-9q-HdP" kind="show" id="CuO-cY-hv6"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Check for Updates…" id="otZ-0x-ddp">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="checkForUpdates:" target="LGR-ye-EHh" id="4pn-M9-rKL"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="C1n-1i-Dfy"/>
                                         <menuItem title="Services" id="NMo-om-nkz">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -444,6 +450,7 @@ DQ
                         <outlet property="runItem" destination="Rgm-K1-pbI" id="mWy-xn-bWq"/>
                     </connections>
                 </customObject>
+                <customObject id="LGR-ye-EHh" customClass="SUUpdater"/>
                 <customObject id="sh2-hA-rfQ" customClass="ScriptLanguageMenuDelegate" customModule="BushelScript_Editor" customModuleProvider="target"/>
                 <customObject id="OXF-AH-Jih" userLabel="BushelScript Website Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
                     <userDefinedRuntimeAttributes>

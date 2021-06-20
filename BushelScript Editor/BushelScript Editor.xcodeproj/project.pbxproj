@@ -46,6 +46,8 @@
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
 		3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1D0602319A07100DD01A9 /* Defaults.swift */; };
+		3CEC9DBD267EED0D00E53CC0 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; };
+		3CEC9DBE267EED0D00E53CC0 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CFEC5122677EFEF001EEF12 /* SidebarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFEC5112677EFEF001EEF12 /* SidebarVC.swift */; };
 		3CFEC51B2677F33B001EEF12 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFEC51A2677F33B001EEF12 /* Notification.swift */; };
 		3CFEC51D2677FA7B001EEF12 /* Observation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFEC51C2677FA7B001EEF12 /* Observation.swift */; };
@@ -164,6 +166,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				3CEC9DBE267EED0D00E53CC0 /* Sparkle.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -235,6 +238,7 @@
 		3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryDocument.swift; sourceTree = "<group>"; };
 		3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = bushelscript.xcodeproj; path = ../bushelscript/bushelscript.xcodeproj; sourceTree = "<group>"; };
 		3CD1D0602319A07100DD01A9 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
+		3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
 		3CEF504023529437008603E3 /* SwiftAutomation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEF50422352948E008603E3 /* BushelScript Editor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BushelScript Editor.entitlements"; sourceTree = "<group>"; };
 		3CFEC5112677EFEF001EEF12 /* SidebarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarVC.swift; sourceTree = "<group>"; };
@@ -254,6 +258,7 @@
 			files = (
 				3C12EFA12354E7640057E0CC /* Defaults in Frameworks */,
 				3C2A9CE726793D6F0084716C /* Bushel.framework in Frameworks */,
+				3CEC9DBD267EED0D00E53CC0 /* Sparkle.framework in Frameworks */,
 				3C2A9CDF26793CF60084716C /* BushelRT.framework in Frameworks */,
 				3C66A80C23CA6BC7005BA372 /* OSAKit.framework in Frameworks */,
 			);
@@ -352,6 +357,7 @@
 		3C05670C231356E7004CDB1A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */,
 				3C66A80B23CA6BC7005BA372 /* OSAKit.framework */,
 				3CEF504023529437008603E3 /* SwiftAutomation.framework */,
 			);
@@ -909,6 +915,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/vendor",
+				);
 				INFOPLIST_FILE = "BushelScript Editor/Info/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -935,6 +945,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/vendor",
+				);
 				INFOPLIST_FILE = "BushelScript Editor/Info/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1056,6 +1070,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/vendor",
+				);
 				INFOPLIST_FILE = "BushelScript Editor/Info/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

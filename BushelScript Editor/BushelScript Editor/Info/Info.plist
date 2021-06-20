@@ -99,5 +99,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>SUFeedURL</key>
+	<string>https://bushelscript.github.io/BushelScript/appcast.xml</string>
 </dict>
 </plist>
