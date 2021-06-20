@@ -526,14 +526,31 @@ DQ
                                         </popUpButtonCell>
                                     </popUpButton>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="12CEB4D7-9654-4757-8DC8-E7FF659957A2" label="Run" paletteLabel="Run" image="play.fill" id="kJ5-50-1Th">
+                                <toolbarItem implicitItemIdentifier="FC7C033E-EDE1-47C0-A165-C3CEA4292CD7" label="Stop" paletteLabel="Stop" image="stop.fill.medium.medium" bordered="YES" id="ihv-Bv-x4Q">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="36" height="25"/>
+                                    <size key="maxSize" width="44" height="32"/>
+                                    <button key="view" verticalHuggingPriority="750" id="fxw-99-Icd">
+                                        <rect key="frame" x="0.0" y="14" width="36" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="stop.fill.medium.medium" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="D5g-xB-Zfr">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="smallSystem" size="13"/>
+                                        </buttonCell>
+                                    </button>
+                                    <connections>
+                                        <action selector="terminateScript:" target="6f7-a7-6o1" id="PKj-uM-jW1"/>
+                                        <binding destination="jGA-0Y-lOj" name="enabled" keyPath="document.isRunning" id="ei6-9M-QdC"/>
+                                    </connections>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="12CEB4D7-9654-4757-8DC8-E7FF659957A2" label="Run" paletteLabel="Run" image="play.fill.medium.medium" id="kJ5-50-1Th">
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="36" height="25"/>
                                     <size key="maxSize" width="44" height="32"/>
                                     <button key="view" verticalHuggingPriority="750" id="BPO-f5-pmU">
                                         <rect key="frame" x="0.0" y="14" width="36" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="play.fill" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8T5-C0-091">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="play.fill.medium.medium" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8T5-C0-091">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem" size="13"/>
                                         </buttonCell>
@@ -547,31 +564,14 @@ DQ
                                         </binding>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="FC7C033E-EDE1-47C0-A165-C3CEA4292CD7" label="Stop" paletteLabel="Stop" image="stop.fill" bordered="YES" id="ihv-Bv-x4Q">
-                                    <nil key="toolTip"/>
-                                    <size key="minSize" width="36" height="25"/>
-                                    <size key="maxSize" width="44" height="32"/>
-                                    <button key="view" verticalHuggingPriority="750" id="fxw-99-Icd">
-                                        <rect key="frame" x="0.0" y="14" width="36" height="32"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="stop.fill" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="D5g-xB-Zfr">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="smallSystem" size="13"/>
-                                        </buttonCell>
-                                    </button>
-                                    <connections>
-                                        <action selector="terminateScript:" target="6f7-a7-6o1" id="PKj-uM-jW1"/>
-                                        <binding destination="jGA-0Y-lOj" name="enabled" keyPath="document.isRunning" id="ei6-9M-QdC"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="97B94677-A3D8-4D64-B0A0-0C76230228D5" label="Pretty Print" paletteLabel="Pretty Print" image="SECompileScriptTemplate" id="t3d-2e-W0z">
+                                <toolbarItem implicitItemIdentifier="97B94677-A3D8-4D64-B0A0-0C76230228D5" label="Pretty Print" paletteLabel="Pretty Print" image="hammer.fill.medium.medium" id="t3d-2e-W0z">
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="44" height="25"/>
                                     <size key="maxSize" width="44" height="25"/>
                                     <button key="view" verticalHuggingPriority="750" id="OJG-qe-5ww">
                                         <rect key="frame" x="12" y="14" width="44" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="SECompileScriptTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="auY-BA-2Az">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="hammer.fill.medium.medium" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="auY-BA-2Az">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem" size="13"/>
                                         </buttonCell>
@@ -580,14 +580,14 @@ DQ
                                         <action selector="compileScript:" target="6f7-a7-6o1" id="H3j-B8-VOu"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="E33B5B42-3F40-46E6-9B3B-420181A6DE60" label="Sidebar" paletteLabel="Toggle Sidebar" image="sidebar.right" bordered="YES" id="Nnz-WS-rd6">
+                                <toolbarItem implicitItemIdentifier="E33B5B42-3F40-46E6-9B3B-420181A6DE60" label="Sidebar" paletteLabel="Toggle Sidebar" image="sidebar.right.medium.medium" bordered="YES" id="Nnz-WS-rd6">
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="44" height="25"/>
                                     <size key="maxSize" width="44" height="25"/>
                                     <button key="view" verticalHuggingPriority="750" id="EkK-ml-3xN">
                                         <rect key="frame" x="21" y="14" width="44" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sidebar.right" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yAz-BA-B5t">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sidebar.right.medium.medium" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yAz-BA-B5t">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem" size="13"/>
                                         </buttonCell>
@@ -602,10 +602,10 @@ DQ
                             <defaultToolbarItems>
                                 <toolbarItem reference="CqE-M2-9eG"/>
                                 <toolbarItem reference="hxi-iX-p2h"/>
-                                <toolbarItem reference="kJ5-50-1Th"/>
                                 <toolbarItem reference="ihv-Bv-x4Q"/>
+                                <toolbarItem reference="kJ5-50-1Th"/>
                                 <toolbarItem reference="t3d-2e-W0z"/>
-                                <toolbarItem reference="hxi-iX-p2h"/>
+                                <toolbarItem reference="Ke7-Zz-VTH"/>
                                 <toolbarItem reference="Nnz-WS-rd6"/>
                             </defaultToolbarItems>
                         </toolbar>
@@ -1068,9 +1068,9 @@ CQ
         </scene>
     </scenes>
     <resources>
-        <image name="SECompileScriptTemplate" width="18" height="14"/>
-        <image name="play.fill" width="10" height="11"/>
-        <image name="sidebar.right" width="15" height="12"/>
-        <image name="stop.fill" width="11" height="11"/>
+        <image name="hammer.fill.medium.medium" width="142" height="118"/>
+        <image name="play.fill.medium.medium" width="88" height="113"/>
+        <image name="sidebar.right.medium.medium" width="140" height="113"/>
+        <image name="stop.fill.medium.medium" width="103" height="119"/>
     </resources>
 </document>
