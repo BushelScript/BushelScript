@@ -543,28 +543,87 @@
             <objects>
                 <viewController title="Updates" id="d7J-M5-OMo" sceneMemberID="viewController">
                     <view key="view" id="5nN-JT-odI">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="56"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="154"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mqw-4I-vce">
-                                <rect key="frame" x="89" y="20" width="273" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Automatic updates are not yet implemented." id="kvy-tR-E2F">
-                                    <font key="font" usesAppearanceFont="YES"/>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tHs-GT-Rk5">
+                                <rect key="frame" x="18" y="117" width="412" height="18"/>
+                                <buttonCell key="cell" type="check" title="Automatically check for updates" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="LSR-48-udr">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="RRE-20-w0l" name="value" keyPath="automaticallyChecksForUpdates" id="o0P-sc-AwW"/>
+                                </connections>
+                            </button>
+                            <button horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YiU-pv-J9y">
+                                <rect key="frame" x="13" y="13" width="178" height="32"/>
+                                <buttonCell key="cell" type="push" title="Check for Updates Now" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nZr-Z8-eDw">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="checkForUpdates:" target="RRE-20-w0l" id="I1I-T0-qll"/>
+                                </connections>
+                            </button>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="NzS-G4-36y">
+                                <rect key="frame" x="18" y="82" width="414" height="28"/>
+                                <textFieldCell key="cell" selectable="YES" id="nII-ZL-XCq">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <string key="title">If enabled, you will be prompted to install updates when they are available.
+The check will only happen when this app is open.</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="XsU-qf-gm6">
+                                <rect key="frame" x="18" y="60" width="65" height="14"/>
+                                <textFieldCell key="cell" selectable="YES" title="Last check:" id="a2b-G6-Vzn">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="N1A-7h-Ib4">
+                                <rect key="frame" x="83" y="60" width="349" height="14"/>
+                                <textFieldCell key="cell" selectable="YES" title="Date" id="dEo-dk-rMc">
+                                    <dateFormatter key="formatter" dateStyle="full" timeStyle="long" doesRelativeDateFormatting="YES" id="Mvn-4a-Yi3"/>
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="RRE-20-w0l" name="value" keyPath="lastUpdateCheckDate" id="jI7-tU-540">
+                                        <dictionary key="options">
+                                            <string key="NSNullPlaceholder">Never</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="mqw-4I-vce" firstAttribute="top" secondItem="5nN-JT-odI" secondAttribute="top" constant="20" symbolic="YES" id="MYz-Mg-D72"/>
-                            <constraint firstAttribute="bottom" secondItem="mqw-4I-vce" secondAttribute="bottom" constant="20" symbolic="YES" id="otN-M3-JrX"/>
-                            <constraint firstItem="mqw-4I-vce" firstAttribute="centerX" secondItem="5nN-JT-odI" secondAttribute="centerX" id="uBU-1D-CKv"/>
+                            <constraint firstAttribute="trailing" secondItem="NzS-G4-36y" secondAttribute="trailing" constant="20" symbolic="YES" id="0R1-Yr-NrQ"/>
+                            <constraint firstItem="XsU-qf-gm6" firstAttribute="firstBaseline" secondItem="NzS-G4-36y" secondAttribute="baseline" constant="22" id="51q-Sw-xMe"/>
+                            <constraint firstItem="YiU-pv-J9y" firstAttribute="top" secondItem="XsU-qf-gm6" secondAttribute="bottom" constant="20" id="6WY-kr-b8H"/>
+                            <constraint firstItem="N1A-7h-Ib4" firstAttribute="leading" secondItem="XsU-qf-gm6" secondAttribute="trailing" constant="4" id="6uH-zj-C6A"/>
+                            <constraint firstAttribute="trailing" secondItem="N1A-7h-Ib4" secondAttribute="trailing" constant="20" symbolic="YES" id="GSV-Tq-p21"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="YiU-pv-J9y" secondAttribute="trailing" constant="20" symbolic="YES" id="HQ1-KM-hko"/>
+                            <constraint firstItem="tHs-GT-Rk5" firstAttribute="leading" secondItem="5nN-JT-odI" secondAttribute="leading" constant="20" symbolic="YES" id="Jvd-qV-NGj"/>
+                            <constraint firstItem="tHs-GT-Rk5" firstAttribute="top" secondItem="5nN-JT-odI" secondAttribute="top" constant="20" symbolic="YES" id="Nth-cx-HvM"/>
+                            <constraint firstItem="NzS-G4-36y" firstAttribute="firstBaseline" secondItem="tHs-GT-Rk5" secondAttribute="baseline" constant="22" id="Q9u-ho-ows"/>
+                            <constraint firstAttribute="trailing" secondItem="tHs-GT-Rk5" secondAttribute="trailing" constant="20" symbolic="YES" id="WUX-Ia-clK"/>
+                            <constraint firstItem="NzS-G4-36y" firstAttribute="leading" secondItem="5nN-JT-odI" secondAttribute="leading" constant="20" symbolic="YES" id="Ypq-dk-aJF"/>
+                            <constraint firstAttribute="bottom" secondItem="YiU-pv-J9y" secondAttribute="bottom" constant="20" symbolic="YES" id="hOh-0Y-D2R"/>
+                            <constraint firstItem="YiU-pv-J9y" firstAttribute="leading" secondItem="5nN-JT-odI" secondAttribute="leading" constant="20" symbolic="YES" id="sCK-Eg-Un5"/>
+                            <constraint firstItem="N1A-7h-Ib4" firstAttribute="firstBaseline" secondItem="XsU-qf-gm6" secondAttribute="firstBaseline" id="sMN-xO-7wv"/>
+                            <constraint firstItem="XsU-qf-gm6" firstAttribute="leading" secondItem="5nN-JT-odI" secondAttribute="leading" constant="20" symbolic="YES" id="ybb-it-Rys"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="5pk-9Q-eKQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="RRE-20-w0l" customClass="SUUpdater"/>
             </objects>
-            <point key="canvasLocation" x="723" y="1552"/>
+            <point key="canvasLocation" x="723" y="1624"/>
         </scene>
         <!--Interpreter-->
         <scene sceneID="fMh-8J-RKj">
