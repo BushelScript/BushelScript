@@ -8,7 +8,7 @@ public final class EnglishMessageFormatter: MessageFormatter {
     public func message(for error: ParseError) -> String {
         switch error.error {
         case let .missing(elements, context):
-            return "expected " + elements.map { element in
+            return "Expected " + elements.map { element in
                 switch element {
                 case let .keyword(keyword):
                     return "\(keyword)"

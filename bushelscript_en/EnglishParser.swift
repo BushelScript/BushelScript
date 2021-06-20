@@ -324,7 +324,7 @@ public final class EnglishParser: SourceParser {
             let foundThen = tryEating(prefix: "then")
             let foundNewline = tryEating(prefix: "\n")
             guard foundThen || foundNewline else {
-                throw AdHocParseError("expected ‘then’ or line break after condition expression", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
+                throw AdHocParseError("Expected ‘then’ or line break after condition expression", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
             }
             
             if foundNewline {
@@ -465,8 +465,8 @@ public final class EnglishParser: SourceParser {
         var system = Resource.System()
         if tryEating(prefix: "version") {
             eatCommentsAndWhitespace()
-            guard let match = tryEating(Regex("[vV]?(\\d+)\\.(\\d+)(?:\\.(\\d+))?")) else {
-                throw AdHocParseError("expected OS version number", at: currentLocation)
+            guard let match = tryEating(Regex("[vV]?(\\d{1,4})\\.(\\d{1,4})(?:\\.(\\d{1,4}))?")) else {
+                throw AdHocParseError("Expected OS version number", at: currentLocation)
             }
             
             let versionComponents = match.captures.compactMap { $0.map { Int($0)! } }
@@ -528,7 +528,7 @@ public final class EnglishParser: SourceParser {
         
         let pathStartIndex = currentIndex
         guard var (_, path) = try parseString() else {
-            throw AdHocParseError("expected path string", at: currentLocation)
+            throw AdHocParseError("Expected path string", at: currentLocation)
         }
         
         path = (path as NSString).expandingTildeInPath
