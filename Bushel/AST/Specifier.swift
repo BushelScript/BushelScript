@@ -171,3 +171,11 @@ extension Expression {
     }
     
 }
+
+extension Specifier: CustomReflectable {
+    
+    public var customMirror: Mirror {
+        Mirror(self, children: ["term": term, "kind": kind, "parent": parent as Any])
+    }
+    
+}
