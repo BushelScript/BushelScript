@@ -376,15 +376,15 @@ extension SourceParser {
             return nil
         }
         
-        while let processedPrimary = try processBinaryOperators(after: primary, lastOperation: lastOperation) {
-            primary = processedPrimary
-        }
-        
         while let processedPrimary = try (
             postprocess(primary: primary).map {
                 Expression($0, at: expressionLocation)
             } ?? parsePostfixOperators()
         ) {
+            primary = processedPrimary
+        }
+        
+        while let processedPrimary = try processBinaryOperators(after: primary, lastOperation: lastOperation) {
             primary = processedPrimary
         }
         
