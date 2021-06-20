@@ -54,6 +54,8 @@ public final class EnglishMessageFormatter: MessageFormatter {
                     return "‘)’ to end weave delimiter"
                 case .blockBody:
                     return "block body (‘do’)"
+                case .specifier:
+                    return "specifier"
                 }
             }.joined(separator: " or ") + (context.map { context in
                 switch context {

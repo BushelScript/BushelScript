@@ -65,6 +65,7 @@ public struct ParseError: ParseErrorProtocol {
             case weaveDelimiter
             case weaveDelimiterEndMarker
             case blockBody
+            case specifier
             
         }
         

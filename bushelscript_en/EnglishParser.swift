@@ -17,6 +17,7 @@ public final class EnglishParser: SourceParser {
     public var elements: Set<SourceElement> = []
     public var awaitingExpressionEndKeywords: [Set<Term.Name>] = []
     public var endExpression: Bool = false
+    public var allowSuffixSpecifierStack: [Bool] = []
     
     public var keywordsTraversalTable: TermNameTraversalTable = [:]
     public var prefixOperatorsTraversalTable: TermNameTraversalTable = [:]
@@ -34,7 +35,7 @@ public final class EnglishParser: SourceParser {
     
     public let postfixOperators: [Term.Name : UnaryOperation] = [:]
     
-    public let binaryOperators: [Term.Name : BinaryOperation] = [
+    public let infixOperators: [Term.Name : BinaryOperation] = [
         Term.Name("or"): .or,
         Term.Name("xor"): .xor,
         Term.Name("and"): .and,
@@ -115,6 +116,11 @@ public final class EnglishParser: SourceParser {
         Term.Name("/"): .divide,
         Term.Name("÷"): .divide,
         Term.Name("as"): .coerce,
+    ]
+    
+    public let suffixSpecifierMarkers: [Term.Name] = [
+        Term.Name("->"),
+        Term.Name("→")
     ]
     
     public let stringMarkers: [(begin: Term.Name, end: Term.Name)] = [
@@ -637,34 +643,34 @@ public final class EnglishParser: SourceParser {
             addingElement {
                 source.removeFirst(firstWord.count)
             }
-            return try parsePrimary().map { dataExpression in
+            return try parsePrimary(allowSuffixSpecifier: false).map { dataExpression in
                 return .index(dataExpression)
             }
         case "named":
             addingElement {
                 source.removeFirst(firstWord.count)
             }
-            return try parsePrimary().map { dataExpression in
+            return try parsePrimary(allowSuffixSpecifier: false).map { dataExpression in
                 return .name(dataExpression)
             }
         case "id":
             addingElement {
                 source.removeFirst(firstWord.count)
             }
-            return try parsePrimary().map { dataExpression in
+            return try parsePrimary(allowSuffixSpecifier: false).map { dataExpression in
                 return .id(dataExpression)
             }
         case "whose", "where":
             addingElement {
                 source.removeFirst(firstWord.count)
             }
-            return try parsePrimary().map { expression in
+            return try parsePrimary(allowSuffixSpecifier: false).map { expression in
                 return .test(expression, expression.asTestPredicate())
             }
         default:
             guard
                 !source.hasPrefix("\n"),
-                let firstExpression = try? parsePrimary()
+                let firstExpression = try? parsePrimary(allowSuffixSpecifier: false)
             else {
                 return nil
             }
@@ -677,7 +683,7 @@ public final class EnglishParser: SourceParser {
                 addingElement {
                     source.removeFirst(midWord!.count)
                 }
-                return try parsePrimary().map { secondExpression in
+                return try parsePrimary(allowSuffixSpecifier: false).map { secondExpression in
                     return .range(from: firstExpression, to: secondExpression)
                 }
             default:
@@ -688,10 +694,10 @@ public final class EnglishParser: SourceParser {
     
     public func parseRelativeSpecifierAfterTypeName(_ typeTerm: Term) throws -> Specifier? {
         if tryEating(prefix: "before") {
-            let parentExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["before"])))
+            let parentExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["before"])), allowSuffixSpecifier: false)
             return Specifier(term: typeTerm, kind: .previous, parent: parentExpression)
         } else if tryEating(prefix: "after") {
-            let parentExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["after"])))
+            let parentExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["after"])), allowSuffixSpecifier: false)
             return Specifier(term: typeTerm, kind: .next, parent: parentExpression)
         } else {
             return nil
@@ -703,7 +709,7 @@ public final class EnglishParser: SourceParser {
     }
     
     public func parseInsertionSpecifierAfterInsertionLocation(kind: InsertionSpecifier.Kind) throws -> Expression.Kind? {
-        .insertionSpecifier(InsertionSpecifier(kind: kind, parent: try parsePrimary()))
+        .insertionSpecifier(InsertionSpecifier(kind: kind, parent: try parsePrimary(allowSuffixSpecifier: false)))
     }
     
     public func tryParseSpecifierPhrase(chainingTo chainTo: Expression) throws -> Expression.Kind? {
@@ -718,25 +724,28 @@ public final class EnglishParser: SourceParser {
         // e.g., character 1 of "hello"
         // First expression (chainTo) must be a specifier since it is the child
         
-        let parentExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["of"])))
+        let parentExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["of"])), allowSuffixSpecifier: false)
         childSpecifier.setRootAncestor(parentExpression)
         return .specifier(childSpecifier)
     }
     
     public func tryParseSuffixSpecifier(chainingTo chainTo: Expression) throws -> Expression.Kind? {
-        guard tryEating(prefix: "'s") || tryEating(prefix: "’s") else {
+        guard allowSuffixSpecifierStack.last! else {
+            return nil
+        }
+        guard let keyword = eatSuffixSpecifierMarker() else {
             return nil
         }
         
         // Add new child to bottom of specifier chain
-        // e.g., "hello"'s first character
+        // e.g., "hello" -> first character
         // Second expression (the one about to be parsed) must be a specifier since
         // it is the child
-        
-        let newChildExpression = try parsePrimaryOrThrow(.adHoc("after possessive"))
+         
+        let newChildExpression = try parsePrimaryOrThrow(.adHoc("after possessive"), allowSuffixSpecifier: false)
         guard let newChildSpecifier = newChildExpression.asSpecifier() else {
-            // e.g., "hello"'s 123
-            throw AdHocParseError("a non-specifier expression may only come first in a possessive-specifier-phrase", at: newChildExpression.location)
+            // e.g., "hello" -> 123
+            throw ParseError(.missing([.specifier], .afterKeyword(keyword)), at: newChildExpression.location)
         }
         newChildSpecifier.parent = chainTo
         return .specifier(newChildSpecifier)

@@ -22,6 +22,7 @@ public protocol SourceParser: AnyObject {
     var elements: Set<SourceElement> { get set }
     var awaitingExpressionEndKeywords: [Set<Term.Name>] { get set }
     var endExpression: Bool { get set }
+    var allowSuffixSpecifierStack: [Bool] { get set }
     
     var keywordsTraversalTable: TermNameTraversalTable { get set }
     var prefixOperatorsTraversalTable: TermNameTraversalTable { get set }
@@ -34,7 +35,8 @@ public protocol SourceParser: AnyObject {
     var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] { get }
     var prefixOperators: [Term.Name : UnaryOperation] { get }
     var postfixOperators: [Term.Name : UnaryOperation] { get }
-    var binaryOperators: [Term.Name : BinaryOperation] { get }
+    var infixOperators: [Term.Name : BinaryOperation] { get }
+    var suffixSpecifierMarkers: [Term.Name] { get }
     var stringMarkers: [(begin: Term.Name, end: Term.Name)] { get }
     var expressionGroupingMarkers: [(begin: Term.Name, end: Term.Name)] { get }
     var listMarkers: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name])] { get }
@@ -150,7 +152,7 @@ extension SourceParser {
         keywordsTraversalTable = buildTraversalTable(for: keywords.keys)
         prefixOperatorsTraversalTable = buildTraversalTable(for: prefixOperators.keys)
         postfixOperatorsTraversalTable = buildTraversalTable(for: postfixOperators.keys)
-        binaryOperatorsTraversalTable = buildTraversalTable(for: binaryOperators.keys)
+        binaryOperatorsTraversalTable = buildTraversalTable(for: infixOperators.keys)
     }
     
 }
@@ -360,20 +362,27 @@ extension SourceParser {
         return result
     }
     
-    public func parsePrimaryOrThrow(_ context: ParseError.Error.Context) throws -> Expression {
-        guard let expression = try parsePrimary() else {
+    public func parsePrimaryOrThrow(_ context: ParseError.Error.Context, allowSuffixSpecifier: Bool = true) throws -> Expression {
+        guard let expression = try parsePrimary(allowSuffixSpecifier: allowSuffixSpecifier) else {
             throw ParseError(.missing([.expression], context), at: currentLocation)
         }
         return expression
     }
-    public func parsePrimary(lastOperation: BinaryOperation? = nil) throws -> Expression? {
+    public func parsePrimary(lastOperation: BinaryOperation? = nil, allowSuffixSpecifier: Bool = true) throws -> Expression? {
         expressionStartIndices.append(currentIndex)
+        allowSuffixSpecifierStack.append(allowSuffixSpecifier)
         defer {
+            eatCommentsAndWhitespace()
+            allowSuffixSpecifierStack.removeLast()
             expressionStartIndices.removeLast()
         }
         
         guard var primary = try (parsePrefixOperators() ?? parseUnprocessedPrimary()) else {
             return nil
+        }
+        
+        if !(allowSuffixSpecifierStack.last!), findSuffixSpecifierMarker() != nil {
+            return primary
         }
         
         while let processedPrimary = try (
@@ -387,8 +396,6 @@ extension SourceParser {
         while let processedPrimary = try processBinaryOperators(after: primary, lastOperation: lastOperation) {
             primary = processedPrimary
         }
-        
-        eatCommentsAndWhitespace()
         
         return primary
     }
@@ -1050,7 +1057,7 @@ extension SourceParser {
     private func findBinaryOperator() -> (termName: Term.Name, operator: BinaryOperation)? {
         let result = findComplexTermName(from: binaryOperatorsTraversalTable, in: source)
         return result.termName.map { name in
-            (termName: name, operator: binaryOperators[name]!)
+            (termName: name, operator: infixOperators[name]!)
         }
     }
     
@@ -1063,6 +1070,14 @@ extension SourceParser {
             source.removeFirst(result.termString.count)
         }
         eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
+    }
+    
+    private func findSuffixSpecifierMarker() -> Term.Name? {
+        suffixSpecifierMarkers.first { isNext($0) }
+    }
+    
+    public func eatSuffixSpecifierMarker() -> Term.Name? {
+        suffixSpecifierMarkers.first { tryEating($0) }
     }
     
     private func eatStringBeginMarker() -> (begin: Term.Name, end: Term.Name)? {
