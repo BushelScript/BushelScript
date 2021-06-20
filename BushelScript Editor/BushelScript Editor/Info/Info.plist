@@ -66,9 +66,9 @@
 	<key>NSAppleEventsUsageDescription</key>
 	<string>If you deny, your scripts will not be able to communicate with this application from BushelScript Editor.</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>If you deny, your scripts will not be able to communicate with the Calendar app from BushelScript Editor. Your data isn&apos;t used for anything else.</string>
+	<string>If you deny, your scripts will not be able to communicate with the Calendar app from BushelScript Editor. Your data isn't used for anything else.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>If you deny, your scripts will not be able to communicate with the Contacts app from BushelScript Editor. Your data isn&apos;t used for anything else.</string>
+	<string>If you deny, your scripts will not be able to communicate with the Contacts app from BushelScript Editor. Your data isn't used for anything else.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2019–2021 Ian Gregory. All rights reserved.</string>
 	<key>NSMainStoryboardFile</key>
@@ -77,6 +77,8 @@
 	<string>NSApplication</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>This permission is needed to be able to communicate with the Reminders app. If you deny, you will not be able to script Reminders from within the editor.</string>
+	<key>SUFeedURL</key>
+	<string>https://bushelscript.github.io/BushelScript/appcast.xml</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -99,7 +101,5 @@
 			</dict>
 		</dict>
 	</array>
-	<key>SUFeedURL</key>
-	<string>https://bushelscript.github.io/BushelScript/appcast.xml</string>
 </dict>
 </plist>

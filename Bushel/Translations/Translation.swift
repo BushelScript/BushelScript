@@ -8,7 +8,7 @@ private let log = OSLog(subsystem: logSubsystem, category: "Translations")
 /// Can be constructed from the contents of a YAML-based translation file.
 public struct Translation {
     
-    public static let currentFormat = 0.3
+    public static let currentFormat = 0.4
     
     public struct ParseError: Error {
         
