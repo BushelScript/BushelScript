@@ -377,7 +377,13 @@ extension SourceParser {
             expressionStartIndices.removeLast()
         }
         
-        guard var primary = try (parsePrefixOperators() ?? parseUnprocessedPrimary()) else {
+        guard var primary: Expression = try ({
+            do {
+                return try parseUnprocessedPrimary()
+            } catch {
+                return try parsePrefixOperators()
+            }
+        }()) else {
             return nil
         }
         
