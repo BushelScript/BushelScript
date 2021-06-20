@@ -1,20 +1,18 @@
 # BushelScript
 
-## Automate macOS to new heights
+## A macOS scripting language with unparalleled connective power
 
-![BushelScript Editor demo](Images/editor-demo.gif)
-
-BushelScript is a [next-generation open-source alternative](https://bushelscript.github.io/) to [AppleScript](https://en.wikipedia.org/wiki/AppleScript).
+[BushelScript is a next-generation open-source alternative to AppleScript](https://bushelscript.github.io/about/).
 
 ## Help
 
-See [BushelScript help](https://bushelscript.github.io/help/) for guides, reference material, and a community Discord server.
+See the [BushelScript help website](https://bushelscript.github.io/help/).
 
 ## Install
 
-See [releases on GitHub](https://github.com/BushelScript/BushelScript/releases). The latest version is at the top of the page. Download and run the installer package `BushelScript.pkg`.
+Download the first zip file listed [here](https://github.com/BushelScript/BushelScript/releases/latest), decompress it, drag the app to /Applications, and finally right-click it in Finder and select Open. Right-click opening will allow you to run the app without a trip to System Preferences, as the app is self-signed (without an Apple Developer ID).
 
-See [WHAT_GETS_INSTALLED.md](WHAT_GETS_INSTALLED.md) for details on what is installed where.
+See [WHAT_GETS_INSTALLED.md](WHAT_GETS_INSTALLED.md) for details.
 
 ## Uninstall
 
