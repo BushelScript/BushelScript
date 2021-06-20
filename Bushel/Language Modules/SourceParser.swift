@@ -381,7 +381,11 @@ extension SourceParser {
             do {
                 return try parseUnprocessedPrimary()
             } catch {
-                return try parsePrefixOperators()
+                if let prefix = try parsePrefixOperators() {
+                    return prefix
+                } else {
+                    throw error
+                }
             }
         }()) else {
             return nil
