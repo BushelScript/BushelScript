@@ -15,10 +15,10 @@ public class RT_String: RT_Object, AEEncodable {
         "\"\(value)\""
     }
     
-    private static let typeInfo_ = TypeInfo(.string)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .string
     }
+    
     public override var truthy: Bool {
         !value.isEmpty
     }
@@ -35,25 +35,25 @@ public class RT_String: RT_Object, AEEncodable {
         RT_Integer(rt, value: value.count)
     }
     
-    public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+    public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
         [
-            PropertyInfo(Properties.Sequence_length): \RT_String.length
+            .Sequence_length: \RT_String.length
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
         keyPath.evaluate(on: self)
     }
     
-    public override func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object? {
+    public override func element(_ type: Reflection.`Type`, at index: Int64) throws -> RT_Object? {
         let zeroBasedIndex = index - 1
-        if RT_Character.typeInfo.isA(type) {
+        if rt.reflection.types[RT_Character.staticType].isA(type) {
             return RT_Character(rt, value: value[value.index(value.startIndex, offsetBy: Int(zeroBasedIndex))])
         } else {
             return try super.element(type, at: index)
         }
     }
     
-    public override func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object? {
+    public override func element(_ type: Reflection.`Type`, at positioning: AbsolutePositioning) throws -> RT_Object? {
         switch positioning {
         case .first:
             return try element(type, at: 1)
@@ -66,16 +66,16 @@ public class RT_String: RT_Object, AEEncodable {
         }
     }
     
-    public override func elements(_ type: TypeInfo) throws -> RT_Object {
-        if RT_Character.typeInfo.isA(type) {
+    public override func elements(_ type: Reflection.`Type`) throws -> RT_Object {
+        if rt.reflection.types[RT_Character.staticType].isA(type) {
             return self
         } else {
             return try super.elements(type)
         }
     }
     
-    public override func elements(_ type: TypeInfo, from: RT_Object, thru: RT_Object) throws -> RT_Object {
-        if RT_Character.typeInfo.isA(type) {
+    public override func elements(_ type: Reflection.`Type`, from: RT_Object, thru: RT_Object) throws -> RT_Object {
+        if rt.reflection.types[RT_Character.staticType].isA(type) {
             let from = try Int(from.coerceOrThrow(to: RT_Integer.self).value)
             let thru = try Int(thru.coerceOrThrow(to: RT_Integer.self).value)
             guard from >= 1, thru <= value.count else {
@@ -93,7 +93,7 @@ public class RT_String: RT_Object, AEEncodable {
         }
     }
     
-    public override func coerce(to type: TypeInfo) -> RT_Object? {
+    public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
         switch Types(type.id) {
         case .character:
             guard value.count == 1 else {

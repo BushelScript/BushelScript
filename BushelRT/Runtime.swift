@@ -73,133 +73,7 @@ public class Runtime {
     public lazy var topScript = RT_Script(self, name: scriptName)
     public lazy var core = RT_Core(self)
     
-    public func injectTerms(from rootTerm: Term) {
-        func add(typeTerm term: Term) {
-            func typeInfo(for typeTerm: Term) -> TypeInfo {
-                var tags: Set<TypeInfo.Tag> = []
-                if let name = typeTerm.name {
-                    tags.insert(.name(name))
-                }
-                return TypeInfo(typeTerm.uri, tags)
-            }
-            
-            let type = typeInfo(for: term)
-            typesByUID[type.id] = type
-            if let supertype = type.supertype {
-                if typesBySupertype[supertype] == nil {
-                    typesBySupertype[supertype] = []
-                }
-                typesBySupertype[supertype]!.append(type)
-            }
-            if let name = term.name {
-                typesByName[name] = type
-            }
-        }
-        
-        guard !terms.contains(rootTerm) else {
-            return
-        }
-        terms.insert(rootTerm)
-        
-        for term in rootTerm.dictionary.contents {
-            switch term.role {
-            case .dictionary:
-                break
-            case .type:
-                add(typeTerm: term)
-            case .property:
-                let tags: [PropertyInfo.Tag] = term.name.map { [.name($0)] } ?? []
-                let property = PropertyInfo(term.uri, Set(tags))
-                propertiesByUID[property.id] = property
-            case .constant:
-                let tags: [ConstantInfo.Tag] = term.name.map { [.name($0)] } ?? []
-                let constant = ConstantInfo(term.uri, Set(tags))
-                constantsByUID[constant.id] = constant
-            case .command:
-                let tags: [CommandInfo.Tag] = term.name.map { [.name($0)] } ?? []
-                let command = CommandInfo(term.uri, Set(tags))
-                commandsByUID[command.id] = command
-            case .parameter:
-                break
-            case .variable:
-                break
-            case .resource:
-                break
-            }
-            
-            injectTerms(from: term)
-        }
-    }
-    
-    private var terms: Set<Term> = []
-    
-    private var typesByUID: [Term.ID : TypeInfo] = [:]
-    private var typesBySupertype: [TypeInfo : [TypeInfo]] = [:]
-    private var typesByName: [Term.Name : TypeInfo] = [:]
-    
-    private func add(forTypeUID uid: Term.SemanticURI) -> TypeInfo {
-        let info = TypeInfo(uid)
-        typesByUID[Term.ID(.type, uid)] = info
-        return info
-    }
-    
-    public func type(forUID uid: Term.ID) -> TypeInfo {
-        typesByUID[uid] ?? TypeInfo(uid.uri)
-    }
-    public func subtypes(of type: TypeInfo) -> [TypeInfo] {
-        typesBySupertype[type] ?? []
-    }
-    public func type(for name: Term.Name) -> TypeInfo? {
-        typesByName[name]
-    }
-    public func type(for code: OSType) -> TypeInfo {
-        type(forUID: Term.ID(.type, .ae4(code: code)))
-    }
-    
-    private var propertiesByUID: [Term.ID : PropertyInfo] = [:]
-    
-    private func add(forPropertyUID uid: Term.SemanticURI) -> PropertyInfo {
-        let info = PropertyInfo(uid)
-        propertiesByUID[Term.ID(.property, uid)] = info
-        return info
-    }
-    
-    public func property(forUID uid: Term.ID) -> PropertyInfo {
-        propertiesByUID[uid] ?? add(forPropertyUID: uid.uri)
-    }
-    public func property(for code: OSType) -> PropertyInfo {
-        property(forUID: Term.ID(.property, .ae4(code: code)))
-    }
-    
-    private var constantsByUID: [Term.ID : ConstantInfo] = [:]
-    
-    private func add(forConstantUID uid: Term.SemanticURI) -> ConstantInfo {
-        let info = ConstantInfo(uid)
-        constantsByUID[Term.ID(.constant, uid)] = info
-        return info
-    }
-    
-    public func constant(forUID uid: Term.ID) -> ConstantInfo {
-        constantsByUID[uid] ??
-            propertiesByUID[Term.ID(.property, uid.uri)].map { ConstantInfo(property: $0) } ??
-            typesByUID[Term.ID(.type, uid.uri)].map { ConstantInfo(type: $0) } ??
-            add(forConstantUID: uid.uri)
-    }
-    public func constant(for code: OSType) -> ConstantInfo {
-        constant(forUID: Term.ID(.constant, .ae4(code: code)))
-    }
-    
-    private var commandsByUID: [Term.ID : CommandInfo] = [:]
-    
-    private func add(forCommandUID uid: Term.SemanticURI) -> CommandInfo {
-        let info = CommandInfo(uid)
-        commandsByUID[Term.ID(.command, uid)] = info
-        return info
-    }
-    
-    public func command(forUID uid: Term.ID) -> CommandInfo {
-        commandsByUID[uid] ?? add(forCommandUID: uid.uri)
-    }
+    public var reflection = Reflection()
     
 }
 
@@ -212,7 +86,7 @@ public extension Runtime {
     }
     
     func run(_ program: Program) throws -> RT_Object {
-        injectTerms(from: program.rootTerm)
+        reflection.inject(from: program.rootTerm)
         builtin = Builtin(
             self,
             frameStack: RT_FrameStack(bottom: [
@@ -404,7 +278,7 @@ public extension Runtime {
             case .enumerator(let term): // MARK: .constant
                 return builtin.newConstant(term.id)
             case .type(let term): // MARK: .class_
-                return RT_Type(self, value: type(forUID: term.id))
+                return RT_Type(self, value: reflection.types[term.uri])
             case .set(let expression, to: let newValueExpression): // MARK: .set
                 if case .variable(let variableTerm) = expression.kind {
                     let newValueExprValue = try runPrimary(newValueExpression)
@@ -414,24 +288,24 @@ public extension Runtime {
                     let expressionExprValue = try runPrimary(expression, evaluateSpecifiers: false)
                     let newValueExprValue = try runPrimary(newValueExpression)
                     
-                    let arguments: [ParameterInfo : RT_Object] = [
-                        ParameterInfo(.direct): expressionExprValue,
-                        ParameterInfo(.set_to): newValueExprValue
+                    let arguments: [Reflection.Parameter : RT_Object] = [
+                        Reflection.Parameter(.direct): expressionExprValue,
+                        Reflection.Parameter(.set_to): newValueExprValue
                     ]
-                    let command = self.command(forUID: Term.ID(Commands.set))
+                    let command = reflection.commands[.set]
                     return try builtin.run(command: command, arguments: arguments)
                 }
             case .command(let term, let parameters): // MARK: .command
-                let parameterExprValues: [(key: ParameterInfo, value: RT_Object)] = try parameters.map { kv in
+                let parameterExprValues: [(key: Reflection.Parameter, value: RT_Object)] = try parameters.map { kv in
                     let (parameterTerm, parameterValue) = kv
-                    let parameterInfo = ParameterInfo(parameterTerm.uri)
+                    let parameter = reflection.commands[term.uri].parameters[parameterTerm.uri]
                     let value = try runPrimary(parameterValue)
-                    return (parameterInfo, value)
+                    return (parameter, value)
                 }
-                let arguments = [ParameterInfo : RT_Object](uniqueKeysWithValues:
+                let arguments = [Reflection.Parameter : RT_Object](uniqueKeysWithValues:
                     parameterExprValues
                 )
-                let command = self.command(forUID: term.id)
+                let command = reflection.commands[term.uri]
                 return try builtin.run(command: command, arguments: arguments)
             case .reference(let expression): // MARK: .reference
                 return try runPrimary(expression, evaluateSpecifiers: false)
@@ -451,16 +325,17 @@ public extension Runtime {
                 return RT_InsertionSpecifier(self, parent: parentValue, kind: insertionSpecifier.kind)
             case .function(let name, let parameters, let types, let arguments, let body): // MARK: .function
                 let evaluatedTypes = try types.map { try $0.map { try runPrimary($0) } }
-                let typeInfos = evaluatedTypes.map { $0.map { ($0 as? RT_Type)?.value ?? TypeInfo(.item) } ?? TypeInfo(.item) }
+                let types = evaluatedTypes.map { $0.flatMap { ($0 as? RT_Type)?.value } ?? reflection.types[.item] }
                 
                 var parameterSignature = RT_Function.ParameterSignature(
-                    parameters.enumerated().map { (ParameterInfo($0.element.uri), typeInfos[$0.offset]) },
+                    parameters.enumerated().map { (Reflection.Parameter($0.element.uri), types[$0.offset]) },
                     uniquingKeysWith: { l, r in l }
                 )
-                if !typeInfos.isEmpty {
-                    parameterSignature[ParameterInfo(.direct)] = typeInfos[0]
+                let command = reflection.commands[name.uri]
+                if !types.isEmpty {
+                    parameterSignature[command.parameters[.direct]] = types[0]
                 }
-                let signature = RT_Function.Signature(command: command(forUID: Term.ID(.command, name.uri)), parameters: parameterSignature)
+                let signature = RT_Function.Signature(command: command, parameters: parameterSignature)
                 
                 let implementation = RT_ExpressionImplementation(self, formalParameters: parameters, formalArguments: arguments, body: body)
                 
@@ -469,9 +344,10 @@ public extension Runtime {
                     
                 return lastResult
             case .block(let arguments, let body): // MARK: .block
+                let command = reflection.commands[.run]
                 let blockSignature = RT_Function.Signature(
-                    command: CommandInfo(.run),
-                    parameters: [ParameterInfo(.direct): TypeInfo(.list)]
+                    command: command,
+                    parameters: [command.parameters[.direct]: reflection.types[.list]]
                 )
                 let implementation = RT_BlockImplementation(
                     self,
@@ -498,34 +374,23 @@ public extension Runtime {
     }
     
     private func buildSpecifier(_ specifier: Specifier) throws -> RT_Object {
-        let id = specifier.term.id
-        
         let parent = try specifier.parent.map { try runPrimary($0, evaluateSpecifiers: false) }
-        
-        let data: [RT_Object]
-        if case .test(_, let testComponent) = specifier.kind {
-            data = [try runTestComponent(testComponent)]
-        } else {
-            data = try specifier.allDataExpressions().map { dataExpression in
-                try runPrimary(dataExpression)
-            }
-        }
-        
-        func generate() -> RT_Specifier {
+        let termURI = specifier.term.uri
+        func generate() throws -> RT_Specifier {
             if case .property = specifier.kind {
-                return RT_Specifier(self, parent: parent, type: nil, property: property(forUID: id), data: [], kind: .property)
+                return RT_Specifier(self, parent: parent, kind: .property(reflection.properties[termURI]))
             }
             
-            let kind: RT_Specifier.Kind = {
+            let form: RT_Specifier.Kind.Element.Form = try {
                 switch specifier.kind {
-                case .simple:
-                    return .simple
-                case .index:
-                    return .index
-                case .name:
-                    return .name
-                case .id:
-                    return .id
+                case let .simple(data):
+                    return try .simple(runPrimary(data))
+                case let .index(index):
+                    return try .index(runPrimary(index))
+                case let .name(name):
+                    return try .name(runPrimary(name))
+                case let .id(id):
+                    return try .id(runPrimary(id))
                 case .all:
                     return .all
                 case .first:
@@ -540,18 +405,19 @@ public extension Runtime {
                     return .previous
                 case .next:
                     return .next
-                case .range:
-                    return .range
-                case .test:
-                    return .test
+                case let .range(from, thru):
+                    return try .range(from: runPrimary(from), thru: runPrimary(thru))
+                case let .test(predicate, _):
+                    return try .test(runPrimary(predicate))
                 case .property:
                     fatalError("unreachable")
                 }
             }()
-            return RT_Specifier(self, parent: parent, type: type(forUID: id), data: data, kind: kind)
+            let element = RT_Specifier.Kind.Element(type: reflection.types[termURI], form: form)
+            return RT_Specifier(self, parent: parent, kind: .element(element))
         }
         
-        let resultValue = generate()
+        let resultValue = try generate()
         return (specifier.parent == nil) ?
             builtin.qualifySpecifier(resultValue) :
             resultValue

@@ -9,18 +9,17 @@ public class RT_Script: RT_Object, RT_LocalModule {
         super.init(rt)
     }
     
-    private static let typeInfo_ = TypeInfo(.script)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .script
     }
     
     public override var description: String {
         "script\(name.map { " \"\($0)\"" } ?? "")"
     }
     
-    public var dynamicProperties: [PropertyInfo : RT_Object] = [:]
+    public var dynamicProperties: [Reflection.Property : RT_Object] = [:]
     
-    public override var properties: [PropertyInfo : RT_Object] {
+    public override var properties: [Reflection.Property : RT_Object] {
         super.properties.merging(dynamicProperties, uniquingKeysWith: { old, new in new })
     }
     

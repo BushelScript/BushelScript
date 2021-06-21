@@ -23,7 +23,7 @@ public struct Undecodable: LocalizedError {
 public struct RemoteCommandError: LocalizedError {
     
     public let remoteObject: Any
-    public let command: CommandInfo
+    public let command: Reflection.Command
     public let error: Error
     
     public var errorDescription: String? {
@@ -55,7 +55,7 @@ public struct NotAModule: LocalizedError {
 
 public struct CommandNotHandled: LocalizedError {
     
-    public let command: CommandInfo
+    public let command: Reflection.Command
     
     public var errorDescription: String? {
         "No module handled '\(command)' with the given arguments"
@@ -65,8 +65,8 @@ public struct CommandNotHandled: LocalizedError {
 
 public struct NoPropertyExists: LocalizedError {
     
-    public let type: TypeInfo
-    public let property: PropertyInfo
+    public let type: Reflection.`Type`
+    public let property: Reflection.Property
     
     public var errorDescription: String? {
         "Objects of type \(type) do not have a property named \(property)"
@@ -76,8 +76,8 @@ public struct NoPropertyExists: LocalizedError {
 
 public struct NoNumericPropertyExists: LocalizedError {
     
-    public let type: TypeInfo
-    public let property: PropertyInfo
+    public let type: Reflection.`Type`
+    public let property: Reflection.Property
     
     public var errorDescription: String? {
         "Objects of type \(type) do not have a numeric property named \(property)"
@@ -87,8 +87,8 @@ public struct NoNumericPropertyExists: LocalizedError {
 
 public struct NoWritablePropertyExists: LocalizedError {
     
-    public let type: TypeInfo
-    public let property: PropertyInfo
+    public let type: Reflection.`Type`
+    public let property: Reflection.Property
     
     public var errorDescription: String? {
         "Objects of type \(type) do not have a writable property named \(property)"
@@ -108,11 +108,11 @@ public struct NonPropertyIsNotWritable: LocalizedError {
 
 public struct Uncoercible: LocalizedError {
     
-    public let expectedType: TypeInfo
+    public let expectedType: Reflection.`Type`
     public let object: RT_Object
     
     public var errorDescription: String? {
-        "The \(object.dynamicTypeInfo) ‘\(object)’ cannot be converted to \("\(expectedType)".startsWithVowel ? "an" : "a") \(expectedType)"
+        "The \(object.type) ‘\(object)’ cannot be converted to \("\(expectedType)".startsWithVowel ? "an" : "a") \(expectedType)"
     }
     
 }
@@ -129,8 +129,8 @@ public struct TypeObjectRequired: LocalizedError {
 
 public struct MissingParameter: LocalizedError {
     
-    public let command: CommandInfo
-    public let parameter: ParameterInfo
+    public let command: Reflection.Command
+    public let parameter: Reflection.Parameter
     
     public var errorDescription: String? {
         "The required \(Parameters(parameter.uri) == .direct ? "direct object parameter" : "parameter \(parameter)") is missing from a call to \(command)"
@@ -140,10 +140,10 @@ public struct MissingParameter: LocalizedError {
 
 public struct WrongParameterType: LocalizedError {
     
-    public let command: CommandInfo
-    public let parameter: ParameterInfo
-    public let expected: TypeInfo
-    public let actual: TypeInfo
+    public let command: Reflection.Command
+    public let parameter: Reflection.Parameter
+    public let expected: Reflection.`Type`
+    public let actual: Reflection.`Type`
     
     public var errorDescription: String? {
         "The \(Parameters(parameter.uri) == .direct ? "direct object parameter" : "parameter \(parameter)") for a call to \(command) expects \("\(expected)".startsWithVowel ? "an" : "a") \(expected) but received \("\(actual)".startsWithVowel ? "an" : "a") \(actual)"
@@ -165,7 +165,7 @@ public struct UnsupportedIndexForm: LocalizedError {
     }
     
     public let indexForm: IndexForm
-    public let `class`: TypeInfo
+    public let `class`: Reflection.`Type`
     
     public var errorDescription: String? {
         "The indexing form ‘\(indexForm)’ is unsupported by items of type \(`class`)"
@@ -189,6 +189,7 @@ public struct InvalidSpecifierDataType: LocalizedError {
         
         case byIndex = "by-index"
         case byName = "by-name"
+        case byID = "by-id"
         case simple = "simple"
         case byRange = "by-range"
         case byTest = "by-test"

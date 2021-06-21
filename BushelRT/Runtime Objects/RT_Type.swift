@@ -4,16 +4,15 @@ import SwiftAutomation
 /// A runtime type reflected as a dynamic object.
 public class RT_Type: RT_Object, AEEncodable {
     
-    public var value: TypeInfo
+    public var value: Reflection.`Type`
     
-    public init(_ rt: Runtime, value: TypeInfo) {
+    public init(_ rt: Runtime, value: Reflection.`Type`) {
         self.value = value
         super.init(rt)
     }
     
-    private static let typeInfo_ = TypeInfo(.type)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .type
     }
     
     public override var description: String {

@@ -21,10 +21,10 @@ extension RT_LocalModule {
         var arguments = arguments
         if
             arguments[.direct] == nil,
-            function.signature.parameters[ParameterInfo(.target)] == nil,
-            function.signature.parameters[ParameterInfo(.direct)] != nil
+            function.signature.parameters[Reflection.Parameter(.target)] == nil,
+            function.signature.parameters[Reflection.Parameter(.direct)] != nil
         {
-            arguments.contents[ParameterInfo(.direct)] = arguments[.target]
+            arguments.contents[Reflection.Parameter(.direct)] = arguments[.target]
         }
         
         return try function.implementation.run(arguments: arguments)
@@ -34,7 +34,7 @@ extension RT_LocalModule {
 
 public struct FunctionSet {
     
-    var byCommand: [CommandInfo : [RT_Function]] = [:]
+    var byCommand: [Reflection.Command : [RT_Function]] = [:]
     
     public mutating func add(_ function: RT_Function) {
         if byCommand[function.signature.command] == nil {
@@ -43,7 +43,7 @@ public struct FunctionSet {
         byCommand[function.signature.command]!.append(function)
     }
     
-    public func functions(for command: CommandInfo) -> [RT_Function] {
+    public func functions(for command: Reflection.Command) -> [RT_Function] {
         byCommand[command] ?? []
     }
     
@@ -56,9 +56,9 @@ public struct FunctionSet {
         return functions.reduce((typeScore: -1, countScore: Int.min, function: nil as RT_Function?)) { bestSoFar, function in
             var parameters = function.signature.parameters
             
-            if parameters[ParameterInfo(.target)] == nil {
+            if parameters[function.signature.command.parameters[.target]] == nil {
                 // Add target parameter that (weakly) matches every invocation.
-                parameters[ParameterInfo(.target)] = TypeInfo(.item)
+                parameters[function.signature.command.parameters[.target]] = function.rt.reflection.types[.item]
             }
             
             // Ensure each argument maps to a parameter of suitable type.
@@ -66,14 +66,14 @@ public struct FunctionSet {
             for (parameter, argument) in arguments.contents {
                 guard
                     let parameterType = parameters[parameter],
-                    argument.dynamicTypeInfo.isA(parameterType) ||
-                        argument.dynamicTypeInfo.uri == Term.SemanticURI(Types.null)
+                    argument.type.isA(parameterType) ||
+                        argument.type.uri == Term.SemanticURI(Types.null)
                 else {
                     return bestSoFar
                 }
                 
                 // +1 point for each exact type match.
-                if argument.dynamicTypeInfo == parameterType {
+                if argument.type == parameterType {
                     typeScore += 1
                 }
             }
@@ -98,12 +98,15 @@ public struct FunctionSet {
 extension FunctionSet {
     
     public mutating func add(_ rt: Runtime, _ command: Commands, parameters: [Parameters : Types], implementation: @escaping RT_SwiftImplementation.Function) {
+        let command = rt.reflection.commands[command]
         add(RT_Function(
             rt,
             signature: RT_Function.Signature(
-                command: CommandInfo(command),
+                command: command,
                 parameters: RT_Function.ParameterSignature(
-                    uniqueKeysWithValues: parameters.map { (ParameterInfo($0.key), TypeInfo($0.value)) }
+                    uniqueKeysWithValues: parameters.map {
+                        (command.parameters[$0.key], rt.reflection.types[$0.value])
+                    }
                 )
             ),
             implementation: RT_SwiftImplementation(function: implementation)

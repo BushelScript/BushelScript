@@ -15,9 +15,8 @@ public class RT_File: RT_Object {
         String(describing: value)
     }
     
-    private static let typeInfo_ = TypeInfo(.date)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .file
     }
     
     public var basename: RT_String {
@@ -30,18 +29,18 @@ public class RT_File: RT_Object {
         RT_String(rt, value: value.deletingLastPathComponent().path)
     }
     
-    public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+    public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
         [
-            PropertyInfo(Properties.file_basename): \RT_File.basename,
-            PropertyInfo(Properties.file_extname): \RT_File.extname,
-            PropertyInfo(Properties.file_dirname): \RT_File.dirname,
+            .file_basename: \RT_File.basename,
+            .file_extname: \RT_File.extname,
+            .file_dirname: \RT_File.dirname
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
         keyPath.evaluate(on: self)
     }
     
-    public override func coerce(to type: TypeInfo) -> RT_Object? {
+    public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
         switch Types(type.id) {
         case .string:
             return RT_String(rt, value: value.path)

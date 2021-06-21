@@ -1,7 +1,7 @@
 import Bushel
 
 /// Base type for all runtime objects.
-@objc public class RT_Object: NSObject, RTTyped {
+@objc public class RT_Object: NSObject {
     
     public var rt: Runtime
     
@@ -9,21 +9,13 @@ import Bushel
         self.rt = rt
     }
     
-    private static let typeInfo_ = TypeInfo(.item, [.root])
-    
-    /// The runtime type that this `RT_Object` subclass implements.
-    /// Should probably be overridden in every subclass.
-    public class var typeInfo: TypeInfo {
-        typeInfo_
+    public class var staticType: Types {
+        .item
     }
     
     /// The runtime type of this instance.
-    /// The base implementation returns `Swift.type(of: self).typeInfo`.
-    ///
-    /// Overridable for cases when an `RT_Object` subclass can represent values
-    /// of different runtime types.
-    public var dynamicTypeInfo: TypeInfo {
-        Swift.type(of: self).typeInfo
+    public var type: Reflection.`Type` {
+        rt.reflection.types[Swift.type(of: self).staticType]
     }
     
     /// Whether this object should be considered equivalent to the boolean
@@ -42,7 +34,7 @@ import Bushel
     /// - Important: If this is overridden, then `evaluateStaticProperty(_:)`
     /// must also be overridden so that the static keypath mapping machinery
     /// knows what type it is applying the keypath to.
-    public class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+    public class var propertyKeyPaths: [Properties : AnyKeyPath] {
         [:]
     }
     /// A peer to `propertyKeyPaths`. This must be also overridden whenever
@@ -61,9 +53,11 @@ import Bushel
     /// A map of statically-declared property terms to their current values.
     /// Does not include any properties that are not known to exist until
     /// until runtime, e.g., record keys.
-    public var staticProperties: [PropertyInfo : RT_Object] {
-        [PropertyInfo(Properties.type): RT_Object.type(rt, dynamicTypeInfo)].merging(
-            RT_Object.propertyKeyPaths.compactMapValues { evaluateStaticProperty($0) },
+    public var staticProperties: [Properties : RT_Object] {
+        [.type: RT_Type(rt, value: type)].merging(
+            RT_Object.propertyKeyPaths.compactMapValues {
+                evaluateStaticProperty($0)
+            },
             uniquingKeysWith: { old, new in new }
         )
     }
@@ -73,8 +67,10 @@ import Bushel
     /// Overridable to allow for dynamic property listings; for properties that
     /// are statically known to exist, an overridden `propertyKeyPaths` and
     /// `evaluateStaticProperty(_:)` pair is preferable.
-    public var properties: [PropertyInfo : RT_Object] {
-        staticProperties
+    public var properties: [Reflection.Property : RT_Object] {
+        [Reflection.Property : RT_Object](uniqueKeysWithValues:
+            staticProperties.map { (rt.reflection.properties[$0.key], $0.value) }
+        )
     }
     
     /// This object's value for the requested property, or nil if unavailable.
@@ -90,20 +86,21 @@ import Bushel
     ///
     /// For properties that are statically known to exist, an overridden
     /// `propertyKeyPaths` and `evaluateStaticProperty(_:)` pair is preferable.
-    public func property(_ property: PropertyInfo) throws -> RT_Object? {
+    public func property(_ property: Reflection.Property) throws -> RT_Object? {
         switch Properties(property.id) {
         case .properties:
             return RT_Record(rt, contents:
                 [RT_Object : RT_Object](uniqueKeysWithValues:
-                    self.properties.map { (key: .property(rt, $0.key), value: $0.value) }
+                    self.properties.map { (key: RT_Constant(rt, value: Reflection.Constant(property: $0.key)), value: $0.value) }
                 )
             )
         case .type:
-            return RT_Type(rt, value: self.dynamicTypeInfo)
+            return RT_Type(rt, value: self.type)
         default:
             // Prefer to avoid evaluating all properties if we can.
             if
-                let keyPath = Swift.type(of: self).propertyKeyPaths[property],
+                let predefined = Properties(property.uri),
+                let keyPath = Swift.type(of: self).propertyKeyPaths[predefined],
                 let value = evaluateStaticProperty(keyPath)
             {
                 return value
@@ -129,12 +126,12 @@ import Bushel
     ///     a suitable type for the property.
     ///
     /// This is called by the `RT_Specifier` implementation of the `set` command.
-    public func setProperty(_ property: PropertyInfo, to newValue: RT_Object) throws {
-        throw NoWritablePropertyExists(type: dynamicTypeInfo, property: property)
+    public func setProperty(_ property: Reflection.Property, to newValue: RT_Object) throws {
+        throw NoWritablePropertyExists(type: type, property: property)
     }
     
-    public func coerce(to type: TypeInfo) -> RT_Object? {
-        if dynamicTypeInfo.isA(type) {
+    public func coerce(to type: Reflection.`Type`) -> RT_Object? {
+        if self.type.isA(type) {
             return self
         } else {
             switch Types(type.id) {
@@ -394,7 +391,7 @@ import Bushel
     /// - Parameters:
     ///     - type: The type of element to access.
     ///     - index: The index of the element to access.
-    public func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object? {
+    public func element(_ type: Reflection.`Type`, at index: Int64) throws -> RT_Object? {
         nil
     }
     
@@ -403,7 +400,7 @@ import Bushel
     /// - Parameters:
     ///     - type: The type of element to access.
     ///     - name: The name of the element to access.
-    public func element(_ type: TypeInfo, named name: String) throws -> RT_Object? {
+    public func element(_ type: Reflection.`Type`, named name: String) throws -> RT_Object? {
         nil
     }
     
@@ -414,7 +411,7 @@ import Bushel
     ///     - type: The type of element to access.
     ///     - id: The unique ID of the element to access. Can be of any
     ///           runtime type.
-    public func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object? {
+    public func element(_ type: Reflection.`Type`, id: RT_Object) throws -> RT_Object? {
         nil
     }
     
@@ -430,7 +427,7 @@ import Bushel
     ///     - type: The type of element to access.
     ///     - positioning: The position relative to this object of the element
     ///                    to access.
-    public func element(_ type: TypeInfo, positioned positioning: RelativePositioning) throws -> RT_Object? {
+    public func element(_ type: Reflection.`Type`, positioned positioning: RelativePositioning) throws -> RT_Object? {
         nil
     }
     
@@ -440,7 +437,7 @@ import Bushel
     /// - Parameters:
     ///     - type: The type of element to access.
     ///     - positioning: The absolute positioning of the element to access.
-    public func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object? {
+    public func element(_ type: Reflection.`Type`, at positioning: AbsolutePositioning) throws -> RT_Object? {
         switch positioning {
         case .first:
             return try element(type, at: 0)
@@ -453,7 +450,7 @@ import Bushel
     ///
     /// - Parameters:
     ///     - type: The type of element to access.
-    public func elements(_ type: TypeInfo) throws -> RT_Object {
+    public func elements(_ type: Reflection.`Type`) throws -> RT_Object {
         RT_List(rt, contents: [])
     }
     
@@ -463,13 +460,13 @@ import Bushel
     ///     - type: The type of element to access.
     ///     - from: The lower bound.
     ///     - thru: The upper bound.
-    public func elements(_ type: TypeInfo, from: RT_Object, thru: RT_Object) throws -> RT_Object {
+    public func elements(_ type: Reflection.`Type`, from: RT_Object, thru: RT_Object) throws -> RT_Object {
         RT_List(rt, contents: [])
     }
     
     // TODO: Must be migrated to RT_TestSpecifier before documentation & use.
     @available(*, unavailable)
-    public func elements(_ type: TypeInfo, filtered: RT_Specifier) throws -> RT_Object {
+    public func elements(_ type: Reflection.`Type`, filtered: RT_Specifier) throws -> RT_Object {
         RT_List(rt, contents: [])
     }
     
@@ -521,11 +518,11 @@ extension RT_Object {
     ///
     /// e.g., `RT_Integer(rt, value: 42).coerce(to: RT_Real.self)`
     ///
-    /// - Returns: This instance coerced to `To.typeInfo` via `coerce(to:)`, or
+    /// - Returns: This instance coerced to `To.Reflection.`Type`` via `coerce(to:)`, or
     ///            `nil` if the coercion returns `nil` or something other than
     ///            a `To`.
-    public func coerce<To: RTTyped>(to _: To.Type) -> To? {
-        coerce(to: To.typeInfo) as? To
+    public func coerce<To: RT_Object>(to _: To.Type) -> To? {
+        coerce(to: rt.reflection.types[To.staticType]) as? To
     }
 
     /// Forcibly coerces this object to the runtime type specified
@@ -533,36 +530,16 @@ extension RT_Object {
     ///
     /// e.g., `try RT_Integer(rt, value: 42).coerceOrThrow(to: RT_Real.self)`
     ///
-    /// - Returns: This instance coerced to `To.typeInfo` via `coerce(to:)`.
+    /// - Returns: This instance coerced to `To.Reflection.`Type`` via `coerce(to:)`.
     ///
     /// - Throws:
     ///     - `Uncoercible` if the coercion returns `nil` or something other
     ///       than a `To`.
-    public func coerceOrThrow<To: RTTyped>(to _: To.Type) throws -> To {
+    public func coerceOrThrow<To: RT_Object>(to _: To.Type) throws -> To {
         guard let coerced = coerce(to: To.self) else {
-            throw Uncoercible(expectedType: To.typeInfo, object: self)
+            throw Uncoercible(expectedType: rt.reflection.types[To.staticType], object: self)
         }
         return coerced
-    }
-    
-}
-
-// MARK: Reflective object factory functions
-extension RT_Object {
-    
-    /// The reflective runtime object representation of the given property.
-    public static func property(_ rt: Runtime, _ property: PropertyInfo) -> RT_Object {
-        RT_Constant(rt, value: ConstantInfo(property: property))
-    }
-    
-    /// The reflective runtime object representation of the given symbolic constant.
-    public static func constant(_ rt: Runtime, _ constant: ConstantInfo) -> RT_Object {
-        RT_Constant(rt, value: constant)
-    }
-    
-    /// The reflective runtime object representation of the given type.
-    public static func type(_ rt: Runtime, _ type: TypeInfo) -> RT_Object {
-        RT_Type(rt, value: type)
     }
     
 }
@@ -573,12 +550,5 @@ extension AnyKeyPath {
         (self as? PartialKeyPath<Object>)
             .flatMap { object[keyPath: $0] as? RT_Object }
     }
-    
-}
-
-public protocol RTTyped {
-    
-    /// The BushelScript Runtime type that this Swift type implements.
-    static var typeInfo: TypeInfo { get }
     
 }

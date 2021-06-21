@@ -28,26 +28,26 @@ final class Builtin {
         targetStack.top
     }
     
-    func newConstant(_ typedUID: Term.ID) -> RT_Object {
-        switch Constants(typedUID) {
+    func newConstant(_ id: Term.ID) -> RT_Object {
+        switch Constants(id) {
         case .true:
             return rt.true
         case .false:
             return rt.false
         default:
-            return RT_Constant(rt, value: rt.constant(forUID: typedUID))
+            return RT_Constant(rt, value: rt.reflection.constants[id.uri])
         }
     }
     
     func getSequenceLength(_ sequence: RT_Object) throws -> Int64 {
-        guard let length = try sequence.property(rt.property(forUID: Term.ID(Properties.Sequence_length))) as? RT_Numeric else {
-            throw NoNumericPropertyExists(type: sequence.dynamicTypeInfo, property: PropertyInfo(Properties.Sequence_length))
+        guard let length = try sequence.property(rt.reflection.properties[.Sequence_length])?.coerce(to: RT_Integer.self)?.value else {
+            throw NoNumericPropertyExists(type: sequence.type, property: rt.reflection.properties[.Sequence_length])
         }
-        return Int64(length.numericValue.rounded(.up))
+        return length
     }
     
     func getFromSequenceAtIndex(_ sequence: RT_Object, _ index: Int64) throws -> RT_Object {
-        return try sequence.element(rt.type(forUID: Term.ID(Types.item)), at: index) ?? rt.null
+        try sequence.element(rt.reflection.types[.item], at: index) ?? rt.null
     }
     
     func unaryOp(_ operation: UnaryOperation, _ operand: RT_Object) -> RT_Object {
@@ -69,9 +69,9 @@ final class Builtin {
             case .and:
                 return lhs.and(rhs)
             case .isA:
-                return rhs.coerce(to: RT_Type.self).map { RT_Boolean.withValue(rt, lhs.dynamicTypeInfo.isA($0.value)) }
+                return rhs.coerce(to: RT_Type.self).map { RT_Boolean.withValue(rt, lhs.type.isA($0.value)) }
             case .isNotA:
-                return rhs.coerce(to: RT_Type.self).map { RT_Boolean.withValue(rt, !lhs.dynamicTypeInfo.isA($0.value)) }
+                return rhs.coerce(to: RT_Type.self).map { RT_Boolean.withValue(rt, !lhs.type.isA($0.value)) }
             case .equal:
                 return lhs.equal(to: rhs)
             case .notEqual:
@@ -168,16 +168,16 @@ final class Builtin {
         }
     }
     
-    func run(command: CommandInfo, arguments: [ParameterInfo : RT_Object]) throws -> RT_Object {
+    func run(command: Reflection.Command, arguments: [Reflection.Parameter : RT_Object]) throws -> RT_Object {
         var arguments = RT_Arguments(command, arguments)
         if arguments[.target] == nil {
-            arguments.contents[ParameterInfo(.target)] = target
+            arguments.contents[command.parameters[.target]] = target
         }
         
         return try propagate(up: moduleStack) { (module) -> RT_Object? in
             do {
                 return try module.handle(arguments)
-            } catch let error as Unencodable where error.object is CommandInfo || error.object is ParameterInfo {
+            } catch let error as Unencodable where error.object is Reflection.Command || error.object is Reflection.Parameter {
                 // Tried to send an inapplicable command to a remote object
                 // Ignore it and fall through to the next target
                 return nil
@@ -213,7 +213,7 @@ final class Builtin {
         process.standardError = error
         
         let inputWriteFileHandle = input.fileHandleForWriting
-        inputWriteFileHandle.write(((inputObject.coerce(to: rt.type(forUID: Term.ID(Types.string))) as? RT_String)?.value ?? String(describing: inputObject)).data(using: .utf8)!)
+        inputWriteFileHandle.write((inputObject.coerce(to: RT_String.self)?.value ?? String(describing: inputObject)).data(using: .utf8)!)
         inputWriteFileHandle.closeFile()
         
         try! process.run()
@@ -302,9 +302,9 @@ extension SwiftAutomation.Symbol {
     func asRTObject(_ rt: Runtime) -> RT_Object {
         switch type {
         case typeType:
-            return RT_Type(rt, value: TypeInfo(.ae4(code: code)))
+            return RT_Type(rt, value: rt.reflection.types[.ae4(code: code)])
         case typeEnumerated, typeKeyword, typeProperty:
-            return RT_Constant(rt, value: ConstantInfo(.ae4(code: code)))
+            return RT_Constant(rt, value: rt.reflection.constants[.ae4(code: code)])
         default:
             fatalError("invalid descriptor type for Symbol")
         }
@@ -317,8 +317,9 @@ extension RT_HierarchicalSpecifier {
     public func evaluate_() throws -> RT_Object {
         switch rootAncestor() {
         case let root as RT_AERootSpecifier:
+            let get = rt.reflection.commands[.get]
             return try self.handleByAppleEvent(
-                RT_Arguments(CommandInfo(.get), [ParameterInfo(.direct): self]),
+                RT_Arguments(get, [get.parameters[.direct]: self]),
                 appData: root.saRootSpecifier.appData
             )
         default:

@@ -4,16 +4,15 @@ import SwiftAutomation
 /// A symbolic constant.
 public class RT_Constant: RT_Object, AEEncodable {
     
-    public var value: ConstantInfo
+    public var value: Reflection.Constant
     
-    public init(_ rt: Runtime, value: ConstantInfo) {
+    public init(_ rt: Runtime, value: Reflection.Constant) {
         self.value = value
         super.init(rt)
     }
     
-    private static let typeInfo_ = TypeInfo(.constant)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .constant
     }
     
     public override var description: String {

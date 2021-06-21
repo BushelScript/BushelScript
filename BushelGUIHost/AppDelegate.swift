@@ -67,9 +67,9 @@ extension AppDelegate {
     @objc func handleAlert(event: NSAppleEventDescriptor, reply: NSAppleEventDescriptor) {
         let arguments = getArguments(from: event)
         
-        let heading = string(from: arguments[ParameterInfo(.direct)]) ?? ""
-        let message = string(from: arguments[ParameterInfo(.GUI_alert_message)]) ?? ""
-        let title = string(from: arguments[ParameterInfo(.GUI_alert_title)]) ?? ""
+        let heading = string(from: arguments[Reflection.Parameter(.direct)]) ?? ""
+        let message = string(from: arguments[Reflection.Parameter(.GUI_alert_message)]) ?? ""
+        let title = string(from: arguments[Reflection.Parameter(.GUI_alert_title)]) ?? ""
         
         runAlert(heading: heading, message: message, title: title, suspension: suspendAppleEvent())
     }
@@ -77,17 +77,17 @@ extension AppDelegate {
     @objc func handleChooseFrom(event: NSAppleEventDescriptor, reply: NSAppleEventDescriptor) {
         let arguments = getArguments(from: event)
         
-        let itemsArg = arguments[ParameterInfo(.direct)]
+        let itemsArg = arguments[Reflection.Parameter(.direct)]
         let items: [RT_Object] =
             itemsArg?.coerce(to: RT_List.self)?.contents ??
             itemsArg.map { [$0] } ??
             []
         let stringItems = items.compactMap { string(from: $0) }
         
-        let prompt = string(from: arguments[ParameterInfo(.GUI_chooseFrom_prompt)]) ?? ""
-        let okButtonName = string(from: arguments[ParameterInfo(.GUI_chooseFrom_confirm)]) ?? "OK"
-        let cancelButtonName = string(from: arguments[ParameterInfo(.GUI_chooseFrom_cancel)]) ?? "Cancel"
-        let title = string(from: arguments[ParameterInfo(.GUI_chooseFrom_title)]) ?? ""
+        let prompt = string(from: arguments[Reflection.Parameter(.GUI_chooseFrom_prompt)]) ?? ""
+        let okButtonName = string(from: arguments[Reflection.Parameter(.GUI_chooseFrom_confirm)]) ?? "OK"
+        let cancelButtonName = string(from: arguments[Reflection.Parameter(.GUI_chooseFrom_cancel)]) ?? "Cancel"
+        let title = string(from: arguments[Reflection.Parameter(.GUI_chooseFrom_title)]) ?? ""
         
         chooseFrom(list: stringItems, prompt: prompt, okButtonName: okButtonName, cancelButtonName: cancelButtonName, title: title, suspension: suspendAppleEvent())
     }
@@ -96,16 +96,16 @@ extension AppDelegate {
         let rt = Runtime()
         let arguments = getArguments(from: event)
         
-        let typeArg = arguments[ParameterInfo(.GUI_ask_dataType)]
+        let typeArg = arguments[Reflection.Parameter(.GUI_ask_dataType)]
         let type = typeArg?.coerce(to: RT_Type.self)?.value ??
-            rt.type(forUID: Term.ID(Types.string))
+            rt.reflection.types[.string]
         
-        let promptArg = arguments[ParameterInfo(.direct)]
+        let promptArg = arguments[Reflection.Parameter(.direct)]
         let prompt = promptArg?.coerce(to: RT_String.self)?.value ??
             promptArg.map { String(describing: $0) } ??
             "Please enter a value:"
         
-        let titleArg = arguments[ParameterInfo(.GUI_ask_title)]
+        let titleArg = arguments[Reflection.Parameter(.GUI_ask_title)]
         let title = titleArg?.coerce(to: RT_String.self)?.value ??
             titleArg.map { String(describing: $0) } ??
             ""
@@ -116,10 +116,10 @@ extension AppDelegate {
     @objc func handleNotification(event: NSAppleEventDescriptor, reply: NSAppleEventDescriptor) {
         let arguments = getArguments(from: event)
         
-        let message = string(from: arguments[ParameterInfo(.direct)]) ?? ""
-        let title = string(from: arguments[ParameterInfo(.GUI_notification_title)])
-        let subtitle = string(from: arguments[ParameterInfo(.GUI_notification_subtitle)]) ?? ""
-        let soundName = string(from: arguments[ParameterInfo(.GUI_notification_sound)])
+        let message = string(from: arguments[Reflection.Parameter(.direct)]) ?? ""
+        let title = string(from: arguments[Reflection.Parameter(.GUI_notification_title)])
+        let subtitle = string(from: arguments[Reflection.Parameter(.GUI_notification_subtitle)]) ?? ""
+        let soundName = string(from: arguments[Reflection.Parameter(.GUI_notification_sound)])
         
         let content = UNMutableNotificationContent()
         if let title = title {
@@ -163,9 +163,9 @@ extension AppDelegate {
     }
 }
 
-func getArguments(from event: NSAppleEventDescriptor) -> [ParameterInfo : RT_Object] {
+func getArguments(from event: NSAppleEventDescriptor) -> [Reflection.Parameter : RT_Object] {
     let rt = Runtime()
-    var result: [ParameterInfo : RT_Object] = [:]
+    var result: [Reflection.Parameter : RT_Object] = [:]
     
     let count = event.numberOfItems
     guard count > 0 else {
@@ -182,7 +182,7 @@ func getArguments(from event: NSAppleEventDescriptor) -> [ParameterInfo : RT_Obj
         }
         
         if let value = try? RT_Object.fromAEDescriptor(rt, AppData(), descriptor) {
-            result[ParameterInfo(.ae12(class: eventClass, id: eventID, code: code))] = value
+            result[Reflection.Parameter(.ae12(class: eventClass, id: eventID, code: code))] = value
         }
     }
     

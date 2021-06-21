@@ -24,11 +24,11 @@ public final class RT_TestSpecifier: RT_Object {
         super.init(rt)
     }
     
-    public func saTestClause(appData: AppData) -> SwiftAutomation.TestClause? {
-        func makeLogicalTestClause() -> SwiftAutomation.TestClause? {
+    public func saTestClause(appData: AppData) throws -> SwiftAutomation.TestClause? {
+        func makeLogicalTestClause() throws -> SwiftAutomation.TestClause? {
             guard
-                let lhsClause = (lhs as? RT_TestSpecifier)?.saTestClause(appData: appData),
-                let rhsClause = (rhs as? RT_TestSpecifier)?.saTestClause(appData: appData)
+                let lhsClause = try (lhs as? RT_TestSpecifier)?.saTestClause(appData: appData),
+                let rhsClause = try (rhs as? RT_TestSpecifier)?.saTestClause(appData: appData)
             else {
                 return nil
             }
@@ -45,16 +45,16 @@ public final class RT_TestSpecifier: RT_Object {
                 fatalError("unreachable")
             }
         }
-        func makeComparisonTestClause() -> SwiftAutomation.TestClause? {
+        func makeComparisonTestClause() throws -> SwiftAutomation.TestClause? {
             let objectSpecifier: SwiftAutomation.ObjectSpecifier
             let other: RT_Object
             let reverse: Bool
-            if let lhsObjectSpecifier = (lhs as? RT_AESpecifier)?.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifier {
+            if let lhsObjectSpecifier = try (lhs as? RT_AESpecifier)?.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifier {
                 objectSpecifier = lhsObjectSpecifier
                 other = rhs
                 reverse = false
             } else {
-                guard let rhsObjectSpecifier = (rhs as? RT_AESpecifier)?.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifier else {
+                guard let rhsObjectSpecifier = try (rhs as? RT_AESpecifier)?.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifier else {
                     return nil
                 }
                 objectSpecifier = rhsObjectSpecifier
@@ -95,12 +95,12 @@ public final class RT_TestSpecifier: RT_Object {
             }
         }
         
-        return testKind.flatMap { kind in
+        return try testKind.flatMap { kind in
             switch kind {
             case .logical:
-                return makeLogicalTestClause()
+                return try makeLogicalTestClause()
             case .comparison:
-                return makeComparisonTestClause()
+                return try makeComparisonTestClause()
             }
         }
     }
@@ -161,20 +161,14 @@ public final class RT_TestSpecifier: RT_Object {
         }
     }
     
-    // We technically don't know the type statically, since it's either
-    // .comparisonTestSpecifier or .logicalTestSpecifier
-    private static let typeInfo_ = TypeInfo(.item, [.dynamic])
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
-    }
-    public override var dynamicTypeInfo: TypeInfo {
+    public override var type: Reflection.`Type` {
         switch testKind {
         case .logical:
-            return TypeInfo(.logicalTestSpecifier)
+            return rt.reflection.types[.logicalTestSpecifier]
         case .comparison:
-            return TypeInfo(.comparisonTestSpecifier)
+            return rt.reflection.types[.comparisonTestSpecifier]
         case nil:
-            return TypeInfo(.item)
+            return rt.reflection.types[.item]
         }
     }
     

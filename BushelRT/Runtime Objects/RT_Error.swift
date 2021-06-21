@@ -10,9 +10,8 @@ public class RT_Error: RT_Object {
         super.init(rt)
     }
     
-    private static let typeInfo_ = TypeInfo(.error)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .error
     }
     
     public override var description: String {

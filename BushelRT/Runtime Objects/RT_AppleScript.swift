@@ -17,20 +17,19 @@ public class RT_AppleScript: RT_Object, RT_Module {
         "AppleScript \"\(name)\""
     }
     
-    private static let typeInfo_ = TypeInfo(.applescript)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .applescript
     }
     
     public func handle(_ arguments: RT_Arguments) throws -> RT_Object? {
         var arguments = arguments
         if arguments[.direct] == nil {
-            arguments.contents[ParameterInfo(.direct)] = arguments[.target]
+            arguments.contents[Reflection.Parameter(.direct)] = arguments[.target]
         }
         
         // AppleScript handlers almost certainly do not care about the
         // AE "subject" attribute, so we can safely leave that off.
-        arguments.contents.removeValue(forKey: ParameterInfo(.target))
+        arguments.contents.removeValue(forKey: Reflection.Parameter(.target))
         
         let encodedArguments = try aeEncode(arguments, appData: AppData())
         

@@ -15,50 +15,50 @@ public class RT_Real: RT_Object, AEEncodable {
         String(describing: value)
     }
     
-    private static let typeInfo_ = TypeInfo(.real)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .real
     }
+    
     public override var truthy: Bool {
         !value.isZero
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
-        guard let other = other as? RT_Numeric else {
+        guard let other = other.coerce(to: Self.self) else {
             return nil
         }
-        return value <=> other.numericValue
+        return value <=> other.value
     }
     
     public override func adding(_ other: RT_Object) -> RT_Object? {
-        guard let other = other as? RT_Numeric else {
+        guard let other = other.coerce(to: Self.self) else {
             return nil
         }
-        return RT_Real(rt, value: self.value + other.numericValue)
+        return RT_Real(rt, value: self.value + other.value)
     }
     
     public override func subtracting(_ other: RT_Object) -> RT_Object? {
-        guard let other = other as? RT_Numeric else {
+        guard let other = other.coerce(to: Self.self) else {
             return nil
         }
-        return RT_Real(rt, value: self.value - other.numericValue)
+        return RT_Real(rt, value: self.value - other.value)
     }
     
     public override func multiplying(by other: RT_Object) -> RT_Object? {
-        guard let other = other as? RT_Numeric else {
+        guard let other = other.coerce(to: Self.self) else {
             return nil
         }
-        return RT_Real(rt, value: self.value * other.numericValue)
+        return RT_Real(rt, value: self.value * other.value)
     }
     
     public override func dividing(by other: RT_Object) -> RT_Object? {
-        guard let other = other as? RT_Numeric else {
+        guard let other = other.coerce(to: Self.self) else {
             return nil
         }
-        return RT_Real(rt, value: self.value / other.numericValue)
+        return RT_Real(rt, value: self.value / other.value)
     }
     
-    public override func property(_ property: PropertyInfo) throws -> RT_Object? {
+    public override func property(_ property: Reflection.Property) throws -> RT_Object? {
         switch Properties(property.id) {
         case .Math_NaN_Q:
             return RT_Boolean.withValue(rt, value.isNaN)
@@ -75,25 +75,16 @@ public class RT_Real: RT_Object, AEEncodable {
         }
     }
     
-    public override func coerce(to type: TypeInfo) -> RT_Object? {
-        switch Types(type.id) {
-        case .integer:
-            return RT_Integer(rt, value: Int64(value.rounded()))
-        default:
+    public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
+        if type.isA(rt.reflection.types[.integer]) {
+            return RT_Integer(rt, value: Int64(floor(value)))
+        } else {
             return super.coerce(to: type)
         }
     }
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
-        return NSAppleEventDescriptor(double: value)
-    }
-    
-}
-
-extension RT_Real: RT_Numeric {
-    
-    public var numericValue: Double {
-        value
+        NSAppleEventDescriptor(double: value)
     }
     
 }

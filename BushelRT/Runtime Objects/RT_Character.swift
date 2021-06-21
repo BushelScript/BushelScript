@@ -15,9 +15,8 @@ public class RT_Character: RT_Object, AEEncodable {
         "(\"\(value)\" as character)"
     }
     
-    private static let typeInfo_ = TypeInfo(.character)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .character
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
@@ -25,7 +24,7 @@ public class RT_Character: RT_Object, AEEncodable {
             .map { value <=> $0.value }
     }
     
-    public override func coerce(to type: TypeInfo) -> RT_Object? {
+    public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
         switch Types(type.uri) {
         case .string:
             return RT_String(rt, value: String(value))

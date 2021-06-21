@@ -5,11 +5,11 @@ import Bushel
 /// A runtime function.
 public class RT_Function: RT_Object {
     
-    public typealias ParameterSignature = [ParameterInfo : TypeInfo]
+    public typealias ParameterSignature = [Reflection.Parameter : Reflection.`Type`]
     
     public struct Signature: Hashable {
         
-        var command: CommandInfo
+        var command: Reflection.Command
         var parameters: ParameterSignature
         
     }
@@ -24,9 +24,8 @@ public class RT_Function: RT_Object {
         super.init(rt)
     }
     
-    private static let typeInfo_ = TypeInfo(.function)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .function
     }
     
     public override var description: String {
@@ -43,31 +42,31 @@ public protocol RT_Implementation {
 
 public struct RT_Arguments {
     
-    public var command: CommandInfo
-    public var contents: [ParameterInfo : RT_Object]
+    public var command: Reflection.Command
+    public var contents: [Reflection.Parameter : RT_Object]
     
-    public init(_ command: CommandInfo, _ contents: [ParameterInfo : RT_Object]) {
+    public init(_ command: Reflection.Command, _ contents: [Reflection.Parameter : RT_Object]) {
         self.command = command
         self.contents = contents
     }
     
     public func `for`<Argument: RT_Object>(_ predefined: Parameters, _: Argument.Type? = nil) throws -> Argument {
-        try `for`(ParameterInfo(predefined))
+        try `for`(command.parameters[predefined])
     }
-    public func `for`<Argument: RT_Object>(_ parameter: ParameterInfo, _: Argument.Type? = nil) throws -> Argument {
+    public func `for`<Argument: RT_Object>(_ parameter: Reflection.Parameter, _: Argument.Type? = nil) throws -> Argument {
         guard let someArgument = contents[parameter] else {
             throw MissingParameter(command: command, parameter: parameter)
         }
         guard let argument = someArgument.coerce(to: Argument.self) else {
-            throw WrongParameterType(command: command, parameter: parameter, expected: Argument.typeInfo, actual: someArgument.dynamicTypeInfo)
+            throw WrongParameterType(command: command, parameter: parameter, expected: someArgument.rt.reflection.types[Argument.staticType], actual: someArgument.type)
         }
         return argument
     }
     
     public subscript<Argument: RT_Object>(_ predefined: Parameters, _: Argument.Type? = nil) -> Argument? {
-        self[ParameterInfo(predefined)]
+        self[Reflection.Parameter(predefined)]
     }
-    public subscript<Argument: RT_Object>(_ parameter: ParameterInfo, _: Argument.Type? = nil) -> Argument? {
+    public subscript<Argument: RT_Object>(_ parameter: Reflection.Parameter, _: Argument.Type? = nil) -> Argument? {
         contents[parameter]?.coerce(to: Argument.self)
     }
     
@@ -123,9 +122,9 @@ public struct RT_ExpressionImplementation: RT_Implementation {
             //  l = "hello" even though it's not explicitly specified.
             //  Without this special-case, the call would have to be:
             //     cat l "hello, " with "world"
-            var argument: RT_Object? = arguments[ParameterInfo(parameter.uri)]
+            var argument: RT_Object? = arguments[Reflection.Parameter(parameter.uri)]
             if index == 0, argument == nil {
-                argument = arguments[ParameterInfo(.direct)]
+                argument = arguments[Reflection.Parameter(.direct)]
             }
             rt.builtin[variable: formalArgument] = argument ?? rt.null
         }

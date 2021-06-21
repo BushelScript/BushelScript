@@ -17,7 +17,7 @@ public protocol Term_PredefinedID {
     var pathname: Term.SemanticURI.Pathname? { get }
     var resourceName: String? { get }
     
-    init?(_ uid: Term.SemanticURI)
+    init?(_ uri: Term.SemanticURI)
     
 }
 
@@ -88,7 +88,7 @@ public extension Term.SemanticURI {
     
     init(_ predefined: Term.PredefinedID) {
         guard
-            let uid: Term.SemanticURI = {
+            let uri: Term.SemanticURI = {
                 if let aeCode = predefined.ae4Code {
                     return .ae4(code: aeCode)
                 } else if let (aeClassCode, aeIDCode) = predefined.ae8Code {
@@ -106,7 +106,7 @@ public extension Term.SemanticURI {
         else {
             preconditionFailure("Predefined term URI \(predefined) has no valid identification method")
         }
-        self = uid
+        self = uri
     }
     
 }
@@ -381,8 +381,8 @@ public enum Properties: String, Term.PredefinedID {
         }
     }
     
-    public init?(_ uid: Term.SemanticURI) {
-        switch uid {
+    public init?(_ uri: Term.SemanticURI) {
+        switch uri {
         case .ae4(let aeCode):
             switch aeCode {
             case try! FourCharCode(fourByteString: "pALL"):
@@ -433,8 +433,8 @@ public enum Constants: String, Term.PredefinedID {
         }
     }
     
-    public init?(_ uid: Term.SemanticURI) {
-        switch uid {
+    public init?(_ uri: Term.SemanticURI) {
+        switch uri {
         case .ae4(let aeCode):
             switch aeCode {
             case typeTrue:
@@ -528,8 +528,8 @@ public enum Commands: String, Term.PredefinedID {
         }
     }
     
-    public init?(_ uid: Term.SemanticURI) {
-        switch uid {
+    public init?(_ uri: Term.SemanticURI) {
+        switch uri {
         case .ae8(let `class`, let id):
             switch (`class`, id) {
             case (kAECoreSuite, kAEGetData):
@@ -661,8 +661,8 @@ public enum Parameters: String, Term.PredefinedID {
         return (class: `class`, id: id, code: commandAndCode.code)
     }
     
-    public init?(_ uid: Term.SemanticURI) {
-        switch uid {
+    public init?(_ uri: Term.SemanticURI) {
+        switch uri {
         case .ae4(let aeCode):
             switch aeCode {
             case keyDirectObject:
@@ -742,8 +742,8 @@ public enum Resources: String, Term.PredefinedID {
         rawValue
     }
     
-    public init?(_ uid: Term.SemanticURI) {
-        switch uid {
+    public init?(_ uri: Term.SemanticURI) {
+        switch uri {
         case .res(let resourceName):
             self.init(resourceName: resourceName)
         default:

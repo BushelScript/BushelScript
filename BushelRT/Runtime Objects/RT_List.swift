@@ -15,9 +15,8 @@ public class RT_List: RT_Object, AEEncodable {
         "{\(contents.map { String(describing: $0) }.joined(separator: ", "))}"
     }
     
-    private static let typeInfo_ = TypeInfo(.list)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .list
     }
     
     public override var truthy: Bool {
@@ -51,22 +50,22 @@ public class RT_List: RT_Object, AEEncodable {
         RT_List(rt, contents: [RT_Object](contents[1...]))
     }
     
-    public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+    public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
         [
-            PropertyInfo(Properties.Sequence_length): \RT_List.length,
-            PropertyInfo(Properties.Sequence_reverse): \RT_List.reverse,
-            PropertyInfo(Properties.Sequence_tail): \RT_List.tail
+            .Sequence_length: \RT_List.length,
+            .Sequence_reverse: \RT_List.reverse,
+            .Sequence_tail: \RT_List.tail
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
         keyPath.evaluate(on: self)
     }
     
-    private func filteredContents(_ type: TypeInfo) -> [RT_Object] {
-        contents.filter { $0.dynamicTypeInfo.isA(type) }
+    private func filteredContents(_ type: Reflection.`Type`) -> [RT_Object] {
+        contents.filter { $0.type.isA(type) }
     }
     
-    public override func element(_ type: TypeInfo, at index: Int64) throws -> RT_Object {
+    public override func element(_ type: Reflection.`Type`, at index: Int64) throws -> RT_Object {
         let filteredContents = self.filteredContents(type)
         let zeroBasedIndex = index - 1
         guard filteredContents.indices.contains(Int(zeroBasedIndex)) else {
@@ -75,7 +74,7 @@ public class RT_List: RT_Object, AEEncodable {
         return filteredContents[Int(zeroBasedIndex)]
     }
     
-    public override func element(_ type: TypeInfo, at positioning: AbsolutePositioning) throws -> RT_Object {
+    public override func element(_ type: Reflection.`Type`, at positioning: AbsolutePositioning) throws -> RT_Object {
         switch positioning {
         case .first:
             return try element(type, at: 1)
@@ -88,17 +87,17 @@ public class RT_List: RT_Object, AEEncodable {
         }
     }
     
-    public override func elements(_ type: TypeInfo) throws -> RT_Object {
+    public override func elements(_ type: Reflection.`Type`) throws -> RT_Object {
         return RT_List(rt, contents: filteredContents(type))
     }
     
-    public override func elements(_ type: TypeInfo, from: RT_Object, thru: RT_Object) throws -> RT_Object {
+    public override func elements(_ type: Reflection.`Type`, from: RT_Object, thru: RT_Object) throws -> RT_Object {
         let filteredContents = self.filteredContents(type)
         
-        guard let fromNum = ((from.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (from.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue else {
+        guard let fromNum = from.coerce(to: RT_Integer.self)?.value else {
             throw InvalidSpecifierDataType(specifierType: .byRange, specifierData: from)
         }
-        guard let thruNum = ((thru.coerce(to: RT_Integer.self) as RT_Numeric?) ?? (thru.coerce(to: RT_Real.self) as RT_Numeric?))?.numericValue else {
+        guard let thruNum = thru.coerce(to: RT_Integer.self)?.value else {
             throw InvalidSpecifierDataType(specifierType: .byRange, specifierData: thru)
         }
         

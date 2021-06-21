@@ -15,9 +15,8 @@ public class RT_Record: RT_Object, AEEncodable {
         contents.isEmpty ? "{:}" : "{\(contents.map { "\($0.key): \($0.value)" }.joined(separator: ", "))}"
     }
     
-    private static let typeInfo_ = TypeInfo(.record)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .record
     }
     
     public override var truthy: Bool {
@@ -32,15 +31,15 @@ public class RT_Record: RT_Object, AEEncodable {
         RT_Integer(rt, value: contents.count)
     }
     
-    public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
-        [PropertyInfo(Properties.Sequence_length): \RT_Record.length]
+    public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
+        [.Sequence_length: \RT_Record.length]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
         keyPath.evaluate(on: self)
     }
     
-    public override func property(_ property: PropertyInfo) throws -> RT_Object? {
-        let propertyConstantKey = ConstantInfo(property: property)
+    public override func property(_ property: Reflection.Property) throws -> RT_Object? {
+        let propertyConstantKey = Reflection.Constant(property: property)
         func keyMatchesProperty(key: RT_Object) -> Bool {
             (key as? RT_Constant)?.value == propertyConstantKey
         }
@@ -70,10 +69,11 @@ public class RT_Record: RT_Object, AEEncodable {
             guard
                 let aeCode: OSType = ({
                     if let key = key as? RT_Specifier {
-                        if key.kind == .property {
-                            return key.property?.uri.ae4Code
-                        } else {
-                            return key.type?.uri.ae4Code
+                        switch key.kind {
+                        case let .property(property):
+                            return property.uri.ae4Code
+                        case .element:
+                            return nil
                         }
                     } else if let key = key as? RT_Type {
                         return key.value.uri.ae4Code

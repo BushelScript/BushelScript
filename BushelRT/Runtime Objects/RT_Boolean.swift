@@ -20,10 +20,10 @@ public class RT_Boolean: RT_Object, AEEncodable {
         String(describing: value)
     }
     
-    private static let typeInfo_ = TypeInfo(.boolean)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .boolean
     }
+    
     public override var truthy: Bool {
         value
     }
@@ -37,7 +37,7 @@ public class RT_Boolean: RT_Object, AEEncodable {
             .map { value <=> $0.value }
     }
     
-    public override func coerce(to type: TypeInfo) -> RT_Object? {
+    public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
         switch Types(type.id) {
         case .constant:
             // A boolean "is-a" constant

@@ -3,14 +3,14 @@ import SwiftAutomation
 
 public protocol RT_AESpecifier: RT_Object, AEEncodable {
     
-    func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier?
+    func saSpecifier(appData: AppData) throws -> SwiftAutomation.Specifier?
     
 }
 
 extension RT_AESpecifier {
     
     public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
-        guard let saSpecifier = self.saSpecifier(appData: appData) else {
+        guard let saSpecifier = try self.saSpecifier(appData: appData) else {
             throw Unencodable(object: self)
         }
         return try saSpecifier.encodeAEDescriptor(appData)
@@ -22,10 +22,10 @@ extension RT_AESpecifier {
         // (target parameters aren't supported for AE commands;
         // the target must be specified with 'tell' et al.).
         var arguments = arguments
-        arguments.contents.removeValue(forKey: ParameterInfo(.target))
+        arguments.contents.removeValue(forKey: Reflection.Parameter(.target))
         
         let encodedArguments = try aeEncode(arguments, appData: appData)
-        guard let saSpecifier = self.saSpecifier(appData: appData) else {
+        guard let saSpecifier = try self.saSpecifier(appData: appData) else {
             throw Unencodable(object: self)
         }
         

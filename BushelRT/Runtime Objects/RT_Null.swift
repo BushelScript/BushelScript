@@ -7,10 +7,10 @@ public class RT_Null: RT_Object, AEEncodable {
         super.init(rt)
     }
     
-    private static let typeInfo_ = TypeInfo(.null)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override var type: Reflection.`Type` {
+        rt.reflection.types[.null]
     }
+    
     public override var truthy: Bool {
         false
     }
@@ -19,12 +19,12 @@ public class RT_Null: RT_Object, AEEncodable {
         "null"
     }
     
-    public override func coerce(to type: TypeInfo) -> RT_Object? {
+    public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
         switch Types(type.uri) {
         case .string:
             return RT_String(rt, value: "null")
         case .type:
-            return RT_Type(rt, value: RT_Null.typeInfo)
+            return RT_Type(rt, value: rt.reflection.types[.null])
         default:
             return super.coerce(to: type)
         }

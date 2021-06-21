@@ -1,11 +1,10 @@
 import Bushel
 import SwiftAutomation
 
-public class RT_Core: RT_Object, RT_LocalModule {
+public final class RT_Core: RT_Object, RT_LocalModule {
     
-    private static let typeInfo_ = TypeInfo(.coreObject)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .coreObject
     }
     
     public override var description: String {
@@ -25,7 +24,7 @@ public class RT_Core: RT_Object, RT_LocalModule {
         functions.add(rt, .set, parameters: [.direct: .specifier, .set_to: .item]) { arguments in
             let specifier = try arguments.for(.direct, RT_Specifier.self)
             let newValue = try arguments.for(.set_to)
-            guard let property = specifier.property else {
+            guard case let .property(property) = specifier.kind else {
                 throw NonPropertyIsNotWritable(specifier: specifier)
             }
             try specifier.parent.evaluate().setProperty(property, to: newValue)
@@ -162,7 +161,7 @@ public class RT_Core: RT_Object, RT_LocalModule {
                 let scriptName = Optional("")//rt.topScript.name
             // FIXME: fix
             {
-                arguments.contents[ParameterInfo(.GUI_ask_title)] = RT_String(rt, value: scriptName)
+                arguments.contents[Reflection.Parameter(.GUI_ask_title)] = RT_String(rt, value: scriptName)
             }
             
             return try RT_Application(rt, bundle: guiHostBundle).handle(arguments)
@@ -171,7 +170,7 @@ public class RT_Core: RT_Object, RT_LocalModule {
         return try self.handleByLocalFunction(arguments)
     }
     
-    public override func property(_ property: PropertyInfo) throws -> RT_Object? {
+    public override func property(_ property: Reflection.Property) throws -> RT_Object? {
         switch Properties(property.id) {
         case .arguments:
             return RT_List(rt, contents: rt.arguments.map { RT_String.init(rt, value: $0) })
@@ -190,7 +189,7 @@ public class RT_Core: RT_Object, RT_LocalModule {
         }
     }
     
-    public override func element(_ type: TypeInfo, named name: String) throws -> RT_Object? {
+    public override func element(_ type: Reflection.`Type`, named name: String) throws -> RT_Object? {
         func element() -> RT_Object? {
             switch Types(type.uri) {
             case .app:
@@ -209,7 +208,7 @@ public class RT_Core: RT_Object, RT_LocalModule {
         return elem
     }
     
-    public override func element(_ type: TypeInfo, id: RT_Object) throws -> RT_Object? {
+    public override func element(_ type: Reflection.`Type`, id: RT_Object) throws -> RT_Object? {
         func element() -> RT_Object? {
             switch Types(type.uri) {
             case .app:
@@ -230,7 +229,7 @@ public class RT_Core: RT_Object, RT_LocalModule {
         return elem
     }
     
-    public override func elements(_ type: TypeInfo) throws -> RT_Object {
+    public override func elements(_ type: Reflection.`Type`) throws -> RT_Object {
         switch Types(type.uri) {
         case .environmentVariable:
             return RT_List(rt, contents: ProcessInfo.processInfo.environment.keys.map { RT_EnvVar(rt, name: $0) })
@@ -240,11 +239,11 @@ public class RT_Core: RT_Object, RT_LocalModule {
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {
-        other.dynamicTypeInfo.isA(dynamicTypeInfo)
+        other.type.isA(type)
     }
     
     public override var hash: Int {
-        dynamicTypeInfo.hashValue
+        type.hashValue
     }
     
 }

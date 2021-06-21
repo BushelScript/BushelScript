@@ -13,19 +13,15 @@ public class RT_AEObject: RT_Object, AEEncodable {
         super.init(rt)
     }
     
-    private static let typeInfo_ = TypeInfo(.item, [.dynamic])
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
-    }
-    public override var dynamicTypeInfo: TypeInfo {
-        TypeInfo(.ae4(code: descriptor.descriptorType))
+    public override var type: Reflection.`Type` {
+        rt.reflection.types[.ae4(code: descriptor.descriptorType)]
     }
     
     public override var description: String {
         String(describing: descriptor)
     }
     
-    public override func coerce(to type: TypeInfo) -> RT_Object? {
+    public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
         guard
             let code = type.id.ae4Code,
             let coercedDescriptor = descriptor.coerce(toDescriptorType: code)

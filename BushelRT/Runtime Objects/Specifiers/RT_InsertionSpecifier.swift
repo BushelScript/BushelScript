@@ -28,12 +28,12 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
         throw InsertionSpecifierEvaluated(insertionSpecifier: self)
     }
     
-    public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
+    public func saSpecifier(appData: AppData) throws -> SwiftAutomation.Specifier? {
         guard let parent = self.parent as? RT_AESpecifier else {
             return nil
         }
-        guard let parentSpecifier = parent.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifierProtocol else {
-            // TODO: handle these errors more gracefully (should make this a throwing method)
+        guard let parentSpecifier = try parent.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifierProtocol else {
+            // TODO: handle gracefully
             fatalError("cannot extend a non-object specifier")
         }
         
@@ -124,9 +124,8 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
         }
     }
     
-    private static let typeInfo_ = TypeInfo(.specifier)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .specifier
     }
     
 }

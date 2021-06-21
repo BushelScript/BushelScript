@@ -17,9 +17,8 @@ public class RT_Date: RT_Object {
         value.description(with: nil)
     }
     
-    private static let typeInfo_ = TypeInfo(.date)
-    public override class var typeInfo: TypeInfo {
-        typeInfo_
+    public override class var staticType: Types {
+        .date
     }
     
     public var seconds: RT_Integer {
@@ -35,19 +34,19 @@ public class RT_Date: RT_Object {
         RT_Integer(rt, value: calendar.dateComponents([.second], from: calendar.startOfDay(for: value), to: value).second!)
     }
     
-    public override class var propertyKeyPaths: [PropertyInfo : AnyKeyPath] {
+    public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
         [
-            PropertyInfo(Properties.date_seconds): \RT_Date.seconds,
-            PropertyInfo(Properties.date_minutes): \RT_Date.minutes,
-            PropertyInfo(Properties.date_hours): \RT_Date.hours,
-            PropertyInfo(Properties.date_secondsSinceMidnight): \RT_Date.secondsSinceMidnight
+            .date_seconds: \RT_Date.seconds,
+            .date_minutes: \RT_Date.minutes,
+            .date_hours: \RT_Date.hours,
+            .date_secondsSinceMidnight: \RT_Date.secondsSinceMidnight
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
         keyPath.evaluate(on: self)
     }
     
-    public override func coerce(to type: TypeInfo) -> RT_Object? {
+    public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
         switch Types(type.id) {
         case .real:
             return RT_Real(rt, value: value.timeIntervalSince1970)
