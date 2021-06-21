@@ -86,6 +86,7 @@ public extension Runtime {
     }
     
     func run(_ program: Program) throws -> RT_Object {
+        reflection.typeTree = program.typeTree
         reflection.inject(from: program.rootTerm)
         builtin = Builtin(
             self,

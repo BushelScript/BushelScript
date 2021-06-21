@@ -205,7 +205,7 @@ public struct Translation {
         mappings[typedUID]?.first
     }
     
-    public func makeTerms() -> Set<Term> {
+    public func makeTerms(typeTree: TypeTree) -> Set<Term> {
         var resourceTerms: [Term] = []
         
         let termPairs: [(Term.ID, [Term])] = mappings.map { kv in
@@ -267,7 +267,7 @@ public struct Translation {
         }
         
         for resourceTerm in resourceTerms {
-            try? resourceTerm.loadDictionary()
+            try? resourceTerm.loadDictionary(typeTree: typeTree)
         }
         
         return resultTerms.values.reduce(into: Set()) { set, terms in set.formUnion(terms) }

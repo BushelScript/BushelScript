@@ -45,9 +45,9 @@ public class AETEParser {
                 */
                 for var elementTerm in self.classDefinitionsByCode.values {
                     if elementTerm.name == "" {
-                        elementTerm = ClassTerm(name: elementTerm.pluralName, pluralName: elementTerm.pluralName, code: elementTerm.code)
+                        elementTerm = ClassTerm(name: elementTerm.pluralName, pluralName: elementTerm.pluralName, code: elementTerm.code, inheritsFromName: nil)
                     } else if elementTerm.pluralName == "" {
-                        elementTerm = ClassTerm(name: elementTerm.name, pluralName: elementTerm.name, code: elementTerm.code)
+                        elementTerm = ClassTerm(name: elementTerm.name, pluralName: elementTerm.name, code: elementTerm.code, inheritsFromName: nil)
                     }
                     self.elements.append(elementTerm)
                     self.types.append(elementTerm)
@@ -211,9 +211,9 @@ public class AETEParser {
         let elementDef: ClassTerm
         let oldDef = self.classDefinitionsByCode[classCode]
         if isPlural {
-            elementDef = ClassTerm(name: oldDef?.name ?? "", pluralName: className, code: classCode)
+            elementDef = ClassTerm(name: oldDef?.name ?? "", pluralName: className, code: classCode, inheritsFromName: nil)
         } else {
-            elementDef = ClassTerm(name: className, pluralName: oldDef?.pluralName ?? "", code: classCode)
+            elementDef = ClassTerm(name: className, pluralName: oldDef?.pluralName ?? "", code: classCode, inheritsFromName: nil)
         }
         self.classDefinitionsByCode[classCode] = elementDef
     }

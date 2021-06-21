@@ -1,4 +1,7 @@
 import SDEFinitely
+import os
+
+private let log = OSLog(subsystem: logSubsystem, category: #file)
 
 extension TermDictionary {
     
@@ -11,7 +14,7 @@ extension TermDictionary {
     ///     a Cocoa Scripting plist pair, or a classic `aete` resource
     ///
     /// - Throws: `SDEFError` if the terms cannot be loaded for any reason.
-    public func load(from url: URL) throws {
+    public func load(from url: URL, typeTree: TypeTree) throws {
         if url.pathExtension == "bushel" {
             merge(try parse(from: url).rootTerm.dictionary)
         } else {
@@ -26,7 +29,7 @@ extension TermDictionary {
                 return
             }
             
-            var terms = try parse(sdef: sdef)
+            var terms = try parse(sdef: sdef, typeTree: typeTree)
             
             terms.removeAll { term in
                 // Don't import terms that shadow the "set" and "get"
@@ -75,20 +78,32 @@ private func withSDEFCache<Result>(do action: (inout [URL : Data]) throws -> Res
     }
 }
 
-/// Parses and returns terms from SDEF data `sdef`.
+/// Parses and returns terms from SDEF data `sdef`,
+/// adding subtyping information to `typeTree`.
 ///
 /// SDEF data can be obtained from `readSDEF(from:)`.
 ///
 /// - Throws: `SDEFError` if the data cannot be parsed for any reason.
-public func parse(sdef: Data) throws -> [Term] {
+public func parse(sdef: Data, typeTree: TypeTree) throws -> [Term] {
     let delegate = SetOfTermSDEFParserDelegate()
     try SDEFParser(delegate: delegate).parse(sdef)
+    
+    for (type, supertypeName) in delegate.inheritedClassTypes {
+        if let supertype = delegate.nameToClassType[supertypeName] {
+            typeTree.add(type.uri, supertype: supertype.uri)
+        } else {
+            os_log("No class type found for supertype name ‘%{public}@’, ignoring", log: log, "\(supertypeName)")
+        }
+    }
+    
     return delegate.terms
 }
 
 private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
     
     var terms: [Term] = []
+    var nameToClassType: [Term.Name : Term] = [:]
+    var inheritedClassTypes: [(type: Term, supertypeName: Term.Name)] = []
     
     private func add(_ term: Term) {
         terms.append(term)
@@ -98,7 +113,14 @@ private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
         add(convertAE4(.type, term))
     }
     func addClass(_ term: SDEFinitely.ClassTerm) {
-        add(convertAE4(.type, term))
+        let classType = convertAE4(.type, term)
+        add(classType)
+        if let name = classType.name {
+            nameToClassType[name] = classType
+        }
+        if let supertypeName = term.inheritsFromName {
+            inheritedClassTypes.append((type: classType, supertypeName: Term.Name(supertypeName)))
+        }
     }
     func addProperty(_ term: SDEFinitely.KeywordTerm) {
         add(convertAE4(.property, term))

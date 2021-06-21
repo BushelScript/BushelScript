@@ -319,8 +319,8 @@ extension Resource {
 // MARK: Dictionary loading
 extension Term {
     
-    public func loadDictionary() throws {
-        try resource?.url.map { try dictionary.load(from: $0) }
+    public func loadDictionary(typeTree: TypeTree) throws {
+        try resource?.url.map { try dictionary.load(from: $0, typeTree: typeTree) }
     }
     
 }

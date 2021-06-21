@@ -18,6 +18,7 @@ public protocol SourceParser: AnyObject {
     var termNameStartIndex: String.Index { get set }
     
     var lexicon: Lexicon { get set }
+    var typeTree: TypeTree { get set }
     var sequenceNestingLevel: Int { get set }
     var elements: Set<SourceElement> { get set }
     var awaitingExpressionEndKeywords: [Set<Term.Name>] { get set }
@@ -92,7 +93,7 @@ extension SourceParser {
         
         // Add all other terms.
         for translation in translations {
-            lexicon.add(translation.makeTerms())
+            lexicon.add(translation.makeTerms(typeTree: typeTree))
         }
         
         lexicon.add(Term(Term.ID(Parameters.direct)))
@@ -128,7 +129,7 @@ extension SourceParser {
         self.elements = []
         
         guard !entireSource.isEmpty else {
-            return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, rootTerm: lexicon.rootTerm)
+            return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, rootTerm: lexicon.rootTerm, typeTree: typeTree)
         }
         
         buildTraversalTables()
@@ -139,7 +140,7 @@ extension SourceParser {
         do {
             let sequence = try parseSequence()
             eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
-            return Program(sequence, elements, source: entireSource, rootTerm: lexicon.rootTerm)
+            return Program(sequence, elements, source: entireSource, rootTerm: lexicon.rootTerm, typeTree: typeTree)
         } catch var error as ParseErrorProtocol {
             if !entireSource.range.contains(error.location.range.lowerBound) {
                 error.location.range = entireSource.index(before: entireSource.endIndex)..<entireSource.endIndex

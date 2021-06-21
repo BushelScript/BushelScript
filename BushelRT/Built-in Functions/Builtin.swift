@@ -3,7 +3,7 @@ import SwiftAutomation
 
 final class Builtin {
     
-    var rt = Runtime()
+    var rt: Runtime
     public var frameStack: RT_FrameStack
     public var moduleStack: RT_ModuleStack
     public var targetStack: RT_TargetStack

@@ -2,19 +2,21 @@ import Bushel
 
 public struct Reflection {
     
-    // MARK: Terminology runtime reflection
-    
-    public init() {
-    }
+    public var typeTree: TypeTree? = nil
     
     public mutating func inject(from rootTerm: Term) {
+        addAll(from: rootTerm)
+        updateSupertypes()
+    }
+    
+    private mutating func addAll(from rootTerm: Term) {
         for term in rootTerm.dictionary.contents {
             switch term.role {
             case .dictionary:
                 break
             case .type:
                 let type = types.add(term)
-                // FIXME: Deal with supertypes
+                typesWithoutSupertype.insert(type)
             case .property:
                 properties.add(term)
             case .constant:
@@ -28,24 +30,37 @@ public struct Reflection {
             case .resource:
                 break
             }
-            inject(from: term)
+            addAll(from: term)
         }
+    }
+    
+    /// Update supertype info for orphaned types according to the current state
+    /// of the TypeTree.
+    private mutating func updateSupertypes() {
+        guard let typeTree = typeTree else {
+            return
+        }
+        var newTypesWithoutSupertype = typesWithoutSupertype
+        for type in typesWithoutSupertype {
+            let supertype = typeTree.supertype(of: type.uri)
+            if supertype != typeTree.rootType {
+                type.supertype = types[supertype]
+                newTypesWithoutSupertype.remove(type)
+            }
+        }
+        typesWithoutSupertype = newTypesWithoutSupertype
     }
     
     private var terms: Set<Term> = []
     
-    public var types = ReflectedTerms<Reflection.`Type`, Types>()
+    public var types = ReflectedTerms<`Type`, Types>()
+    private var typesWithoutSupertype: Set<`Type`> = []
     
-    private var typesBySupertype: [Reflection.`Type` : [Reflection.`Type`]] = [:]
-    public func subtypes(of type: Reflection.`Type`) -> [Reflection.`Type`] {
-        typesBySupertype[type] ?? []
-    }
+    public var properties = ReflectedTerms<Property, Properties>()
     
-    public var properties = ReflectedTerms<Reflection.Property, Properties>()
+    public var constants = ReflectedTerms<Constant, Constants>()
     
-    public var constants = ReflectedTerms<Reflection.Constant, Constants>()
-    
-    public var commands = ReflectedTerms<Reflection.Command, Commands>()
+    public var commands = ReflectedTerms<Command, Commands>()
     
     public struct ReflectedTerms<Reflected: TermReflection, Predefined: Term.PredefinedID> {
         
