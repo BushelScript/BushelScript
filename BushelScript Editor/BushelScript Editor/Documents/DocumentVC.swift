@@ -335,7 +335,7 @@ extension DocumentVC: NSTextViewDelegate {
             if lineBreakNSRange.location == NSNotFound {
                 lineBreakNSRange = NSRange(location: 0, length: 0)
             }
-            var firstNonspaceNSRange = (textStorage.string as NSString).rangeOfCharacter(from: .whitespaces.inverted, options: [], range: NSRange(location: lineBreakNSRange.location + 1, length: selectedRange.location - (lineBreakNSRange.location + 1)))
+            var firstNonspaceNSRange = (textStorage.string as NSString).rangeOfCharacter(from: CharacterSet.whitespaces.inverted, options: [], range: NSRange(location: lineBreakNSRange.location + 1, length: selectedRange.location - (lineBreakNSRange.location + 1)))
             if firstNonspaceNSRange.location == NSNotFound {
                 firstNonspaceNSRange = NSRange(location: selectedRange.location, length: 0)
             }
