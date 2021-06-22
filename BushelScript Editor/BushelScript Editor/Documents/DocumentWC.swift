@@ -8,6 +8,7 @@ import Bushel
 class DocumentWC: NSWindowController {
     
     @IBOutlet var languageMenuDelegate: CurrentDocumentLanguageMenuDelegate!
+    @IBOutlet var indentationMenuDelegate: IndentationMenuDelegate!
     
     @IBOutlet weak var languagePUB: NSPopUpButton!
     
@@ -38,7 +39,7 @@ class CurrentDocumentLanguageMenuDelegate: NSObject, NSMenuDelegate {
         var itemTitleToSelect: String?
         
         for module in LanguageModule.allModuleDescriptors() {
-            let item = menu.addItem(withTitle: module.localizedName, action: #selector(DocumentVC.setLanguage(_:)), keyEquivalent: "")
+            let item = menu.addItem(title: module.localizedName, action: #selector(DocumentVC.setLanguage(_:)))
             item.representedObject = module
             if module.identifier == currentDocument?.languageID {
                 item.state = .on

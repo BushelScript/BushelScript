@@ -14,6 +14,7 @@ class Document: NSDocument {
     
     @objc var sourceCode: String = ""
     @objc dynamic var languageID: String = "bushelscript_en"
+    @objc dynamic var indentMode = IndentMode()
     
     var rt = BushelRT.Runtime()
     
@@ -159,6 +160,31 @@ class Document: NSDocument {
         }
         
         self.sourceCode = readString
+    }
+    
+}
+
+class IndentMode: NSObject {
+    
+    @objc dynamic var character: Character = .space
+    @objc dynamic var width: Int = 4
+    
+    @objc enum Character: Int {
+        case space, tab
+    }
+    
+    var indentation: String {
+        switch character {
+        case .space:
+            return String(repeating: " ", count: width)
+        case .tab:
+            return "\t"
+        @unknown default:
+            return String(repeating: " ", count: width)
+        }
+    }
+    func indentation(for level: Int) -> String {
+        String(repeating: indentation, count: level)
     }
     
 }

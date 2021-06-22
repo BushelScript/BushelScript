@@ -100,7 +100,7 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
                     textView.didChangeText()
                 }
                 
-                textView.typingAttributes = defaultSourceCodeAttributes()
+                resetTypingAttributes()
             }
             
             textView.textStorage?.beginEditing()
@@ -184,6 +184,35 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
         }
         document.languageID = moduleDescriptor.identifier
         program = nil
+    }
+    
+    @IBAction func setIndentType(_ sender: Any?) {
+        guard
+            let tag = (sender as AnyObject).tag,
+            let character = IndentMode.Character(rawValue: tag)
+        else {
+            return
+        }
+        document.indentMode.character = character
+    }
+    @IBAction func setIndentWidth(_ sender: Any?) {
+        guard let tag = (sender as AnyObject).tag else {
+            return
+        }
+        document.indentMode.width = tag
+        updateTabWidth()
+    }
+    
+    private func updateTabWidth() {
+        let paragraphStyle = textView.defaultParagraphStyle ?? NSParagraphStyle()
+        let style = paragraphStyle.mutableCopy() as! NSMutableParagraphStyle
+        style.defaultTabInterval = NSAttributedString(string: String(repeating: " ", count: document.indentMode.width), attributes: textView.typingAttributes).size().width
+        style.tabStops = []
+        textView.defaultParagraphStyle = style
+        textView.typingAttributes[.paragraphStyle] = style
+        if let textStorage = textView.textStorage {
+            textStorage.addAttributes([.paragraphStyle: style], range: NSRange(location: 0, length: textStorage.length))
+        }
     }
     
     @objc func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
@@ -290,6 +319,45 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
 // MARK: NSTextViewDelegate
 extension DocumentVC: NSTextViewDelegate {
     
+    func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+        switch commandSelector {
+        case #selector(insertTab(_:)),
+             #selector(insertTabIgnoringFieldEditor(_:)):
+            textView.insertText(document.indentMode.indentation, replacementRange: textView.selectedRange())
+            return true
+        case #selector(insertNewline(_:)):
+            guard let textStorage = textView.textStorage else {
+                return false
+            }
+            
+            let selectedRange = textView.selectedRange()
+            var lineBreakNSRange = (textStorage.string as NSString).rangeOfCharacter(from: .newlines, options: [.backwards], range: NSRange(location: 0, length: selectedRange.location))
+            if lineBreakNSRange.location == NSNotFound {
+                lineBreakNSRange = NSRange(location: 0, length: 0)
+            }
+            var firstNonspaceNSRange = (textStorage.string as NSString).rangeOfCharacter(from: .whitespaces.inverted, options: [], range: NSRange(location: lineBreakNSRange.location + 1, length: selectedRange.location - (lineBreakNSRange.location + 1)))
+            if firstNonspaceNSRange.location == NSNotFound {
+                firstNonspaceNSRange = NSRange(location: selectedRange.location, length: 0)
+            }
+            guard
+                let lineBreakRange = Range(lineBreakNSRange, in: textStorage.string),
+                let firstNonspaceRange = Range(firstNonspaceNSRange, in: textStorage.string)
+            else {
+                return false
+            }
+            
+            var lineIndentation = String(textStorage.string[lineBreakRange.upperBound..<firstNonspaceRange.lowerBound])
+            lineIndentation = lineIndentation.replacingOccurrences(of: document.indentMode.indentation, with: "\t", options: [])
+            let indentCount = lineIndentation.reduce(0) { $0 + ($1 == "\t" ? 1 : 0) }
+            
+            textView.insertNewline(self)
+            textView.insertText(document.indentMode.indentation(for: indentCount), replacementRange: textView.selectedRange())
+            return true
+        default:
+            return false
+        }
+    }
+    
     func textDidChange(_ notification: Notification) {
         textDidChange()
     }
@@ -337,7 +405,7 @@ extension DocumentVC: NSTextViewDelegate {
         let textStorageRange = NSRange(sourceRange, in: textStorage.string)
         
         textStorage.addAttribute(.backgroundColor, value: NSColor(named: "ErrorHighlightColor")!, range: textStorageRange)
-        textView.typingAttributes = defaultSourceCodeAttributes()
+        resetTypingAttributes()
         
         let firstLineScreenRect = textView.firstRect(forCharacterRange: textStorageRange, actualRange: nil)
         guard firstLineScreenRect != .zero else {
@@ -372,7 +440,7 @@ extension DocumentVC: NSTextViewDelegate {
         func clearErrorHighlighting() {
             let entireSourceRange = NSRange(location: 0, length: (self.textView.string as NSString).length)
             textView.textStorage?.removeAttribute(.backgroundColor, range: entireSourceRange)
-            textView.typingAttributes = defaultSourceCodeAttributes()
+            resetTypingAttributes()
         }
         func removeInlineErrorView() {
             guard let oldInlineErrorVC = self.inlineErrorVC else {
@@ -383,6 +451,10 @@ extension DocumentVC: NSTextViewDelegate {
         }
         clearErrorHighlighting()
         removeInlineErrorView()
+    }
+    
+    private func resetTypingAttributes() {
+        textView.typingAttributes.merge(defaultSourceCodeAttributes(), uniquingKeysWith: { old, new in new })
     }
     
     func textViewDidChangeSelection(_ notification: Notification) {

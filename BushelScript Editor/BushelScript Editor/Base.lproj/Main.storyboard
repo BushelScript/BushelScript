@@ -282,6 +282,48 @@ Gw
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View" id="HyV-fh-RgO">
                                     <items>
+                                        <menuItem title="Indentation" id="3H8-tg-f5D">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Indentation" id="GZA-NV-SpX">
+                                                <items>
+                                                    <menuItem title="Spaces" id="vdn-cC-emp">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="Tabs" id="QvL-yw-wzb">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem isSeparatorItem="YES" id="Ebn-Lm-Spg"/>
+                                                    <menuItem title="1" id="T6S-A0-llr">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="2" id="1dk-GB-VOM">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="3" id="ljv-cl-yMB">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="4" id="TRn-7C-zh6">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="5" id="IkD-oW-ibO">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="6" id="idW-93-nIx">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="7" id="xCe-8q-Ta1">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="8" id="dGo-TM-BZu">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                </items>
+                                                <connections>
+                                                    <outlet property="delegate" destination="HSZ-f1-Wpn" id="fyK-8o-j03"/>
+                                                </connections>
+                                            </menu>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="v1Y-Xt-WaQ"/>
                                         <menuItem title="Show Toolbar" keyEquivalent="t" id="snW-S8-Cw5">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
@@ -446,6 +488,7 @@ DQ
                 </customObject>
                 <customObject id="LGR-ye-EHh" customClass="SUUpdater"/>
                 <customObject id="sh2-hA-rfQ" customClass="ScriptLanguageMenuDelegate" customModule="BushelScript_Editor" customModuleProvider="target"/>
+                <customObject id="HSZ-f1-Wpn" customClass="IndentationMenuDelegate" customModule="BushelScript_Editor" customModuleProvider="target"/>
                 <customObject id="OXF-AH-Jih" userLabel="BushelScript Website Link" customClass="LinkOpener" customModule="BushelScript_Editor" customModuleProvider="target">
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="string" keyPath="link" value="https://bushelscript.github.io"/>

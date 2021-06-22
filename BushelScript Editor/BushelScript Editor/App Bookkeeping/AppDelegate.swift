@@ -89,16 +89,34 @@ class ScriptLanguageMenuDelegate: NSObject, NSMenuDelegate {
         menu.removeAllItems()
         
         for module in LanguageModule.allModuleDescriptors() {
-            let item = menu.addItem(withTitle: module.localizedName, action: #selector(DocumentVC.setLanguage(_:)), keyEquivalent: "")
-            item.representedObject = module
-            if module.identifier == currentDocument?.languageID {
-                item.state = .on
-            }
+            menu.addItem(
+                title: module.localizedName,
+                action: #selector(DocumentVC.setLanguage(_:)),
+                representedObject: module,
+                isOn: module.identifier == currentDocument()?.languageID
+            )
         }
     }
     
-    private var currentDocument: Document? {
-        return NSApplication.shared.orderedDocuments.first as? Document
+}
+
+class IndentationMenuDelegate: NSObject, NSMenuDelegate {
+    
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        menu.removeAllItems()
+        
+        menu.addItem(title: "Spaces", action: #selector(DocumentVC.setIndentType(_:)), tag: IndentMode.Character.space.rawValue, isOn: currentDocument()?.indentMode.character == .space)
+        menu.addItem(title: "Tabs", action: #selector(DocumentVC.setIndentType(_:)), tag: IndentMode.Character.tab.rawValue, isOn: currentDocument()?.indentMode.character == .tab)
+        
+        menu.addItem(NSMenuItem.separator())
+        
+        for width in 1...8 {
+            menu.addItem(title: String(width), action: #selector(DocumentVC.setIndentWidth(_:)), tag: width, isOn: currentDocument()?.indentMode.width == width)
+        }
     }
     
+}
+
+private func currentDocument() -> Document? {
+    NSApplication.shared.orderedDocuments.first as? Document
 }
