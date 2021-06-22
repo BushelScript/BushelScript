@@ -3,10 +3,8 @@ name: CI (Test and Package)
 on: [push]
 
 jobs:
-  test-and-package:
-
+  test:
     runs-on: macos-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Switch to Xcode 12.4
@@ -15,7 +13,14 @@ jobs:
       run: |
         cd "$GITHUB_WORKSPACE"
         ./test.sh
-    - name: Package
+    
+  package:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Switch to Xcode 12.4
+      run: sudo xcode-select -s /Applications/Xcode_12.4.app/Contents/Developer
+    - name: Package release
       run: |
         cd "$GITHUB_WORKSPACE"
         function get_project_version {
