@@ -74,8 +74,40 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
         }
     }
     
+    @IBAction func increaseFontSize(_ sender: Any?) {
+        customFontSize = (customFontSize ?? Defaults[.sourceCodeFont].pointSize) * 1.2
+    }
+    @IBAction func decreaseFontSize(_ sender: Any?) {
+        customFontSize = max(1.0, (customFontSize ?? Defaults[.sourceCodeFont].pointSize) / 1.2)
+    }
+    @IBAction func resetFontSize(_ sender: Any?) {
+        customFontSize = nil
+    }
+    
+    var customFontSize: CGFloat? {
+        didSet {
+            updateDisplayedFont()
+        }
+    }
+    
+    override func viewDidLoad() {
+        Defaults.observe(.sourceCodeFont) { [weak self] _ in
+            self?.updateDisplayedFont()
+        }.tieToLifetime(of: self)
+    }
+    
+    private func updateDisplayedFont() {
+        if let textStorage = textView.textStorage {
+            textStorage.addAttribute(.font, value: documentFont, range: NSRange(location: 0, length: textStorage.length))
+        }
+    }
+    
     private var documentFont: NSFont {
-        Defaults[.sourceCodeFont]
+        if let fontSize = customFontSize {
+            return Defaults[.sourceCodeFont].withSize(fontSize)
+        } else {
+            return Defaults[.sourceCodeFont]
+        }
     }
     
     var displayedAttributedSourceCode = NSAttributedString(string: "") {

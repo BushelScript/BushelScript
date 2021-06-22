@@ -295,6 +295,28 @@ Gw
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="hB3-LF-h0Y"/>
+                                        <menuItem title="Font" id="4E5-eh-8mh">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Font" id="sTS-rX-Axw">
+                                                <items>
+                                                    <menuItem title="Bigger" keyEquivalent="=" id="Hgo-a5-VRG">
+                                                        <connections>
+                                                            <action selector="increaseFontSize:" target="Ady-hI-5gd" id="Xoi-Tc-THb"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Smaller" keyEquivalent="-" id="ASL-KB-PbQ">
+                                                        <connections>
+                                                            <action selector="decreaseFontSize:" target="Ady-hI-5gd" id="oGf-1w-l7M"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Default Size" keyEquivalent="0" id="QJd-pC-3IH">
+                                                        <connections>
+                                                            <action selector="resetFontSize:" target="Ady-hI-5gd" id="f27-zY-fVb"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
+                                        </menuItem>
                                         <menuItem title="Indentation" id="3H8-tg-f5D">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Indentation" id="GZA-NV-SpX">
