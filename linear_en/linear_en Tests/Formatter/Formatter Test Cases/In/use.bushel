@@ -1,5 +1,0 @@
-use application Finder
-use app Mail
-use application id com.apple.finder
-use app id com.apple.Mail
-use application System Preferences
