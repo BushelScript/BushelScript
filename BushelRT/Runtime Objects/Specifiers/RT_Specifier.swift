@@ -231,10 +231,10 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
             switch element.form {
             case let .simple(name),
                  let .name(name):
-                guard let name = (name.coerce(to: RT_String.self))?.value else {
+                guard let appName = (name.coerce(to: RT_String.self))?.value else {
                     throw InvalidSpecifierDataType(specifierType: .byName, specifierData: name)
                 }
-                return RootSpecifier(name: name)
+                return RootSpecifier(name: appName)
             case let .id(id):
                 guard let bundleID = (id.coerce(to: RT_String.self))?.value else {
                     throw InvalidSpecifierDataType(specifierType: .byID, specifierData: id)
