@@ -26,7 +26,11 @@ public final class TypeTree {
             subtypes.insert(type)
             typeToSubtypes[supertype] = subtypes
             
-            supertype = self.supertype(of: supertype)
+            let newSupertype = self.supertype(of: supertype)
+            if newSupertype == supertype {
+                break
+            }
+            supertype = newSupertype
         }
         
     }
