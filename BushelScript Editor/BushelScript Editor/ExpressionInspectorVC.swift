@@ -17,11 +17,11 @@ class ExpressionInspectorVC: ObjectInspector2VC {
             return os_log("No document available", log: log, type: .debug)
         }
         self.document = document
-        tying(to: self) {
+        tying(to: self, [
             NotificationObservation(.selectedExpression, document) { [weak self] (document, userInfo) in
                 self?.representedObject = (userInfo[.payload] as? Expression).map { "\($0.kindName): \($0.kindDescription)" }
             }
-        }
+        ])
     }
     
 }

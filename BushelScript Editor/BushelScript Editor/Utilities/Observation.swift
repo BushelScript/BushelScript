@@ -30,15 +30,10 @@ final class NotificationObservation: NSObject, Tiable {
     
 }
 
-func tying<T: Tiable>(to owner: AnyObject, @ArrayBuilder<T> _ tiables: () -> [T]) {
-    for tiable in tiables() {
+func tying<T: Tiable>(to owner: AnyObject, _ tiables: [T]) {
+    for tiable in tiables {
         tiable.tie(to: owner)
     }
-}
-
-@_functionBuilder
-enum ArrayBuilder<T> {
-    static func buildBlock(_ elements: T...) -> [T] { elements }
 }
 
 protocol Tiable {
