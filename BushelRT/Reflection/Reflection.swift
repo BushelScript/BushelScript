@@ -30,7 +30,10 @@ public struct Reflection {
             case .resource:
                 break
             }
-            addAll(from: term)
+            if !terms.contains(term) {
+                terms.insert(term)
+                addAll(from: term)
+            }
         }
     }
     
