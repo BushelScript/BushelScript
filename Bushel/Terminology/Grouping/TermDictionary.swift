@@ -18,11 +18,12 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     
     /// Initializes with the terms in `contents`.
     public init<Contents: TermCollection>(contents: Contents) {
-        self.byID = Dictionary(uniqueKeysWithValues: contents.map { (key: $0.id, value: $0) })
-        self.byName = Dictionary(uniqueKeysWithValues:
+        self.byID = Dictionary(contents.map { (key: $0.id, value: $0) }, uniquingKeysWith: TermDictionary.resolveTermConflict)
+        self.byName = Dictionary(
             contents.compactMap { term in
                 term.name.flatMap { (key: $0, value: term) }
-            })
+            },
+            uniquingKeysWith: TermDictionary.resolveTermConflict)
         findExportingTerms(in: contents)
     }
     

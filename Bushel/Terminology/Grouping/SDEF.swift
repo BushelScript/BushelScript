@@ -13,37 +13,42 @@ extension TermDictionary {
     ///   - An application bundle that contains one or more of an SDEF,
     ///     a Cocoa Scripting plist pair, or a classic `aete` resource
     ///
-    /// - Throws: `SDEFError` if the terms cannot be loaded for any reason.
+    /// Maintains a cache, so external changes to previously read URLs may be
+    /// ignored.
+    ///
+    /// - Throws:
+    ///   - `ParseError` if `url` refers to an ill-formed BushelScript file.
+    ///   - `SDEFError` if `url` refers to an ill-formed SDEF file or
+    ///                 an app bundle with an ill-formed terminology definition.
     public func load(from url: URL, typeTree: TypeTree) throws {
-        if url.pathExtension == "bushel" {
-            merge(try parse(from: url).rootTerm.dictionary)
-        } else {
-            let sdef: Data
-            do {
-                sdef = try readSDEF(from: url)
-            } catch is NoSDEF {
-                // That's OK.
-                return
-            } catch is SDEFError {
-                // TODO: Why are errors suppressed here?
-                return
+        if let dictionary = try dictionaryCache.cached(for: url, orElse: {
+            if url.pathExtension == "bushel" {
+                return try parse(from: url).rootTerm.dictionary
+            } else {
+                let sdef: Data
+                do {
+                    sdef = try readSDEF(from: url)
+                } catch is NoSDEF {
+                    // That's OK.
+                    return nil
+                }
+                var terms = try parse(sdef: sdef, typeTree: typeTree)
+                // Don't import terms that shadow "set" or "get":
+                terms.removeAll { term in
+                    [Commands.get, Commands.set]
+                        .map { Term.ID($0) }
+                        .contains(term.id)
+                }
+                return TermDictionary(contents: terms)
             }
-            
-            var terms = try parse(sdef: sdef, typeTree: typeTree)
-            
-            terms.removeAll { term in
-                // Don't import terms that shadow the "set" and "get"
-                // builtin special-case commands
-                [Commands.get, Commands.set]
-                    .map { Term.ID($0) }
-                    .contains(term.id)
-            }
-            
-            add(terms)
+        }) {
+            merge(dictionary)
         }
     }
     
 }
+
+private var dictionaryCache = Cache<URL, TermDictionary>()
 
 /// SDEF data containing the contents of the scripting definition at `url`.
 ///
@@ -57,25 +62,41 @@ extension TermDictionary {
 ///
 /// - Throws: `SDEFError` if the data cannot be read for any reason.
 public func readSDEF(from url: URL) throws -> Data {
-    try withSDEFCache { sdefCache in
-        if let sdef = sdefCache[url] {
-            return sdef
-        }
-        
-        let sdef = try SDEFinitely.readSDEF(from: url)
-        
-        sdefCache[url] = sdef
-        return sdef
-    }
+    try sdefCache.cached(for: url, orElse: {
+        try SDEFinitely.readSDEF(from: url)
+    })
 }
 
-private let _sdefCacheAccessQueue = DispatchQueue(label: "SDEF cache access")
-private var _sdefCache: [URL : Data] = [:]
+private var sdefCache = Cache<URL, Data>()
 
-private func withSDEFCache<Result>(do action: (inout [URL : Data]) throws -> Result) rethrows -> Result {
-    try _sdefCacheAccessQueue.sync {
-        try action(&_sdefCache)
+class Cache<Key, Value> where Key: Hashable {
+    
+    private let accessQueue = DispatchQueue(label: "Cache access")
+    private var cache: [Key : Value] = [:]
+    
+    func cached(for key: Key, orElse action: () throws -> Value) rethrows -> Value {
+        try accessQueue.sync {
+            if let value = cache[key] {
+                return value
+            }
+            let value = try action()
+            cache[key] = value
+            return value
+        }
     }
+    func cached(for key: Key, orElse action: () throws -> Value?) rethrows -> Value? {
+        try accessQueue.sync {
+            if let value = cache[key] {
+                return value
+            }
+            if let value = try action() {
+                cache[key] = value
+                return value
+            }
+            return nil
+        }
+    }
+    
 }
 
 /// Parses and returns terms from SDEF data `sdef`,
