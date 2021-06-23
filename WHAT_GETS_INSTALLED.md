@@ -8,7 +8,6 @@ You can currently add the following types of components to `Library/BushelScript
 
 The app package contains the following core components:
   - Core frameworks: `SharedFrameworks/`
-    - AppleEvent support: `SwiftAutomation.framework`
     - Common structure (including AST) definitions, language module API: `Bushel.framework`
     - Runtime: `BushelRT.framework`
   - Language modules: `Languages/`

@@ -1,5 +1,5 @@
 import Cocoa
-import SwiftAutomation
+import AEthereal
 import Bushel
 import BushelRT
 import os
@@ -181,7 +181,7 @@ func getArguments(from event: NSAppleEventDescriptor) -> [Reflection.Parameter :
             continue
         }
         
-        if let value = try? RT_Object.fromAEDescriptor(rt, AppData(), descriptor) {
+        if let value = try? RT_Object.fromAEDescriptor(rt, App(), descriptor) {
             result[Reflection.Parameter(.ae12(class: eventClass, id: eventID, code: code))] = value
         }
     }
@@ -216,7 +216,7 @@ private func setResult(_ object: RT_Object, in replyEvent: NSAppleEventDescripto
         return
     }
     do {
-        let encoded = try encodable.encodeAEDescriptor(AppData())
+        let encoded = try encodable.encodeAEDescriptor(App())
         setResult(encoded, in: replyEvent)
     } catch {
         os_log("Failed to encode reply descriptor for %@: %@", log: log, type: .error, object, String(describing: error))

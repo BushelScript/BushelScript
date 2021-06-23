@@ -26,7 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     Defaults[.liveErrorsEnabled] = false
                 }
             },
-            Defaults.observe(.privacyFetchAppDataForSmartSuggestions) { change in
+            Defaults.observe(.privacyFetchAppForSmartSuggestions) { change in
                 Defaults[.smartSuggestionKinds]["ScriptingObjects"] = false
             }
         ]

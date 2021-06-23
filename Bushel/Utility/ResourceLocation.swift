@@ -1,5 +1,5 @@
 import Foundation
-import SwiftAutomation
+import AEthereal
 import os.log
 
 private let log = OSLog(subsystem: logSubsystem, category: "Resource location")
@@ -10,7 +10,7 @@ extension Bundle {
         signpostBegin()
         defer { signpostEnd() }
         
-        guard let bundleIdentifier = TargetApplication.name(applicationName).bundleIdentifier else {
+        guard let bundleIdentifier = AETarget.name(applicationName).bundleIdentifier else {
             return nil
         }
         self.init(applicationBundleIdentifier: bundleIdentifier)

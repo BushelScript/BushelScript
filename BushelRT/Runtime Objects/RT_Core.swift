@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 public final class RT_Core: RT_Object, RT_LocalModule {
     

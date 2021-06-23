@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// A 64-bit integer.
 public class RT_Integer: RT_Object {
@@ -35,7 +35,7 @@ public class RT_Integer: RT_Object {
         }
     }
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
         withUnsafePointer(to: value) { valuePointer in
             NSAppleEventDescriptor(descriptorType: typeSInt64, data: Data(buffer: UnsafeBufferPointer(start: valuePointer, count: 1)))!
         }

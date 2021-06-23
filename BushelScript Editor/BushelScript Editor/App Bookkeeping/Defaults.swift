@@ -23,6 +23,6 @@ extension Defaults.Keys {
     static let addHashbangOnSaveProgram = Key<String>("AddHashbangOnSaveProgram", default: "/usr/local/bin/bushelscript")
     static let addHashbangOnSaveUseLanguageFlag = Key<Bool>("AddHashbangOnSaveUseLanguageFlag", default: true)
     
-    static let privacyFetchAppDataForSmartSuggestions = Key<Bool>("PrivacyFetchAppDataForSmartSuggestions", default: true)
+    static let privacyFetchAppForSmartSuggestions = Key<Bool>("PrivacyFetchAppForSmartSuggestions", default: true)
     
 }

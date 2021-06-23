@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// A file URL.
 public class RT_File: RT_Object {
@@ -58,7 +58,7 @@ public class RT_File: RT_Object {
 // MARK: AEEncodable
 extension RT_File: AEEncodable {
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
         NSAppleEventDescriptor(fileURL: value)
     }
     

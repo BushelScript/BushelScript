@@ -22,7 +22,6 @@
 		3C2A9CDE26793CF60084716C /* Bushel.framework in Embed Shared Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2A9CDF26793CF60084716C /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
 		3C2A9CE026793CF60084716C /* BushelRT.framework in Embed Shared Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3C2A9CE626793D5A0084716C /* SwiftAutomation.framework in Embed Shared Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEF504023529437008603E3 /* SwiftAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2A9CE726793D6F0084716C /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; };
 		3C2A9CE826793E690084716C /* BushelGUIHost.app in Resources */ = {isa = PBXBuildFile; fileRef = 3CFA68C623EE300E00A3E87E /* BushelGUIHost.app */; };
 		3C2A9CEA267940360084716C /* bushelscript in Resources */ = {isa = PBXBuildFile; fileRef = 3C9FD7B923E53E5500279945 /* bushelscript */; };
@@ -189,7 +188,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 11;
 			files = (
-				3C2A9CE626793D5A0084716C /* SwiftAutomation.framework in Embed Shared Frameworks */,
 				3C2A9CDE26793CF60084716C /* Bushel.framework in Embed Shared Frameworks */,
 				3C2A9CE026793CF60084716C /* BushelRT.framework in Embed Shared Frameworks */,
 			);
@@ -241,7 +239,6 @@
 		3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = bushelscript.xcodeproj; path = ../bushelscript/bushelscript.xcodeproj; sourceTree = "<group>"; };
 		3CD1D0602319A07100DD01A9 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
-		3CEF504023529437008603E3 /* SwiftAutomation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEF50422352948E008603E3 /* BushelScript Editor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BushelScript Editor.entitlements"; sourceTree = "<group>"; };
 		3CFEC5112677EFEF001EEF12 /* SidebarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarVC.swift; sourceTree = "<group>"; };
 		3CFEC51A2677F33B001EEF12 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
@@ -361,7 +358,6 @@
 			children = (
 				3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */,
 				3C66A80B23CA6BC7005BA372 /* OSAKit.framework */,
-				3CEF504023529437008603E3 /* SwiftAutomation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

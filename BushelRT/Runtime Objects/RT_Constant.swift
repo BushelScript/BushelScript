@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// A symbolic constant.
 public class RT_Constant: RT_Object, AEEncodable {
@@ -27,7 +27,7 @@ public class RT_Constant: RT_Object, AEEncodable {
         value.hashValue
     }
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
         guard let aeCode = value.uri.ae4Code else {
             throw Unencodable(object: self)
         }

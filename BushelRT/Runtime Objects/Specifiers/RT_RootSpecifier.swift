@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 public final class RT_RootSpecifier: RT_Object, RT_AESpecifier {
     
@@ -24,7 +24,7 @@ public final class RT_RootSpecifier: RT_Object, RT_AESpecifier {
         super.init(rt)
     }
     
-    public static func fromSARootSpecifier(_ rt: Runtime, _ specifier: SwiftAutomation.RootSpecifier) throws -> RT_Object {
+    public static func fromSARootSpecifier(_ rt: Runtime, _ specifier: AEthereal.RootSpecifier) throws -> RT_Object {
         switch specifier.kind {
         case .application:
             return RT_RootSpecifier(rt, kind: .application)
@@ -33,18 +33,18 @@ public final class RT_RootSpecifier: RT_Object, RT_AESpecifier {
         case .specimen:
             return RT_RootSpecifier(rt, kind: .specimen)
         case let .object(descriptor):
-            return try RT_Object.fromAEDescriptor(rt, specifier.appData, descriptor)
+            return try RT_Object.fromAEDescriptor(rt, specifier.app, descriptor)
         }
     }
     
-    public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
+    public func saSpecifier(app: App) -> AEthereal.Specifier? {
         switch kind {
         case .application:
-            return RootSpecifier(.application, appData: appData)
+            return RootSpecifier(.application, app: app)
         case .container:
-            return RootSpecifier(.container, appData: appData)
+            return RootSpecifier(.container, app: app)
         case .specimen:
-            return RootSpecifier(.specimen, appData: appData)
+            return RootSpecifier(.specimen, app: app)
         }
     }
     

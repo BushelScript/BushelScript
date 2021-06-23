@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// Something that was received from an Apple Event but couldn't be unboxed
 /// to a Bushel runtime type. Can still be introspected by type and
@@ -28,10 +28,10 @@ public class RT_AEObject: RT_Object, AEEncodable {
         else {
             return nil
         }
-        return try? RT_Object.fromAEDescriptor(rt, AppData(), coercedDescriptor)
+        return try? RT_Object.fromAEDescriptor(rt, App(), coercedDescriptor)
     }
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
         descriptor
     }
     

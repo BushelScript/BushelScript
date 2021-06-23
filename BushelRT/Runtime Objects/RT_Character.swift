@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// A Unicode "character", stored as a Swift `Character`.
 public class RT_Character: RT_Object, AEEncodable {
@@ -35,7 +35,7 @@ public class RT_Character: RT_Object, AEEncodable {
         }
     }
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
         String(value).withCString(encodedAs: UTF32.self) { cString in
             NSAppleEventDescriptor(descriptorType: cChar, bytes: cString, length: 1)! as NSAppleEventDescriptor
         }

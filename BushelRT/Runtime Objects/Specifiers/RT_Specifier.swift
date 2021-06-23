@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 public protocol RT_HierarchicalSpecifier: RT_AESpecifier {
     
@@ -148,13 +148,13 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
     public func handle(_ arguments: RT_Arguments) throws -> RT_Object? {
         switch rootAncestor() {
         case let root as RT_AERootSpecifier:
-            return try self.handleByAppleEvent(arguments, appData: root.saRootSpecifier.appData)
+            return try self.handleByAppleEvent(arguments, app: root.saRootSpecifier.app)
         default:
             return nil
         }
     }
     
-    public func saSpecifier(appData: AppData) throws -> SwiftAutomation.Specifier? {
+    public func saSpecifier(app: App) throws -> AEthereal.Specifier? {
         if
             case let .element(element) = kind,
             element.type.isA(rt.reflection.types[.app])
@@ -165,7 +165,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
         guard let parent = self.parent as? RT_AESpecifier else {
             return nil
         }
-        guard let parentSpecifier = try parent.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifierProtocol else {
+        guard let parentSpecifier = try parent.saSpecifier(app: app) as? AEthereal.ObjectSpecifierProtocol else {
             // TODO: handle gracefully
             fatalError("cannot extend a non-object specifier")
         }
@@ -217,7 +217,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
             case let .range(from, thru):
                 return elements[from, thru]
             case let .test(predicate):
-                guard let testClause = try (predicate as? RT_TestSpecifier)?.saTestClause(appData: appData) else {
+                guard let testClause = try (predicate as? RT_TestSpecifier)?.saTestClause(app: app) else {
                     throw InvalidSpecifierDataType(specifierType: .byTest, specifierData: predicate)
                 }
                 return elements[testClause]
@@ -225,7 +225,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
         }
     }
     
-    private func saRootSpecifier() throws -> SwiftAutomation.RootSpecifier {
+    private func saRootSpecifier() throws -> AEthereal.RootSpecifier {
         switch kind {
         case let .element(element):
             switch element.form {
@@ -250,14 +250,14 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
         }
     }
     
-    public convenience init?(_ rt: Runtime, saSpecifier: SwiftAutomation.ObjectSpecifier) {
+    public convenience init?(_ rt: Runtime, saSpecifier: AEthereal.ObjectSpecifier) {
         let parent: RT_Object?
-        if let objectSpecifier = saSpecifier.parentQuery as? SwiftAutomation.ObjectSpecifier {
+        if let objectSpecifier = saSpecifier.parentQuery as? AEthereal.ObjectSpecifier {
             parent = RT_Specifier(rt, saSpecifier: objectSpecifier)
-        } else if let rootSpecifier = saSpecifier.parentQuery as? SwiftAutomation.RootSpecifier {
-            if rootSpecifier === AEApp {
+        } else if let rootSpecifier = saSpecifier.parentQuery as? AEthereal.RootSpecifier {
+            if rootSpecifier === AEthereal.applicationRoot {
                 guard
-                    let bundleID = saSpecifier.appData.target.bundleIdentifier,
+                    let bundleID = saSpecifier.app.target.bundleIdentifier,
                     let bundle = Bundle(identifier: bundleID)
                 else {
                     return nil
@@ -270,7 +270,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
                 parent = root
             }
         } else {
-            fatalError("unknown Query type for SwiftAutomation.Specifier.parentQuery")
+            fatalError("unknown Query type for AEthereal.Specifier.parentQuery")
         }
         guard parent != nil else {
             return nil
@@ -279,7 +279,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
         let typeCode = saSpecifier.wantType.typeCodeValue
         let type = rt.reflection.types[.ae4(code: typeCode)]
         let form: Kind.Element.Form
-        // See AppData.unpackAsObjectSpecifier(_:)
+        // See App.decodeAsObjectSpecifier(_:)
         switch saSpecifier.selectorForm.enumCodeValue {
         case OSType(formPropertyID):
             guard
@@ -335,7 +335,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
                 form = .index(index)
             }
         case OSType(formRange):
-            let rangeSelector = saSpecifier.selectorData as! SwiftAutomation.RangeSelector
+            let rangeSelector = saSpecifier.selectorData as! AEthereal.RangeSelector
             guard
                 let from = RT_Object.fromSADecoded(rt, rangeSelector.start),
                 let thru = RT_Object.fromSADecoded(rt, rangeSelector.stop)

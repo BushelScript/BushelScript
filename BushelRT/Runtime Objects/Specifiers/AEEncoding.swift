@@ -1,7 +1,7 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
-func aeEncode(_ arguments: RT_Arguments, appData: AppData) throws -> [OSType : NSAppleEventDescriptor] {
+func aeEncode(_ arguments: RT_Arguments, app: App) throws -> [OSType : NSAppleEventDescriptor] {
     if let unencodableKey = arguments.contents.keys.first(where: { $0.id.ae4Code == nil }) {
         throw Unencodable(object: unencodableKey)
     }
@@ -11,7 +11,7 @@ func aeEncode(_ arguments: RT_Arguments, appData: AppData) throws -> [OSType : N
         guard let encodable = argument as? AEEncodable else {
             throw Unencodable(object: argument)
         }
-        return try encodable.encodeAEDescriptor(appData)
+        return try encodable.encodeAEDescriptor(app)
     }
 
     return [OSType : NSAppleEventDescriptor](uniqueKeysWithValues: zip(keys, values))

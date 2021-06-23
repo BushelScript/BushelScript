@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 import Carbon.OpenScripting
 
 public class RT_AppleScript: RT_Object, RT_Module {
@@ -31,7 +31,7 @@ public class RT_AppleScript: RT_Object, RT_Module {
         // AE "subject" attribute, so we can safely leave that off.
         arguments.contents.removeValue(forKey: Reflection.Parameter(.target))
         
-        let encodedArguments = try aeEncode(arguments, appData: AppData())
+        let encodedArguments = try aeEncode(arguments, app: App())
         
         let eventClass: AEEventClass
         let eventID: AEEventID
@@ -69,7 +69,7 @@ public class RT_AppleScript: RT_Object, RT_Module {
             throw AppleScriptError(number: errorInfo[NSAppleScript.errorNumber as NSString] as? OSStatus, message: errorInfo[NSAppleScript.errorMessage as NSString] as? String)
         }
         
-        return try RT_Object.fromAEDescriptor(rt, AppData(), resultDescriptor)
+        return try RT_Object.fromAEDescriptor(rt, App(), resultDescriptor)
     }
     
 }

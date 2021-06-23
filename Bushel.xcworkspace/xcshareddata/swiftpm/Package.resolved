@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "AEthereal",
+        "repositoryURL": "https://github.com/BushelScript/AEthereal.git",
+        "state": {
+          "branch": null,
+          "revision": "48fc2ec06fc8146e461ffb1c5c5feb883aae52e8",
+          "version": "0.1.0"
+        }
+      },
+      {
         "package": "Defaults",
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
@@ -14,9 +23,9 @@
         "package": "InAnyCase",
         "repositoryURL": "https://github.com/ThatsJustCheesy/InAnyCase.git",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "c9f2151e6cfee4c1487dceb127702a5c83c6217a",
-          "version": null
+          "version": "1.0.1"
         }
       },
       {
@@ -50,9 +59,9 @@
         "package": "SDEFinitely",
         "repositoryURL": "https://github.com/ThatsJustCheesy/SDEFinitely.git",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "824fdabbc2b23c2da0b50eb2edb158d0a8ebd643",
-          "version": null
+          "version": "1.2.0"
         }
       },
       {

@@ -1,19 +1,19 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 public class RT_Application: RT_Object, RT_AERootSpecifier {
     
     public let bundle: Bundle?
-    public let target: TargetApplication
+    public let target: AETarget
     
     public init(_ rt: Runtime, bundle: Bundle) {
         self.bundle = bundle
-        self.target = bundle.bundleIdentifier.map { .bundleIdentifier($0, false) } ??
+        self.target = bundle.bundleIdentifier.map { .bundleIdentifier($0) } ??
             .url(bundle.bundleURL)
         super.init(rt)
     }
     
-    public init(_ rt: Runtime, target: TargetApplication) {
+    public init(_ rt: Runtime, target: AETarget) {
         self.bundle = nil
         self.target = target
         super.init(rt)
@@ -21,7 +21,7 @@ public class RT_Application: RT_Object, RT_AERootSpecifier {
     
     public convenience init?(_ rt: Runtime, named name: String) {
         guard
-            let appBundleID = TargetApplication.name(name).bundleIdentifier,
+            let appBundleID = AETarget.name(name).bundleIdentifier,
             let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
         else {
             return nil
@@ -37,11 +37,11 @@ public class RT_Application: RT_Object, RT_AERootSpecifier {
             return "application \"\(name)\""
         case .url(let url):
             return "application at \"\(url)\""
-        case .bundleIdentifier(let bundleID, _):
+        case .bundleIdentifier(let bundleID):
             return "application id \"\(bundleID)\""
         case .processIdentifier(let pid):
             return "application with pid \(pid)"
-        case .Descriptor(let descriptor):
+        case .descriptor(let descriptor):
             return "application by descriptor \(descriptor)"
         case .none:
             return "not-an-application"
@@ -55,7 +55,7 @@ public class RT_Application: RT_Object, RT_AERootSpecifier {
     // MARK: RT_AERootSpecifier
     
     public var saRootSpecifier: RootSpecifier {
-        RootSpecifier(.application, appData: AppData(target: target))
+        RootSpecifier(.application, app: App(target: target))
     }
     
 }

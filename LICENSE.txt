@@ -1,9 +1,9 @@
 Different parts of this project are licensed differently.
 
 • Core frameworks (Bushel, BushelRT): MIT License
-• SwiftAutomation framework:
+• AEthereal framework:
     Released into public domain by its author, hhas. See swiftae/README § Etc.
-    I also hereby dedicate all of my modifications to SwiftAutomation (everything under the swiftae/ directory) to the public domain.
+    I also hereby dedicate all of my modifications to AEthereal (everything under the swiftae/ directory) to the public domain.
 • Standard language modules: (bushelscript_en): MIT License
 • bushelscript (command line tool): MIT License
 • BushelScript Editor (graphical editor application): GPL v3

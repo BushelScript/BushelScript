@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// A string stored as a Swift `String`.
 public class RT_String: RT_Object, AEEncodable {
@@ -133,7 +133,7 @@ public class RT_String: RT_Object, AEEncodable {
             .map { RT_Boolean.withValue(rt, value.contains($0.value)) }
     }
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
         NSAppleEventDescriptor(string: value)
     }
     

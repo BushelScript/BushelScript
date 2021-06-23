@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// A test clause specifier.
 public final class RT_TestSpecifier: RT_Object {
@@ -24,11 +24,11 @@ public final class RT_TestSpecifier: RT_Object {
         super.init(rt)
     }
     
-    public func saTestClause(appData: AppData) throws -> SwiftAutomation.TestClause? {
-        func makeLogicalTestClause() throws -> SwiftAutomation.TestClause? {
+    public func saTestClause(app: App) throws -> AEthereal.TestClause? {
+        func makeLogicalTestClause() throws -> AEthereal.TestClause? {
             guard
-                let lhsClause = try (lhs as? RT_TestSpecifier)?.saTestClause(appData: appData),
-                let rhsClause = try (rhs as? RT_TestSpecifier)?.saTestClause(appData: appData)
+                let lhsClause = try (lhs as? RT_TestSpecifier)?.saTestClause(app: app),
+                let rhsClause = try (rhs as? RT_TestSpecifier)?.saTestClause(app: app)
             else {
                 return nil
             }
@@ -45,21 +45,21 @@ public final class RT_TestSpecifier: RT_Object {
                 fatalError("unreachable")
             }
         }
-        func makeComparisonTestClause() throws -> SwiftAutomation.TestClause? {
-            let objectSpecifier: SwiftAutomation.ObjectSpecifier
+        func makeComparisonTestClause() throws -> AEthereal.TestClause? {
+            let objectSpecifier: AEthereal.ObjectSpecifier
             let other: RT_Object
             let reverse: Bool
-            if let lhsObjectSpecifier = try (lhs as? RT_AESpecifier)?.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifier {
+            if let lhsObjectSpecifier = try (lhs as? RT_AESpecifier)?.saSpecifier(app: app) as? AEthereal.ObjectSpecifier {
                 objectSpecifier = lhsObjectSpecifier
                 other = rhs
                 reverse = false
             } else {
-                guard let rhsObjectSpecifier = try (rhs as? RT_AESpecifier)?.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifier else {
+                guard let rhsObjectSpecifier = try (rhs as? RT_AESpecifier)?.saSpecifier(app: app) as? AEthereal.ObjectSpecifier else {
                     return nil
                 }
                 objectSpecifier = rhsObjectSpecifier
                 other = lhs
-                // SwiftAutomation always has its lhs be the object specifier,
+                // AEthereal always has its lhs be the object specifier,
                 // so we must reverse the operands to preserve the intended
                 // semantics.
                 reverse = true

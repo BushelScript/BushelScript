@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// An Apple Event record. Aka: associative array, dictionary, map.
 public class RT_Record: RT_Object, AEEncodable {
@@ -63,7 +63,7 @@ public class RT_Record: RT_Object, AEEncodable {
         }
     }
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
         return try contents.reduce(into: NSAppleEventDescriptor.record()) { (descriptor, entry) in
             let (key, value) = entry
             guard
@@ -81,7 +81,7 @@ public class RT_Record: RT_Object, AEEncodable {
                         return nil
                     }
                 })(),
-                let encodedValue = try (value as? AEEncodable)?.encodeAEDescriptor(appData)
+                let encodedValue = try (value as? AEEncodable)?.encodeAEDescriptor(app)
             else {
                 throw Unencodable(object: self)
             }

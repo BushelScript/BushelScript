@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// An insertion location specifier.
 /// i.e., at beginning, at end, before, after
@@ -28,11 +28,11 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
         throw InsertionSpecifierEvaluated(insertionSpecifier: self)
     }
     
-    public func saSpecifier(appData: AppData) throws -> SwiftAutomation.Specifier? {
+    public func saSpecifier(app: App) throws -> AEthereal.Specifier? {
         guard let parent = self.parent as? RT_AESpecifier else {
             return nil
         }
-        guard let parentSpecifier = try parent.saSpecifier(appData: appData) as? SwiftAutomation.ObjectSpecifierProtocol else {
+        guard let parentSpecifier = try parent.saSpecifier(app: app) as? AEthereal.ObjectSpecifierProtocol else {
             // TODO: handle gracefully
             fatalError("cannot extend a non-object specifier")
         }
@@ -49,14 +49,14 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
         }
     }
     
-    public convenience init?(_ rt: Runtime, saSpecifier: SwiftAutomation.InsertionSpecifier) {
+    public convenience init?(_ rt: Runtime, saSpecifier: AEthereal.InsertionSpecifier) {
         let parent: RT_Object?
-        if let objectSpecifier = saSpecifier.parentQuery as? SwiftAutomation.ObjectSpecifier {
+        if let objectSpecifier = saSpecifier.parentQuery as? AEthereal.ObjectSpecifier {
             parent = RT_Specifier(rt, saSpecifier: objectSpecifier)
-        } else if let rootSpecifier = saSpecifier.parentQuery as? SwiftAutomation.RootSpecifier {
-            if rootSpecifier === AEApp {
+        } else if let rootSpecifier = saSpecifier.parentQuery as? AEthereal.RootSpecifier {
+            if rootSpecifier === AEthereal.applicationRoot {
                 guard
-                    let bundleID = saSpecifier.appData.target.bundleIdentifier,
+                    let bundleID = saSpecifier.app.target.bundleIdentifier,
                     let bundle = Bundle(identifier: bundleID)
                 else {
                     return nil
@@ -69,7 +69,7 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
                 parent = root
             }
         } else {
-            fatalError("unknown Query type for SwiftAutomation.Specifier.parentQuery")
+            fatalError("unknown Query type for AEthereal.Specifier.parentQuery")
         }
         guard parent != nil else {
             return nil

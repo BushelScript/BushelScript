@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// A real number, stored as a `Double`.
 public class RT_Real: RT_Object, AEEncodable {
@@ -83,7 +83,7 @@ public class RT_Real: RT_Object, AEEncodable {
         }
     }
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
         NSAppleEventDescriptor(double: value)
     }
     

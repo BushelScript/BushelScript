@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 public class RT_Null: RT_Object, AEEncodable {
     
@@ -30,8 +30,8 @@ public class RT_Null: RT_Object, AEEncodable {
         }
     }
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
-        return try MissingValue.encodeAEDescriptor(appData)
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
+        return try MissingValue.encodeAEDescriptor(app)
     }
     
 }

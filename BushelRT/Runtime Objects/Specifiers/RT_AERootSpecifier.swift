@@ -1,9 +1,9 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 public protocol RT_AERootSpecifier: RT_AESpecifier, RT_Module {
     
-    var saRootSpecifier: SwiftAutomation.RootSpecifier { get }
+    var saRootSpecifier: AEthereal.RootSpecifier { get }
     
 }
 
@@ -11,7 +11,7 @@ extension RT_AERootSpecifier {
     
     // MARK: RT_AESpecifier
     
-    public func saSpecifier(appData: AppData) -> SwiftAutomation.Specifier? {
+    public func saSpecifier(app: App) -> AEthereal.Specifier? {
         saRootSpecifier
     }
     
@@ -22,7 +22,7 @@ extension RT_AERootSpecifier {
     }
     
     public func handleByAppleEvent(_ arguments: RT_Arguments) throws -> RT_Object {
-        try handleByAppleEvent(arguments, appData: saRootSpecifier.appData)
+        try handleByAppleEvent(arguments, app: saRootSpecifier.app)
     }
     
 }

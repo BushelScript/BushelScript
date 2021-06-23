@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 final class Builtin {
     
@@ -227,8 +227,8 @@ final class Builtin {
 
 public extension RT_Object {
     
-    static func fromAEDescriptor(_ rt: Runtime, _ appData: AppData, _ descriptor: NSAppleEventDescriptor) throws -> RT_Object {
-        return fromSADecoded(rt, try appData.unpackAsAny(descriptor)) ??
+    static func fromAEDescriptor(_ rt: Runtime, _ app: App, _ descriptor: NSAppleEventDescriptor) throws -> RT_Object {
+        return fromSADecoded(rt, try app.decodeAsAny(descriptor)) ??
             RT_AEObject(rt, descriptor: descriptor)
     }
     
@@ -261,7 +261,7 @@ public extension RT_Object {
                 return nil
             }
             return RT_List(rt, contents: contents.map { $0 })
-        case let dictionary as [SwiftAutomation.Symbol : Any]:
+        case let dictionary as [AEthereal.Symbol : Any]:
             guard let values = dictionary.values.map({ fromSADecoded(rt, $0) }) as? [RT_Object] else {
                 return nil
             }
@@ -274,16 +274,16 @@ public extension RT_Object {
             return rt.null // Intentional
         case let symbol as Symbol:
             return symbol.asRTObject(rt)
-        case let specifier as SwiftAutomation.Specifier:
-            if let root = specifier as? SwiftAutomation.RootSpecifier {
+        case let specifier as AEthereal.Specifier:
+            if let root = specifier as? AEthereal.RootSpecifier {
                 guard
-                    let bundleID = root.appData.target.bundleIdentifier,
+                    let bundleID = root.app.target.bundleIdentifier,
                     let bundle = Bundle(identifier: bundleID)
                 else {
                     return nil
                 }
                 return RT_Application(rt, bundle: bundle)
-            } else if let objectSpecifier = specifier as? SwiftAutomation.ObjectSpecifier {
+            } else if let objectSpecifier = specifier as? AEthereal.ObjectSpecifier {
                 return RT_Specifier(rt, saSpecifier: objectSpecifier)
             } else {
                 // TODO: insertion specifiers
@@ -297,7 +297,7 @@ public extension RT_Object {
     
 }
 
-extension SwiftAutomation.Symbol {
+extension AEthereal.Symbol {
     
     func asRTObject(_ rt: Runtime) -> RT_Object {
         switch type {
@@ -320,7 +320,7 @@ extension RT_HierarchicalSpecifier {
             let get = rt.reflection.commands[.get]
             return try self.handleByAppleEvent(
                 RT_Arguments(get, [get.parameters[.direct]: self]),
-                appData: root.saRootSpecifier.appData
+                app: root.saRootSpecifier.app
             )
         default:
             // Eval as a local specifier.

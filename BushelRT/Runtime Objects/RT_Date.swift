@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 private let calendar = Calendar(identifier: .gregorian)
 
@@ -67,7 +67,7 @@ public class RT_Date: RT_Object {
 // MARK: AEEncodable
 extension RT_Date: AEEncodable {
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
         NSAppleEventDescriptor(date: value)
     }
     

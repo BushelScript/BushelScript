@@ -1,5 +1,5 @@
 import Bushel
-import SwiftAutomation
+import AEthereal
 
 /// A boolean. Really just a special case of an `RT_Constant`,
 /// but modelled as a separate class for convenience.
@@ -54,7 +54,7 @@ public class RT_Boolean: RT_Object, AEEncodable {
         }
     }
     
-    public func encodeAEDescriptor(_ appData: AppData) throws -> NSAppleEventDescriptor {
+    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
         NSAppleEventDescriptor(boolean: value)
     }
     
