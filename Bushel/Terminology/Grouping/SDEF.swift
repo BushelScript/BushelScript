@@ -76,25 +76,27 @@ class Cache<Key, Value> where Key: Hashable {
     
     func cached(for key: Key, orElse action: () throws -> Value) rethrows -> Value {
         try accessQueue.sync {
-            if let value = cache[key] {
-                return value
-            }
+            cache[key]
+        } ?? {
             let value = try action()
-            cache[key] = value
+            accessQueue.sync {
+                cache[key] = value
+            }
             return value
-        }
+        }()
     }
     func cached(for key: Key, orElse action: () throws -> Value?) rethrows -> Value? {
         try accessQueue.sync {
-            if let value = cache[key] {
-                return value
+            cache[key]
+        } ?? {
+            let value = try action()
+            if let value = value {
+                accessQueue.sync {
+                    cache[key] = value
+                }
             }
-            if let value = try action() {
-                cache[key] = value
-                return value
-            }
-            return nil
-        }
+            return value
+        }()
     }
     
 }
