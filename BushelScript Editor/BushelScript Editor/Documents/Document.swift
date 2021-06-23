@@ -166,7 +166,7 @@ class Document: NSDocument {
 
 class IndentMode: NSObject {
     
-    @objc dynamic var character: Character = .space
+    @objc dynamic var character: Character = .tab
     @objc dynamic var width: Int = 4
     
     @objc enum Character: Int {
