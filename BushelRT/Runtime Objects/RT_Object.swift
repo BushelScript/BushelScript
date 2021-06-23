@@ -127,7 +127,7 @@ import Bushel
     ///
     /// This is called by the `RT_Specifier` implementation of the `set` command.
     public func setProperty(_ property: Reflection.Property, to newValue: RT_Object) throws {
-        throw NoWritablePropertyExists(type: type, property: property)
+        throw NoWritablePropertyExists()
     }
     
     public func coerce(to type: Reflection.`Type`) -> RT_Object? {

@@ -25,7 +25,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             let specifier = try arguments.for(.direct, RT_Specifier.self)
             let newValue = try arguments.for(.set_to)
             guard case let .property(property) = specifier.kind else {
-                throw NonPropertyIsNotWritable(specifier: specifier)
+                throw NonPropertyIsNotWritable()
             }
             try specifier.parent.evaluate().setProperty(property, to: newValue)
             return newValue

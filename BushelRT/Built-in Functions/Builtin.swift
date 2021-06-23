@@ -163,8 +163,10 @@ final class Builtin {
     func evaluateSpecifier(_ specifier: RT_Object) throws -> RT_Object {
         do {
             return try specifier.evaluate()
+        } catch let error as RemoteCommandError {
+            throw RemoteSpecifierEvaluationFailed(specifier: specifier, reason: error.error)
         } catch {
-            throw SpecifierEvaluationFailed(specifier: specifier, reason: error)
+            throw LocalSpecifierEvaluationFailed(specifier: specifier, reason: error)
         }
     }
     

@@ -65,11 +65,8 @@ public struct CommandNotHandled: LocalizedError {
 
 public struct NoPropertyExists: LocalizedError {
     
-    public let type: Reflection.`Type`
-    public let property: Reflection.Property
-    
     public var errorDescription: String? {
-        "Objects of type \(type) do not have a property named \(property)"
+        "No such property exists"
     }
     
 }
@@ -80,28 +77,23 @@ public struct NoNumericPropertyExists: LocalizedError {
     public let property: Reflection.Property
     
     public var errorDescription: String? {
-        "Objects of type \(type) do not have a numeric property named \(property)"
+        "No numeric property \(property) exists on items of type \(type)"
     }
     
 }
 
 public struct NoWritablePropertyExists: LocalizedError {
     
-    public let type: Reflection.`Type`
-    public let property: Reflection.Property
-    
     public var errorDescription: String? {
-        "Objects of type \(type) do not have a writable property named \(property)"
+        "No such writable property exists"
     }
     
 }
 
 public struct NonPropertyIsNotWritable: LocalizedError {
     
-    public let specifier: RT_Specifier
-    
     public var errorDescription: String? {
-        "Specifier ‘\(specifier)’ cannot be written to because it does not refer to a property"
+        "Non-property specifiers cannot be written to"
     }
     
 }
@@ -175,10 +167,8 @@ public struct UnsupportedIndexForm: LocalizedError {
 
 public struct NoElementExists: LocalizedError {
     
-    public let locationDescription: String
-    
     public var errorDescription: String? {
-        "No element exists \(locationDescription)"
+        "No such element exists"
     }
     
 }
@@ -258,13 +248,24 @@ public struct RangeOutOfBounds: LocalizedError {
     
 }
 
-public struct SpecifierEvaluationFailed: LocalizedError {
+public struct RemoteSpecifierEvaluationFailed: LocalizedError {
     
     public let specifier: RT_Object
     public let reason: Error
     
     public var errorDescription: String? {
-        "Failed to evaluate specifier \(specifier): \(reason.localizedDescription)"
+        "From remotely evaluating \(specifier): \(reason.localizedDescription)"
+    }
+    
+}
+
+public struct LocalSpecifierEvaluationFailed: LocalizedError {
+    
+    public let specifier: RT_Object
+    public let reason: Error
+    
+    public var errorDescription: String? {
+        "From locally evaluating \(specifier): \(reason.localizedDescription)"
     }
     
 }

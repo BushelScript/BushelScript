@@ -136,10 +136,10 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
         
         guard let value = try propagate(from: evaluatedParent, up: rt.builtin.moduleStack, evaluate(on:)) else {
             switch kind {
-            case let .property(property):
-                throw NoPropertyExists(type: type, property: property)
+            case .property:
+                throw NoPropertyExists()
             case .element:
-                throw NoElementExists(locationDescription: "at: \(self)")
+                throw NoElementExists()
             }
         }
         return value
