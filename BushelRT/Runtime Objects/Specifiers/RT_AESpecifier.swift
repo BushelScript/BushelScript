@@ -44,12 +44,12 @@ extension RT_AESpecifier {
             }
             return try RT_Object.fromAEDescriptor(rt, app, resultDescriptor)
         } catch let error as CommandError {
-            throw RemoteCommandError(remoteObject: app.target, command: arguments.command, error: error)
+            throw RemoteCommandError(remoteObject: RT_Application(rt, target: app.target), command: arguments.command, error: error)
         } catch let error as AutomationError {
             if error._code == errAEEventNotPermitted {
-                throw RemoteCommandsDisallowed(remoteObject: app.target)
+                throw RemoteCommandsDisallowed(remoteObject: RT_Application(rt, target: app.target))
             } else {
-                throw RemoteCommandError(remoteObject: app.target, command: arguments.command, error: error)
+                throw RemoteCommandError(remoteObject: RT_Application(rt, target: app.target), command: arguments.command, error: error)
             }
         } catch let error as DecodeError {
             throw Undecodable(error: error)

@@ -32,19 +32,19 @@ public class RT_Application: RT_Object, RT_AERootSpecifier {
     public override var description: String {
         switch target {
         case .current:
-            return "current application"
+            return "current app"
         case .name(let name):
-            return "application \"\(name)\""
+            return "app \"\(name)\""
         case .url(let url):
-            return "application at \"\(url)\""
+            return "app at \"\(url)\""
         case .bundleIdentifier(let bundleID):
-            return "application id \"\(bundleID)\""
+            return "app id \"\(bundleID)\""
         case .processIdentifier(let pid):
-            return "application with pid \(pid)"
+            return "app with pid \(pid)"
         case .descriptor(let descriptor):
-            return "application by descriptor \(descriptor)"
+            return "app by descriptor \(descriptor)"
         case .none:
-            return "not-an-application"
+            return "invalid app"
         }
     }
     

@@ -22,7 +22,7 @@ public struct Undecodable: LocalizedError {
 
 public struct RemoteCommandError: LocalizedError {
     
-    public let remoteObject: Any
+    public let remoteObject: RT_Object
     public let command: Reflection.Command
     public let error: Error
     
@@ -34,7 +34,7 @@ public struct RemoteCommandError: LocalizedError {
 
 public struct RemoteCommandsDisallowed: LocalizedError {
     
-    public let remoteObject: Any
+    public let remoteObject: RT_Object
     
     public var errorDescription: String? {
         // Generalize this once multiple possibly inaccessible remote target types exist
