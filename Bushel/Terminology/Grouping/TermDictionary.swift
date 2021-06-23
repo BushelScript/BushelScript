@@ -29,7 +29,6 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     /// Initializes from the terms in `old` and then merges all terms in `new`
     /// into the new dictionary, resolving conflicts in a way that preserves
     /// AppleScript compatibility.
-    /// `new`'s term pool is used and `old`'s is ignored.
     public init(merging new: TermDictionary, into old: TermDictionary) {
         self.byID = new.byID.merging(old.byID, uniquingKeysWith: TermDictionary.resolveTermConflict)
         self.byName = new.byName.merging(old.byName, uniquingKeysWith: TermDictionary.resolveTermConflict)
@@ -89,12 +88,20 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
         old.dictionary.merge(new.dictionary)
         new.dictionary = old.dictionary
         
-        // For compatibility.
-        // e.g., AppleScript sees Xcode : project as a class whilst ignoring the identically named property term.
+        // For AppleScript compatibility, types take precedence over properties
+        // and constants.
+        // This makes sense because types can be used as if they were
+        // properties or constants anyway.
+        
+        // e.g., AppleScript sees Xcode -> project as a class, ignoreing the identically named property term.
         if case .type = old.role, case .property = new.role {
-            new.dictionary = old.dictionary
             return old
         }
+        // e.g., AppleScript sees Microsoft Word -> document as a class, ignoreing the identically named constant term.
+        if case .type = old.role, case .constant = new.role {
+            return old
+        }
+        
         return new
     }
     
