@@ -369,7 +369,7 @@ public extension Runtime {
             case .debugInspectLexicon(let message):
                 return RT_String(self, value: message)
             }
-        } catch where !(error is RuntimeError || error is EarlyReturn) {
+        } catch where !(error is Located || error is EarlyReturn) {
             throw RuntimeError(description: error.localizedDescription, location: currentLocation ?? expression.location)
         }
     }
