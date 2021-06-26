@@ -17,10 +17,14 @@ public struct Reflection {
             case .type:
                 let type = types.add(term)
                 typesWithoutSupertype.insert(type)
+                properties.add(term)
+                constants.add(term)
             case .property:
                 properties.add(term)
+                constants.add(term)
             case .constant:
                 constants.add(term)
+                properties.add(term)
             case .command:
                 commands.add(term)
             case .parameter:
