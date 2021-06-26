@@ -18,28 +18,26 @@ extension RT_AEQuery {
     }
     
     func handleByAppleEvent(_ arguments: RT_Arguments, app: App) throws -> RT_Object {
-        // AEthereal's App#sendAppleEvent already adds the "subject"
-        // AE attribute for us, so don't attempt to encode the target argument
-        // (target parameters aren't supported for AE commands;
-        // the target must be specified with 'tell' et al.).
+        // AEthereal's App#sendAppleEvent already sets the "subject"
+        // AE attribute to the "target query" that we provide.
         var arguments = arguments
-        arguments.contents.removeValue(forKey: Reflection.Parameter(.target))
-        
+        let targetQuery = (arguments.contents.removeValue(forKey: Reflection.Parameter(.target)) as? RT_AEQuery) ?? self
         let aeParameters = try makeAEParameters(arguments, app: app)
-        guard let query = try self.appleEventQuery() else {
-            throw Unencodable(object: self)
-        }
-        
         guard let (`class`, id) = arguments.command.id.ae8Code else {
             throw Unencodable(object: arguments.command)
         }
         do {
-            let result = try app.sendAppleEvent(eventClass: `class`, eventID: `id`, targetQuery: query, parameters: aeParameters)
+            let result = try app.sendAppleEvent(
+                eventClass: `class`,
+                eventID: `id`,
+                targetQuery: try targetQuery.appleEventQuery() ?? .rootSpecifier(.application),
+                parameters: aeParameters
+            )
             return try RT_Object.decode(rt, app: app, aeDescriptor: result)
         } catch let error as SendFailure {
             throw RemoteCommandError(remoteObject: RT_Application(rt, target: app.target), command: arguments.command, error: error)
         } catch let error as AutomationError {
-            if error._code == errAEEventNotPermitted {
+            if error.code == errAEEventNotPermitted {
                 throw RemoteCommandsDisallowed(remoteObject: RT_Application(rt, target: app.target))
             } else {
                 throw RemoteCommandError(remoteObject: RT_Application(rt, target: app.target), command: arguments.command, error: error)
