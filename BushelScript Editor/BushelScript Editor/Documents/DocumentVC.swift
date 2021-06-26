@@ -460,7 +460,7 @@ extension DocumentVC: NSTextViewDelegate {
         
         let inlineErrorVC = InlineErrorVC()
         self.inlineErrorVC = inlineErrorVC
-        inlineErrorVC.representedObject = error
+        inlineErrorVC.representedObject = error.localizedDescription
         
         let errorView = inlineErrorVC.view
         textView.addSubview(errorView)

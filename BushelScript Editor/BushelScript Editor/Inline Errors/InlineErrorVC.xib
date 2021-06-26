@@ -24,7 +24,7 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
-                        <binding destination="-2" name="value" keyPath="representedObject.localizedDescription" id="4LW-Ga-XoE"/>
+                        <binding destination="-2" name="value" keyPath="representedObject" id="NZR-V3-Tkr"/>
                     </connections>
                 </textField>
             </subviews>
