@@ -2,20 +2,10 @@ import Bushel
 import AEthereal
 
 /// A file URL.
-public class RT_File: RT_Object, Encodable {
+public class RT_File: RT_ValueWrapper<AEFileURL> {
     
-    public var value: AEFileURL
-    
-    public init(_ rt: Runtime, value: AEFileURL) {
-        self.value = value
-        super.init(rt)
-    }
     public convenience init(_ rt: Runtime, value: URL) {
         self.init(rt, value: AEFileURL(url: value))
-    }
-    
-    public override var description: String {
-        String(describing: value)
     }
     
     public override class var staticType: Types {

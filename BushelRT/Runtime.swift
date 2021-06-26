@@ -1,7 +1,7 @@
 import Bushel
 import os
 
-private let log = OSLog(subsystem: logSubsystem, category: #file)
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
 /// A context in which Bushel programs run.
 public class Runtime {

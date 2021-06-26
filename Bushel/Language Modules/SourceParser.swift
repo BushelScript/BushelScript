@@ -1499,6 +1499,6 @@ extension StringProtocol {
 ///           The default is the file where `assume(_:_:file:line:)` is called.
 ///   - line: The line number to print along with message if the assertion fails.
 ///           The default is the line number where `assume(_:_:file:line:)` is called.
-private func assume(_ condition: Bool, _ message: @autoclosure () -> String = String(), file: StaticString = #file, line: UInt = #line) {
+private func assume(_ condition: Bool, _ message: @autoclosure () -> String = String(), file: StaticString = #fileID, line: UInt = #line) {
     assert(condition, message(), file: file, line: line)
 }

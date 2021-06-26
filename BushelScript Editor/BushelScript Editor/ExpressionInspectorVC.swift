@@ -5,7 +5,7 @@
 import os.log
 import Bushel
 
-private let log = OSLog(subsystem: logSubsystem, category: #file)
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
 class ExpressionInspectorVC: ObjectInspector2VC {
     

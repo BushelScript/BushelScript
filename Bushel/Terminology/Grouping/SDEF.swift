@@ -1,7 +1,7 @@
 import SDEFinitely
 import os
 
-private let log = OSLog(subsystem: logSubsystem, category: #file)
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
 extension TermDictionary {
     

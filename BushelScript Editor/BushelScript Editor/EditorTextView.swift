@@ -5,7 +5,7 @@
 import os.log
 import Carbon.HIToolbox.Events
 
-private let log = OSLog(subsystem: logSubsystem, category: #file)
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
 class EditorTextView: NSTextView {
     

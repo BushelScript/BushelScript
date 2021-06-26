@@ -4,7 +4,7 @@
 
 import os.log
 
-private let log = OSLog(subsystem: logSubsystem, category: #file)
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
 class ObjectInspector2VC: NSViewController {
 }

@@ -2,7 +2,7 @@ import Bushel
 import AEthereal
 import os.log
 
-private let log = OSLog(subsystem: logSubsystem, category: #file)
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
 public protocol RT_HierarchicalSpecifier: RT_AEQuery {
     
@@ -95,6 +95,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
             case let .property(property):
                 return try parent.property(property)
             case let .element(element):
+                let type = element.type
                 switch element.form {
                 case let .index(index):
                     guard index.coerce(to: RT_Integer.self) != nil else {
