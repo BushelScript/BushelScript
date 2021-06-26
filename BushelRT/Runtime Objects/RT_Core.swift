@@ -141,7 +141,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
         functions.add(rt, .CLI_log, parameters: [.direct: .item]) { arguments in
             let message = try arguments.for(.direct)
             print(message.coerce(to: RT_String.self)?.value ?? String(describing: message))
-            return rt.null
+            return rt.lastResult
         }
     }
     

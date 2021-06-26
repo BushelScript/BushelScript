@@ -171,10 +171,7 @@ translation:
                     pow:
                         - pow
                         - power
-                    ln:
-                        - ln
-                        - log
-                        - loge
+                    ln: ln  # Cannot use "log" since that's taken by the CLI command
                     log10: log10
                     log2: log2
                     sin:
