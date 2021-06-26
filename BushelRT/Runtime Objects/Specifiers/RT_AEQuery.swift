@@ -35,9 +35,9 @@ extension RT_AEQuery {
             )
             return try RT_Object.decode(rt, app: app, aeDescriptor: result)
         } catch let error as SendFailure {
-            throw RemoteCommandError(remoteObject: RT_Application(rt, target: app.target), command: arguments.command, error: error)
+            throw RemoteCommandError(remoteObject: RT_Application(rt, target: app.target), command: arguments.command, error: error.cause ?? error)
         } catch let error as AutomationError {
-            if error.code == errAEEventNotPermitted {
+            if error._code == errAEEventNotPermitted {
                 throw RemoteCommandsDisallowed(remoteObject: RT_Application(rt, target: app.target))
             } else {
                 throw RemoteCommandError(remoteObject: RT_Application(rt, target: app.target), command: arguments.command, error: error)
