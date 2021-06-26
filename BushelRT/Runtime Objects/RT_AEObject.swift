@@ -4,11 +4,11 @@ import AEthereal
 /// Something that was received from an Apple Event but couldn't be unboxed
 /// to a Bushel runtime type. Can still be introspected by type and
 /// sent around in other Apple Events.
-public class RT_AEObject: RT_Object, AEEncodable {
+public class RT_AEObject: RT_Object, Encodable {
     
-    public var descriptor: NSAppleEventDescriptor
+    public var descriptor: AEDescriptor
     
-    public init(_ rt: Runtime, descriptor: NSAppleEventDescriptor) {
+    public init(_ rt: Runtime, descriptor: AEDescriptor) {
         self.descriptor = descriptor
         super.init(rt)
     }
@@ -23,16 +23,17 @@ public class RT_AEObject: RT_Object, AEEncodable {
     
     public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
         guard
-            let code = type.id.ae4Code,
-            let coercedDescriptor = descriptor.coerce(toDescriptorType: code)
+            let ae4Code = type.id.ae4Code,
+            let coercedDescriptor = descriptor.coerce(to: AE4.AEType(rawValue: ae4Code))
         else {
             return nil
         }
-        return try? RT_Object.fromAEDescriptor(rt, App(), coercedDescriptor)
+        return try? RT_Object.decode(rt, app: App(), aeDescriptor: coercedDescriptor)
     }
     
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        descriptor
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(descriptor)
     }
     
 }

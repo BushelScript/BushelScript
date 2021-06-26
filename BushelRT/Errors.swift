@@ -12,10 +12,10 @@ public struct Unencodable: LocalizedError {
 
 public struct Undecodable: LocalizedError {
     
-    public let error: Error
+    public let reason: String
     
     public var errorDescription: String? {
-        "An object couldn’t be decoded from an AppleEvent descriptor: \(error.localizedDescription)"
+        "An object couldn’t be decoded from an AppleEvent descriptor: \(reason)"
     }
     
 }

@@ -1,4 +1,5 @@
 import Foundation
+import AEthereal
 
 private let keySubjectAttr: AEKeyword = 0x7375626A
 
@@ -191,11 +192,11 @@ extension Term.SemanticURI: CustomStringConvertible {
     public var name: String {
         switch self {
         case .ae4(let code):
-            return String(fourCharCode: code)
+            return String(ae4Code: code)
         case .ae8(let `class`, let id):
-            return String(fourCharCode: `class`) + String(fourCharCode: id)
+            return String(ae4Code: `class`) + String(ae4Code: id)
         case .ae12(let `class`, let id, let code):
-            return String(fourCharCode: `class`) + String(fourCharCode: id) + String(fourCharCode: code)
+            return String(ae4Code: `class`) + String(ae4Code: id) + String(ae4Code: code)
         case .id(let pathname):
             return pathname.rawValue
         case .res(let name):
@@ -254,6 +255,34 @@ extension Term.SemanticURI: CustomStringConvertible {
             self = .asid(name)
         default:
             return nil
+        }
+    }
+    
+}
+
+// MARK: Codable
+extension Term.SemanticURI: Codable {
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case let .ae4(code):
+            try container.encode(code)
+        default:
+            try container.encode(normalized)
+        
+        }
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let ae4 = try? container.decode(AE4.self) {
+            self = .ae4(code: ae4)
+        } else {
+            guard let parsed = Self.init(normalized: try container.decode(String.self)) else {
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Couldn't parse term URI")
+            }
+            self = parsed
         }
     }
     

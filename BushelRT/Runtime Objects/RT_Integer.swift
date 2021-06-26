@@ -2,21 +2,10 @@ import Bushel
 import AEthereal
 
 /// A 64-bit integer.
-public class RT_Integer: RT_Object {
-    
-    public var value: Int64 = 0
-    
-    public init(_ rt: Runtime, value: Int64) {
-        self.value = value
-        super.init(rt)
-    }
+public class RT_Integer: RT_ValueWrapper<Int64> {
     
     public convenience init(_ rt: Runtime, value: Int) {
         self.init(rt, value: Int64(value))
-    }
-    
-    public override var description: String {
-        String(describing: value)
     }
     
     public override class var staticType: Types {
@@ -76,20 +65,6 @@ public class RT_Integer: RT_Object {
         } else {
             return super.coerce(to: type)
         }
-    }
-    
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        withUnsafePointer(to: value) { valuePointer in
-            NSAppleEventDescriptor(descriptorType: typeSInt64, data: Data(buffer: UnsafeBufferPointer(start: valuePointer, count: 1)))!
-        }
-    }
-    
-}
-
-extension RT_Integer {
-    
-    public override var debugDescription: String {
-        super.debugDescription + "[value: \(value)]"
     }
     
 }

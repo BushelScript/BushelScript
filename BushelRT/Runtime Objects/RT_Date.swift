@@ -4,18 +4,7 @@ import AEthereal
 private let calendar = Calendar(identifier: .gregorian)
 
 /// A date, stored as a Foundation `Date`.
-public class RT_Date: RT_Object {
-    
-    public var value: Date = Date()
-    
-    public init(_ rt: Runtime, value: Date) {
-        self.value = value
-        super.init(rt)
-    }
-    
-    public override var description: String {
-        value.description(with: nil)
-    }
+public class RT_Date: RT_ValueWrapper<Date> {
     
     public override class var staticType: Types {
         .date
@@ -60,23 +49,6 @@ public class RT_Date: RT_Object {
     public override func compare(with other: RT_Object) -> ComparisonResult? {
         (other as? RT_Date)
             .map { value <=> $0.value }
-    }
-    
-}
-
-// MARK: AEEncodable
-extension RT_Date: AEEncodable {
-    
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        NSAppleEventDescriptor(date: value)
-    }
-    
-}
-
-extension RT_Date {
-    
-    public override var debugDescription: String {
-        super.debugDescription + "[value: \(value)]"
     }
     
 }

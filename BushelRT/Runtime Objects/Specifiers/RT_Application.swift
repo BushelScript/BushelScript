@@ -1,29 +1,35 @@
 import Bushel
 import AEthereal
 
-public class RT_Application: RT_Object, RT_AERootSpecifier {
+public class RT_Application: RT_Object, RT_AEQuery, RT_Module {
     
     public let bundle: Bundle?
-    public let target: AETarget
+    public let app: App
+    public var target: AETarget {
+        app.target
+    }
     
     public init(_ rt: Runtime, bundle: Bundle) {
         self.bundle = bundle
-        self.target = bundle.bundleIdentifier.map { .bundleIdentifier($0) } ??
-            .url(bundle.bundleURL)
+        self.app = App(target: bundle.bundleIdentifier.map { .bundleIdentifier($0) } ??
+            .url(bundle.bundleURL))
         super.init(rt)
     }
     
     public init(_ rt: Runtime, target: AETarget) {
         self.bundle = nil
-        self.target = target
+        self.app = App(target: target)
         super.init(rt)
     }
     
     public convenience init?(_ rt: Runtime, named name: String) {
-        guard
-            let appBundleID = AETarget.name(name).bundleIdentifier,
-            let appBundle = Bundle(applicationBundleIdentifier: appBundleID)
-        else {
+        guard let id = AETarget.name(name).bundleIdentifier else {
+            return nil
+        }
+        self.init(rt, id: id)
+    }
+    public convenience init?(_ rt: Runtime, id: String) {
+        guard let appBundle = Bundle(applicationBundleIdentifier: id) else {
             return nil
         }
         self.init(rt, bundle: appBundle)
@@ -52,10 +58,20 @@ public class RT_Application: RT_Object, RT_AERootSpecifier {
         .app
     }
     
-    // MARK: RT_AERootSpecifier
+    // MARK: RT_AEQuery
     
-    public var saRootSpecifier: RootSpecifier {
-        RootSpecifier(.application, app: App(target: target))
+    public func appleEventQuery() throws -> Query? {
+        .rootSpecifier(.application)
+    }
+    
+    // MARK: RT_Module
+    
+    public func handle(_ arguments: RT_Arguments) throws -> RT_Object? {
+        try handleByAppleEvent(arguments)
+    }
+    
+    public func handleByAppleEvent(_ arguments: RT_Arguments) throws -> RT_Object {
+        try handleByAppleEvent(arguments, app: App(target: target))
     }
     
 }

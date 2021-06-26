@@ -97,7 +97,7 @@ public struct ParseError: ParseErrorProtocol {
 
 /// A predefined parser error that has been passed through a `MessageFormatter`.
 /// Has a localized, formatted message.
-public struct FormattedParseError: ParseErrorProtocol {
+public struct FormattedParseError: ParseErrorProtocol, LocalizedError {
     
     public private(set) var error: ParseError
     
@@ -120,11 +120,6 @@ public struct FormattedParseError: ParseErrorProtocol {
         error.fixes
     }
     
-}
-
-// MARK: CodableLocalizedError
-extension FormattedParseError: CodableLocalizedError {
-    
     public var errorDescription: String? {
         description
     }
@@ -134,7 +129,7 @@ extension FormattedParseError: CodableLocalizedError {
 /// A custom parser error defined and thrown by parser code in a language module.
 /// Its message is formatted at init time and not enumerated anywhere;
 /// hence, the error is defined "ad hoc".
-public struct AdHocParseError: ParseErrorProtocol {
+public struct AdHocParseError: ParseErrorProtocol, LocalizedError {
     
     /// The error message as formatted during init.
     public let description: String
@@ -148,11 +143,6 @@ public struct AdHocParseError: ParseErrorProtocol {
         self.location = location
         self.fixes = fixes
     }
-    
-}
-
-// MARK: CodableLocalizedError
-extension AdHocParseError: CodableLocalizedError {
     
     public var errorDescription: String? {
         description

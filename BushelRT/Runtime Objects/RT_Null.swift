@@ -1,14 +1,14 @@
 import Bushel
 import AEthereal
 
-public class RT_Null: RT_Object, AEEncodable {
+public final class RT_Null: RT_Object, Codable {
     
     internal override init(_ rt: Runtime) {
         super.init(rt)
     }
     
-    public override var type: Reflection.`Type` {
-        rt.reflection.types[.null]
+    public override class var staticType: Types {
+        .null
     }
     
     public override var truthy: Bool {
@@ -30,8 +30,17 @@ public class RT_Null: RT_Object, AEEncodable {
         }
     }
     
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        return try MissingValue.encodeAEDescriptor(app)
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(AEDescriptor.missingValue)
+    }
+    
+    public convenience init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        guard container.decodeNil() else {
+            throw DecodingError.typeMismatch(Self.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Couldn't decode nil"))
+        }
+        self.init(decoder.userInfo[.rt] as! Runtime)
     }
     
 }

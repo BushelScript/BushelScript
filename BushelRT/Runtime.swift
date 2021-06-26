@@ -1,55 +1,21 @@
 import Bushel
 import os
 
-private let log = OSLog(subsystem: logSubsystem, category: "Runtime")
+private let log = OSLog(subsystem: logSubsystem, category: #file)
 
-public struct RuntimeError: CodableLocalizedError, Located {
-    
-    /// The error message as formatted during init.
-    public let description: String
-    
-    /// The source location to which the error applies.
-    public let location: SourceLocation
-    
-    public var errorDescription: String? {
-        description
-    }
-    
-}
-
-/// The error thrown by `raise` in user code.
-public struct RaisedObjectError: CodableLocalizedError, Located {
-    
-    /// The object given to `raise`.
-    public let error: RT_Object
-    
-    /// The source location of the `raise` expression.
-    public let location: SourceLocation
-    
-    public var errorDescription: String? {
-        "\(error)"
-    }
-    
-}
-
+/// A context in which Bushel programs run.
 public class Runtime {
     
+    /// Whether this context is currently running anything.
     @Atomic
     public var isRunning = false
+    /// If this context is running, whether it should stop running at its
+    /// earilest convenience.
+    /// If this context is not running, meaningless.
     @Atomic
     public var shouldTerminate = false
     
-    var builtin: Builtin!
-    
-    /// The result of the last expression executed in sequence.
-    public lazy var lastResult: RT_Object = null
-    
-    /// The singleton `null` instance.
-    public lazy var null = RT_Null(self)
-    /// The singleton `true` boolean instance.
-    public lazy var `true` = RT_Boolean(self, value: true)
-    /// The singleton `false` boolean instance.
-    public lazy var `false` = RT_Boolean(self, value: false)
+    var context: Context!
     
     private var locations: [SourceLocation] = []
     private func pushLocation(_ location: SourceLocation) {
@@ -62,33 +28,58 @@ public class Runtime {
         locations.last
     }
     
-    public var arguments: [String] = []
-    public var scriptName: String?
-    
+    /// Creates a Runtime context, optionally given (command-line)
+    /// `arguments` and the `scriptName` of the top-level script.
     public init(arguments: [String] = [], scriptName: String? = nil) {
         self.arguments = arguments
         self.scriptName = scriptName
     }
     
+    /// The (command-line) arguments passed to the interpreter.
+    public var arguments: [String] = []
+    /// The name of the top-level script, if any.
+    /// Typically the file name minus any extension.
+    public let scriptName: String?
+    
+    /// The top-level "script" object.
     public lazy var topScript = RT_Script(self, name: scriptName)
+    /// The "core" object that handles built-in commands.
     public lazy var core = RT_Core(self)
+    
+    /// The result of the last expression executed in sequence.
+    public lazy var lastResult: RT_Object = null
+    
+    /// The singleton `null` instance.
+    public lazy var null = RT_Null(self)
+    /// The singleton `true` boolean instance.
+    public lazy var `true` = RT_Boolean(self, value: true)
+    /// The singleton `false` boolean instance.
+    public lazy var `false` = RT_Boolean(self, value: false)
     
     public var reflection = Reflection()
     
 }
 
-public extension Runtime {
+extension Runtime {
     
-    func terminateIfNeeded() throws {
+    /// If termination has been requested, throws an error that will stop
+    /// execution of all remaining user code until the next call to an overload
+    /// of `run(_:)`, providing a new program or expression.
+    /// Otherwise, does nothing.
+    public func terminateIfNeeded() throws {
         if shouldTerminate {
             throw Terminated()
         }
     }
     
-    func run(_ program: Program) throws -> RT_Object {
+    /// Runs `program` in this context.
+    ///
+    /// Adds the program's reflection information to the context as
+    /// appropriate, then runs its `ast` expression.
+    public func run(_ program: Program) throws -> RT_Object {
         reflection.typeTree = program.typeTree
         reflection.inject(from: program.rootTerm)
-        builtin = Builtin(
+        context = Context(
             self,
             frameStack: RT_FrameStack(bottom: [
                 Term.SemanticURI(Variables.Core): core,
@@ -100,7 +91,8 @@ public extension Runtime {
         return try run(program.ast)
     }
     
-    func run(_ expression: Expression) throws -> RT_Object {
+    /// Runs `expression` in this context.
+    public func run(_ expression: Expression) throws -> RT_Object {
         shouldTerminate = false
         isRunning = true
         defer {
@@ -144,9 +136,9 @@ public extension Runtime {
             case .empty: // MARK: .empty
                 return lastResult
             case .that: // MARK: .that
-                return try evaluateSpecifiers ? evaluatingSpecifier(lastResult) : lastResult
+                return try evaluateSpecifiers ? context.evaluate(specifier: lastResult) : lastResult
             case .it: // MARK: .it
-                return try evaluateSpecifiers ? evaluatingSpecifier(builtin.target) : builtin.target
+                return try evaluateSpecifiers ? context.evaluate(specifier: context.target) : context.target
             case .null: // MARK: .null
                 return null
             case .sequence(let expressions): // MARK: .sequence
@@ -162,8 +154,8 @@ public extension Runtime {
                 do {
                     return try runPrimary(body)
                 } catch {
-                    builtin.targetStack.push(RT_Error(self, error))
-                    defer { builtin.targetStack.pop() }
+                    context.targetStack.push(RT_Error(self, error))
+                    defer { context.targetStack.pop() }
                     return try runPrimary(handle)
                 }
             case let .if_(condition, then, else_): // MARK: .if_
@@ -187,20 +179,20 @@ public extension Runtime {
                 
                 var repeatResult: RT_Object?
                 var count = 0
-                while try builtin.binaryOp(.less, RT_Integer(self, value: count), timesValue).truthy {
+                while try context.binaryOp(.less, RT_Integer(self, value: count), timesValue).truthy {
                     repeatResult = try runPrimary(repeating)
                     count += 1
                 }
                 return repeatResult ?? lastResult
             case .repeatFor(let variable, let container, let repeating): // MARK: .repeatFor
                 let containerValue = try runPrimary(container)
-                let timesValue = try builtin.getSequenceLength(containerValue)
+                let timesValue = try context.getSequenceLength(containerValue)
                 
                 var repeatResult: RT_Object?
                 // 1-based indices wheeeeee
                 for count in 1...timesValue {
-                    let elementValue = try builtin.getFromSequenceAtIndex(containerValue, Int64(count))
-                    builtin[variable: variable] = elementValue
+                    let elementValue = try context.getFromSequenceAtIndex(containerValue, Int64(count))
+                    context[variable: variable] = elementValue
                     repeatResult = try runPrimary(repeating)
                 }
                 return repeatResult ?? lastResult
@@ -209,21 +201,21 @@ public extension Runtime {
                 guard let newModule = newModuleObject as? RT_Module else {
                     throw NotAModule(object: newModuleObject)
                 }
-                builtin.moduleStack.push(newModule)
+                context.moduleStack.push(newModule)
                 defer {
-                    builtin.moduleStack.pop()
+                    context.moduleStack.pop()
                 }
                 return try runPrimary(to)
             case .target(let newTarget, let body): // MARK: .target
                 let newTargetValue = try runPrimary(newTarget, evaluateSpecifiers: false)
-                builtin.targetStack.push(newTargetValue)
+                context.targetStack.push(newTargetValue)
                 defer {
-                    builtin.targetStack.pop()
+                    context.targetStack.pop()
                 }
                 return try runPrimary(body)
             case .let_(let term, let initialValue): // MARK: .let_
                 let initialExprValue = try initialValue.map { try runPrimary($0) } ?? null
-                builtin[variable: term] = initialExprValue
+                context[variable: term] = initialExprValue
                 return initialExprValue
             case .define(_, as: _): // MARK: .define
                 return lastResult
@@ -260,30 +252,30 @@ public extension Runtime {
                             )
                         },
                         uniquingKeysWith: {
-                            try builtin.binaryOp(.greater, $1, $0).truthy ? $1 : $0
+                            try context.binaryOp(.greater, $1, $0).truthy ? $1 : $0
                         }
                     )
                 )
             case .prefixOperator(let operation, let operand), .postfixOperator(let operation, let operand): // MARK: .prefixOperator, .postfixOperator
                 let operandValue = try runPrimary(operand)
-                return builtin.unaryOp(operation, operandValue)
+                return context.unaryOp(operation, operandValue)
             case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
                 let lhsValue = try runPrimary(lhs)
                 let rhsValue = try runPrimary(rhs)
-                return try builtin.binaryOp(operation, lhsValue, rhsValue)
+                return try context.binaryOp(operation, lhsValue, rhsValue)
             case .variable(let term): // MARK: .variable
-                return builtin[variable: term]
+                return context[variable: term]
             case .use(let term), // MARK: .use
                  .resource(let term): // MARK: .resource
-                return try builtin.getResource(term)
+                return try context.getResource(term)
             case .enumerator(let term): // MARK: .constant
-                return builtin.newConstant(term.id)
+                return context.newConstant(term.id)
             case .type(let term): // MARK: .class_
                 return RT_Type(self, value: reflection.types[term.uri])
             case .set(let expression, to: let newValueExpression): // MARK: .set
                 if case .variable(let variableTerm) = expression.kind {
                     let newValueExprValue = try runPrimary(newValueExpression)
-                    builtin[variable: variableTerm] = newValueExprValue
+                    context[variable: variableTerm] = newValueExprValue
                     return newValueExprValue
                 } else {
                     let expressionExprValue = try runPrimary(expression, evaluateSpecifiers: false)
@@ -294,7 +286,7 @@ public extension Runtime {
                         Reflection.Parameter(.set_to): newValueExprValue
                     ]
                     let command = reflection.commands[.set]
-                    return try builtin.run(command: command, arguments: arguments)
+                    return try context.run(command: command, arguments: arguments)
                 }
             case .command(let term, let parameters): // MARK: .command
                 let parameterExprValues: [(key: Reflection.Parameter, value: RT_Object)] = try parameters.map { kv in
@@ -307,20 +299,20 @@ public extension Runtime {
                     parameterExprValues
                 )
                 let command = reflection.commands[term.uri]
-                return try builtin.run(command: command, arguments: arguments)
+                return try context.run(command: command, arguments: arguments)
             case .reference(let expression): // MARK: .reference
                 return try runPrimary(expression, evaluateSpecifiers: false)
             case .get(let expression): // MARK: .get
-                return try evaluatingSpecifier(runPrimary(expression))
+                return try context.evaluate(specifier: runPrimary(expression))
             case .specifier(let specifier): // MARK: .specifier
                 let specifierValue = try buildSpecifier(specifier)
-                return evaluateSpecifiers ? try evaluatingSpecifier(specifierValue) : specifierValue
+                return evaluateSpecifiers ? try context.evaluate(specifier: specifierValue) : specifierValue
             case .insertionSpecifier(let insertionSpecifier): // MARK: .insertionSpecifier
                 let parentValue: RT_Object = try {
                     if let parent = insertionSpecifier.parent {
                         return try runPrimary(parent)
                     } else {
-                        return builtin.target
+                        return context.target
                     }
                 }()
                 return RT_InsertionSpecifier(self, parent: parentValue, kind: insertionSpecifier.kind)
@@ -341,7 +333,7 @@ public extension Runtime {
                 let implementation = RT_ExpressionImplementation(self, formalParameters: parameters, formalArguments: arguments, body: body)
                 
                 let function = RT_Function(self, signature: signature, implementation: implementation)
-                builtin.moduleStack.add(function: function)
+                context.moduleStack.add(function: function)
                     
                 return lastResult
             case .block(let arguments, let body): // MARK: .block
@@ -362,7 +354,7 @@ public extension Runtime {
                 if hashbang.isEmpty {
                     return lastResult
                 } else {
-                    return builtin.runWeave(hashbang.invocation, body, lastResult)
+                    return context.runWeave(hashbang.invocation, body, lastResult)
                 }
             case .debugInspectTerm(_, let message):
                 return RT_String(self, value: message)
@@ -420,7 +412,7 @@ public extension Runtime {
         
         let resultValue = try generate()
         return (specifier.parent == nil) ?
-            builtin.qualifySpecifier(resultValue) :
+            context.qualify(specifier: resultValue) :
             resultValue
     }
     
@@ -431,12 +423,8 @@ public extension Runtime {
         case let .predicate(predicate):
             let lhsValue = try runTestComponent(predicate.lhs)
             let rhsValue = try runTestComponent(predicate.rhs)
-            return builtin.newTestSpecifier(predicate.operation, lhsValue, rhsValue)
+            return RT_TestSpecifier(self, operation: predicate.operation, lhs: lhsValue, rhs: rhsValue)
         }
-    }
-    
-    private func evaluatingSpecifier(_ object: RT_Object) throws -> RT_Object {
-        try builtin.evaluateSpecifier(object)
     }
     
 }

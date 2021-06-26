@@ -1,7 +1,10 @@
 import Bushel
 import AEthereal
+import os.log
 
-public protocol RT_HierarchicalSpecifier: RT_AESpecifier {
+private let log = OSLog(subsystem: logSubsystem, category: #file)
+
+public protocol RT_HierarchicalSpecifier: RT_AEQuery {
     
     var parent: RT_Object { get set }
     
@@ -134,7 +137,7 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
             }
         }
         
-        guard let value = try propagate(from: evaluatedParent, up: rt.builtin.moduleStack, evaluate(on:)) else {
+        guard let value = try propagate(from: evaluatedParent, up: rt.context.moduleStack, evaluate(on:)) else {
             switch kind {
             case .property:
                 throw NoPropertyExists()
@@ -147,40 +150,47 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
     
     public func handle(_ arguments: RT_Arguments) throws -> RT_Object? {
         switch rootAncestor() {
-        case let root as RT_AERootSpecifier:
-            return try self.handleByAppleEvent(arguments, app: root.saRootSpecifier.app)
+        case let app as RT_Application:
+            return try self.handleByAppleEvent(arguments, app: app.app)
+        case let root as RT_Module:
+            return try root.handle(arguments)
         default:
             return nil
         }
     }
     
-    public func saSpecifier(app: App) throws -> AEthereal.Specifier? {
+    public func appleEventQuery() throws -> Query? {
         if
             case let .element(element) = kind,
             element.type.isA(rt.reflection.types[.app])
         {
-            return try saRootSpecifier()
+            return .rootSpecifier(.application)
         }
         
-        guard let parent = self.parent as? RT_AESpecifier else {
+        guard
+            let parent = self.parent as? RT_AEQuery,
+            let parentQuery = try parent.appleEventQuery()
+        else {
             return nil
         }
-        guard let parentSpecifier = try parent.saSpecifier(app: app) as? AEthereal.ObjectSpecifierProtocol else {
-            // TODO: handle gracefully
-            fatalError("cannot extend a non-object specifier")
+        
+        var parentSpecifier: ChainableSpecifier
+        switch parentQuery {
+        case let .rootSpecifier(specifier as ChainableSpecifier),
+             let .objectSpecifier(specifier as ChainableSpecifier):
+            parentSpecifier = specifier
+        default:
+            return nil
         }
         
         switch kind {
         case let .property(property):
-            return parentSpecifier.property(property.id.ae4Code!)
+            return .objectSpecifier(parentSpecifier.byProperty(AE4.AEEnum(rawValue: property.uri.ae4Code!)))
         case let .element(element):
             guard let code = element.type.id.ae4Code else {
-                // TODO: handle gracefully
-                fatalError("must have code to evaluate by Apple Event")
+                return nil
             }
-            
-            let elements = parentSpecifier.elements(code)
-            
+            let wantType = AE4.AEType(rawValue: code)
             switch element.form {
             case let .index(index):
                 guard index.coerce(to: RT_Integer.self) != nil else {
@@ -188,178 +198,56 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
                 }
                 fallthrough
             case let .simple(index) where index.coerce(to: RT_Integer.self) != nil:
-                return elements[index.coerce(to: RT_Integer.self)!.value]
+                return .objectSpecifier(parentSpecifier.byIndex(wantType, Int(index.coerce(to: RT_Integer.self)!.value)))
             case let .name(name):
                 guard name.coerce(to: RT_String.self) != nil else {
                     throw InvalidSpecifierDataType(specifierType: .byName, specifierData: name)
                 }
                 fallthrough
             case let .simple(name) where name.coerce(to: RT_String.self) != nil:
-                return elements.named(name.coerce(to: RT_String.self)!.value)
+                return .objectSpecifier(parentSpecifier.byName(wantType, name.coerce(to: RT_String.self)!.value))
             case let .simple(data):
                 throw InvalidSpecifierDataType(specifierType: .simple, specifierData: data)
             case let .id(id):
-                return elements.id(id)
+                guard let id_ = id as? Encodable else {
+                    throw Unencodable(object: id)
+                }
+                return .objectSpecifier(parentSpecifier.byID(wantType, id_))
             case .all:
-                return elements.all
+                return .objectSpecifier(parentSpecifier.byAbsolute(wantType, .all))
             case .first:
-                return elements.first
+                return .objectSpecifier(parentSpecifier.byAbsolute(wantType, .first))
             case .middle:
-                return elements.middle
+                return .objectSpecifier(parentSpecifier.byAbsolute(wantType, .middle))
             case .last:
-                return elements.last
+                return .objectSpecifier(parentSpecifier.byAbsolute(wantType, .last))
             case .random:
-                return elements.any
+                return .objectSpecifier(parentSpecifier.byAbsolute(wantType, .random))
             case .previous:
-                return parentSpecifier.previous()
+                guard let parentSpecifier = parentSpecifier as? ObjectSpecifier else {
+                    return nil
+                }
+                return .objectSpecifier(parentSpecifier.byRelative(wantType, .previous))
             case .next:
-                return parentSpecifier.next()
+                guard let parentSpecifier = parentSpecifier as? ObjectSpecifier else {
+                    return nil
+                }
+                return .objectSpecifier(parentSpecifier.byRelative(wantType, .next))
             case let .range(from, thru):
-                return elements[from, thru]
+                guard let from_ = from as? Encodable else {
+                    throw Unencodable(object: from)
+                }
+                guard let thru_ = thru as? Encodable else {
+                    throw Unencodable(object: thru)
+                }
+                return .objectSpecifier(parentSpecifier.byRange(wantType, from: from_, thru: thru_))
             case let .test(predicate):
-                guard let testClause = try (predicate as? RT_TestSpecifier)?.saTestClause(app: app) else {
+                guard let testClause = try (predicate as? RT_TestSpecifier)?.appleEventTestClause() else {
                     throw InvalidSpecifierDataType(specifierType: .byTest, specifierData: predicate)
                 }
-                return elements[testClause]
+                return .objectSpecifier(parentSpecifier.byTest(wantType, testClause))
             }
         }
-    }
-    
-    private func saRootSpecifier() throws -> AEthereal.RootSpecifier {
-        switch kind {
-        case let .element(element):
-            switch element.form {
-            case let .simple(name),
-                 let .name(name):
-                guard let appName = (name.coerce(to: RT_String.self))?.value else {
-                    throw InvalidSpecifierDataType(specifierType: .byName, specifierData: name)
-                }
-                return RootSpecifier(name: appName)
-            case let .id(id):
-                guard let bundleID = (id.coerce(to: RT_String.self))?.value else {
-                    throw InvalidSpecifierDataType(specifierType: .byID, specifierData: id)
-                }
-                return RootSpecifier(bundleIdentifier: bundleID)
-            default:
-                // TODO: How to handle properly?
-                fatalError("invalid application specifier; must be by-name or by-id")
-            }
-        default:
-            // TODO: How to handle properly?
-            fatalError("invalid application specifier; must be by-name or by-id")
-        }
-    }
-    
-    public convenience init?(_ rt: Runtime, saSpecifier: AEthereal.ObjectSpecifier) {
-        let parent: RT_Object?
-        if let objectSpecifier = saSpecifier.parentQuery as? AEthereal.ObjectSpecifier {
-            parent = RT_Specifier(rt, saSpecifier: objectSpecifier)
-        } else if let rootSpecifier = saSpecifier.parentQuery as? AEthereal.RootSpecifier {
-            if rootSpecifier === AEthereal.applicationRoot {
-                guard
-                    let bundleID = saSpecifier.app.target.bundleIdentifier,
-                    let bundle = Bundle(identifier: bundleID)
-                else {
-                    return nil
-                }
-                parent = RT_Application(rt, bundle: bundle)
-            } else {
-                guard let root = try? RT_RootSpecifier.fromSARootSpecifier(rt, rootSpecifier) else {
-                    return nil
-                }
-                parent = root
-            }
-        } else {
-            fatalError("unknown Query type for AEthereal.Specifier.parentQuery")
-        }
-        guard parent != nil else {
-            return nil
-        }
-        
-        let typeCode = saSpecifier.wantType.typeCodeValue
-        let type = rt.reflection.types[.ae4(code: typeCode)]
-        let form: Kind.Element.Form
-        // See App.decodeAsObjectSpecifier(_:)
-        switch saSpecifier.selectorForm.enumCodeValue {
-        case OSType(formPropertyID):
-            guard
-                let code = (saSpecifier.selectorData as? NSAppleEventDescriptor)?.enumCodeValue,
-                code != 0
-            else {
-                return nil
-            }
-            let property = rt.reflection.properties[.ae4(code: code)]
-            self.init(rt, parent: parent!, kind: .property(property))
-            return
-        case 0x75737270: // _formUserPropertyID:
-            fatalError()
-        case OSType(formRelativePosition):
-            guard
-                let descriptor = saSpecifier.selectorData as? NSAppleEventDescriptor,
-                descriptor.descriptorType == typeEnumerated
-            else {
-                return nil
-            }
-            switch descriptor.enumCodeValue {
-            case OSType(kAEPrevious):
-                form = .previous
-            case OSType(kAENext):
-                form = .next
-            default:
-                return nil
-            }
-        case OSType(formAbsolutePosition):
-            if
-                let descriptor = saSpecifier.selectorData as? NSAppleEventDescriptor,
-                descriptor.descriptorType == typeEnumerated
-            {
-                
-                switch descriptor.enumCodeValue {
-                case OSType(kAEAll):
-                    form = .all
-                case OSType(kAEFirst):
-                    form = .first
-                case OSType(kAEMiddle):
-                    form = .middle
-                case OSType(kAELast):
-                    form = .last
-                case OSType(kAEAny):
-                    form = .random
-                default:
-                    return nil
-                }
-            } else {
-                guard let index = RT_Object.fromSADecoded(rt, saSpecifier.selectorData) else {
-                    return nil
-                }
-                form = .index(index)
-            }
-        case OSType(formRange):
-            let rangeSelector = saSpecifier.selectorData as! AEthereal.RangeSelector
-            guard
-                let from = RT_Object.fromSADecoded(rt, rangeSelector.start),
-                let thru = RT_Object.fromSADecoded(rt, rangeSelector.stop)
-            else {
-                return nil
-            }
-            form = .range(from: from, thru: thru)
-        case OSType(formTest):
-            // TODO: Low prio unimplemented
-            fatalError("unimplemented")
-        case OSType(formName):
-            guard let name = RT_Object.fromSADecoded(rt, saSpecifier.selectorData) else {
-                return nil
-            }
-            form = .name(name)
-        case OSType(formUniqueID):
-            guard let id = RT_Object.fromSADecoded(rt, saSpecifier.selectorData) else {
-                return nil
-            }
-            form = .id(id)
-        default:
-            return nil
-        }
-        self.init(rt, parent: parent!, kind: .element(Kind.Element(type: type, form: form)))
     }
     
     public override var description: String {

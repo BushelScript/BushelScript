@@ -2,7 +2,7 @@ import Bushel
 import AEthereal
 
 /// A Unicode "character", stored as a Swift `Character`.
-public class RT_Character: RT_Object, AEEncodable {
+public class RT_Character: RT_Object {
     
     public var value: Character
     
@@ -32,12 +32,6 @@ public class RT_Character: RT_Object, AEEncodable {
             return value.unicodeScalars.count == 1 ? RT_Integer(rt, value: Int64(value.unicodeScalars.first!.value)) : nil
         default:
             return super.coerce(to: type)
-        }
-    }
-    
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        String(value).withCString(encodedAs: UTF32.self) { cString in
-            NSAppleEventDescriptor(descriptorType: cChar, bytes: cString, length: 1)! as NSAppleEventDescriptor
         }
     }
     

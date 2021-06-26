@@ -164,6 +164,7 @@ extension AppDelegate {
 }
 
 func getArguments(from event: NSAppleEventDescriptor) -> [Reflection.Parameter : RT_Object] {
+    let event = AEDescriptor(event)
     let rt = Runtime()
     var result: [Reflection.Parameter : RT_Object] = [:]
     
@@ -177,11 +178,11 @@ func getArguments(from event: NSAppleEventDescriptor) -> [Reflection.Parameter :
     
     for i in 1...count {
         let code = event.keywordForDescriptor(at: i)
-        guard let descriptor = event.paramDescriptor(forKeyword: code) else {
+        guard let descriptor = event[code] else {
             continue
         }
         
-        if let value = try? RT_Object.fromAEDescriptor(rt, App(), descriptor) {
+        if let value = try? RT_Object.decode(rt, app: App(), aeDescriptor: descriptor) {
             result[Reflection.Parameter(.ae12(class: eventClass, id: eventID, code: code))] = value
         }
     }
@@ -211,13 +212,12 @@ private func setResult(_ object: RT_Object, for suspensionID: NSAppleEventManage
 }
 
 private func setResult(_ object: RT_Object, in replyEvent: NSAppleEventDescriptor) {
-    guard let encodable = object as? AEEncodable else {
+    guard let encodable = object as? Encodable else {
         os_log("Could not send object %@ in a reply descriptor because it is not encodable", log: log, type: .error, object)
         return
     }
     do {
-        let encoded = try encodable.encodeAEDescriptor(App())
-        setResult(encoded, in: replyEvent)
+        setResult(try AEEncoder.encode(encodable), in: replyEvent)
     } catch {
         os_log("Failed to encode reply descriptor for %@: %@", log: log, type: .error, object, String(describing: error))
     }

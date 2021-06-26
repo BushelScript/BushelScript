@@ -2,18 +2,7 @@ import Bushel
 import AEthereal
 
 /// A real number, stored as a `Double`.
-public class RT_Real: RT_Object, AEEncodable {
-    
-    public var value: Double = 0.0
-    
-    public init(_ rt: Runtime, value: Double) {
-        self.value = value
-        super.init(rt)
-    }
-    
-    public override var description: String {
-        String(describing: value)
-    }
+public class RT_Real: RT_ValueWrapper<Double> {
     
     public override class var staticType: Types {
         .real
@@ -81,18 +70,6 @@ public class RT_Real: RT_Object, AEEncodable {
         } else {
             return super.coerce(to: type)
         }
-    }
-    
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        NSAppleEventDescriptor(double: value)
-    }
-    
-}
-
-extension RT_Real {
-    
-    public override var debugDescription: String {
-        super.debugDescription + "[value: \(value)]"
     }
     
 }

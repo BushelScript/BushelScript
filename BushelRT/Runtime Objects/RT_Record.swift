@@ -2,7 +2,7 @@ import Bushel
 import AEthereal
 
 /// An Apple Event record. Aka: associative array, dictionary, map.
-public class RT_Record: RT_Object, AEEncodable {
+public class RT_Record: RT_Object, Encodable {
     
     public var contents: [RT_Object : RT_Object] = [:]
     
@@ -63,39 +63,33 @@ public class RT_Record: RT_Object, AEEncodable {
         }
     }
     
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        return try contents.reduce(into: NSAppleEventDescriptor.record()) { (descriptor, entry) in
-            let (key, value) = entry
-            guard
-                let aeCode: OSType = ({
-                    if let key = key as? RT_Specifier {
-                        switch key.kind {
-                        case let .property(property):
-                            return property.uri.ae4Code
-                        case .element:
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(
+            try contents.reduce(into: AEDescriptor.record()) { (descriptor, entry) in
+                let (key, value) = entry
+                guard
+                    let aeCode: OSType = ({
+                        if let key = key as? RT_Specifier {
+                            switch key.kind {
+                            case let .property(property):
+                                return property.uri.ae4Code
+                            case .element:
+                                return nil
+                            }
+                        } else if let key = key as? RT_Type {
+                            return key.value.uri.ae4Code
+                        } else {
                             return nil
                         }
-                    } else if let key = key as? RT_Type {
-                        return key.value.uri.ae4Code
-                    } else {
-                        return nil
-                    }
-                })(),
-                let encodedValue = try (value as? AEEncodable)?.encodeAEDescriptor(app)
-            else {
-                throw Unencodable(object: self)
+                    })(),
+                    let encodable = value as? Encodable
+                else {
+                    throw Unencodable(object: self)
+                }
+                descriptor[aeCode] = try AEEncoder.encode(encodable)
             }
-            descriptor.setDescriptor(encodedValue, forKeyword: aeCode)
-        }
+        )
     }
     
 }
-
-extension RT_Record {
-    
-    public override var debugDescription: String {
-        super.debugDescription + "[contents: \(contents)]"
-    }
-    
-}
-

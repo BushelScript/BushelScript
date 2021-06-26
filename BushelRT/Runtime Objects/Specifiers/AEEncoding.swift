@@ -1,18 +1,18 @@
 import Bushel
 import AEthereal
 
-func aeEncode(_ arguments: RT_Arguments, app: App) throws -> [OSType : NSAppleEventDescriptor] {
+func makeAEParameters(_ arguments: RT_Arguments, app: App) throws -> [AE4 : Encodable] {
     if let unencodableKey = arguments.contents.keys.first(where: { $0.id.ae4Code == nil }) {
         throw Unencodable(object: unencodableKey)
     }
     let keys = arguments.contents.keys.map { $0.id.ae4Code! }
     
-    let values: [NSAppleEventDescriptor] = try arguments.contents.values.map { (argument: RT_Object) -> NSAppleEventDescriptor in
-        guard let encodable = argument as? AEEncodable else {
+    let values: [Encodable] = try arguments.contents.values.map { (argument: RT_Object) -> Encodable in
+        guard let encodable = argument as? Encodable else {
             throw Unencodable(object: argument)
         }
-        return try encodable.encodeAEDescriptor(app)
+        return encodable
     }
 
-    return [OSType : NSAppleEventDescriptor](uniqueKeysWithValues: zip(keys, values))
+    return [AE4 : Encodable](uniqueKeysWithValues: zip(keys, values))
 }

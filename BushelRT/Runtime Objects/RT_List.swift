@@ -2,7 +2,7 @@ import Bushel
 import AEthereal
 
 /// An Apple Event list. Pretty much your standard list type.
-public class RT_List: RT_Object, AEEncodable {
+public class RT_List: RT_Object, Encodable {
     
     public var contents: [RT_Object] = []
     
@@ -124,12 +124,13 @@ public class RT_List: RT_Object, AEEncodable {
         )
     }
     
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        return try contents.enumerated().reduce(into: NSAppleEventDescriptor.list()) { (descriptor, entry) in
-            let (index, value) = entry
-            if let value = value as? AEEncodable {
-                descriptor.insert(try value.encodeAEDescriptor(app), at: index + 1)
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        for object in contents {
+            guard let encodable = object as? Encodable else {
+                throw Unencodable(object: object)
             }
+            try encodable.encode(to: &container)
         }
     }
     

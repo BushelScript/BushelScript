@@ -31,8 +31,6 @@ public class RT_AppleScript: RT_Object, RT_Module {
         // AE "subject" attribute, so we can safely leave that off.
         arguments.contents.removeValue(forKey: Reflection.Parameter(.target))
         
-        let encodedArguments = try aeEncode(arguments, app: App())
-        
         let eventClass: AEEventClass
         let eventID: AEEventID
         var subroutineName: String?
@@ -47,29 +45,33 @@ public class RT_AppleScript: RT_Object, RT_Module {
             return nil
         }
         
-        let event = NSAppleEventDescriptor.appleEvent(
-            withEventClass: eventClass,
+        let event = AEDescriptor(
+            eventClass: eventClass,
             eventID: eventID,
-            targetDescriptor: .null(),
-            returnID: AEReturnID(kAutoGenerateReturnID),
-            transactionID: AETransactionID(kAnyTransactionID)
+            target: .appRoot
         )
         if let subroutineName = subroutineName {
-            event.setParam(NSAppleEventDescriptor(string: subroutineName), forKeyword: 0x736E616D /* keyASSubroutineName 'snam' */)
+            event.setParam(AEDescriptor(string: subroutineName), forKeyword: 0x736E616D /* keyASSubroutineName 'snam' */)
         }
         
-        for (ae4Code, argumentDescriptor) in encodedArguments {
-            event.setParam(argumentDescriptor, forKeyword: ae4Code)
+        for (parameter, argument) in arguments.contents {
+            guard let parameterAE4Code = parameter.uri.ae4Code else {
+                throw Unencodable(object: parameter)
+            }
+            guard let encodableArgument = argument as? Encodable else {
+                throw Unencodable(object: argument)
+            }
+            event[parameterAE4Code] = try AEEncoder.encode(encodableArgument)
         }
         
         var errorInfo: NSDictionary?
-        let resultDescriptor = value.executeAppleEvent(event, error: &errorInfo)
+        let resultDescriptor = AEDescriptor(value.executeAppleEvent(event, error: &errorInfo))
         
         if let errorInfo = errorInfo {
             throw AppleScriptError(number: errorInfo[NSAppleScript.errorNumber as NSString] as? OSStatus, message: errorInfo[NSAppleScript.errorMessage as NSString] as? String)
         }
         
-        return try RT_Object.fromAEDescriptor(rt, App(), resultDescriptor)
+        return try RT_Object.decode(rt, app: App(), aeDescriptor: resultDescriptor)
     }
     
 }

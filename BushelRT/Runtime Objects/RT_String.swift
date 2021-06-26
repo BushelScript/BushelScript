@@ -2,14 +2,7 @@ import Bushel
 import AEthereal
 
 /// A string stored as a Swift `String`.
-public class RT_String: RT_Object, AEEncodable {
-    
-    public var value: String = ""
-    
-    public init(_ rt: Runtime, value: String) {
-        self.value = value
-        super.init(rt)
-    }
+public class RT_String: RT_ValueWrapper<String> {
     
     public override var description: String {
         "\"\(value)\""
@@ -131,18 +124,6 @@ public class RT_String: RT_Object, AEEncodable {
     public override func contains(_ other: RT_Object) -> RT_Object? {
         other.coerce(to: RT_String.self)
             .map { RT_Boolean.withValue(rt, value.contains($0.value)) }
-    }
-    
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        NSAppleEventDescriptor(string: value)
-    }
-    
-}
-
-extension RT_String {
-    
-    public override var debugDescription: String {
-        super.debugDescription + "[value: \(value)]"
     }
     
 }

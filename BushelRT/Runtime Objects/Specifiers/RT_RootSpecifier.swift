@@ -1,7 +1,7 @@
 import Bushel
 import AEthereal
 
-public final class RT_RootSpecifier: RT_Object, RT_AESpecifier {
+public final class RT_RootSpecifier: RT_Object, RT_AEQuery {
     
     public enum Kind {
         /// Root of all absolute object specifiers.
@@ -24,27 +24,14 @@ public final class RT_RootSpecifier: RT_Object, RT_AESpecifier {
         super.init(rt)
     }
     
-    public static func fromSARootSpecifier(_ rt: Runtime, _ specifier: AEthereal.RootSpecifier) throws -> RT_Object {
-        switch specifier.kind {
-        case .application:
-            return RT_RootSpecifier(rt, kind: .application)
-        case .container:
-            return RT_RootSpecifier(rt, kind: .container)
-        case .specimen:
-            return RT_RootSpecifier(rt, kind: .specimen)
-        case let .object(descriptor):
-            return try RT_Object.fromAEDescriptor(rt, specifier.app, descriptor)
-        }
-    }
-    
-    public func saSpecifier(app: App) -> AEthereal.Specifier? {
+    public func appleEventQuery() -> AEthereal.Query? {
         switch kind {
         case .application:
-            return RootSpecifier(.application, app: app)
+            return .rootSpecifier(.application)
         case .container:
-            return RootSpecifier(.container, app: app)
+            return .rootSpecifier(.container)
         case .specimen:
-            return RootSpecifier(.specimen, app: app)
+            return .rootSpecifier(.specimen)
         }
     }
     

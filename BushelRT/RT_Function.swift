@@ -103,9 +103,9 @@ public struct RT_ExpressionImplementation: RT_Implementation {
     }
     
     public func run(arguments: RT_Arguments) throws -> RT_Object {
-        rt.builtin.frameStack.repush()
+        rt.context.frameStack.repush()
         defer {
-            rt.builtin.frameStack.pop()
+            rt.context.frameStack.pop()
         }
         
         // Create variables for each of the function's parameters.
@@ -126,7 +126,7 @@ public struct RT_ExpressionImplementation: RT_Implementation {
             if index == 0, argument == nil {
                 argument = arguments[Reflection.Parameter(.direct)]
             }
-            rt.builtin[variable: formalArgument] = argument ?? rt.null
+            rt.context[variable: formalArgument] = argument ?? rt.null
         }
         
         do {
@@ -152,15 +152,15 @@ public struct RT_BlockImplementation: RT_Implementation {
     }
     
     public func run(arguments: RT_Arguments) throws -> RT_Object {
-        rt.builtin.frameStack.repush()
+        rt.context.frameStack.repush()
         defer {
-            rt.builtin.frameStack.pop()
+            rt.context.frameStack.pop()
         }
         
         // Push exactly what we're given as direct argument.
-        rt.builtin.targetStack.push(arguments[.direct, RT_Object.self] ?? rt.null)
+        rt.context.targetStack.push(arguments[.direct, RT_Object.self] ?? rt.null)
         defer {
-            rt.builtin.targetStack.pop()
+            rt.context.targetStack.pop()
         }
         
         // Convert direct argument to list to do variable binding.
@@ -171,7 +171,7 @@ public struct RT_BlockImplementation: RT_Implementation {
         // Bind the items to variables.
         let directArguments = directArgumentList.contents
         for (index, formalArgument) in formalArguments.enumerated() {
-            rt.builtin[variable: formalArgument] =
+            rt.context[variable: formalArgument] =
                 (index < directArguments.count) ?
                 directArguments[index] :
                 rt.null

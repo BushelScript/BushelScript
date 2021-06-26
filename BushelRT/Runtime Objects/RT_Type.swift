@@ -2,7 +2,7 @@ import Bushel
 import AEthereal
 
 /// A runtime type reflected as a dynamic object.
-public class RT_Type: RT_Object, AEEncodable {
+public class RT_Type: RT_Object, Encodable {
     
     public var value: Reflection.`Type`
     
@@ -27,11 +27,13 @@ public class RT_Type: RT_Object, AEEncodable {
         value.hashValue
     }
     
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        guard let aeCode = value.uri.ae4Code else {
-            throw Unencodable(object: self)
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        if let ae4Code = value.uri.ae4Code {
+            try container.encode(AE4.AEType(rawValue: ae4Code))
+        } else {
+            try container.encode(value.uri.normalized)
         }
-        return NSAppleEventDescriptor(typeCode: aeCode)
     }
     
 }

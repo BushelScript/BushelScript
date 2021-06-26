@@ -3,21 +3,14 @@ import AEthereal
 
 /// A boolean. Really just a special case of an `RT_Constant`,
 /// but modelled as a separate class for convenience.
-public class RT_Boolean: RT_Object, AEEncodable {
-    
-    public let value: Bool
+public class RT_Boolean: RT_ValueWrapper<Bool> {
     
     public static func withValue(_ rt: Runtime, _ value: Bool) -> RT_Boolean {
         value ? rt.`true` : rt.`false`
     }
     
-    internal init(_ rt: Runtime, value: Bool) {
-        self.value = value
-        super.init(rt)
-    }
-    
-    public override var description: String {
-        String(describing: value)
+    internal override init(_ rt: Runtime, value: Bool) {
+        super.init(rt, value: value)
     }
     
     public override class var staticType: Types {
@@ -52,18 +45,6 @@ public class RT_Boolean: RT_Object, AEEncodable {
         default:
             return super.coerce(to: type)
         }
-    }
-    
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        NSAppleEventDescriptor(boolean: value)
-    }
-    
-}
-
-extension RT_Boolean {
-    
-    public override var debugDescription: String {
-        super.debugDescription + "[value: \(value)]"
     }
     
 }

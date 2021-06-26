@@ -5,9 +5,9 @@
         "package": "AEthereal",
         "repositoryURL": "https://github.com/BushelScript/AEthereal.git",
         "state": {
-          "branch": null,
-          "revision": "48fc2ec06fc8146e461ffb1c5c5feb883aae52e8",
-          "version": "0.1.0"
+          "branch": "main",
+          "revision": "1529bcb4c49501e86c0a5f3914ecc4187e778ae2",
+          "version": null
         }
       },
       {

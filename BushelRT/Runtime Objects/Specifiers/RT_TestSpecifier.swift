@@ -24,11 +24,11 @@ public final class RT_TestSpecifier: RT_Object {
         super.init(rt)
     }
     
-    public func saTestClause(app: App) throws -> AEthereal.TestClause? {
-        func makeLogicalTestClause() throws -> AEthereal.TestClause? {
+    public func appleEventTestClause() throws -> AEthereal.ObjectSpecifier.TestClause? {
+        func makeLogicalTestClause() throws -> AEthereal.ObjectSpecifier.TestClause? {
             guard
-                let lhsClause = try (lhs as? RT_TestSpecifier)?.saTestClause(app: app),
-                let rhsClause = try (rhs as? RT_TestSpecifier)?.saTestClause(app: app)
+                let lhsClause = try (lhs as? RT_TestSpecifier)?.appleEventTestClause(),
+                let rhsClause = try (rhs as? RT_TestSpecifier)?.appleEventTestClause()
             else {
                 return nil
             }
@@ -45,24 +45,27 @@ public final class RT_TestSpecifier: RT_Object {
                 fatalError("unreachable")
             }
         }
-        func makeComparisonTestClause() throws -> AEthereal.TestClause? {
+        func makeComparisonTestClause() throws -> AEthereal.ObjectSpecifier.TestClause? {
             let objectSpecifier: AEthereal.ObjectSpecifier
-            let other: RT_Object
+            let otherObject: RT_Object
             let reverse: Bool
-            if let lhsObjectSpecifier = try (lhs as? RT_AESpecifier)?.saSpecifier(app: app) as? AEthereal.ObjectSpecifier {
+            if case let .objectSpecifier(lhsObjectSpecifier) = try (lhs as? RT_AEQuery)?.appleEventQuery() {
                 objectSpecifier = lhsObjectSpecifier
-                other = rhs
+                otherObject = rhs
                 reverse = false
             } else {
-                guard let rhsObjectSpecifier = try (rhs as? RT_AESpecifier)?.saSpecifier(app: app) as? AEthereal.ObjectSpecifier else {
+                guard case let .objectSpecifier(rhsObjectSpecifier) = try (rhs as? RT_AEQuery)?.appleEventQuery() else {
                     return nil
                 }
                 objectSpecifier = rhsObjectSpecifier
-                other = lhs
+                otherObject = lhs
                 // AEthereal always has its lhs be the object specifier,
                 // so we must reverse the operands to preserve the intended
                 // semantics.
                 reverse = true
+            }
+            guard let other = otherObject as? Codable else {
+                return nil
             }
             
             switch operation {

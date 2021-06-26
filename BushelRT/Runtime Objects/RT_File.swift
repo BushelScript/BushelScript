@@ -2,13 +2,16 @@ import Bushel
 import AEthereal
 
 /// A file URL.
-public class RT_File: RT_Object {
+public class RT_File: RT_Object, Encodable {
     
-    public var value: URL
+    public var value: AEFileURL
     
-    public init(_ rt: Runtime, value: URL) {
+    public init(_ rt: Runtime, value: AEFileURL) {
         self.value = value
         super.init(rt)
+    }
+    public convenience init(_ rt: Runtime, value: URL) {
+        self.init(rt, value: AEFileURL(url: value))
     }
     
     public override var description: String {
@@ -20,13 +23,13 @@ public class RT_File: RT_Object {
     }
     
     public var basename: RT_String {
-        RT_String(rt, value: value.deletingPathExtension().lastPathComponent)
+        RT_String(rt, value: value.url.deletingPathExtension().lastPathComponent)
     }
     public var extname: RT_String {
-        RT_String(rt, value: value.pathExtension)
+        RT_String(rt, value: value.url.pathExtension)
     }
     public var dirname: RT_String {
-        RT_String(rt, value: value.deletingLastPathComponent().path)
+        RT_String(rt, value: value.url.deletingLastPathComponent().path)
     }
     
     public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
@@ -43,23 +46,14 @@ public class RT_File: RT_Object {
     public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
         switch Types(type.id) {
         case .string:
-            return RT_String(rt, value: value.path)
+            return RT_String(rt, value: value.url.path)
         default:
             return super.coerce(to: type)
         }
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {
-        (other as? RT_File).map { value == $0.value } ?? false
-    }
-    
-}
-
-// MARK: AEEncodable
-extension RT_File: AEEncodable {
-    
-    public func encodeAEDescriptor(_ app: App) throws -> NSAppleEventDescriptor {
-        NSAppleEventDescriptor(fileURL: value)
+        (other as? RT_File).map { value.url == $0.value.url } ?? false
     }
     
 }
