@@ -1013,7 +1013,7 @@ extension SourceParser {
         {
             source.removeLeadingWhitespace()
             
-            let line = source[..<(source.firstIndex(of: "\n") ?? source.endIndex)]
+            let line = source[..<(source.firstIndex { $0.isNewline } ?? source.endIndex)]
             
             guard let endDelimiterIndex = line.firstIndex(of: ")") else {
                 throw ParseError(.missing([.weaveDelimiter]), at: currentLocation)
@@ -1161,10 +1161,14 @@ extension SourceParser {
     }
     
     public func eatLineBreakOrThrow(_ context: ParseError.Error.Context? = nil) throws {
-        guard tryEating(prefix: "\n") else {
+        guard tryEatingLineBreak() else {
             throw ParseError(.missing([.lineBreak], context), at: currentLocation)
         }
     }
+    public func tryEatingLineBreak() -> Bool {
+        tryEating(Regex("\r?\n|\r")) != nil
+    }
+    
     public func eatOrThrow(prefix: String, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) throws {
         guard tryEating(prefix: prefix, styling, spacing: spacing) else {
             throw ParseError(.missing([.keyword(Term.Name(prefix))]), at: currentLocation)

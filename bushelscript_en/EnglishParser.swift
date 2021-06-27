@@ -274,7 +274,7 @@ public final class EnglishParser: SourceParser {
         let body = try withScope {
             lexicon.add(Set(arguments))
             lexicon.add(Term(Term.ID(Dictionaries.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.dictionary))
-            if tryEating(prefix: "\n") {
+            if tryEatingLineBreak() {
                 return try parseSequence()
             } else {
                 guard let expression = try parsePrimary() else {
@@ -288,7 +288,7 @@ public final class EnglishParser: SourceParser {
     
     private func handleTry() throws -> Expression.Kind? {
         func parseBody() throws -> Expression {
-            let foundNewline = tryEating(prefix: "\n")
+            let foundNewline = tryEatingLineBreak()
             if foundNewline {
                 return try parseSequence(stoppingAt: ["handle"])
             } else {
@@ -303,7 +303,7 @@ public final class EnglishParser: SourceParser {
             eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
             try eatOrThrow(prefix: "handle")
             
-            if tryEating(prefix: "\n") {
+            if tryEatingLineBreak() {
                 return try parseSequence()
             } else {
                 guard let handleExpression = try parsePrimary() else {
@@ -323,7 +323,7 @@ public final class EnglishParser: SourceParser {
         func parseThen() throws -> Expression {
             let thenStartIndex = currentIndex
             let foundThen = tryEating(prefix: "then")
-            let foundNewline = tryEating(prefix: "\n")
+            let foundNewline = tryEatingLineBreak()
             guard foundThen || foundNewline else {
                 throw AdHocParseError("Expected ‘then’ or line break after condition expression", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
             }
@@ -351,7 +351,7 @@ public final class EnglishParser: SourceParser {
                 return nil
             }
             
-            if tryEating(prefix: "\n") {
+            if tryEatingLineBreak() {
                 return try parseSequence()
             } else {
                 guard let elseExpr = try parsePrimary() else {
@@ -400,7 +400,7 @@ public final class EnglishParser: SourceParser {
         let target = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["tell"])))
         
         let foundTo = tryEating(prefix: "to")
-        let foundNewline = tryEating(prefix: "\n")
+        let foundNewline = tryEatingLineBreak()
         guard foundTo && !foundNewline || !foundTo && foundNewline else {
             throw ParseError(.missing([.expression, .lineBreak], .adHoc("after target expression")), at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " to", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
         }
@@ -415,7 +415,7 @@ public final class EnglishParser: SourceParser {
         let target = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["target"])))
         
         let foundThen = tryEating(prefix: "then")
-        let foundNewline = tryEating(prefix: "\n")
+        let foundNewline = tryEatingLineBreak()
         guard foundThen && !foundNewline || !foundThen && foundNewline else {
             throw ParseError(.missing([.keyword(Term.Name(["then"])), .lineBreak]), at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " then", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
         }
@@ -670,7 +670,7 @@ public final class EnglishParser: SourceParser {
             }
         default:
             guard
-                !source.hasPrefix("\n"),
+                !(source.first?.isNewline ?? false),
                 let firstExpression = try? parsePrimary(allowSuffixSpecifier: false)
             else {
                 return nil
