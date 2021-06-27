@@ -12,6 +12,10 @@ public class RT_File: RT_ValueWrapper<AEFileURL> {
         .file
     }
     
+    public override var description: String {
+        "\(value.url)"
+    }
+    
     public var basename: RT_String {
         RT_String(rt, value: value.url.deletingPathExtension().lastPathComponent)
     }
