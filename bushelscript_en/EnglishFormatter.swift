@@ -79,8 +79,8 @@ public final class EnglishFormatter: SourceFormatter {
             return String(value)
         case .double(let value):
             return String(value)
-        case .string(let value):
-            return "\"\(value)\""
+        case .string(_, let raw):
+            return raw
         case .list(let expressions):
             return "{\(expressions.map { format($0, level: level) }.joined(separator: ", "))}"
         case .record(let expressions):

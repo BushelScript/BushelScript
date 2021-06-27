@@ -53,7 +53,7 @@ public struct Expression {
         /// constituent value.
         case double(Double)
         /// Yields a string object with its constituent value.
-        case string(String)
+        case string(String, raw: String)
         /// Yields a string object with `body` as its (possibly multiline)
         /// value.
         case multilineString(bihash: Bihash, body: String)

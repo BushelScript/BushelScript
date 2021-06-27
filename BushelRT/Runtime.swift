@@ -236,7 +236,7 @@ extension Runtime {
                 return RT_Integer(self, value: value)
             case .double(let value): // MARK: .double
                 return RT_Real(self, value: value)
-            case .string(let value): // MARK: .string
+            case .string(let value, _): // MARK: .string
                 return RT_String(self, value: value)
             case .list(let expressions): // MARK: .list
                 return try RT_List(self, contents:

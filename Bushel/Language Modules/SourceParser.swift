@@ -588,6 +588,7 @@ extension SourceParser {
             else {
                 throw ParseError(.invalidString, at: currentLocation)
             }
+            let entireLiteral = "\(startMarker)\(match.matchedString)"
             
             var finalString = ""
             var index = string.startIndex
@@ -621,7 +622,7 @@ extension SourceParser {
                 index = string.index(after: index)
             }
             
-            return Expression(.string(finalString), at: expressionLocation)
+            return Expression(.string(finalString, raw: entireLiteral), at: expressionLocation)
         } else if let groupedExpression = try parseGroupedExpression() {
             return groupedExpression
         } else if let (_, endMarker, itemSeparators, keyValueSeparators) = eatListAndRecordBeginMarker() {
@@ -906,7 +907,7 @@ extension SourceParser {
             return nil
         }
         switch expression.kind {
-        case .string(let value):
+        case .string(let value, _):
             return (expression, value)
         default:
             return nil

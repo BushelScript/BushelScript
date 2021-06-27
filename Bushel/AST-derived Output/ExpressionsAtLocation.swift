@@ -62,7 +62,7 @@ extension Expression {
             return []
         case .double(_):
             return []
-        case .string(_):
+        case .string(_, _):
             return []
         case let .list(expressions):
             return expressions
