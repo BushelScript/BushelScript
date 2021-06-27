@@ -3,7 +3,7 @@ import AEthereal
 
 extension Reflection {
 
-    public final class Constant: TermReflection, Hashable, Codable {
+    public final class Constant: TermReflection, Codable, AETyped {
         
         public var role: Term.SyntacticRole {
             .constant
@@ -39,6 +39,10 @@ extension Reflection {
             let uri = try container.decode(Term.SemanticURI.self)
             let rt = decoder.userInfo[.rt] as! Runtime
             self.init(constant: rt.reflection.constants[uri])
+        }
+        
+        public var aeType: AE4.AEType {
+            .enumerated
         }
         
     }
