@@ -581,14 +581,47 @@ extension SourceParser {
             }
             
             return Expression(.sequence(weaves), at: expressionLocation)
-        } else if let (_, endMarker) = eatStringBeginMarker() {
+        } else if let (startMarker, endMarker) = eatStringBeginMarker() {
             guard
-                let match = tryEating(try! Regex(string: "(.*?)(?<!\\\\)\(endMarker)", options: .dotMatchesLineSeparators), .string, spacing: .right),
+                let match = tryEating(try! Regex(string: #"(.*?)(?:(?<!\\)|(?<=\\\\))\#(endMarker)"#, options: .dotMatchesLineSeparators), .string, spacing: .right),
                 let string = match.captures[0]
             else {
                 throw ParseError(.invalidString, at: currentLocation)
             }
-            return Expression(.string(string), at: expressionLocation)
+            
+            var finalString = ""
+            var index = string.startIndex
+            while index < string.endIndex {
+                if string[index] == "\\" {
+                    index = string.index(after: index)
+                    guard index < string.endIndex else {
+                        throw ParseError(.invalidString, at: currentLocation)
+                    }
+                    finalString.append(try {
+                        switch string[index] {
+                        case "\\":
+                            return "\\"
+                        case "t":
+                            return "\t"
+                        case "n":
+                            return "\n"
+                        case "r":
+                            return "\r"
+                        case endMarker.words.first!.first!:
+                            return endMarker.words.first!.first!
+                        default:
+                            let escSequenceOffset = string.distance(from: string.startIndex, to: index)
+                            let escSequenceStartIndex = entireSource.index(expressionStartIndex, offsetBy: startMarker.normalized.count + escSequenceOffset - 1)
+                            throw ParseError(.invalidString, at: SourceLocation(escSequenceStartIndex..<entireSource.index(escSequenceStartIndex, offsetBy: 2), source: entireSource))
+                        }
+                    }() as Character)
+                } else {
+                    finalString.append(string[index])
+                }
+                index = string.index(after: index)
+            }
+            
+            return Expression(.string(finalString), at: expressionLocation)
         } else if let groupedExpression = try parseGroupedExpression() {
             return groupedExpression
         } else if let (_, endMarker, itemSeparators, keyValueSeparators) = eatListAndRecordBeginMarker() {
