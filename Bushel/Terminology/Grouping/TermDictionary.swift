@@ -93,14 +93,24 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
         // and constants.
         // This makes sense because types can be used as if they were
         // properties or constants anyway.
-        
-        // e.g., AppleScript sees Xcode -> project as a class, ignoreing the identically named property term.
-        if case .type = old.role, case .property = new.role {
-            return old
-        }
-        // e.g., AppleScript sees Microsoft Word -> document as a class, ignoreing the identically named constant term.
-        if case .type = old.role, case .constant = new.role {
-            return old
+        // Also, properties take precedence over constants, for similar reasons.
+        if case .type = old.role {
+            // e.g., AppleScript sees Xcode -> project as a class,
+            // ignoring the identically named property term.
+            if case .property = new.role {
+                return old
+            }
+            // e.g., AppleScript sees Microsoft Word -> document as a class,
+            // ignoring the identically named constant term.
+            if case .constant = new.role {
+                return old
+            }
+        } else if case .property = old.role {
+            // e.g., AppleScript sees Finder -> name as a property,
+            // ignoring the identically named constant term.
+            if case .constant = new.role {
+                return old
+            }
         }
         
         return new
