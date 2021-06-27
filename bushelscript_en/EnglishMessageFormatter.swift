@@ -60,7 +60,7 @@ public final class EnglishMessageFormatter: MessageFormatter {
             }.joined(separator: " or ") + (context.map { context in
                 switch context {
                 case let .adHoc(context):
-                    return context
+                    return " \(context)"
                 case let .afterKeyword(keyword):
                     return " after \(keyword)"
                 case .afterInfixOperator:
