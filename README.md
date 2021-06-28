@@ -32,5 +32,4 @@ If you encounter bugs or missing features, please submit issues for them!
 
 ## License
 
-[GPLv3 and MIT License](LICENSE.txt)
-
+[Mixed GPLv3 and MIT License](LICENSE.txt). Most of the important stuff is under MIT. I might swap GPL for something else at some point.
