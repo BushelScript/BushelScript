@@ -33,6 +33,10 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
         findTerm { dictionary in dictionary.term(named: name) }
     }
     
+    public func term(named name: Term.Name, role: Term.SyntacticRole) -> Term? {
+        findTerm { dictionary in dictionary.term(named: name, role: role) }
+    }
+    
     private func findTerm(_ extractTerm: (TermDictionary) -> Term?) -> Term? {
         find(in: stack.reversed(), extractTerm) ?? find(in: exporting.reversed(), extractTerm)
     }
@@ -46,20 +50,19 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
         return nil
     }
     
-    /// Constructs a `SemanticURI` with the `id` scheme that uniquely represents
-    /// a term defined in the current dictionary with the provided name.
-    /// - Parameter name: The name of the term residing in the current
-    ///                   dictionary.
-    public func makeURI(forName name: Term.Name) -> Term.SemanticURI {
-        var components: [String] = []
-        let lastStackTermURI = stack.last!.uri
-        if let pathnameComponents = lastStackTermURI.pathname?.components {
-            components.append(contentsOf: pathnameComponents)
-        } else {
-            components.append("\(lastStackTermURI)")
+    public mutating func lookUpOrDefine(_ role: Term.SyntacticRole, name: Term.Name, dictionary: TermDictionary = TermDictionary()) -> Term {
+        if let existing = term(named: name, role: role) {
+            existing.dictionary.merge(dictionary)
+            return existing
         }
-        components.append(name.normalized)
-        return .id(Term.SemanticURI.Pathname(components))
+        return add(Term(role, makeURI(forName: name), name: name, dictionary: dictionary))
+    }
+    
+    /// Constructs a `SemanticURI` with the `id` scheme that uniquely represents
+    /// a term with the provided name.
+    /// - Parameter name: The name of the term.
+    public func makeURI(forName name: Term.Name) -> Term.SemanticURI {
+        .id(Term.SemanticURI.Pathname([name.normalized]))
     }
     /// Constructs a universally unique `SemanticURI` with the `id` scheme.
     public func makeUniqueURI() -> Term.SemanticURI {

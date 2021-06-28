@@ -203,10 +203,9 @@ public final class EnglishParser: SourceParser {
     ]
     
     private func handleFunctionStart() throws -> Expression.Kind? {
-        guard let termName = try parseTermNameEagerly(stoppingAt: [":"], styling: .command) else {
+        guard let functionName = try parseTermNameEagerly(stoppingAt: [":"], styling: .command) else {
             throw ParseError(.missing([.functionName]), at: SourceLocation(source.range, source: entireSource))
         }
-        let functionNameTerm = Term(.variable, lexicon.makeURI(forName: termName), name: termName)
         
         var parameters: [Term] = []
         var types: [Expression?] = []
@@ -236,8 +235,7 @@ public final class EnglishParser: SourceParser {
             }
         }
         
-        let commandTerm = Term(.command, lexicon.makeURI(forName: termName), name: termName, dictionary: TermDictionary(contents: parameters))
-        lexicon.add(commandTerm)
+        let commandTerm = lexicon.lookUpOrDefine(.command, name: functionName, dictionary: TermDictionary(contents: parameters))
         
         try eatLineBreakOrThrow(.toBeginBlock("function body"))
         let body = try withScope {
@@ -246,7 +244,7 @@ public final class EnglishParser: SourceParser {
             return try parseSequence()
         }
         
-        return .function(name: functionNameTerm, parameters: parameters, types: types, arguments: arguments, body: body)
+        return .function(name: commandTerm, parameters: parameters, types: types, arguments: arguments, body: body)
     }
     
     private func handleBlockArgumentNamesStart() throws -> Expression.Kind? {

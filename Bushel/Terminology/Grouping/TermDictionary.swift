@@ -51,6 +51,13 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
         byName[name]
     }
     
+    /// The term named `name` with `role`, or nil if such a term is not in the
+    /// dictionary.
+    public func term(named name: Term.Name, role: Term.SyntacticRole) -> Term? {
+        let term = byName[name]
+        return term?.role == role ? term : nil
+    }
+    
     /// Adds `term` to the dictionary.
     public func add(_ term: Term) {
         add([term])
