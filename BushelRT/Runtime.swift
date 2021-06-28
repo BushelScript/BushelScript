@@ -187,6 +187,9 @@ extension Runtime {
             case .repeatFor(let variable, let container, let repeating): // MARK: .repeatFor
                 let containerValue = try runPrimary(container)
                 let timesValue = try context.getSequenceLength(containerValue)
+                guard timesValue > 0 else {
+                    return lastResult
+                }
                 
                 var repeatResult: RT_Object?
                 // 1-based indices wheeeeee
