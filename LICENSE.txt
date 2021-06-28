@@ -1,13 +1,12 @@
 Different parts of this project are licensed differently.
 
 • Core frameworks (Bushel, BushelRT): MIT License
-• AEthereal framework:
-    Released into public domain by its author, hhas. See swiftae/README § Etc.
-    I also hereby dedicate all of my modifications to AEthereal (everything under the swiftae/ directory) to the public domain.
 • Standard language modules: (bushelscript_en): MIT License
 • bushelscript (command line tool): MIT License
 • BushelScript Editor (graphical editor application): GPL v3
-  • Note that you're free to use the app to write code without releasing that code under a GPL-compatible license. The virality applies if you make any modifications to the app itself, or if *your code* uses the app in any nontrivial way.
+  • Note that you're free to use the app to write code without releasing that code under a GPL-compatible license.
+    The virality applies if you make any modifications to the app, or if your code uses functionality specific
+    to the app.
 
 MIT License full text:
 
