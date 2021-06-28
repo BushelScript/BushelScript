@@ -23,6 +23,10 @@ public class RT_ValueWrapper<Value: Codable & Hashable>: RT_Object, Codable {
         "\(value)"
     }
     
+    public override func compareEqual(with other: RT_Object) -> Bool {
+        value == (other as? RT_ValueWrapper)?.value
+    }
+    
     public override var hash: Int {
         value.hashValue
     }
