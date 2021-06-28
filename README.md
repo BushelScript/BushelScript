@@ -29,3 +29,8 @@ This software is under active development; it could change at any time and for a
 Expect this software to crash inexplicably, report that 1 = 2, and eat the last slice of your pizza.
 
 If you encounter bugs or missing features, please submit issues for them!
+
+## License
+
+[GPLv3 and MIT License](LICENSE.txt)
+
