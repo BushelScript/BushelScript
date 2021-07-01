@@ -7,13 +7,6 @@ import Bushel
 import BushelRT
 import Defaults
 
-private func defaultSourceCodeAttributes() -> [NSAttributedString.Key : Any] {
-    [
-        .font: Defaults[.sourceCodeFont],
-        .foregroundColor: NSColor.white
-    ]
-}
-
 class DocumentVC: NSViewController, NSUserInterfaceValidations {
     
     @IBOutlet var textView: NSTextView!
@@ -86,20 +79,24 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     
     var customFontSize: CGFloat? {
         didSet {
-            updateDisplayedFont()
+            updateTextAttributes()
         }
     }
     
     override func viewDidLoad() {
         Defaults.observe(.sourceCodeFont) { [weak self] _ in
-            self?.updateDisplayedFont()
+            self?.updateTextAttributes()
         }.tieToLifetime(of: self)
     }
     
-    private func updateDisplayedFont() {
+    private func updateTextAttributes() {
         if let textStorage = textView.textStorage {
             textStorage.addAttribute(.font, value: documentFont, range: NSRange(location: 0, length: textStorage.length))
         }
+        resetTypingAttributes()
+    }
+    private func resetTypingAttributes() {
+        textView.typingAttributes.merge(sourceCodeAttributes, uniquingKeysWith: { old, new in new })
     }
     
     private var documentFont: NSFont {
@@ -108,6 +105,13 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
         } else {
             return Defaults[.sourceCodeFont]
         }
+    }
+    
+    private var sourceCodeAttributes: [NSAttributedString.Key : Any] {
+        [
+            .font: documentFont,
+            .foregroundColor: NSColor.white
+        ]
     }
     
     var displayedAttributedSourceCode = NSAttributedString(string: "") {
@@ -146,7 +150,7 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
             displayedAttributedSourceCode.string
         }
         set {
-            displayedAttributedSourceCode = NSAttributedString(string: newValue, attributes: defaultSourceCodeAttributes())
+            displayedAttributedSourceCode = NSAttributedString(string: newValue, attributes: sourceCodeAttributes)
         }
     }
     
@@ -486,10 +490,6 @@ extension DocumentVC: NSTextViewDelegate {
         }
         clearErrorHighlighting()
         removeInlineErrorView()
-    }
-    
-    private func resetTypingAttributes() {
-        textView.typingAttributes.merge(defaultSourceCodeAttributes(), uniquingKeysWith: { old, new in new })
     }
     
     func textViewDidChangeSelection(_ notification: Notification) {
