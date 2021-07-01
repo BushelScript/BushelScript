@@ -78,6 +78,9 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     /// Adds all terms in `dictionary` to this dictionary, resolving conflicts
     /// in a way that preserves AppleScript compatibility.
     public func merge(_ dictionary: TermDictionary) {
+        if self === dictionary {
+            return
+        }
         byID.merge(dictionary.byID, uniquingKeysWith: TermDictionary.resolveTermConflict)
         byName.merge(dictionary.byName, uniquingKeysWith: TermDictionary.resolveTermConflict)
         findExportingTerms(in: dictionary.byID.values)
