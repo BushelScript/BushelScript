@@ -278,6 +278,7 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
                 self.statusStack.removeLast()
             }
             do {
+                self.document.rt = Runtime()
                 let result = try self.document.rt.run(program)
                 NotificationCenter.default.post(name: .result, object: self.document, userInfo: [UserInfo.payload: result])
                 DispatchQueue.main.async {
