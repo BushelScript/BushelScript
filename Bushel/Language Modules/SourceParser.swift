@@ -866,7 +866,7 @@ extension SourceParser {
         }
         guard allWords.first! != "|" else {
             // Lazy parsing handles pipe escapes
-            return try parseTermNameLazily()
+            return try parseTermNameLazily(styling: styling)
         }
         
         var words: [String] = []

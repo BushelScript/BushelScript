@@ -203,36 +203,47 @@ public final class EnglishParser: SourceParser {
     ]
     
     private func handleFunctionStart() throws -> Expression.Kind? {
-        guard let functionName = try parseTermNameEagerly(stoppingAt: [":"], styling: .command) else {
+        guard let functionName = try parseTermNameEagerly(styling: .command) else {
             throw ParseError(.missing([.functionName]), at: SourceLocation(source.range, source: entireSource))
         }
+        
+        try eatLineBreakOrThrow()
         
         var parameters: [Term] = []
         var types: [Expression?] = []
         var arguments: [Term] = []
-        if tryEating(prefix: ":", spacing: .right) {
-            while let parameterTermName = try parseTermNameLazily(styling: .parameter) {
-                parameters.append(Term(.parameter, .id(Term.SemanticURI.Pathname([parameterTermName.normalized])), name: parameterTermName))
-                
-                var argumentName = try parseTermNameEagerly(stoppingAt: expressionGroupingMarkers.map { $0.begin.normalized } + [","], styling: .variable) ?? parameterTermName
-                if argumentName.words.isEmpty {
-                    argumentName = parameterTermName
-                }
-                arguments.append(Term(.variable, .id(Term.SemanticURI.Pathname([argumentName.normalized])), name: argumentName))
-                
-                if
-                    let groupedExpression = try parseGroupedExpression(),
-                    case let .parentheses(type) = groupedExpression.kind
-                {
-                    types.append(type)
-                } else {
-                    types.append(nil)
-                }
-                
-                if !tryEating(prefix: ",", spacing: .right) {
-                    break
-                }
+        while
+            !isNext("do"),
+            { eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true); return true }(),
+            let parameterTermName = try parseTermNameEagerly(stoppingAt: ["(", ":"], styling: .parameter)
+        {
+            parameters.append(Term(.parameter, .id(Term.SemanticURI.Pathname([parameterTermName.normalized])), name: parameterTermName))
+            
+            var argumentName = Term.Name([])
+            if tryEating(prefix: "(", spacing: .left) {
+                argumentName = try parseTermNameEagerly(stoppingAt: [")"], styling: .variable) ?? parameterTermName
+                try eatOrThrow(prefix: ")", spacing: .right)
+            } else {
+                argumentName = parameterTermName
             }
+            arguments.append(Term(.variable, .id(Term.SemanticURI.Pathname([argumentName.normalized])), name: argumentName))
+            
+            if
+                tryEating(prefix: ":", spacing: .right),
+                let type = try parsePrimary()
+            {
+                types.append(type)
+            } else {
+                types.append(nil)
+            }
+            
+            if !(tryEatingLineBreak() || tryEating(prefix: ",", spacing: .right)) {
+                break
+            }
+        }
+        eatCommentsAndWhitespace(eatingNewlines: true)
+        guard tryEating(prefix: "do") else {
+            return nil
         }
         
         let commandTerm = lexicon.lookUpOrDefine(.command, name: functionName, dictionary: TermDictionary(contents: parameters))
