@@ -1317,28 +1317,43 @@ extension SourceParser {
     }
     
     public func eatTerm<Terminology: ByNameTermLookup>(from dictionary: Terminology, role: Term.SyntacticRole? = nil) throws -> Term? {
-        func eatDefinedTerm() -> Term? {
-            func findTerm<Terminology: ByNameTermLookup>(in dictionary: Terminology) -> (termString: Substring, term: Term)? {
+        func eatDefinedTerm() throws -> Term? {
+            func findTerm<Terminology: ByNameTermLookup>(in dictionary: Terminology) throws -> (termString: Substring, term: Term)? {
                 eatCommentsAndWhitespace()
-                var termString = source.prefix { !$0.isNewline }.prefix { !$0.isWordBreaking || $0.isWhitespace || $0 == ":" }
-                while let lastNonBreakingIndex = termString.lastIndex(where: { !$0.isWordBreaking }) {
-                    termString = termString[...lastNonBreakingIndex]
-                    let termName = Term.Name(String(termString))
-                    if let term = dictionary.term(named: termName) {
-                        return (termString, term)
-                    } else {
-                        termString.removeLast(termName.words.last!.count)
+                
+                let restOfLine = source.prefix(while: { !$0.isNewline })
+                
+                if source.hasPrefix("|") {
+                    guard let nextPipeIndex = restOfLine.dropFirst().firstIndex(where: { $0 == "|" }) else {
+                        throw ParseError(.mismatchedPipe, at: expressionLocation)
                     }
+                    let termString = restOfLine[...nextPipeIndex]
+                    let termName = Term.Name(String(termString.dropFirst().dropLast()))
+                    guard let term = dictionary.term(named: termName) else {
+                        return nil
+                    }
+                    return (termString, term)
+                } else {
+                    var termString = restOfLine.prefix { !$0.isWordBreaking || $0.isWhitespace || $0 == ":" }
+                    while let lastNonBreakingIndex = termString.lastIndex(where: { !$0.isWordBreaking }) {
+                        termString = termString[...lastNonBreakingIndex]
+                        let termName = Term.Name(String(termString))
+                        if let term = dictionary.term(named: termName) {
+                            return (termString, term)
+                        } else {
+                            termString.removeLast(termName.words.last!.count)
+                        }
+                    }
+                    return nil
                 }
-                return nil
             }
             
-            guard var (termString, term) = findTerm(in: dictionary) else {
+            guard var (termString, term) = try findTerm(in: dictionary) else {
                 return nil
             }
             
             if role == nil, tryEating(prefix: ":") {
-                addingElement(styling(for: term)) {
+                addingElement(styling(for: term.role)) {
                     source.removeFirst(termString.count)
                 }
                 eatCommentsAndWhitespace()
@@ -1348,7 +1363,7 @@ extension SourceParser {
                     // For explicit term specification Lhs : rhs,
                     // only eat the colon if rhs is the name of a term defined
                     // in the dictionary of Lhs.
-                    guard let result = findTerm(in: term.dictionary) else {
+                    guard let result = try findTerm(in: term.dictionary) else {
                         // Restore the colon. It may have come from some other construct,
                         // e.g., a record key such as: {Math : pi: "the constant pi"}
                         source = sourceWithColon
@@ -1359,7 +1374,7 @@ extension SourceParser {
                     // Eat rhs.
                     (termString, term) = result
                     
-                    addingElement(styling(for: term)) {
+                    addingElement(styling(for: term.role)) {
                         source.removeFirst(termString.count)
                     }
                     eatCommentsAndWhitespace()
@@ -1370,7 +1385,7 @@ extension SourceParser {
                 
                 return term
             } else if role == nil || term.role == role {
-                addingElement(styling(for: term)) {
+                addingElement(styling(for: term.role)) {
                     source.removeFirst(termString.count)
                 }
                 return term
@@ -1404,7 +1419,7 @@ extension SourceParser {
                 
                 let term = lexicon.term(id: Term.ID(role, uid)) ?? Term(role, uid)
                 
-                addElement(from: startIndex, styling: styling(for: term), spacing: .leftRight)
+                addElement(from: startIndex, styling: styling(for: term.role), spacing: .leftRight)
                 
                 return term
             }
@@ -1490,10 +1505,6 @@ extension SourceParser {
         let slice = String(entireSource[startIndex..<currentIndex])
         let loc = location(from: startIndex)
         elements.insert(SourceElement(Terminal(slice, at: loc, spacing: spacing, styling: styling)))
-    }
-    
-    public func styling(for term: Term) -> Styling {
-        styling(for: term.role)
     }
     
     public func styling(for role: Term.SyntacticRole) -> Styling {
