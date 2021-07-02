@@ -73,7 +73,7 @@ do
 	if that = 0 then return ""
 	if that = 1 then return (first item of list) as string
 	
-	if separator = null then set separator to ""
+	if separator is unspecified then set separator to ""
 
 	(first item of list) as string
 	repeat for item in tail of list
@@ -87,7 +87,6 @@ do
 	tell Core to set separator to separator as string
 	let separator len be length of separator
 	if separator len < 1 then return {string}
-	-- if string = separator then return {}
 
 	let len be length of string
 	let i be 1
