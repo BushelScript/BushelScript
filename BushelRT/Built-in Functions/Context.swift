@@ -178,7 +178,7 @@ extension Runtime {
                 arguments.contents[command.parameters[.target]] = target
             }
             
-            return try propagate(from: target as? RT_Module, up: moduleStack) { (module) -> RT_Object? in
+            return try propagate(up: moduleStack) { (module) -> RT_Object? in
                 do {
                     return try module.handle(arguments)
                 } catch let error as Unencodable where error.object is Reflection.Command || error.object is Reflection.Parameter {
