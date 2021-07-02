@@ -65,8 +65,10 @@ public final class EnglishFormatter: SourceFormatter {
             return formatted
         case .raise(let error):
             return "raise \(format(error, level: level))"
-        case .use(let resourceTerm):
-            return "use \(resourceTerm.formattedForUseStatement)"
+        case .require(let resourceTerm):
+            return "require \(resourceTerm.formattedForUseStatement)"
+        case .use(let module):
+            return "use \(format(module, level: level))"
         case .resource(let resource):
             return "\(resource)"
         case .that:

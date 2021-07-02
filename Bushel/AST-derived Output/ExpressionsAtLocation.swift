@@ -54,8 +54,10 @@ extension Expression {
             return expression.map { [$0] } ?? []
         case let .raise(expression):
             return [expression]
-        case .use(resource: _):
+        case .require(resource: _):
             return []
+        case let .use(module):
+            return [module]
         case .resource(_):
             return []
         case .integer(_):
@@ -122,9 +124,9 @@ extension Expression {
     
     public func term() -> Term? {
         switch kind {
-        case .parentheses, .scoped, .sequence, .empty, .that, .it, .tell, .target, .null, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
+        case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .target, .null, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
             return nil
-        case let .use(term),
+        case let .require(term),
              let .resource(term),
              let .variable(term),
              let .enumerator(term),

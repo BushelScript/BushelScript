@@ -161,7 +161,7 @@ extension SourceParser {
 // MARK: Off-the-shelf keyword handlers
 extension SourceParser {
     
-    public func handleUse() throws -> Expression.Kind? {
+    public func handleRequire() throws -> Expression.Kind? {
         eatCommentsAndWhitespace()
         
         let typeNamesLongestFirst = resourceTypes.keys
@@ -195,7 +195,7 @@ extension SourceParser {
         
         let resourceTerm = try handler(name)
         lexicon.add(resourceTerm)
-        return .use(resource: resourceTerm)
+        return .require(resource: resourceTerm)
     }
     
     public func handleEnd() throws -> Expression.Kind? {

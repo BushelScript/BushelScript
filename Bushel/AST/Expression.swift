@@ -40,9 +40,12 @@ public struct Expression {
         ///  - Evaluates `body`.
         ///  - Pops _R_ off the target stack.
         case target(target: Expression, body: Expression)
-        /// Imports the resource identified by `resource`.
+        /// Imports the resource identified by `resource` and adds it to
+        /// the end of the current frame of the module stack.
         /// See [Resources](https://bushelscript.github.io/help/docs/ref/resources).
-        case use(resource: Term)
+        case require(resource: Term)
+        /// Adds
+        case use(module: Expression)
         /// Yields the resource identified by its constituent term.
         case resource(Term)
         /// Yields the null constant.
@@ -265,7 +268,7 @@ extension Expression {
             return false
         case .sequence, .scoped, .parentheses, .function, .block, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .target, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
             return subexpressions().contains(where: { $0.hasSideEffects })
-        case .use, .prefixOperator, .postfixOperator, .infixOperator, .set, .command, .weave:
+        case .require, .use, .prefixOperator, .postfixOperator, .infixOperator, .set, .command, .weave:
             return true
         }
     }
@@ -338,8 +341,10 @@ extension Expression.Kind {
             return ("Return expression", "Immediately transfers control out of the current function. The result of the function is that of the specified expression, or “null” if absent.")
         case .raise:
             return ("Raise expresssion", "Immediately transfers control to the nearest applicable ‘handle’-block. The error object is specified here.")
+        case .require:
+            return ("Require expression", "Acquires the specified resource and binds it to an exporting term of the same name. Produces a compile-time error if the resource cannot be found. At runtime, adds the resource to the top substack of the module stack.")
         case .use:
-            return ("Use expression", "Acquires the specified resource and binds it to an exporting term of the same name. Produces a compile-time error if the resource cannot be found.")
+            return ("Use expression", "Adds to the top substack of the module stack.")
         case .resource:
             return ("Resource reference", "A resource declared by a “use” statement.")
         case .integer:

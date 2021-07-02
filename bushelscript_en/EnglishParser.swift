@@ -160,13 +160,14 @@ public final class EnglishParser: SourceParser {
         Term.Name("repeat"): handleRepeat(Term.Name("repeat")),
         Term.Name("repeating"): handleRepeat(Term.Name("repeating")),
         Term.Name("tell"): handleTell,
+        Term.Name("use"): handleUse,
         Term.Name("target"): handleTarget,
         Term.Name("let"): handleLet,
         Term.Name("define"): handleDefine,
         Term.Name("defining"): handleDefining,
         Term.Name("return"): handleReturn,
         Term.Name("raise"): handleRaise(Term.Name("raise")),
-        Term.Name("use"): handleUse,
+        Term.Name("require"): handleRequire,
         Term.Name("that"): handleThat,
         Term.Name("it"): handleIt,
         Term.Name("null"): handleNull,
@@ -192,14 +193,14 @@ public final class EnglishParser: SourceParser {
     ]
     
     public lazy var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] = [
-        Term.Name("system"): (false, [], handleUseSystem),
+        Term.Name("system"): (false, [], handleImportSystem),
         
-        Term.Name("app"): (true, [], handleUseApplicationName),
-        Term.Name("app id"): (true, [], handleUseApplicationID),
+        Term.Name("app"): (true, [], handleImportApplicationName),
+        Term.Name("app id"): (true, [], handleImportApplicationID),
         
-        Term.Name("library"): (true, [], handleUseLibrary),
+        Term.Name("library"): (true, [], handleImportLibrary),
         
-        Term.Name("AppleScript"): (true, ["at"], handleUseAppleScript),
+        Term.Name("AppleScript"): (true, ["at"], handleImportAppleScript),
     ]
     
     private func handleFunctionStart() throws -> Expression.Kind? {
@@ -420,6 +421,11 @@ public final class EnglishParser: SourceParser {
         }
     }
     
+    private func handleUse() throws -> Expression.Kind? {
+        let module = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["use"])))
+        return .use(module: module)
+    }
+    
     private func handleTarget() throws -> Expression.Kind? {
         let target = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["target"])))
         
@@ -471,7 +477,7 @@ public final class EnglishParser: SourceParser {
         return .defining(term, as: existingTerm, body: body)
     }
     
-    private func handleUseSystem(name _: Term.Name) throws -> Term {
+    private func handleImportSystem(name _: Term.Name) throws -> Term {
         var system = Resource.System()
         if tryEating(prefix: "version") {
             eatCommentsAndWhitespace()
@@ -504,7 +510,7 @@ public final class EnglishParser: SourceParser {
         }
     }
     
-    private func handleUseApplicationName(name: Term.Name) throws -> Term {
+    private func handleImportApplicationName(name: Term.Name) throws -> Term {
         guard let application = Resource.ApplicationByName(name: name.normalized) else {
             throw ParseError(.unmetResourceRequirement(.applicationByName(name: name.normalized)), at: termNameLocation)
         }
@@ -514,7 +520,7 @@ public final class EnglishParser: SourceParser {
         return term
     }
     
-    private func handleUseApplicationID(name: Term.Name) throws -> Term {
+    private func handleImportApplicationID(name: Term.Name) throws -> Term {
         guard let application = Resource.ApplicationByID(id: name.normalized) else {
             throw ParseError(.unmetResourceRequirement(.applicationByBundleID(bundleID: name.normalized)), at: termNameLocation)
         }
@@ -523,7 +529,7 @@ public final class EnglishParser: SourceParser {
         return term
     }
     
-    private func handleUseLibrary(name: Term.Name) throws -> Term {
+    private func handleImportLibrary(name: Term.Name) throws -> Term {
         guard let library = Resource.LibraryByName(name: name.normalized, ignoring: nativeImports) else {
             throw ParseError(.unmetResourceRequirement(.libraryByName(name: name.normalized)), at: termNameLocation)
         }
@@ -533,7 +539,7 @@ public final class EnglishParser: SourceParser {
         return term
     }
     
-    private func handleUseAppleScript(name: Term.Name) throws -> Term {
+    private func handleImportAppleScript(name: Term.Name) throws -> Term {
         try eatOrThrow(prefix: "at")
         
         let pathStartIndex = currentIndex

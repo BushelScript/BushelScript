@@ -85,7 +85,7 @@ extension Runtime {
                 Term.SemanticURI(Variables.Core): Ref(core),
                 Term.SemanticURI(Variables.Script): Ref(topScript)
             ]),
-            moduleStack: RT_ModuleStack(bottom: core, rest: [topScript]),
+            moduleStack: RT_ModuleStack(bottom: RT_ModuleSubstack(bottom: core), rest: [RT_ModuleSubstack(bottom: topScript)]),
             targetStack: RT_TargetStack(bottom: core, rest: [topScript])
         )
         return try run(program.ast)
@@ -204,7 +204,7 @@ extension Runtime {
                 guard let newModule = newModuleObject as? RT_Module else {
                     throw NotAModule(object: newModuleObject)
                 }
-                context.moduleStack.push(newModule)
+                context.moduleStack.push(RT_ModuleSubstack(bottom: newModule))
                 defer {
                     context.moduleStack.pop()
                 }
@@ -268,8 +268,22 @@ extension Runtime {
                 return try context.binaryOp(operation, lhsValue, rhsValue)
             case .variable(let term): // MARK: .variable
                 return context[variable: term]
-            case .use(let term), // MARK: .use
-                 .resource(let term): // MARK: .resource
+            case .require(let term): // MARK: .require
+                let resource = try context.getResource(term)
+                if let resourceModule = resource as? RT_Module {
+                    context.moduleStack.top.push(resourceModule)
+                }
+                return resource
+            case .use(let module): // MARK: .use
+                let moduleObject = try runPrimary(module, evaluateSpecifiers: false)
+                guard let module = moduleObject as? RT_Module else {
+                    throw NotAModule(object: moduleObject)
+                }
+                if context.moduleStack.top.top !== module {
+                    context.moduleStack.top.push(module)
+                }
+                return lastResult
+            case .resource(let term): // MARK: .resource
                 return try context.getResource(term)
             case .enumerator(let term): // MARK: .constant
                 return context.newConstant(term.id)
@@ -336,7 +350,7 @@ extension Runtime {
                 let implementation = RT_ExpressionImplementation(self, formalParameters: parameters, formalArguments: arguments, body: body)
                 
                 let function = RT_Function(self, signature: signature, implementation: implementation)
-                context.moduleStack.add(function: function)
+                context.moduleStack.addFunction(function)
                     
                 return lastResult
             case .block(let arguments, let body): // MARK: .block
