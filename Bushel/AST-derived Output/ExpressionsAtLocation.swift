@@ -18,7 +18,7 @@ extension Expression {
             return []
         case .it:
             return []
-        case .null:
+        case .missing:
             return []
         case .unspecified:
             return []
@@ -124,7 +124,7 @@ extension Expression {
     
     public func term() -> Term? {
         switch kind {
-        case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .null, .unspecified, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
+        case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .missing, .unspecified, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
             return nil
         case let .require(term),
              let .resource(term),

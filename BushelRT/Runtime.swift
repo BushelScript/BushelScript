@@ -47,10 +47,10 @@ public class Runtime {
     public lazy var core = RT_Core(self)
     
     /// The result of the last expression executed in sequence.
-    public lazy var lastResult: RT_Object = null
+    public lazy var lastResult: RT_Object = missing
     
-    /// The singleton `null` instance.
-    public lazy var null = RT_Null(self)
+    /// The singleton `missing` instance.
+    public lazy var missing = RT_Missing(self)
     /// The singleton `unspecified` instance.
     public lazy var unspecified = RT_Unspecified(self)
     /// The singleton `true` boolean instance.
@@ -141,8 +141,8 @@ extension Runtime {
                 return try evaluateSpecifiers ? context.evaluate(specifier: lastResult) : lastResult
             case .it: // MARK: .it
                 return try evaluateSpecifiers ? context.evaluate(specifier: context.target) : context.target
-            case .null: // MARK: .null
-                return null
+            case .missing: // MARK: .missing
+                return missing
             case .unspecified: // MARK: .unspecified
                 return unspecified
             case .sequence(let expressions): // MARK: .sequence
@@ -219,7 +219,7 @@ extension Runtime {
                     return try runPrimary(body)
                 }
             case .let_(let term, let initialValue): // MARK: .let_
-                let initialExprValue = try initialValue.map { try runPrimary($0) } ?? null
+                let initialExprValue = try initialValue.map { try runPrimary($0) } ?? missing
                 context[variable: term] = initialExprValue
                 return initialExprValue
             case .define(_, as: _): // MARK: .define

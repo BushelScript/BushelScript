@@ -45,7 +45,7 @@ public struct Expression {
         /// Yields the resource identified by its constituent term.
         case resource(Term)
         /// Yields the null constant.
-        case null
+        case missing
         /// Yields the unspecified constant.
         case unspecified
         /// Yields an integer object with its constituent value.
@@ -261,7 +261,7 @@ extension Expression {
     /// usually due to some uncontrolled external interaction (like `.command`).
     public var hasSideEffects: Bool {
         switch kind {
-        case .empty, .that, .it, .null, .unspecified, .resource, .integer, .double, .string, .variable, .enumerator, .type, .multilineString, .debugInspectTerm, .debugInspectLexicon:
+        case .empty, .that, .it, .missing, .unspecified, .resource, .integer, .double, .string, .variable, .enumerator, .type, .multilineString, .debugInspectTerm, .debugInspectLexicon:
             assert(subexpressions().isEmpty)
             return false
         case .sequence, .scoped, .parentheses, .function, .block, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
@@ -303,7 +303,7 @@ extension Expression.Kind {
             return ("Previous result specifier", "Specifies the result of the last expression executed in sequence.")
         case .it:
             return ("Current target specifier", "Specifies the current command target, as set by the nearest “tell” block.")
-        case .null:
+        case .missing:
             return ("Null literal", "Marker indicating the absence of a value.")
         case .unspecified:
             return ("Unspecified literal", "Marker indicating that a value has not been specified.")
@@ -326,7 +326,7 @@ extension Expression.Kind {
         case .tell:
             return ("Tell expression", "Changes the current command target and pushes the new target’s dictionary, if any, onto the lexicon.")
         case .let_:
-            return ("Variable binding expression", "Defines a new variable term and assigns it the result of the initial value expression, or “null” if absent.")
+            return ("Variable binding expression", "Defines a new variable term and assigns it the result of the initial value expression, or “unspecified” if absent.")
         case .define:
             return ("Define expression", "Defines a new term in the current dictionary.")
         case .defining:
@@ -336,7 +336,7 @@ extension Expression.Kind {
         case .block:
             return ("Block expression", "An anonymous function.")
         case .return_:
-            return ("Return expression", "Immediately transfers control out of the current function. The result of the function is that of the specified expression, or “null” if absent.")
+            return ("Return expression", "Immediately transfers control out of the current function. The result of the function is that of the specified expression, or the previous result if absent.")
         case .raise:
             return ("Raise expresssion", "Immediately transfers control to the nearest applicable ‘handle’-block. The error object is specified here.")
         case .require:

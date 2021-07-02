@@ -6,7 +6,7 @@ private typealias Constructor = () -> RT_Object
 public func ask(_ rt: Runtime, for type: Reflection.`Type`, prompt: String, title: String, suspension: NSAppleEventManager.SuspensionID) {
     func makeViewController() -> (NSViewController, Constructor) {
         func uneditableVC() -> (UneditableVC, Constructor) {
-            (UneditableVC(), { rt.null })
+            (UneditableVC(), { rt.missing })
         }
         func fileChooserVC(defaultLocation: URL? = nil, constructor: @escaping (FileChooserVC) -> RT_Object) -> (FileChooserVC, Constructor) {
             let vc = FileChooserVC(defaultLocation: defaultLocation)
@@ -40,7 +40,7 @@ public func ask(_ rt: Runtime, for type: Reflection.`Type`, prompt: String, titl
         case .string:
             return textFieldVC { RT_String(rt, value: $0.value) }
         case .character:
-            return textFieldVC(characterLimit: 1) { $0.value.first.map { RT_Character(rt, value: $0) } ?? rt.null }
+            return textFieldVC(characterLimit: 1) { $0.value.first.map { RT_Character(rt, value: $0) } ?? rt.missing }
         case .number:
             return numberFieldVC() { RT_Real(rt, value: $0.value.doubleValue) }
         case .integer:

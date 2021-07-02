@@ -1,7 +1,7 @@
 import Bushel
 import AEthereal
 
-public final class RT_Null: RT_Object, Codable {
+public final class RT_Missing: RT_Object, Codable {
     
     internal override init(_ rt: Runtime) {
         super.init(rt)
@@ -16,13 +16,13 @@ public final class RT_Null: RT_Object, Codable {
     }
     
     public override var description: String {
-        "null"
+        "missing"
     }
     
     public override func coerce(to type: Reflection.`Type`) -> RT_Object? {
         switch Types(type.uri) {
         case .string:
-            return RT_String(rt, value: "null")
+            return RT_String(rt, value: "missing")
         case .type:
             return RT_Type(rt, value: rt.reflection.types[.null])
         default:

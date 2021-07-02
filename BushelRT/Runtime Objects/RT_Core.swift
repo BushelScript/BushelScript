@@ -72,7 +72,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
                 list.contents.remove(at: index)
                 return item
             } else {
-                return rt.null
+                return rt.missing
             }
         }
         

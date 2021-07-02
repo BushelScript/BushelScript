@@ -169,7 +169,7 @@ public final class EnglishParser: SourceParser {
         Term.Name("require"): handleRequire,
         Term.Name("that"): handleThat,
         Term.Name("it"): handleIt,
-        Term.Name("null"): handleNull,
+        Term.Name("missing"): handleMissing,
         Term.Name("unspecified"): handleUnspecified,
         Term.Name("every"): handleQuantifier(.all),
         Term.Name("all"): handleQuantifier(.all),
@@ -591,7 +591,7 @@ public final class EnglishParser: SourceParser {
         case .dictionary: // MARK: .dictionary
             // TODO: Such purely organizational dictionaries should probably
             // have a runtime reflection type.
-            return .null
+            return .missing
         case .type: // MARK: .type
             if let specifierKind = try parseSpecifierAfterTypeName() {
                 return .specifier(Specifier(term: term, kind: specifierKind))

@@ -10,11 +10,11 @@ public class RT_EnvVar: RT_Object {
         super.init(rt)
     }
     
-    // Either RT_String or RT_Null.
+    // Either RT_String or RT_Missing.
     public var value: RT_Object {
         get {
             name.withCString {
-                getenv($0).map { RT_String(rt, value: String(cString: $0)) } ?? rt.null
+                getenv($0).map { RT_String(rt, value: String(cString: $0)) } ?? rt.missing
             }
         }
         set {

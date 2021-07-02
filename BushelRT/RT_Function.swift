@@ -115,7 +115,7 @@ public struct RT_ExpressionImplementation: RT_Implementation {
         }
         
         do {
-            rt.lastResult = rt.null
+            rt.lastResult = rt.unspecified
             return try rt.runPrimary(body)
         } catch let earlyReturn as Runtime.EarlyReturn {
             return earlyReturn.value
@@ -159,11 +159,11 @@ public struct RT_BlockImplementation: RT_Implementation {
             rt.context[variable: formalArgument] =
                 (index < directArguments.count) ?
                 directArguments[index] :
-                rt.null
+                rt.unspecified
         }
         
         do {
-            rt.lastResult = rt.null
+            rt.lastResult = rt.unspecified
             return try rt.runPrimary(body)
         } catch let earlyReturn as Runtime.EarlyReturn {
             return earlyReturn.value

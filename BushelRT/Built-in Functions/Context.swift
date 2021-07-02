@@ -53,7 +53,7 @@ extension Runtime {
         }
         
         func getFromSequenceAtIndex(_ sequence: RT_Object, _ index: Int64) throws -> RT_Object {
-            try sequence.element(rt.reflection.types[.item], at: index) ?? rt.null
+            try sequence.element(rt.reflection.types[.item], at: index) ?? rt.missing
         }
         
         func unaryOp(_ operation: UnaryOperation, _ operand: RT_Object) -> RT_Object {
@@ -62,7 +62,7 @@ extension Runtime {
                 case .not:
                     return operand.not()
                 }
-            }() ?? rt.null
+            }() ?? rt.missing
         }
         
         func binaryOp(_ operation: BinaryOperation, _ lhs: RT_Object, _ rhs: RT_Object) throws -> RT_Object {
@@ -115,7 +115,7 @@ extension Runtime {
                 case .coerce:
                     return try lhs.coercing(to: rhs)
                 }
-            }() ?? rt.null
+            }() ?? rt.missing
         }
         
         private var nativeLibraryRTs: [URL : Runtime] = [:]
@@ -151,7 +151,7 @@ extension Runtime {
                 case let .applescriptAtPath(_, script):
                     return RT_AppleScript(rt, name: term.name!.normalized, value: script)
                 case nil:
-                    return rt.null
+                    return rt.missing
                 }
             }() as RT_Object
         }

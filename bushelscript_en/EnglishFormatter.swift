@@ -72,8 +72,8 @@ public final class EnglishFormatter: SourceFormatter {
             return "that"
         case .it:
             return "it"
-        case .null:
-            return "null"
+        case .missing:
+            return "missing"
         case .unspecified:
             return "unspecified"
         case .integer(let value):

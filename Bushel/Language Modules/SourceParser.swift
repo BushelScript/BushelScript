@@ -231,8 +231,8 @@ extension SourceParser {
         .it
     }
     
-    public func handleNull() throws -> Expression.Kind? {
-        .null
+    public func handleMissing() throws -> Expression.Kind? {
+        .missing
     }
     
     public func handleUnspecified() throws -> Expression.Kind? {

@@ -16,7 +16,7 @@ extension RT_Object {
         case let .query(query):
             return try fromQuery(rt, app: app, query: query)
         case .missingValue:
-            return rt.null
+            return rt.missing
         case let .type(type):
             return RT_Type(rt, value: rt.reflection.types[.ae4(code: type.rawValue)])
         case let .enum(`enum`):

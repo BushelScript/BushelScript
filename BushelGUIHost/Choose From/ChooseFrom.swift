@@ -16,7 +16,7 @@ public func chooseFrom(list: [String], prompt: String, okButtonName: String, can
     
     display(window: window) {
         returnResultToSender(
-            wc.response.map { RT_String(rt, value: $0) } ?? rt.null,
+            wc.response.map { RT_String(rt, value: $0) } ?? rt.missing,
             for: suspension
         )
     }
