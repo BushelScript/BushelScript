@@ -72,26 +72,6 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3C0566C823135675004CDB1A"
-               BuildableName = "BushelScript EditorUITests.xctest"
-               BlueprintName = "BushelScript EditorUITests"
-               ReferencedContainer = "container:BushelScript Editor.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3C6B75762305AF3F0006C354"
-               BuildableName = "BushelLanguageTests.xctest"
-               BlueprintName = "BushelLanguageTests"
-               ReferencedContainer = "container:../Bushel.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "3CCD8AB622CC45040049C74F"
                BuildableName = "BushelRTTests.xctest"
                BlueprintName = "BushelRTTests"
@@ -116,6 +96,26 @@
                BuildableName = "bushelscript_en Tests.xctest"
                BlueprintName = "bushelscript_en Tests"
                ReferencedContainer = "container:../Bushel.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3C0566BD23135675004CDB1A"
+               BuildableName = "BushelScript EditorTests.xctest"
+               BlueprintName = "BushelScript EditorTests"
+               ReferencedContainer = "container:BushelScript Editor.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3C2046EE268EAEC100C52E2B"
+               BuildableName = "Standard Library Tests.xctest"
+               BlueprintName = "Standard Library Tests"
+               ReferencedContainer = "container:BushelScript Editor.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
