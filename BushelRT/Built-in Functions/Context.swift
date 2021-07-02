@@ -19,10 +19,14 @@ extension Runtime {
         
         public subscript(variable term: Term) -> RT_Object {
             get {
-                frameStack.top[term.uri] ?? rt.null
+                frameStack.top[term.uri]?.value ?? rt.null
             }
             set {
-                frameStack.top[term.uri] = newValue
+                if let objectRef = frameStack.top[term.uri] {
+                    objectRef.value = newValue
+                } else {
+                    frameStack.top[term.uri] = Ref(newValue)
+                }
             }
         }
         

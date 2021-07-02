@@ -82,8 +82,8 @@ extension Runtime {
         context = Context(
             self,
             frameStack: RT_FrameStack(bottom: [
-                Term.SemanticURI(Variables.Core): core,
-                Term.SemanticURI(Variables.Script): topScript
+                Term.SemanticURI(Variables.Core): Ref(core),
+                Term.SemanticURI(Variables.Script): Ref(topScript)
             ]),
             moduleStack: RT_ModuleStack(bottom: core, rest: [topScript]),
             targetStack: RT_TargetStack(bottom: core, rest: [topScript])
