@@ -11,7 +11,7 @@ do
 	set assertion count to assertion count + 1
 	if not condition then
 		"Expected " & if reason then reason else default reason
-		if formatter then that & " but " & (target formatter then run)
+		if formatter then that & " but " & (tell formatter to run)
 		raise that
 	end
 end
@@ -57,7 +57,7 @@ to test
 	description: string
 	run (block): function
 do
-	try target block then run block
+	try tell block to run
 	handle raise ("“" & description & "” failed: " & it)
 	log "Test " & (if description then description & " " else "") & "succeeded (" & assertion count & " assertions)."
 	set assertion count to 0

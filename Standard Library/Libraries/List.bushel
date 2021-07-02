@@ -7,8 +7,8 @@ on map
 do
 	let out be {}
 	repeat for item in list
-		if target filter then run item
-			target block then run item
+		if tell filter to run item
+			tell block to run item
 			add that to out
 		end
 	end
@@ -26,7 +26,7 @@ on for each
 	run (block): function
 do
 	repeat for item in list
-		target block then run item
+		tell block to run item
 	end
 end
 
@@ -36,7 +36,7 @@ on filter
 do
 	let out be {}
 	repeat for item in list
-		if target block then run item then add item to out
+		if tell block to run item then add item to out
 	end
 	out
 end
@@ -47,12 +47,12 @@ on begin
 	ensure: function
 do
 	try
-		target block then run
+		tell block to run
 	handle
-		target ensure then run
+		tell ensure to run
 		raise it
 	end
-	target ensure then run
+	tell ensure to run
 end
 
 on replicate

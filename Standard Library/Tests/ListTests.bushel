@@ -1,7 +1,7 @@
 #!/usr/local/bin/bushelscript -l bushelscript_en
 
-tell use library Unit Test
-tell use library List
+require library Unit Test
+require library List
 
 test "map" run do
 	expect map {1,2,3} by do it + 1 to equal {2,3,4}

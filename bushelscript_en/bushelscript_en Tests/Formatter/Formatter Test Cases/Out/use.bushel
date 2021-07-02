@@ -1,3 +1,0 @@
-use app Mail
-use app id com.apple.Mail
-use app System Preferences
