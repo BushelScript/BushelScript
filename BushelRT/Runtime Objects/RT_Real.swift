@@ -19,34 +19,6 @@ public class RT_Real: RT_ValueWrapper<Double> {
         return value <=> other.value
     }
     
-    public override func adding(_ other: RT_Object) -> RT_Object? {
-        guard let other = other.coerce(to: Self.self) else {
-            return nil
-        }
-        return RT_Real(rt, value: self.value + other.value)
-    }
-    
-    public override func subtracting(_ other: RT_Object) -> RT_Object? {
-        guard let other = other.coerce(to: Self.self) else {
-            return nil
-        }
-        return RT_Real(rt, value: self.value - other.value)
-    }
-    
-    public override func multiplying(by other: RT_Object) -> RT_Object? {
-        guard let other = other.coerce(to: Self.self) else {
-            return nil
-        }
-        return RT_Real(rt, value: self.value * other.value)
-    }
-    
-    public override func dividing(by other: RT_Object) -> RT_Object? {
-        guard let other = other.coerce(to: Self.self) else {
-            return nil
-        }
-        return RT_Real(rt, value: self.value / other.value)
-    }
-    
     public override func property(_ property: Reflection.Property) throws -> RT_Object? {
         switch Properties(property.id) {
         case .Math_NaN_Q:

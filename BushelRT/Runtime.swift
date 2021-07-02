@@ -183,7 +183,14 @@ extension Runtime {
                 
                 var repeatResult: RT_Object?
                 var count = 0
-                while try context.binaryOp(.less, RT_Integer(self, value: count), timesValue).truthy {
+                let less = reflection.commands[.less]
+                while try context.run(
+                    command: less,
+                    arguments: [
+                        less.parameters[.lhs]: RT_Integer(self, value: count),
+                        less.parameters[.rhs]: timesValue
+                    ]
+                ).truthy {
                     repeatResult = try runPrimary(repeating)
                     count += 1
                 }
@@ -257,17 +264,33 @@ extension Runtime {
                             )
                         },
                         uniquingKeysWith: {
-                            try context.binaryOp(.greater, $1, $0).truthy ? $1 : $0
+                            let greater = reflection.commands[.greater]
+                            return try context.run(
+                                command: greater,
+                                arguments: [
+                                    greater.parameters[.lhs]: $1,
+                                    greater.parameters[.rhs]: $0
+                                ]
+                            ).truthy ? $1 : $0
                         }
                     )
                 )
             case .prefixOperator(let operation, let operand), .postfixOperator(let operation, let operand): // MARK: .prefixOperator, .postfixOperator
                 let operandValue = try runPrimary(operand)
-                return context.unaryOp(operation, operandValue)
+                let arguments: [Reflection.Parameter : RT_Object] = [
+                    Reflection.Parameter(.direct): operandValue
+                ]
+                let command = reflection.commands[operation.uri]
+                return try context.run(command: command, arguments: arguments)
             case .infixOperator(let operation, let lhs, let rhs): // MARK: .infixOperator
                 let lhsValue = try runPrimary(lhs)
                 let rhsValue = try runPrimary(rhs)
-                return try context.binaryOp(operation, lhsValue, rhsValue)
+                let arguments: [Reflection.Parameter : RT_Object] = [
+                    Reflection.Parameter(.lhs): lhsValue,
+                    Reflection.Parameter(.rhs): rhsValue
+                ]
+                let command = reflection.commands[operation.uri]
+                return try context.run(command: command, arguments: arguments)
             case .variable(let term): // MARK: .variable
                 return context[variable: term]
             case .require(let term): // MARK: .require

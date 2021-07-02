@@ -456,6 +456,17 @@ public enum Constants: String, Term.PredefinedID {
 
 public enum Commands: String, Term.PredefinedID {
     
+    case not
+    
+    case or, xor
+    case and
+    case isA, isNotA
+    case equal = "=", notEqual = "≠", less = "<", lessEqual = "≤", greater = ">", greaterEqual = "≥", startsWith, endsWith, contains, notContains, containedBy, notContainedBy
+    case concatenate
+    case add = "+", subtract = "-"
+    case multiply = "✕", divide = "÷"
+    case coerce
+    
     case get
     case set
     
@@ -571,6 +582,8 @@ public enum Parameters: String, Term.PredefinedID {
     
     case direct = ".direct"
     case target = ".target"
+    case lhs = ".lhs"
+    case rhs = ".rhs"
     case set_to
     case open_searchText
     

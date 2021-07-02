@@ -16,6 +16,166 @@ public final class RT_Core: RT_Object, RT_LocalModule {
     public override init(_ rt: Runtime) {
         super.init(rt)
         
+        functions.add(rt, .not, parameters: [.direct: .item]) { arguments in
+            let operand = try arguments.for(.direct)
+            return RT_Boolean.withValue(rt, !operand.truthy)
+        }
+        
+        func binary(_ operation: @escaping (RT_Object, RT_Object) throws -> RT_Object?) -> (_ arguments: RT_Arguments) throws -> RT_Object {
+            { arguments in
+                let lhs = try arguments.for(.lhs)
+                let rhs = try arguments.for(.rhs)
+                return try operation(lhs, rhs) ?? { throw CommandNotHandled(command: arguments.command) }()
+            }
+        }
+        functions.add(rt, .or, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            RT_Boolean.withValue(rt, $0.truthy || $1.truthy)
+        })
+        functions.add(rt, .xor, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            let lhsTruthy = $0.truthy
+            let rhsTruthy = $1.truthy
+            return RT_Boolean.withValue(rt, lhsTruthy && !rhsTruthy || !lhsTruthy && rhsTruthy)
+        })
+        functions.add(rt, .and, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            RT_Boolean.withValue(rt, $0.truthy && $1.truthy)
+        })
+        functions.add(rt, .coerce, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            guard let type = ($1 as? RT_Type)?.value else {
+                throw TypeObjectRequired(object: $1)
+            }
+            guard let coerced = $0.coerce(to: type) else {
+                throw Uncoercible(expectedType: type, object: self)
+            }
+            return coerced
+        })
+        functions.add(rt, .isA, parameters: [.lhs: .item, .rhs: .type], implementation: binary {
+            RT_Boolean.withValue(rt, try $0.type.isA($1.coerceOrThrow(to: RT_Type.self).value))
+        })
+        functions.add(rt, .isNotA, parameters: [.lhs: .item, .rhs: .type], implementation: binary {
+            RT_Boolean.withValue(rt, try !$0.type.isA($1.coerceOrThrow(to: RT_Type.self).value))
+        })
+        functions.add(rt, .equal, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            RT_Boolean.withValue(rt, $0.compareEqual(with: $1))
+        })
+        functions.add(rt, .notEqual, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            RT_Boolean.withValue(rt, !$0.compareEqual(with: $1))
+        })
+        functions.add(rt, .less, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            $0.compare(with: $1).map { RT_Boolean.withValue(rt, $0 == .orderedAscending) }
+        })
+        functions.add(rt, .lessEqual, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            $0.compare(with: $1).map { RT_Boolean.withValue(rt, $0 != .orderedDescending) }
+        })
+        functions.add(rt, .greater, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            $0.compare(with: $1).map { RT_Boolean.withValue(rt, $0 == .orderedAscending) }
+        })
+        functions.add(rt, .greaterEqual, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            $0.compare(with: $1).map { RT_Boolean.withValue(rt, $0 != .orderedAscending) }
+        })
+        
+        functions.add(rt, .notContains, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            let contains = rt.reflection.commands[.contains]
+            return try RT_Boolean.withValue(rt, !rt.context.run(command: contains, arguments: [contains.parameters[.lhs]: $0, contains.parameters[.rhs]: $1]).truthy)
+        })
+        functions.add(rt, .containedBy, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            let contains = rt.reflection.commands[.contains]
+            return try RT_Boolean.withValue(rt, rt.context.run(command: contains, arguments: [contains.parameters[.lhs]: $1, contains.parameters[.rhs]: $0]).truthy)
+        })
+        functions.add(rt, .notContainedBy, parameters: [.lhs: .item, .rhs: .item], implementation: binary {
+            let contains = rt.reflection.commands[.contains]
+            return try RT_Boolean.withValue(rt, !rt.context.run(command: contains, arguments: [contains.parameters[.lhs]: $1, contains.parameters[.rhs]: $0]).truthy)
+        })
+        
+        functions.add(rt, .startsWith, parameters: [.lhs: .string, .rhs: .string], implementation: binary {
+            RT_Boolean.withValue(rt, try $0.coerceOrThrow(to: RT_String.self).value.hasPrefix($1.coerceOrThrow(to: RT_String.self).value))
+        })
+        functions.add(rt, .endsWith, parameters: [.lhs: .string, .rhs: .string], implementation: binary {
+            RT_Boolean.withValue(rt, try $0.coerceOrThrow(to: RT_String.self).value.hasSuffix($1.coerceOrThrow(to: RT_String.self).value))
+        })
+        functions.add(rt, .contains, parameters: [.lhs: .string, .rhs: .string], implementation: binary {
+            RT_Boolean.withValue(rt, try $0.coerceOrThrow(to: RT_String.self).value.contains($1.coerceOrThrow(to: RT_String.self).value))
+        })
+        
+        functions.add(rt, .contains, parameters: [.lhs: .list, .rhs: .item], implementation: binary {
+            RT_Boolean.withValue(rt, try $0.coerceOrThrow(to: RT_List.self).contents.contains($1))
+        })
+        
+        // (integer, integer)
+        functions.add(rt, .add, parameters: [.lhs: .integer, .rhs: .integer], implementation: binary {
+            RT_Integer(rt, value: try $0.coerceOrThrow(to: RT_Integer.self).value + $1.coerceOrThrow(to: RT_Integer.self).value)
+        })
+        functions.add(rt, .subtract, parameters: [.lhs: .integer, .rhs: .integer], implementation: binary {
+            RT_Integer(rt, value: try $0.coerceOrThrow(to: RT_Integer.self).value - $1.coerceOrThrow(to: RT_Integer.self).value)
+        })
+        functions.add(rt, .multiply, parameters: [.lhs: .integer, .rhs: .integer], implementation: binary {
+            RT_Integer(rt, value: try $0.coerceOrThrow(to: RT_Integer.self).value * $1.coerceOrThrow(to: RT_Integer.self).value)
+        })
+        functions.add(rt, .divide, parameters: [.lhs: .integer, .rhs: .integer], implementation: binary {
+            RT_Real(rt, value: try Double($0.coerceOrThrow(to: RT_Integer.self).value) / Double($1.coerceOrThrow(to: RT_Integer.self).value))
+        })
+        
+        // (real, real)
+        functions.add(rt, .add, parameters: [.lhs: .real, .rhs: .real], implementation: binary {
+            RT_Real(rt, value: try $0.coerceOrThrow(to: RT_Real.self).value + $1.coerceOrThrow(to: RT_Real.self).value)
+        })
+        functions.add(rt, .subtract, parameters: [.lhs: .real, .rhs: .real], implementation: binary {
+            RT_Real(rt, value: try $0.coerceOrThrow(to: RT_Real.self).value - $1.coerceOrThrow(to: RT_Real.self).value)
+        })
+        functions.add(rt, .multiply, parameters: [.lhs: .real, .rhs: .real], implementation: binary {
+            RT_Real(rt, value: try $0.coerceOrThrow(to: RT_Real.self).value * $1.coerceOrThrow(to: RT_Real.self).value)
+        })
+        functions.add(rt, .divide, parameters: [.lhs: .real, .rhs: .real], implementation: binary {
+            RT_Real(rt, value: try $0.coerceOrThrow(to: RT_Real.self).value / $1.coerceOrThrow(to: RT_Real.self).value)
+        })
+        
+        // (integer, real)
+        functions.add(rt, .add, parameters: [.lhs: .integer, .rhs: .real], implementation: binary {
+            RT_Real(rt, value: try Double($0.coerceOrThrow(to: RT_Integer.self).value) + $1.coerceOrThrow(to: RT_Real.self).value)
+        })
+        functions.add(rt, .subtract, parameters: [.lhs: .integer, .rhs: .real], implementation: binary {
+            RT_Real(rt, value: try Double($0.coerceOrThrow(to: RT_Integer.self).value) - $1.coerceOrThrow(to: RT_Real.self).value)
+        })
+        functions.add(rt, .multiply, parameters: [.lhs: .integer, .rhs: .real], implementation: binary {
+            RT_Real(rt, value: try Double($0.coerceOrThrow(to: RT_Integer.self).value) * $1.coerceOrThrow(to: RT_Real.self).value)
+        })
+        functions.add(rt, .divide, parameters: [.lhs: .integer, .rhs: .real], implementation: binary {
+            RT_Real(rt, value: try Double($0.coerceOrThrow(to: RT_Integer.self).value) / $1.coerceOrThrow(to: RT_Real.self).value)
+        })
+        
+        // (real, integer)
+        functions.add(rt, .add, parameters: [.lhs: .real, .rhs: .integer], implementation: binary {
+            RT_Real(rt, value: try $0.coerceOrThrow(to: RT_Real.self).value + Double($1.coerceOrThrow(to: RT_Integer.self).value))
+        })
+        functions.add(rt, .subtract, parameters: [.lhs: .real, .rhs: .integer], implementation: binary {
+            RT_Real(rt, value: try $0.coerceOrThrow(to: RT_Real.self).value - Double($1.coerceOrThrow(to: RT_Integer.self).value))
+        })
+        functions.add(rt, .multiply, parameters: [.lhs: .real, .rhs: .integer], implementation: binary {
+            RT_Real(rt, value: try $0.coerceOrThrow(to: RT_Real.self).value * Double($1.coerceOrThrow(to: RT_Integer.self).value))
+        })
+        functions.add(rt, .divide, parameters: [.lhs: .real, .rhs: .integer], implementation: binary {
+            RT_Real(rt, value: try $0.coerceOrThrow(to: RT_Real.self).value / Double($1.coerceOrThrow(to: RT_Integer.self).value))
+        })
+        
+        functions.add(rt, .concatenate, parameters: [.lhs: .string, .rhs: .string], implementation: binary {
+            RT_String(rt, value: try $0.coerceOrThrow(to: RT_String.self).value + $1.coerceOrThrow(to: RT_String.self).value)
+        })
+        functions.add(rt, .concatenate, parameters: [.lhs: .string, .rhs: .item], implementation: binary {
+            RT_String(rt, value: try $0.coerceOrThrow(to: RT_String.self).value + ($1.coerce(to: RT_String.self)?.value ?? "\($1)"))
+        })
+        functions.add(rt, .concatenate, parameters: [.lhs: .item, .rhs: .string], implementation: binary {
+            RT_String(rt, value: try ($0.coerce(to: RT_String.self)?.value ?? "\($0)") + $1.coerceOrThrow(to: RT_String.self).value)
+        })
+        
+        functions.add(rt, .concatenate, parameters: [.lhs: .list, .rhs: .list], implementation: binary {
+            RT_List(rt, contents: try $0.coerceOrThrow(to: RT_List.self).contents + $1.coerceOrThrow(to: RT_List.self).contents)
+        })
+        functions.add(rt, .concatenate, parameters: [.lhs: .list, .rhs: .item], implementation: binary {
+            RT_List(rt, contents: try $0.coerceOrThrow(to: RT_List.self).contents + [$1])
+        })
+        functions.add(rt, .concatenate, parameters: [.lhs: .item, .rhs: .list], implementation: binary {
+            RT_List(rt, contents: try [$0] + $1.coerceOrThrow(to: RT_List.self).contents)
+        })
+        
         functions.add(rt, .run, parameters: [.target: .function, .direct: .item]) { arguments in
             let function = try arguments.for(.target, RT_Function.self)
             return try function.implementation.run(arguments: arguments)

@@ -16,14 +16,6 @@ public class RT_String: RT_ValueWrapper<String> {
         !value.isEmpty
     }
     
-    public override func concatenating(_ other: RT_Object) -> RT_Object? {
-        if let other = other.coerce(to: RT_String.self) {
-            return RT_String(rt, value: self.value + other.value)
-        } else {
-            return nil
-        }
-    }
-    
     public var length: RT_Integer {
         RT_Integer(rt, value: value.count)
     }
@@ -109,21 +101,6 @@ public class RT_String: RT_ValueWrapper<String> {
     public override func compare(with other: RT_Object) -> ComparisonResult? {
         (other as? RT_String)
             .map { value <=> $0.value }
-    }
-    
-    public override func startsWith(_ other: RT_Object) -> RT_Object? {
-        other.coerce(to: RT_String.self)
-            .map { RT_Boolean.withValue(rt, value.hasPrefix($0.value)) }
-    }
-    
-    public override func endsWith(_ other: RT_Object) -> RT_Object? {
-        other.coerce(to: RT_String.self)
-            .map { RT_Boolean.withValue(rt, value.hasSuffix($0.value)) }
-    }
-    
-    public override func contains(_ other: RT_Object) -> RT_Object? {
-        other.coerce(to: RT_String.self)
-            .map { RT_Boolean.withValue(rt, value.contains($0.value)) }
     }
     
 }

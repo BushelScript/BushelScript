@@ -23,22 +23,6 @@ public class RT_List: RT_Object, Encodable {
         !contents.isEmpty
     }
     
-    public override func concatenating(_ other: RT_Object) -> RT_Object? {
-        if let other = other.coerce(to: RT_List.self) {
-            return RT_List(rt, contents: self.contents + other.contents)
-        } else {
-            return RT_List(rt, contents: self.contents + [other])
-        }
-    }
-    
-    public override func concatenated(to other: RT_Object) -> RT_Object? {
-        if let other = other.coerce(to: RT_List.self) {
-            return RT_List(rt, contents: other.contents + self.contents)
-        } else {
-            return RT_List(rt, contents: [other] + self.contents)
-        }
-    }
-    
     public var length: RT_Integer {
         let count = Int64(contents.count)
         return RT_Integer(rt, value: count)
@@ -118,12 +102,6 @@ public class RT_List: RT_Object, Encodable {
             .map { contents <=> $0.contents }
     }
     
-    public override func contains(_ other: RT_Object) -> RT_Object? {
-        RT_Boolean.withValue(rt, 
-            contents.contains { $0.equal(to: other)?.truthy ?? false }
-        )
-    }
-    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
         for object in contents {
@@ -132,14 +110,6 @@ public class RT_List: RT_Object, Encodable {
             }
             try encodable.encode(to: &container)
         }
-    }
-    
-}
-
-extension RT_List {
-    
-    public override var debugDescription: String {
-        super.debugDescription + "[contents: \(contents)]"
     }
     
 }

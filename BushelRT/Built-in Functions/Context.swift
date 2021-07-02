@@ -56,68 +56,6 @@ extension Runtime {
             try sequence.element(rt.reflection.types[.item], at: index) ?? rt.missing
         }
         
-        func unaryOp(_ operation: UnaryOperation, _ operand: RT_Object) -> RT_Object {
-            return { () -> RT_Object? in
-                switch operation {
-                case .not:
-                    return operand.not()
-                }
-            }() ?? rt.missing
-        }
-        
-        func binaryOp(_ operation: BinaryOperation, _ lhs: RT_Object, _ rhs: RT_Object) throws -> RT_Object {
-            return try { () -> RT_Object? in
-                switch operation {
-                case .or:
-                    return lhs.or(rhs)
-                case .xor:
-                    return lhs.xor(rhs)
-                case .and:
-                    return lhs.and(rhs)
-                case .isA:
-                    return rhs.coerce(to: RT_Type.self).map { RT_Boolean.withValue(rt, lhs.type.isA($0.value)) }
-                case .isNotA:
-                    return rhs.coerce(to: RT_Type.self).map { RT_Boolean.withValue(rt, !lhs.type.isA($0.value)) }
-                case .equal:
-                    return lhs.equal(to: rhs)
-                case .notEqual:
-                    return lhs.notEqual(to: rhs)
-                case .less:
-                    return lhs.less(than: rhs)
-                case .lessEqual:
-                    return lhs.lessEqual(to: rhs)
-                case .greater:
-                    return lhs.greater(than: rhs)
-                case .greaterEqual:
-                    return lhs.greaterEqual(to: rhs)
-                case .startsWith:
-                    return lhs.startsWith(rhs)
-                case .endsWith:
-                    return lhs.endsWith(rhs)
-                case .contains:
-                    return lhs.contains(rhs)
-                case .notContains:
-                    return lhs.notContains(rhs)
-                case .containedBy:
-                    return lhs.contained(by: rhs)
-                case .notContainedBy:
-                    return lhs.notContained(by: rhs)
-                case .add:
-                    return lhs.adding(rhs)
-                case .subtract:
-                    return lhs.subtracting(rhs)
-                case .multiply:
-                    return lhs.multiplying(by: rhs)
-                case .divide:
-                    return lhs.dividing(by: rhs)
-                case .concatenate:
-                    return lhs.concatenating(rhs) ?? rhs.concatenated(to: lhs)
-                case .coerce:
-                    return try lhs.coercing(to: rhs)
-                }
-            }() ?? rt.missing
-        }
-        
         private var nativeLibraryRTs: [URL : Runtime] = [:]
         
         func getResource(_ term: Term) throws -> RT_Object {
