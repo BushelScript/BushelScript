@@ -109,24 +109,9 @@ public struct RT_ExpressionImplementation: RT_Implementation {
         }
         
         // Create variables for each of the function's parameters.
-        for (index, (parameter, formalArgument)) in zip(formalParameters, formalArguments).enumerated() {
-            // This special-cases the first argument to allow it to fall back
-            // on the value of the direct parameter.
-            //
-            // e.g.,
-            //     to cat: l, with r
-            //         l & r
-            //     end
-            //     cat "hello, " with "world"
-            //
-            //  l = "hello" even though it's not explicitly specified.
-            //  Without this special-case, the call would have to be:
-            //     cat l "hello, " with "world"
-            var argument: RT_Object? = arguments[Reflection.Parameter(parameter.uri)]
-            if index == 0, argument == nil {
-                argument = arguments[Reflection.Parameter(.direct)]
-            }
-            rt.context[variable: formalArgument] = argument ?? rt.null
+        for (parameter, argumentVariable) in zip(formalParameters, formalArguments) {
+            let argument = arguments[Reflection.Parameter(parameter.uri)]
+            rt.context[variable: argumentVariable] = argument ?? rt.null
         }
         
         do {

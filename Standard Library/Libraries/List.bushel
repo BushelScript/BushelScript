@@ -1,7 +1,7 @@
 #!/usr/local/bin/bushelscript -l bushelscript_en
 
 on map
-	over (list): list
+	over [direct] (list): list
 	by (block): function
 	if (filter): function
 do
@@ -15,14 +15,14 @@ do
 	out
 end
 on map
-	over (list): list
+	over [direct] (list): list
 	by (block): function
 do
 	map over list by block if do true
 end
 
 on for each
-	in (list): list
+	in [direct] (list): list
 	run (block): function
 do
 	repeat for item in list
@@ -31,7 +31,7 @@ do
 end
 
 on filter
-	list: list
+	list [direct]: list
 	by (block): function
 do
 	let out be {}
@@ -43,7 +43,7 @@ end
 
 -- TODO: Move out of this library.
 on begin
-	block: function
+	block [direct]: function
 	ensure: function
 do
 	try
@@ -56,7 +56,7 @@ do
 end
 
 on replicate
-	item
+	item [direct]
 	times: integer
 do
 	{}
@@ -66,7 +66,7 @@ do
 end
 
 on join
-	list
+	list [direct]
 	by (separator)
 do
 	length of list
@@ -81,7 +81,7 @@ do
 	end
 end
 on split
-	string
+	string [direct]
 	by (separator)
 do
 	tell Core to set separator to separator as string

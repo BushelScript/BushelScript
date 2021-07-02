@@ -17,7 +17,7 @@ do
 end
 
 to expect
-	that (condition)
+	that [direct] (condition)
 	since (reason): string
 do
 	generic expect that condition since reason default reason "truthy" to format error do
@@ -26,7 +26,7 @@ do
 end
 
 to expect
-	_ (lhs)
+	_ [direct] (lhs)
 	to equal (rhs)
 	since (reason): string
 do
@@ -36,7 +36,7 @@ do
 end
 
 to expect
-	_ (lhs)
+	_ [direct] (lhs)
 	to not equal (rhs)
 	since (reason): string
 do
@@ -46,7 +46,6 @@ do
 end
 
 to fail
-	_: item -- direct parameter
 	since (reason): string
 do
 	if reason then " since " & reason else ""
@@ -54,7 +53,7 @@ do
 end
 
 to test
-	description: string
+	description [direct]: string
 	run (block): function
 do
 	try tell block to run
