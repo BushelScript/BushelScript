@@ -51,6 +51,8 @@ public class Runtime {
     
     /// The singleton `null` instance.
     public lazy var null = RT_Null(self)
+    /// The singleton `unspecified` instance.
+    public lazy var unspecified = RT_Unspecified(self)
     /// The singleton `true` boolean instance.
     public lazy var `true` = RT_Boolean(self, value: true)
     /// The singleton `false` boolean instance.
@@ -141,6 +143,8 @@ extension Runtime {
                 return try evaluateSpecifiers ? context.evaluate(specifier: context.target) : context.target
             case .null: // MARK: .null
                 return null
+            case .unspecified: // MARK: .unspecified
+                return unspecified
             case .sequence(let expressions): // MARK: .sequence
                 for expression in expressions {
                     lastResult = try runPrimary(expression)

@@ -111,7 +111,7 @@ public struct RT_ExpressionImplementation: RT_Implementation {
         // Create variables for each of the function's parameters.
         for (parameter, argumentVariable) in zip(formalParameters, formalArguments) {
             let argument = arguments[Reflection.Parameter(parameter.uri)]
-            rt.context[variable: argumentVariable] = argument ?? rt.null
+            rt.context[variable: argumentVariable] = argument ?? rt.unspecified
         }
         
         do {
@@ -143,7 +143,7 @@ public struct RT_BlockImplementation: RT_Implementation {
         }
         
         // Push exactly what we're given as direct argument.
-        rt.context.targetStack.push(arguments[.direct, RT_Object.self] ?? rt.null)
+        rt.context.targetStack.push(arguments[.direct, RT_Object.self] ?? rt.unspecified)
         defer {
             rt.context.targetStack.pop()
         }

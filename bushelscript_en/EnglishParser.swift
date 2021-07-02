@@ -170,6 +170,7 @@ public final class EnglishParser: SourceParser {
         Term.Name("that"): handleThat,
         Term.Name("it"): handleIt,
         Term.Name("null"): handleNull,
+        Term.Name("unspecified"): handleUnspecified,
         Term.Name("every"): handleQuantifier(.all),
         Term.Name("all"): handleQuantifier(.all),
         Term.Name("first"): handleQuantifier(.first),

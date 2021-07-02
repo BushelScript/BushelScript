@@ -188,6 +188,7 @@ public enum Types: String, Term.PredefinedID {
     case logicalTestSpecifier
     case type
     case null
+    case unspecified
     case coreObject
     case script
     case app
@@ -247,7 +248,7 @@ public enum Types: String, Term.PredefinedID {
             return try! FourCharCode(fourByteString: "msng")
         case .app:
             return cApplication
-        case .coreObject, .script, .applescript, .function, .system, .error, .environmentVariable:
+        default:
             return nil
         }
     }

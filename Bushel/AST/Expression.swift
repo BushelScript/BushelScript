@@ -46,6 +46,8 @@ public struct Expression {
         case resource(Term)
         /// Yields the null constant.
         case null
+        /// Yields the unspecified constant.
+        case unspecified
         /// Yields an integer object with its constituent value.
         case integer(Int64)
         /// Yields a double-precision floating-point number object with its
@@ -259,7 +261,7 @@ extension Expression {
     /// usually due to some uncontrolled external interaction (like `.command`).
     public var hasSideEffects: Bool {
         switch kind {
-        case .empty, .that, .it, .null, .resource, .integer, .double, .string, .variable, .enumerator, .type, .multilineString, .debugInspectTerm, .debugInspectLexicon:
+        case .empty, .that, .it, .null, .unspecified, .resource, .integer, .double, .string, .variable, .enumerator, .type, .multilineString, .debugInspectTerm, .debugInspectLexicon:
             assert(subexpressions().isEmpty)
             return false
         case .sequence, .scoped, .parentheses, .function, .block, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
@@ -302,7 +304,9 @@ extension Expression.Kind {
         case .it:
             return ("Current target specifier", "Specifies the current command target, as set by the nearest “tell” block.")
         case .null:
-            return ("Null literal", "The absence of a value.")
+            return ("Null literal", "Marker indicating the absence of a value.")
+        case .unspecified:
+            return ("Unspecified literal", "Marker indicating that a value has not been specified.")
         case .sequence:
             return ("Sequence", "A list of sequentially evaluated expressions.")
         case .scoped:

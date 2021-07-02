@@ -235,6 +235,10 @@ extension SourceParser {
         .null
     }
     
+    public func handleUnspecified() throws -> Expression.Kind? {
+        .unspecified
+    }
+    
     public func handleRef(_ keyword: Term.Name) -> () throws -> Expression.Kind? {
         { [weak self] in
             try self?.handleRef(keyword)
