@@ -5,31 +5,29 @@ import Bushel
 
 class LanguageConstructTests: XCTestCase {
     
-    func test_use_invalidResourceType_emitsError() {
+    func test_require_invalidResourceType_emitsError() {
         let parser = module.parser()
-        XCTAssertThrowsError(try parser.parse(source: "use Finder"))
-        XCTAssertThrowsError(try parser.parse(source: "use appl Finder"))
-        XCTAssertThrowsError(try parser.parse(source: "use application \"Finder\""))
-        XCTAssertThrowsError(try parser.parse(source: "use com.apple.Finder"))
-        XCTAssertThrowsError(try parser.parse(source: "use appl com.apple.Finder"))
-        XCTAssertThrowsError(try parser.parse(source: "use id com.apple.Finder"))
-        XCTAssertThrowsError(try parser.parse(source: "use application id \"com.apple.Finder\""))
+        XCTAssertThrowsError(try parser.parse(source: "require Finder"))
+        XCTAssertThrowsError(try parser.parse(source: "require ap Finder"))
+        XCTAssertThrowsError(try parser.parse(source: "require com.apple.Finder"))
+        XCTAssertThrowsError(try parser.parse(source: "require ap com.apple.Finder"))
+        XCTAssertThrowsError(try parser.parse(source: "require id com.apple.Finder"))
     }
     
-    func test_useApplication_notFound_emitsError() {
+    func test_requireApplication_notFound_emitsError() {
         let parser = module.parser()
-        XCTAssertThrowsError(try parser.parse(source: "use app ThisAppDoesNotExistOnAnybodysSystem"))
-        XCTAssertThrowsError(try parser.parse(source: "use app id abc.xyz.ThisAppDoesNotExistOnAnybodysSystem"))
+        XCTAssertThrowsError(try parser.parse(source: "require app ThisAppDoesNotExistOnAnybodysSystem"))
+        XCTAssertThrowsError(try parser.parse(source: "require app id abc.xyz.ThisAppDoesNotExistOnAnybodysSystem"))
     }
     
-    func test_useApplication_byName_findsApplication() {
+    func test_requireApplication_byName_findsApplication() {
         let parser = module.parser()
-        XCTAssertNoThrow(try parser.parse(source: "use app Finder"))
+        XCTAssertNoThrow(try parser.parse(source: "require app Finder"))
     }
     
-    func test_useApplication_byID_findsApplication() {
+    func test_requireApplication_byID_findsApplication() {
         let parser = module.parser()
-        XCTAssertNoThrow(try parser.parse(source: "use app id com.apple.Finder"))
+        XCTAssertNoThrow(try parser.parse(source: "require app id com.apple.Finder"))
     }
     
     func test_if() {

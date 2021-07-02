@@ -32,12 +32,9 @@ public final class EnglishFormatter: SourceFormatter {
             return "repeat \(format(times, level: level)) times\(format(repeating, level: level))"
         case let .repeatFor(variable, container, repeating):
             return "repeat for \(variable) in \(format(container, level: level))\(format(repeating, level: level))"
-        case .tell(let module, let to):
-            return "tell \(format(module, level: level))"
+        case .tell(let target, let to):
+            return "tell \(format(target, level: level))"
                 + format(to, level: level, beginKeyword: " to ")
-        case .target(let target, let body):
-            return "target \(format(target, level: level))"
-                + format(body, level: level, beginKeyword: " then ")
         case .let_(let term, let initialValue):
             var formatted = "let \(term)"
             if let initialValue = initialValue {

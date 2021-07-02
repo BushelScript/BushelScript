@@ -199,23 +199,21 @@ extension Runtime {
                     repeatResult = try runPrimary(repeating)
                 }
                 return repeatResult ?? lastResult
-            case .tell(let newModule, let to): // MARK: .tell
-                let newModuleObject = try runPrimary(newModule, evaluateSpecifiers: false)
-                guard let newModule = newModuleObject as? RT_Module else {
-                    throw NotAModule(object: newModuleObject)
-                }
-                context.moduleStack.push(RT_ModuleSubstack(bottom: newModule))
-                defer {
-                    context.moduleStack.pop()
-                }
-                return try runPrimary(to)
-            case .target(let newTarget, let body): // MARK: .target
+            case .tell(let newTarget, let body): // MARK: .tell
                 let newTargetValue = try runPrimary(newTarget, evaluateSpecifiers: false)
                 context.targetStack.push(newTargetValue)
                 defer {
                     context.targetStack.pop()
                 }
-                return try runPrimary(body)
+                if let newModule = newTargetValue as? RT_Module {
+                    context.moduleStack.push(RT_ModuleSubstack(bottom: newModule))
+                    defer {
+                        context.moduleStack.pop()
+                    }
+                    return try runPrimary(body)
+                } else {
+                    return try runPrimary(body)
+                }
             case .let_(let term, let initialValue): // MARK: .let_
                 let initialExprValue = try initialValue.map { try runPrimary($0) } ?? null
                 context[variable: term] = initialExprValue

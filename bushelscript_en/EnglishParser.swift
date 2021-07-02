@@ -161,7 +161,6 @@ public final class EnglishParser: SourceParser {
         Term.Name("repeating"): handleRepeat(Term.Name("repeating")),
         Term.Name("tell"): handleTell,
         Term.Name("use"): handleUse,
-        Term.Name("target"): handleTarget,
         Term.Name("let"): handleLet,
         Term.Name("define"): handleDefine,
         Term.Name("defining"): handleDefining,
@@ -416,27 +415,14 @@ public final class EnglishParser: SourceParser {
         }
         
         return try withTerminology(of: target) {
-            let toExpression = try foundNewline ? parseSequence() : parsePrimaryOrThrow(.afterKeyword(Term.Name(["then"])))
-            return .tell(module: target, to: toExpression)
+            let body = try foundNewline ? parseSequence() : parsePrimaryOrThrow(.afterKeyword(Term.Name(["to"])))
+            return .tell(target: target, to: body)
         }
     }
     
     private func handleUse() throws -> Expression.Kind? {
         let module = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["use"])))
         return .use(module: module)
-    }
-    
-    private func handleTarget() throws -> Expression.Kind? {
-        let target = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["target"])))
-        
-        let foundThen = tryEating(prefix: "then")
-        let foundNewline = tryEatingLineBreak()
-        guard foundThen && !foundNewline || !foundThen && foundNewline else {
-            throw ParseError(.missing([.keyword(Term.Name(["then"])), .lineBreak]), at: currentLocation, fixes: [SuggestingFix(suggesting: "{FIX} to evaluate a single targeted expression", by: AppendingFix(appending: " then", at: currentLocation)), SuggestingFix(suggesting: "{FIX} to evaluate a targeted sequence of expressions", by: AppendingFix(appending: "\n", at: currentLocation))])
-        }
-        
-        let thenExpression = try foundNewline ? parseSequence() : try parsePrimaryOrThrow(.afterKeyword(Term.Name(["then"])))
-        return .target(target: target, body: thenExpression)
     }
     
     private func handleLet() throws -> Expression.Kind? {

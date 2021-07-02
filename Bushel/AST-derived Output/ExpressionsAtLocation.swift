@@ -36,9 +36,7 @@ extension Expression {
             return [times, repeating]
         case let .repeatFor(_, container, repeating):
             return [container, repeating]
-        case let .tell(module, to):
-            return [module, to]
-        case let .target(target, body):
+        case let .tell(target, body):
             return [target, body]
         case let .let_(_, initialValue):
             return initialValue.map { [$0] } ?? []
@@ -124,7 +122,7 @@ extension Expression {
     
     public func term() -> Term? {
         switch kind {
-        case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .target, .null, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
+        case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .null, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
             return nil
         case let .require(term),
              let .resource(term),

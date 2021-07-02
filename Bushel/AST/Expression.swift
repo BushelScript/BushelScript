@@ -24,27 +24,23 @@ public struct Expression {
         case that
         /// Yields the current target.
         case it
-        /// If `module` has a principal term _T_, pushes _T_ onto the lexicon
+        /// If `target` has a principal term _T_, pushes _T_ onto the lexicon
         /// for the scope of the `to` expression.
         ///
         /// When evaluated:
-        ///  - Evaluates `module` without evaluating specifiers.
-        ///  - If the result is a module _M_, pushes _M_ to the module stack.
-        ///    Otherwise (if the result is not a module), raises an error.
-        ///  - Evaluates `to`.
-        ///  - Pops _M_ off the module stack.
-        case tell(module: Expression, to: Expression)
-        /// When evaluated:
         ///  - Evaluates `target` without evaluating specifiers.
         ///  - Pushes the result _R_ to the target stack.
+        ///  - If the result is a module _M_, pushes _M_ to the module stack.
         ///  - Evaluates `body`.
+        ///  - If _M_ exists, pops _M_ off the module stack.
         ///  - Pops _R_ off the target stack.
-        case target(target: Expression, body: Expression)
+        case tell(target: Expression, to: Expression)
         /// Imports the resource identified by `resource` and adds it to
         /// the end of the current frame of the module stack.
         /// See [Resources](https://bushelscript.github.io/help/docs/ref/resources).
         case require(resource: Term)
-        /// Adds
+        /// Adds `module` to the top of the current module substack (which is
+        /// the top of the module stack.)
         case use(module: Expression)
         /// Yields the resource identified by its constituent term.
         case resource(Term)
@@ -266,7 +262,7 @@ extension Expression {
         case .empty, .that, .it, .null, .resource, .integer, .double, .string, .variable, .enumerator, .type, .multilineString, .debugInspectTerm, .debugInspectLexicon:
             assert(subexpressions().isEmpty)
             return false
-        case .sequence, .scoped, .parentheses, .function, .block, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .target, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
+        case .sequence, .scoped, .parentheses, .function, .block, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
             return subexpressions().contains(where: { $0.hasSideEffects })
         case .require, .use, .prefixOperator, .postfixOperator, .infixOperator, .set, .command, .weave:
             return true
@@ -325,8 +321,6 @@ extension Expression.Kind {
             return ("Iterative repeat expression", "Executes the contained block for each element in the specified collection.")
         case .tell:
             return ("Tell expression", "Changes the current command target and pushes the new target’s dictionary, if any, onto the lexicon.")
-        case .target:
-            return ("Target expression", "")
         case .let_:
             return ("Variable binding expression", "Defines a new variable term and assigns it the result of the initial value expression, or “null” if absent.")
         case .define:
