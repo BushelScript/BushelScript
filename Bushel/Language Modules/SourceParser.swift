@@ -1408,16 +1408,10 @@ extension SourceParser {
                 
                 eatCommentsAndWhitespace()
                 
-                guard let closeBracketRange = source.range(of: "»") else {
-                    throw ParseError(.missing([.termURIAndRawFormEndMarker]), at: currentLocation)
-                }
-                let uidString = source[..<closeBracketRange.lowerBound]
-                source = source[closeBracketRange.upperBound...]
-                guard let uid = Term.SemanticURI(normalized: String(uidString)) else {
-                    throw ParseError(.missing([.termURI]), at: currentLocation)
-                }
+                let uri = try eatTermURI(stoppingAt: "»")
+                try eatOrThrow(prefix: "»")
                 
-                let term = lexicon.term(id: Term.ID(role, uid)) ?? Term(role, uid)
+                let term = lexicon.term(id: Term.ID(role, uri)) ?? Term(role, uri)
                 
                 addElement(from: startIndex, styling: styling(for: term.role), spacing: .leftRight)
                 
@@ -1426,6 +1420,19 @@ extension SourceParser {
         }
         
         return try eatDefinedTerm() ?? eatRawFormTerm()
+    }
+    
+    // NOTE: Does not add any source elements.
+    public func eatTermURI(stoppingAt stop: String) throws -> Term.SemanticURI {
+        guard let stopRange = source.range(of: stop) else {
+            throw ParseError(.missing([.keyword(Term.Name(stop))]), at: currentLocation)
+        }
+        let uriString = source[..<stopRange.lowerBound]
+        source = source[stopRange.lowerBound...]
+        guard let uri = Term.SemanticURI(normalized: String(uriString)) else {
+            throw ParseError(.missing([.termURI]), at: currentLocation)
+        }
+        return uri
     }
     
     public func eatCommentsAndWhitespace(eatingNewlines: Bool = false, isSignificant: Bool = false) {

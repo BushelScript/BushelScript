@@ -215,17 +215,38 @@ public final class EnglishParser: SourceParser {
         while
             !isNext("do"),
             { eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true); return true }(),
-            let parameterTermName = try parseTermNameEagerly(stoppingAt: ["(", ":"], styling: .parameter)
+            let parameterTermName = try parseTermNameEagerly(stoppingAt: ["[", "(", ":"], styling: .parameter)
         {
-            parameters.append(Term(.parameter, .id(Term.SemanticURI.Pathname([parameterTermName.normalized])), name: parameterTermName))
+            let parameterTermURI: Term.SemanticURI = try {
+                if tryEating(prefix: "[", spacing: .left) {
+                    let uri: Term.SemanticURI = try {
+                        if tryEating(prefix: "direct") {
+                            return Term.SemanticURI(Parameters.direct)
+                        } else if tryEating(prefix: "target") {
+                            return Term.SemanticURI(Parameters.target)
+                        } else {
+                            return try addingElement(.parameter) {
+                                try eatTermURI(stoppingAt: "]")
+                            }
+                        }
+                    }()
+                    try eatOrThrow(prefix: "]")
+                    return uri
+                } else {
+                    return .id(Term.SemanticURI.Pathname([parameterTermName.normalized]))
+                }
+            }()
+            parameters.append(Term(.parameter, parameterTermURI, name: parameterTermName))
             
-            var argumentName = Term.Name([])
-            if tryEating(prefix: "(", spacing: .left) {
-                argumentName = try parseTermNameEagerly(stoppingAt: [")"], styling: .variable) ?? parameterTermName
-                try eatOrThrow(prefix: ")", spacing: .right)
-            } else {
-                argumentName = parameterTermName
-            }
+            let argumentName: Term.Name = try {
+                if tryEating(prefix: "(", spacing: .left) {
+                    let name = try parseTermNameEagerly(stoppingAt: [")"], styling: .variable) ?? parameterTermName
+                    try eatOrThrow(prefix: ")", spacing: .right)
+                    return name
+                } else {
+                    return parameterTermName
+                }
+            }()
             arguments.append(Term(.variable, .id(Term.SemanticURI.Pathname([argumentName.normalized])), name: argumentName))
             
             if
