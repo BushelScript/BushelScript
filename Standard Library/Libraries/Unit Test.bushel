@@ -1,0 +1,65 @@
+#!/usr/local/bin/bushelscript -l bushelscript_en
+
+let assertion count be 0
+
+to generic expect
+	that (condition)
+	since (reason)
+	default reason
+	to format error (formatter)
+do
+	set assertion count to assertion count + 1
+	if not condition then
+		"Expected " & if reason then reason else default reason
+		if formatter then that & " but " & (target formatter then run)
+		raise that
+	end
+end
+
+to expect
+	that (condition)
+	since (reason): string
+do
+	generic expect that condition since reason default reason "truthy" to format error do
+		(condition as string) & " is not truthy"
+	end
+end
+
+to expect
+	_ (lhs)
+	to equal (rhs)
+	since (reason): string
+do
+	generic expect that (lhs = rhs) since reason default reason "equality" to format error do
+		(lhs as string) & " ≠ " & (rhs as string)
+	end
+end
+
+to expect
+	_ (lhs)
+	to not equal (rhs)
+	since (reason): string
+do
+	generic expect that (lhs ≠ rhs) since reason default reason "inequality" to format error do
+		(lhs as string) & " = " & (rhs as string)
+	end
+end
+
+to fail
+	_: item -- direct parameter
+	since (reason): string
+do
+	if reason then " since " & reason else ""
+	raise "Failed unconditionally" & that
+end
+
+to test
+	description: string
+	run (block): function
+do
+	try target block then run block
+	handle raise ("“" & description & "” failed: " & it)
+	log "Test " & (if description then description & " " else "") & "succeeded (" & assertion count & " assertions)."
+	set assertion count to 0
+	true
+end

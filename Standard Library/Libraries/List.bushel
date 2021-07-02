@@ -1,0 +1,106 @@
+#!/usr/local/bin/bushelscript -l bushelscript_en
+
+on map
+	over (list): list
+	by (block): function
+	if (filter): function
+do
+	let out be {}
+	repeat for item in list
+		if target filter then run item
+			target block then run item
+			add that to out
+		end
+	end
+	out
+end
+on map
+	over (list): list
+	by (block): function
+do
+	map over list by block if do true
+end
+
+on for each
+	in (list): list
+	run (block): function
+do
+	repeat for item in list
+		target block then run item
+	end
+end
+
+on filter
+	list: list
+	by (block): function
+do
+	let out be {}
+	repeat for item in list
+		if target block then run item then add item to out
+	end
+	out
+end
+
+-- TODO: Move out of this library.
+on begin
+	block: function
+	ensure: function
+do
+	try
+		target block then run
+	handle
+		target ensure then run
+		raise it
+	end
+	target ensure then run
+end
+
+on replicate
+	item
+	times: integer
+do
+	{}
+	repeat times times
+		that & {item}
+	end
+end
+
+on join
+	list
+	by (separator)
+do
+	length of list
+	if that = 0 then return ""
+	if that = 1 then return (first item of list) as string
+	
+	if separator = null then set separator to ""
+
+	(first item of list) as string
+	repeat for item in tail of list
+		that & separator & (item as string)
+	end
+end
+on split
+	string
+	by (separator)
+do
+	tell Core to set separator to separator as string
+	let separator len be length of separator
+	if separator len < 1 then return {string}
+	-- if string = separator then return {}
+
+	let len be length of string
+	let i be 1
+	let section start be i
+	let split be {}
+	repeat while i + separator len - 1 ≤ len
+		(item i thru i + separator len - 1) of string
+		if (that = separator)
+			add (item section start thru i - 1) of string to split
+			set i to i + separator len
+			set section start to i
+		else set i to i + 1
+	end
+	add (item section start thru len) of string to split
+	if split = {} then {string} else split
+end

@@ -1,0 +1,53 @@
+#!/usr/local/bin/bushelscript -l bushelscript_en
+
+tell use library Unit Test
+tell use library List
+
+test "map" run do
+	expect map {1,2,3} by do it + 1 to equal {2,3,4}
+	expect map {1} by do it + 1 to equal {2}
+	expect map {} by (do fail since "there are no items to process") to equal {}
+	expect map {"","a","b","","c",""} by do it & it if do it ≠ "" to equal {"aa","bb","cc"}
+end
+
+test "for each" run do
+	let l be {}
+	for each in {1,2,3} run do add it to l
+	expect l to equal {1,2,3}
+	for each in {4} run do add it to l
+	expect l to equal {1,2,3,4}
+	for each in {} run (do fail since "there are no items to process")
+end
+
+test "filter" run do
+	expect filter {"","a","b","","c",""} by do it ≠ "" to equal {"a","b","c"}
+	expect filter {"a"} by do it = "a" to equal {"a"}
+	expect filter {"b"} by do it = "a" to equal {}
+	expect filter {} by (do fail since "there are no items to process") to equal {}
+end
+
+test "replicate" run do
+	expect replicate 1 times 4 to equal {1,1,1,1}
+	expect replicate {} times 3 to equal {{},{},{}}
+	expect replicate "hi" times 1 to equal {"hi"}
+	expect replicate "hi" times 0 to equal {}
+	expect replicate "hi" times 0 - 1 to equal {}
+end
+
+test "join" run do
+	expect join {"abc",123} to equal "abc123"
+	expect join {"m","p"} by "o" to equal "mop"
+	expect join {0,1,2,3,4} by 9 to equal "091929394"
+	expect join {1} by "sep" to equal "1"
+	expect join {} by "sep" to equal ""
+end
+
+test "split" run do
+	expect split "abcccba" by "ccc" to equal {"ab","ba"}
+	expect split "abccba" by "c" to equal {"ab","","ba"}
+	expect split "ccabbacc" by "cc" to equal {"","abba",""}
+	expect split "aaa" by "c" to equal {"aaa"}
+	expect split "c" by "c" to equal {"",""}
+	expect split "ccc" by "c" to equal {"","","",""}
+	expect split "" by "c" to equal {""}
+end

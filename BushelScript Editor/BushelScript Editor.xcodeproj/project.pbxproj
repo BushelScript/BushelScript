@@ -17,6 +17,9 @@
 		3C0566B423135675004CDB1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C0566B323135675004CDB1A /* Assets.xcassets */; };
 		3C056717231359C6004CDB1A /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C056716231359C6004CDB1A /* Errors.swift */; };
 		3C12EFA12354E7640057E0CC /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 3C12EFA02354E7640057E0CC /* Defaults */; };
+		3C2046F2268EAEC100C52E2B /* StandardLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2046F1268EAEC100C52E2B /* StandardLibraryTests.swift */; };
+		3C204701268EB30F00C52E2B /* Tests in Resources */ = {isa = PBXBuildFile; fileRef = 3C204700268EB30F00C52E2B /* Tests */; };
+		3C204703268EB31E00C52E2B /* Libraries in Resources */ = {isa = PBXBuildFile; fileRef = 3C204702268EB31E00C52E2B /* Libraries */; };
 		3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C249D472319C1D700F5826E /* PreferencesViewController.swift */; };
 		3C26BA8D268184D800452D9E /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C26BA8C268184D800452D9E /* Menu.swift */; };
 		3C2A9CDE26793CF60084716C /* Bushel.framework in Embed Shared Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -27,7 +30,6 @@
 		3C2A9CEA267940360084716C /* bushelscript in Resources */ = {isa = PBXBuildFile; fileRef = 3C9FD7B923E53E5500279945 /* bushelscript */; };
 		3C2A9CEC267953450084716C /* bushelscript_en.bundle in Copy Language Modules */ = {isa = PBXBuildFile; fileRef = 3C0566FC23135690004CDB1A /* bushelscript_en.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2A9CF02679665E0084716C /* InterpreterPrefsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2A9CEF2679665E0084716C /* InterpreterPrefsVC.swift */; };
-		3C2A9D012679A6610084716C /* Libraries in Resources */ = {isa = PBXBuildFile; fileRef = 3C2A9D002679A6610084716C /* Libraries */; };
 		3C2A9D1F2679DE3A0084716C /* EditorTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2A9D1E2679DE3A0084716C /* EditorTextView.swift */; };
 		3C2BC9AB23E258E400CB8C20 /* InlineErrorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */; };
 		3C2BC9AC23E258E400CB8C20 /* InlineErrorVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C2BC9AA23E258E400CB8C20 /* InlineErrorVC.xib */; };
@@ -107,6 +109,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3C6B75A02305B5990006C354;
 			remoteInfo = BushelScriptEnglishTests;
+		};
+		3C2046F8268EAEDF00C52E2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C0566A223135673004CDB1A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3C0566A923135673004CDB1A;
+			remoteInfo = "BushelScript Editor";
 		};
 		3C554CB223F7AFE50029E71A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -213,10 +222,14 @@
 		3C0566C423135675004CDB1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C0566DB23135690004CDB1A /* Bushel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Bushel.xcodeproj; path = ../Bushel.xcodeproj; sourceTree = "<group>"; };
 		3C056716231359C6004CDB1A /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		3C2046EF268EAEC100C52E2B /* Standard Library Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Standard Library Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C2046F1268EAEC100C52E2B /* StandardLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardLibraryTests.swift; sourceTree = "<group>"; };
+		3C2046F3268EAEC100C52E2B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3C204700268EB30F00C52E2B /* Tests */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Tests; path = "../Standard Library/Tests"; sourceTree = "<group>"; };
+		3C204702268EB31E00C52E2B /* Libraries */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Libraries; path = "../Standard Library/Libraries"; sourceTree = "<group>"; };
 		3C249D472319C1D700F5826E /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 		3C26BA8C268184D800452D9E /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		3C2A9CEF2679665E0084716C /* InterpreterPrefsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterpreterPrefsVC.swift; sourceTree = "<group>"; };
-		3C2A9D002679A6610084716C /* Libraries */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Libraries; path = ../../../Libraries; sourceTree = "<group>"; };
 		3C2A9D1E2679DE3A0084716C /* EditorTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTextView.swift; sourceTree = "<group>"; };
 		3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineErrorVC.swift; sourceTree = "<group>"; };
 		3C2BC9AA23E258E400CB8C20 /* InlineErrorVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InlineErrorVC.xib; sourceTree = "<group>"; };
@@ -270,6 +283,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3C2046EC268EAEC100C52E2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -287,11 +307,13 @@
 		3C0566A123135673004CDB1A = {
 			isa = PBXGroup;
 			children = (
+				3C2046FF268EB2A100C52E2B /* Standard Library */,
 				3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */,
 				3C0566DB23135690004CDB1A /* Bushel.xcodeproj */,
 				3C0566AC23135673004CDB1A /* BushelScript Editor */,
 				3C0566C123135675004CDB1A /* BushelScript EditorTests */,
 				3C10565E23E0AD7C00877A5C /* Headers */,
+				3C2046F0268EAEC100C52E2B /* Standard Library Tests */,
 				3C0566AB23135673004CDB1A /* Products */,
 				3C05670C231356E7004CDB1A /* Frameworks */,
 			);
@@ -302,6 +324,7 @@
 			children = (
 				3C0566AA23135673004CDB1A /* BushelScript Editor.app */,
 				3C0566BE23135675004CDB1A /* BushelScript EditorTests.xctest */,
+				3C2046EF268EAEC100C52E2B /* Standard Library Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -373,6 +396,24 @@
 			name = Headers;
 			sourceTree = "<group>";
 		};
+		3C2046F0268EAEC100C52E2B /* Standard Library Tests */ = {
+			isa = PBXGroup;
+			children = (
+				3C2046F1268EAEC100C52E2B /* StandardLibraryTests.swift */,
+				3C2046F3268EAEC100C52E2B /* Info.plist */,
+			);
+			path = "Standard Library Tests";
+			sourceTree = "<group>";
+		};
+		3C2046FF268EB2A100C52E2B /* Standard Library */ = {
+			isa = PBXGroup;
+			children = (
+				3C204702268EB31E00C52E2B /* Libraries */,
+				3C204700268EB30F00C52E2B /* Tests */,
+			);
+			name = "Standard Library";
+			sourceTree = "<group>";
+		};
 		3C2BC9B323E2754600CB8C20 /* Inline Errors */ = {
 			isa = PBXGroup;
 			children = (
@@ -405,7 +446,6 @@
 		3C2BC9B623E2766100CB8C20 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				3C2A9D002679A6610084716C /* Libraries */,
 				3C0566B323135675004CDB1A /* Assets.xcassets */,
 			);
 			path = Assets;
@@ -530,13 +570,31 @@
 			productReference = 3C0566BE23135675004CDB1A /* BushelScript EditorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		3C2046EE268EAEC100C52E2B /* Standard Library Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3C2046F4268EAEC100C52E2B /* Build configuration list for PBXNativeTarget "Standard Library Tests" */;
+			buildPhases = (
+				3C2046EB268EAEC100C52E2B /* Sources */,
+				3C2046EC268EAEC100C52E2B /* Frameworks */,
+				3C2046ED268EAEC100C52E2B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3C2046F9268EAEDF00C52E2B /* PBXTargetDependency */,
+			);
+			name = "Standard Library Tests";
+			productName = "Standard Library Tests";
+			productReference = 3C2046EF268EAEC100C52E2B /* Standard Library Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		3C0566A223135673004CDB1A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1020;
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Ian Gregory";
 				TargetAttributes = {
@@ -546,6 +604,10 @@
 					};
 					3C0566BD23135675004CDB1A = {
 						CreatedOnToolsVersion = 10.2.1;
+						TestTargetID = 3C0566A923135673004CDB1A;
+					};
+					3C2046EE268EAEC100C52E2B = {
+						CreatedOnToolsVersion = 12.5;
 						TestTargetID = 3C0566A923135673004CDB1A;
 					};
 				};
@@ -578,6 +640,7 @@
 			targets = (
 				3C0566A923135673004CDB1A /* BushelScript Editor */,
 				3C0566BD23135675004CDB1A /* BushelScript EditorTests */,
+				3C2046EE268EAEC100C52E2B /* Standard Library Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -653,9 +716,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C2A9D012679A6610084716C /* Libraries in Resources */,
 				3C2A9CEA267940360084716C /* bushelscript in Resources */,
 				3C2A9CE826793E690084716C /* BushelGUIHost.app in Resources */,
+				3C204703268EB31E00C52E2B /* Libraries in Resources */,
 				3C0566B423135675004CDB1A /* Assets.xcassets in Resources */,
 				3C2BC9EC23E27E6200CB8C20 /* Main.storyboard in Resources */,
 				3C04308423199A2800758339 /* Preferences.storyboard in Resources */,
@@ -670,6 +733,14 @@
 			files = (
 				3C3C182A231B585200553072 /* CustomHashbang.bushel in Resources */,
 				3C2E1345231B709000E0EB8E /* NoHashbang.bushel in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3C2046ED268EAEC100C52E2B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C204701268EB30F00C52E2B /* Tests in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -743,6 +814,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3C2046EB268EAEC100C52E2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C2046F2268EAEC100C52E2B /* StandardLibraryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -750,6 +829,11 @@
 			isa = PBXTargetDependency;
 			target = 3C0566A923135673004CDB1A /* BushelScript Editor */;
 			targetProxy = 3C0566BF23135675004CDB1A /* PBXContainerItemProxy */;
+		};
+		3C2046F9268EAEDF00C52E2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3C0566A923135673004CDB1A /* BushelScript Editor */;
+			targetProxy = 3C2046F8268EAEDF00C52E2B /* PBXContainerItemProxy */;
 		};
 		3C554CB323F7AFE50029E71A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1003,6 +1087,66 @@
 			};
 			name = Release;
 		};
+		3C2046F5268EAEC100C52E2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Standard Library Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.igregory.Standard-Library-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BushelScript Editor.app/Contents/MacOS/BushelScript Editor";
+			};
+			name = Debug;
+		};
+		3C2046F6268EAEC100C52E2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Standard Library Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.igregory.Standard-Library-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BushelScript Editor.app/Contents/MacOS/BushelScript Editor";
+			};
+			name = Release;
+		};
+		3C2046F7268EAEC100C52E2B /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Standard Library Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.igregory.Standard-Library-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BushelScript Editor.app/Contents/MacOS/BushelScript Editor";
+			};
+			name = Profiling;
+		};
 		3C4897AF2400B9AE008EE9D1 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1137,6 +1281,16 @@
 				3C0566D623135675004CDB1A /* Debug */,
 				3C0566D723135675004CDB1A /* Release */,
 				3C4897B12400B9AE008EE9D1 /* Profiling */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3C2046F4268EAEC100C52E2B /* Build configuration list for PBXNativeTarget "Standard Library Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C2046F5268EAEC100C52E2B /* Debug */,
+				3C2046F6268EAEC100C52E2B /* Release */,
+				3C2046F7268EAEC100C52E2B /* Profiling */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
