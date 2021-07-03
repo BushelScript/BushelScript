@@ -67,3 +67,18 @@ extension Term: Comparable {
     }
     
 }
+
+public protocol TermSemanticURIProvider {
+    
+    var uri: Term.SemanticURI  { get }
+    
+}
+
+extension Term: TermSemanticURIProvider {}
+extension Term.SemanticURI: TermSemanticURIProvider {
+    
+    public var uri: Term.SemanticURI {
+        self
+    }
+    
+}

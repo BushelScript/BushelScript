@@ -128,11 +128,11 @@ public struct Expression {
         /// name of each dictionary in the lexicon, in order.
         /// Defines _T_ in the current dictionary.
         /// Yields the equivalent of `.that`.
-        case define(Term, as: Term?)
+        case define(Term, as: TermSemanticURIProvider?)
         /// Semantically equivalent to _.define_, except that after defining
         /// _T_, pushes _T_'s dictionary _D_ on the lexicon, evaluates `body`,
         /// and then pops _D_ off the lexicon. Yields the result of `body`.
-        case defining(Term, as: Term?, body: Expression)
+        case defining(Term, as: TermSemanticURIProvider?, body: Expression)
         /// Defines a function by adding `name` to the current dictionary as a
         /// command term with parameter terms `parameters`.
         ///

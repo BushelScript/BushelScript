@@ -436,35 +436,35 @@ public final class EnglishParser: SourceParser {
         return .let_(term, initialValue: initialValue)
     }
     
-    private func parseDefineLine() throws -> (term: Term, existingTerm: Term?) {
+    private func parseDefineLine() throws -> (term: Term, uri: TermSemanticURIProvider?) {
         guard let role = parseTermRoleName() else {
             throw ParseError(.missing([.termRole]), at: currentLocation)
         }
-        let termName = try parseTermNameEagerlyOrThrow(stoppingAt: ["as"], styling: styling(for: role))
-        let existingTerm: Term? = try {
+        let name = try parseTermNameEagerlyOrThrow(stoppingAt: ["as"], styling: styling(for: role))
+        let uriProvider: TermSemanticURIProvider = try { () -> TermSemanticURIProvider? in
             guard tryEating(prefix: "as") else {
                 return nil
             }
-            return try eatTermOrThrow()
-        }()
+            return try eatTermURI(styling(for: role)) ?? eatTermOrThrow()
+        }() ?? lexicon.makeURI(forName: name)
         
-        let term = Term(role, existingTerm?.uri ?? lexicon.makeURI(forName: termName), name: termName)
+        let term = Term(role, uriProvider.uri, name: name)
         lexicon.add(term)
         
-        return (term: term, existingTerm: existingTerm)
+        return (term: term, uri: uriProvider)
     }
     
     private func handleDefine() throws -> Expression.Kind? {
-        let (term: term, existingTerm: existingTerm) = try parseDefineLine()
-        return .define(term, as: existingTerm)
+        let (term: term, uri: uri) = try parseDefineLine()
+        return .define(term, as: uri)
     }
     
     private func handleDefining() throws -> Expression.Kind? {
-        let (term: term, existingTerm: existingTerm) = try parseDefineLine()
+        let (term: term, uri: uri) = try parseDefineLine()
         let body = try withTerminology(of: term) {
             try parseSequence()
         }
-        return .defining(term, as: existingTerm, body: body)
+        return .defining(term, as: uri, body: body)
     }
     
     private func handleImportSystem(name _: Term.Name) throws -> Term {
