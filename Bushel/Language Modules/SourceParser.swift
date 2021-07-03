@@ -1098,6 +1098,7 @@ extension SourceParser {
         addingElement(.operator) {
             source.removeFirst(result.termString.count)
         }
+        eatCommentsAndWhitespace()
     }
     
     private func eatPostfixOperator() -> (termName: Term.Name, operator: UnaryOperation)? {
