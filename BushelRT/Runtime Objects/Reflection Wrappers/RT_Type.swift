@@ -9,7 +9,7 @@ public class RT_Type: RT_ValueWrapper<Reflection.`Type`> {
     }
     
     public override var description: String {
-        "\(value.name as Any? ?? "«type \(value.uri)»")"
+        "\(value.name as Any? ?? "#type [\(value.uri)]")"
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {

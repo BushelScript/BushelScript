@@ -46,7 +46,7 @@ public class Term: Hashable, CustomStringConvertible, CustomDebugStringConvertib
         {
             return "\(name)"
         } else {
-            return "«\(role) \(uri)»"
+            return "#\(role) [\(uri)]"
         }
     }
     

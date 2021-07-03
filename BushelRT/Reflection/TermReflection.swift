@@ -34,7 +34,7 @@ extension TermReflection {
         if let name = name {
             return "\(name)"
         } else {
-            return "«\(id.role) \(uri)»"
+            return "#\(id.role) [\(uri)]"
         }
     }
     

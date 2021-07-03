@@ -9,7 +9,7 @@ public class RT_Constant: RT_ValueWrapper<Reflection.Constant> {
     }
     
     public override var description: String {
-        "\(value.name as Any? ?? "«constant \(value.uri)»")"
+        "\(value.name as Any? ?? "#constant [\(value.uri)]")"
     }
     
     public override func compareEqual(with other: RT_Object) -> Bool {
