@@ -12,8 +12,6 @@ public struct Reflection {
     private mutating func addAll(from rootTerm: Term) {
         for term in rootTerm.dictionary.contents {
             switch term.role {
-            case .dictionary:
-                break
             case .type:
                 let type = types.add(term)
                 typesWithoutSupertype.insert(type)

@@ -273,7 +273,7 @@ public final class EnglishParser: SourceParser {
         try eatLineBreakOrThrow(.toBeginBlock("function body"))
         let body = try withScope {
             lexicon.add(Set(arguments))
-            lexicon.add(Term(Term.ID(Dictionaries.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.dictionary))
+            lexicon.add(Term(Term.ID(Constants.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.dictionary))
             return try parseSequence()
         }
         
@@ -304,7 +304,7 @@ public final class EnglishParser: SourceParser {
     private func parseBlockBody(arguments: [Term]) throws -> Expression.Kind? {
         let body = try withScope {
             lexicon.add(Set(arguments))
-            lexicon.add(Term(Term.ID(Dictionaries.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.dictionary))
+            lexicon.add(Term(Term.ID(Constants.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.dictionary))
             if tryEatingLineBreak() {
                 return try parseSequence()
             } else {
@@ -588,10 +588,6 @@ public final class EnglishParser: SourceParser {
         switch term.role {
         case .constant: // MARK: .constant
             return .enumerator(term)
-        case .dictionary: // MARK: .dictionary
-            // TODO: Such purely organizational dictionaries should probably
-            // have a runtime reflection type.
-            return .missing
         case .type: // MARK: .type
             if let specifierKind = try parseSpecifierAfterTypeName() {
                 return .specifier(Specifier(term: term, kind: specifierKind))

@@ -88,11 +88,11 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
     }
     
     public mutating func pushUnnamedDictionary(exports: Bool = false) {
-        addPush(Term(.dictionary, makeUniqueURI(), exports: exports))
+        addPush(Term(.constant, makeUniqueURI(), exports: exports))
     }
     
     public mutating func pushDictionaryTerm(uri: Term.SemanticURI, exports: Bool = false) {
-        let id = Term.ID(.dictionary, uri)
+        let id = Term.ID(.constant, uri)
         let dictionaryTerm = term(id: id) ?? add(Term(id, exports: exports))
         addPush(dictionaryTerm)
     }

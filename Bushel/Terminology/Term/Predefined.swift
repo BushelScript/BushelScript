@@ -139,33 +139,6 @@ public enum Variables: String, Term.PredefinedID {
     
 }
 
-public enum Dictionaries: String, Term.PredefinedID {
-    
-    case root
-    
-    case function
-    
-    case Core_Math
-    case Core_Sequence
-    case Core_String
-    case Core_GUI
-    case Core_CLI
-    
-    public var role: Term.SyntacticRole {
-        .dictionary
-    }
-    
-    public init?(_ uri: Term.SemanticURI) {
-        switch uri {
-        case .id(let pathname):
-            self.init(pathname: pathname)
-        default:
-            return nil
-        }
-    }
-    
-}
-
 public enum Types: String, Term.PredefinedID {
     
     case item
@@ -421,6 +394,8 @@ public enum Properties: String, Term.PredefinedID {
 
 public enum Constants: String, Term.PredefinedID {
     
+    case function
+    
     case `true`
     case `false`
     
@@ -434,6 +409,8 @@ public enum Constants: String, Term.PredefinedID {
             return typeTrue
         case .`false`:
             return typeFalse
+        default:
+            return nil
         }
     }
     

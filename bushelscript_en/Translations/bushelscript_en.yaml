@@ -36,14 +36,6 @@ translation:
                 #   Module at the bottom of the Standard Module Stack
                 #     (i.e., searched last).
                 Core: Core
-        dictionary:
-            id:
-                Core:
-                    Math: Math
-                    Sequence: Sequence
-                    String: String
-                    GUI: GUI
-                    CLI: CLI
         resource:
             res:
                 system: system
@@ -88,6 +80,7 @@ translation:
                 applescript:
                     - applescript
                     - AppleScript
+                console: console
         property:
             ae4:
                 pALL: properties
@@ -125,7 +118,7 @@ translation:
                     minutes: minutes
                     hours: hours
                     seconds since midnight: seconds since midnight
-                Math:
+                real:
                     NaN: NaN
                     inf:
                         - inf
@@ -159,7 +152,7 @@ translation:
                 delay:
                     - delay
                     - wait
-                Math:
+                real:
                     abs:
                         - abs
                         - absolute value
@@ -174,7 +167,7 @@ translation:
                     pow:
                         - pow
                         - power
-                    ln: ln  # Cannot use "log" since that's taken by the CLI command
+                    ln: ln  # Cannot use "log" since that's taken by the console command
                     log10: log10
                     log2: log2
                     sin:
@@ -204,11 +197,11 @@ translation:
                         - ceil
                         - ceiling
                     floor: floor
-                Sequence:
+                list:
                     add: add
                     remove: remove
                     pluck: pluck
-                CLI:
+                console:
                     log: log
         parameter:
             ae12:
@@ -239,7 +232,7 @@ translation:
                     - as
                 bShGask appr: title
             id:
-                Math:
+                real:
                     abs:
                         .direct: of
                     sqrt:
@@ -252,13 +245,13 @@ translation:
                     atan2:
                         .direct: y
                         x: x
-                Sequence:
+                list:
                     add:
                         .target: to
                     remove:
                         .target: from
                     pluck:
                         .target: from
-                CLI:
+                console:
                     log:
                         .direct: message
