@@ -20,7 +20,7 @@ jobs:
         ./build.sh
         product='BushelScript Editor.app'
         mv install/Applications/"$product" .
-        tar -cvf "$product"
+        tar -cvf BushelScript.tar "$product"
         echo "artifact=BushelScript.v${VERSION}" >> "$GITHUB_ENV"
     - name: Upload package
       uses: actions/upload-artifact@v2
