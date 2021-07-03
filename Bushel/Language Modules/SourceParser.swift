@@ -799,7 +799,7 @@ extension SourceParser {
                     
                     func parseInteger() -> Expression? {
                         guard
-                            let match = tryEating(Regex("^\\d++(?!\\.)"), .number),
+                            let match = tryEating(integerRegex, .number),
                             let value = Int64(match.matchedString)
                         else {
                             return nil
@@ -808,7 +808,7 @@ extension SourceParser {
                     }
                     func parseDouble() throws -> Expression {
                         guard
-                            let match = tryEating(Regex("^\\d*(?:\\.\\d++(?:[ep][-+]?\\d+)?)?", options: .ignoreCase), .number),
+                            let match = tryEating(doubleRegex, .number),
                             let value = Double(match.matchedString)
                         else {
                             throw ParseError(.invalidNumber, at: expressionLocation)
@@ -825,6 +825,9 @@ extension SourceParser {
     }
     
 }
+
+private let integerRegex = Regex("^\\d++(?!\\.)")
+private let doubleRegex = Regex("^\\d*(?:\\.\\d++(?:[ep][-+]?\\d+)?)?", options: .ignoreCase)
 
 // MARK: Parse helpers
 extension SourceParser {
@@ -1158,6 +1161,8 @@ extension SourceParser {
     
 }
 
+private let lineBreakRegex = Regex("\r?\n|\r")
+
 // MARK: Parse primitives
 extension SourceParser {
     
@@ -1177,7 +1182,7 @@ extension SourceParser {
         }
     }
     public func tryEatingLineBreak() -> Bool {
-        tryEating(Regex("\r?\n|\r")) != nil
+        tryEating(lineBreakRegex) != nil
     }
     
     public func eatOrThrow(prefix: String, _ styling: Styling = .keyword, spacing: Spacing = .leftRight) throws {
