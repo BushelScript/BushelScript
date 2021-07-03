@@ -328,6 +328,9 @@ public enum Properties: String, Term.PredefinedID {
     case Sequence_reverse
     case Sequence_tail
     
+    case record_keys
+    case record_values
+    
     case file_basename
     case file_extname
     case file_dirname

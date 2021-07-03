@@ -10,6 +10,9 @@ public class RT_List: RT_Object, Encodable {
         self.contents = contents
         super.init(rt)
     }
+    public convenience init<Seq: Sequence>(_ rt: Runtime, contents: Seq) where Seq.Element == RT_Object {
+        self.init(rt, contents: Array(contents))
+    }
     
     public override var description: String {
         "{\(contents.map { String(describing: $0) }.joined(separator: ", "))}"

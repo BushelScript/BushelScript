@@ -106,6 +106,9 @@ translation:
                     - args
                     - arguments
                 current date: current date
+                record:
+                    keys: keys
+                    values: values
                 file:
                     basename:
                         - basename

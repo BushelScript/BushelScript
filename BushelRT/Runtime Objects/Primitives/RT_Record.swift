@@ -31,8 +31,19 @@ public class RT_Record: RT_Object, Encodable {
         RT_Integer(rt, value: contents.count)
     }
     
+    public var keys: RT_List {
+        RT_List(rt, contents: contents.keys)
+    }
+    public var values: RT_List {
+        RT_List(rt, contents: contents.values)
+    }
+    
     public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
-        [.Sequence_length: \RT_Record.length]
+        [
+            .Sequence_length: \RT_Record.length,
+            .record_keys: \RT_Record.keys,
+            .record_values: \RT_Record.values
+        ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
         keyPath.evaluate(on: self)
@@ -49,6 +60,10 @@ public class RT_Record: RT_Object, Encodable {
         } else {
             return try super.property(property)
         }
+    }
+    
+    public override func element(_ type: Reflection.`Type`, id: RT_Object) throws -> RT_Object? {
+        contents[id]?.coerce(to: type)
     }
     
     public override func compare(with other: RT_Object) -> ComparisonResult? {
