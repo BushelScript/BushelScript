@@ -318,22 +318,29 @@ extension SourceParser {
         eatNewlines()
         
         while true {
-            if source.isEmpty || stopKeywords.contains(where: { source.hasPrefix($0) }) {
-                break
+            
+            var indentation = addIndentation()
+            
+            func endSequence() {
+                endExpression = false
+                if sequenceNestingLevel > 0 {
+                    sequenceNestingLevel -= 1
+                }
+                elements.remove(indentation)
+                elements.insert(SourceElement(Indentation(level: sequenceNestingLevel, location: indentation.location)))
             }
             
-            let indentation = addIndentation()
+            
+            if source.isEmpty || stopKeywords.contains(where: { source.hasPrefix($0) }) {
+                endSequence()
+                break
+            }
             
             if let primary = try parsePrimary() {
                 expressions.append(primary)
             }
             if endExpression {
-                endExpression = false
-                sequenceNestingLevel -= 1
-                
-                elements.remove(indentation)
-                elements.insert(SourceElement(Indentation(level: sequenceNestingLevel, location: indentation.location)))
-                
+                endSequence()
                 break
             }
             
@@ -344,7 +351,9 @@ extension SourceParser {
             if source.isEmpty {
                 if let newline = newline {
                     expressions.append(newline)
+                    indentation = addIndentation()
                 }
+                endSequence()
                 break
             }
             
@@ -356,6 +365,8 @@ extension SourceParser {
             
             if stopKeywords.contains(where: { source.hasPrefix($0) }) {
                 expressions.append(newline!)
+                indentation = addIndentation()
+                endSequence()
                 break
             }
             
