@@ -1,19 +1,8 @@
-name: CI (Test and Package)
+name: Package
 
 on: [push]
 
 jobs:
-  test:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Switch to Xcode 12.4
-      run: sudo xcode-select -s /Applications/Xcode_12.4.app/Contents/Developer
-    - name: Test
-      run: |
-        cd "$GITHUB_WORKSPACE"
-        ./test.sh
-    
   package:
     runs-on: macos-latest
     steps:
@@ -29,7 +18,9 @@ jobs:
         export VERSION="$(get_project_version)+git.$(git rev-parse --short HEAD)"
         export INSTALL_DIR=install
         ./build.sh
-        tar -cvf BushelScript.tar install/Applications/
+        product='BushelScript Editor.app'
+        mv install/Applications/"$product" .
+        tar -cvf "$product"
         echo "artifact=BushelScript.v${VERSION}" >> "$GITHUB_ENV"
     - name: Upload package
       uses: actions/upload-artifact@v2
