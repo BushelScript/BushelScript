@@ -157,6 +157,10 @@ extension Runtime {
             case let .try_(body, handle): // MARK: .try_
                 do {
                     return try runPrimary(body)
+                } catch let raisedObject as RaisedObjectError {
+                    context.targetStack.push(raisedObject.error)
+                    defer { context.targetStack.pop() }
+                    return try runPrimary(handle)
                 } catch {
                     context.targetStack.push(RT_Error(self, error))
                     defer { context.targetStack.pop() }
