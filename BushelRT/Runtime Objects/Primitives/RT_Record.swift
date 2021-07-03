@@ -32,10 +32,10 @@ public class RT_Record: RT_Object, Encodable {
     }
     
     public var keys: RT_List {
-        RT_List(rt, contents: contents.keys)
+        RT_List(rt, contents: contents.keys.sorted())
     }
     public var values: RT_List {
-        RT_List(rt, contents: contents.values)
+        RT_List(rt, contents: contents.sorted(by: { $0.key < $1.key }).map { $0.value })
     }
     
     public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
