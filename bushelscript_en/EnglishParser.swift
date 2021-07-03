@@ -214,8 +214,8 @@ public final class EnglishParser: SourceParser {
         var types: [Expression?] = []
         var arguments: [Term] = []
         while
+            ({ eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true); return true }()),
             !isNext("do"),
-            { eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true); return true }(),
             let parameterTermName = try parseTermNameEagerly(stoppingAt: ["[", "(", ":"], styling: .parameter)
         {
             let parameterTermURI: Term.SemanticURI = try {
