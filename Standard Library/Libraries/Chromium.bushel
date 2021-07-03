@@ -1,0 +1,71 @@
+#!/usr/local/bin/bushelscript -l bushelscript_en
+
+-- We define Chromium terms here because we can't know for certain
+-- which Chromium-derived app(s) is/are actually installed at parse time.
+define property active tab as «property ae4:acTa»
+define property URL as «property ae4:URL »
+define property index as «property ae4:pidx»
+define type window as «type ae4:cwin»
+defining command make as «command ae8:corecrel»
+	define parameter new as «parameter ae4:kocl»
+	define parameter at as «parameter ae4:insh»
+	define parameter with properties as «parameter ae4:prdt»
+end
+
+-- "if already open" constants:
+define constant bring to front
+define constant open again
+define constant do nothing
+
+-- Opens a URL in a Chromium-derived browser.
+-- If it is already open in a window, focuses that window.
+-- Otherwise, makes a new window.
+to open
+	URL [direct] (URL to open): string
+	in [target] (browser): app
+	if already open (already open action): constant
+	bringing app to front: boolean
+do
+	if browser is unspecified then set browser to "Google Chrome"
+	if already open action is unspecified then set already open action to bring to front
+	if bringing app to front is unspecified then set bringing app to front to true
+
+	tell browser
+
+		if already open action is not open again
+			-- If already open in another window, focus that window.
+			repeat for win in every window
+				tell win
+					if (URL of active tab) is URL to open
+						if already open action is bring to front
+							set index of win to 1
+							(if bringing app to front then reopen)
+						else
+							-- already open action is 'do nothing'
+						end
+						return win
+					end
+				end
+			end
+		end
+
+		tell make new window
+			set URL of active tab to URL to open
+			return it
+		end
+
+	end
+end
+to open
+	URL [direct] (URL to open): string
+	in [target] (browser): string
+	if already open (already open action): constant
+	bringing app to front: boolean
+do
+	open URL URL to open in (get app named browser) if already open already open action bringing app to front bringing app to front
+end
+
+--( e.g.,
+open "https://www.google.com/" in "Google Chrome"
+open "https://www.google.com/" in "Brave Browser"
+)--

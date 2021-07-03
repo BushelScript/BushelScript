@@ -1,0 +1,33 @@
+#!/usr/local/bin/bushelscript -l bushelscript_en
+
+require library Unit Test
+tell require library Chromium
+
+	test "open" run do
+		to find browser
+			browser [direct]: string
+		do
+			try
+				get app named browser
+				browser
+			handle
+				missing
+			end
+		end
+		
+		if find browser "Google Chrome"
+		else if find browser "Brave Browser"
+		else
+			skip since "No known Chromium browser is installed"
+		end
+		let browser be that
+		
+		let win be open "http://example.com/" in browser if already open open again bringing app to front false
+		expect that win is a specifier since "the window is returned"
+		expect (get URL of active tab of win) to contain "example.com"
+		
+		-- Clean up as best we can.
+		tell get app named browser to «command ae8:coreclos» active tab of win
+	end
+
+end

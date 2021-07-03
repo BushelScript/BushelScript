@@ -21,5 +21,6 @@ class StandardLibraryTests: XCTestCase {
     }
     
     func testList() { runTest("List") }
+    func testChromium() { runTest("Chromium") }
     
 }
