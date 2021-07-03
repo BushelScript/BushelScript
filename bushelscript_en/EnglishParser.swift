@@ -437,7 +437,7 @@ public final class EnglishParser: SourceParser {
     }
     
     private func parseDefineLine() throws -> (term: Term, uri: TermSemanticURIProvider?) {
-        guard let role = parseTermRoleName() else {
+        guard let role = eatTermRoleName() else {
             throw ParseError(.missing([.termRole]), at: currentLocation)
         }
         let name = try parseTermNameEagerlyOrThrow(stoppingAt: ["as"], styling: styling(for: role))

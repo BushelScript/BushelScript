@@ -955,19 +955,15 @@ extension SourceParser {
         }
     }
     
-    public func parseTermRoleName() -> Term.SyntacticRole? {
+    public func eatTermRoleName() -> Term.SyntacticRole? {
         addingElement {
-            eatTermRoleName()
+            eatCommentsAndWhitespace()
+            guard let kindString = Term.Name.nextWord(in: source) else {
+                return nil
+            }
+            source.removeFirst(kindString.count)
+            return Term.SyntacticRole(rawValue: String(kindString))
         }
-    }
-    
-    private func eatTermRoleName() -> Term.SyntacticRole? {
-        guard let kindString = Term.Name.nextWord(in: source) else {
-            return nil
-        }
-        source.removeLeadingWhitespace()
-        source.removeFirst(kindString.count)
-        return Term.SyntacticRole(rawValue: String(kindString))
     }
     
     private func eatFromSource(_ words: [String], styling: Styling = .keyword) {
@@ -1401,7 +1397,7 @@ extension SourceParser {
         }
         func eatRawFormTerm() throws -> Term? {
             return try withCurrentIndex { startIndex in
-                guard source.removePrefix("#") else {
+                guard tryEating(prefix: "#", spacing: .left) else {
                     return nil
                 }
                 
@@ -1416,8 +1412,6 @@ extension SourceParser {
                 let uri = try eatTermURI(styling(for: role)) ?? lexicon.makeUniqueURI()
                 
                 let term = lexicon.term(id: Term.ID(role, uri)) ?? Term(role, uri)
-                
-                addElement(from: startIndex, styling: styling(for: term.role), spacing: .leftRight)
                 
                 return term
             }
