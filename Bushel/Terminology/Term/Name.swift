@@ -8,7 +8,43 @@ extension Term {
         
         public static let separator = " "
         
+        public init(_ words: [String]) {
+            self.words = words
+        }
+        
         public var words: [String] = []
+        
+        public init<S: StringProtocol>(_ string: S) where S.SubSequence == Substring {
+            self.init(Term.Name.words(in: string))
+        }
+        
+        public static func words<S: StringProtocol>(in string: S) -> [String] where S.SubSequence == Substring {
+            var words: [String] = []
+            var word = ""
+            for c in string {
+                let isWhitespace = c.isWhitespace
+                let isWordBreaking = isWhitespace || c.isWordBreakingPunctuation
+                if isWordBreaking, !word.isEmpty {
+                    words.append(word)
+                    word = ""
+                }
+                if !isWhitespace {
+                    if isWordBreaking {
+                        words.append(String(c))
+                    } else {
+                        word.append(c)
+                    }
+                }
+            }
+            if !word.isEmpty {
+                words.append(word)
+            }
+            return words
+        }
+        
+        public static func nextWord<S: StringProtocol>(in string: S) -> String? where S.SubSequence == Substring {
+            words(in: string).first
+        }
         
         public var normalized: String {
             get {
@@ -23,62 +59,27 @@ extension Term {
             normalized
         }
         
-        public init<S: StringProtocol>(_ string: S) where S.SubSequence == Substring {
-            self.init(Term.Name.words(in: string))
-        }
-        
-        public init(_ words: [String]) {
-            self.words = words
-        }
-        
-        public static func words<S: StringProtocol>(in string: S) -> [String] where S.SubSequence == Substring {
-            var words = string.reduce(into: []) { (result: inout [String], c: Character) in
-                if c.isWhitespace {
-                    if result.last != "" {
-                        result.append("")
-                    }
-                } else {
-                    let breaking = c.isWordBreakingPunctuation
-                    if breaking && result.last != "" || result.isEmpty {
-                        result.append("")
-                    }
-                    result[result.index(before: result.endIndex)].append(c)
-                    if breaking {
-                        result.append("")
-                    }
-                }
-            }
-            if words.last == "" {
-                words.removeLast()
-            }
-            return words
-        }
-        
-        public static func nextWord<S: StringProtocol>(in string: S) -> String? where S.SubSequence == Substring {
-            words(in: string).first
-        }
-        
     }
     
 }
 
 extension Character {
     
-    public var isWordBreaking: Bool {
+    @inlinable public var isWordBreaking: Bool {
         unicodeScalars.allSatisfy(wordBreakingCharacters.contains(_:))
     }
     
-    public var isWordBreakingPunctuation: Bool {
+    @inlinable public var isWordBreakingPunctuation: Bool {
         unicodeScalars.allSatisfy(wordBreakingPunctuationCharacters.contains(_:))
     }
     
 }
 
-private let wordBreakingPunctuationCharacters: CharacterSet =
+public let wordBreakingPunctuationCharacters: CharacterSet =
     CharacterSet.punctuationCharacters
     .union(.symbols)
     .subtracting(CharacterSet(charactersIn: "_.-/'’?"))
-private let wordBreakingCharacters: CharacterSet =
+public let wordBreakingCharacters: CharacterSet =
     CharacterSet.whitespacesAndNewlines
     .union(wordBreakingPunctuationCharacters)
 
