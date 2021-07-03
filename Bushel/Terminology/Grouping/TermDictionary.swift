@@ -89,14 +89,29 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     private func findExportingTerms<Terms: Collection>(in terms: Terms) where Terms.Element == Term {
         nextTerm: for term in terms {
             if term.exports {
+                guard !exportingTerms.isEmpty else {
+                    exportingTerms.append(term)
+                    continue nextTerm
+                }
                 // Insert in sorted position.
-                for i in 0..<exportingTerms.count {
-                    if term < exportingTerms[i] {
-                        exportingTerms.insert(term, at: i)
+                var begin = 0
+                var end = exportingTerms.count
+                var middle = 0
+                while begin < end {
+                    middle = (begin + end) / 2
+                    if term < exportingTerms[middle] {
+                        end = middle
+                    } else if term > exportingTerms[middle] {
+                        begin = middle + 1
+                    } else {
                         continue nextTerm
                     }
                 }
-                exportingTerms.append(term)
+                middle = (begin + end) / 2
+                if middle == exportingTerms.count || term != exportingTerms[middle] {
+                    exportingTerms.insert(term, at: middle)
+                }
+                assert(exportingTerms.sorted() == exportingTerms)
             }
         }
     }
