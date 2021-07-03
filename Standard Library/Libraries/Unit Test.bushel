@@ -46,19 +46,37 @@ do
 end
 
 to fail
-	since (reason): string
+	since [direct] (reason): string
 do
 	if reason then " since " & reason else ""
 	raise "Failed unconditionally" & that
+end
+
+define constant skip test
+to skip
+	since [direct] (reason): string
+do
+	raise {skip test, reason}
 end
 
 to test
 	description [direct]: string
 	run (block): function
 do
-	try tell block to run
-	handle raise ("“" & description & "” failed: " & it)
-	log "Test " & (if description then description & " " else "") & "succeeded (" & assertion count & " assertions)."
+	try
+		tell block to run
+		log "Test " & (if description then description & " " else "") & "succeeded (" & assertion count & " assertions)."
+	handle
+		if it is a list
+			if (length = 2) and ((item 1) = skip test)
+				log "Test " & (if description then description & " " else "") & "skipped: " & item 2
+			else
+				raise ("“" & description & "” failed: " & it)
+			end
+		else
+			raise ("“" & description & "” failed: " & it)
+		end
+	end
 	set assertion count to 0
 	true
 end
