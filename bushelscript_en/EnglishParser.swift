@@ -231,7 +231,7 @@ public final class EnglishParser: SourceParser {
                             }
                         }
                     }()
-                    try eatOrThrow(prefix: "]")
+                    try eatOrThrow(prefix: "]", spacing: .right)
                     return uri
                 } else {
                     return .id(Term.SemanticURI.Pathname([parameterTermName.normalized]))
