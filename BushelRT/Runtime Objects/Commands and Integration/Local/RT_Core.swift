@@ -21,6 +21,15 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             return RT_Boolean.withValue(rt, !operand.truthy)
         }
         
+        functions.add(rt, .negate, parameters: [.direct: .integer]) { arguments in
+            let operand = try arguments.for(.direct, RT_Integer.self)
+            return RT_Integer(rt, value: -operand.value)
+        }
+        functions.add(rt, .negate, parameters: [.direct: .real]) { arguments in
+            let operand = try arguments.for(.direct, RT_Real.self)
+            return RT_Real(rt, value: -operand.value)
+        }
+        
         func binary(_ operation: @escaping (RT_Object, RT_Object) throws -> RT_Object?) -> (_ arguments: RT_Arguments) throws -> RT_Object {
             { arguments in
                 let lhs = try arguments.for(.lhs)

@@ -90,6 +90,9 @@ public final class EnglishFormatter: SourceFormatter {
             switch operation {
             case .not:
                 return "not \(format(operand, level: level))"
+            case .negate:
+                return "-(\(format(operand, level: level)))"
+            
             }
         case .infixOperator(let operation, let lhs, let rhs):
             let formattedRhs = format(rhs, level: level)
@@ -139,7 +142,7 @@ public final class EnglishFormatter: SourceFormatter {
                 case .multiply:
                     return "*"
                 case .divide:
-                    return "/"
+                    return "div"
                 case .coerce:
                     return "as"
                 }

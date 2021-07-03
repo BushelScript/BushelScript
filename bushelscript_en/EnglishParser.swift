@@ -31,7 +31,8 @@ public final class EnglishParser: SourceParser {
     }
     
     public let prefixOperators: [Term.Name : UnaryOperation] = [
-        Term.Name("not"): .not
+        Term.Name("not"): .not,
+        Term.Name("-"): .negate
     ]
     
     public let postfixOperators: [Term.Name : UnaryOperation] = [:]

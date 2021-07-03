@@ -437,6 +437,7 @@ public enum Constants: String, Term.PredefinedID {
 public enum Commands: String, Term.PredefinedID {
     
     case not
+    case negate
     
     case or, xor
     case and
