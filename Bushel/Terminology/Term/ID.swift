@@ -55,11 +55,11 @@ extension Term.ID: CustomStringConvertible {
     }
     
     public var normalized: String {
-        "\(role)/\(uri)"
+        "\(role) \(uri)"
     }
     
     public init?<S: StringProtocol>(normalized: S) where S.SubSequence == Substring {
-        let components = normalized.split(separator: "/", maxSplits: 1)
+        let components = normalized.split(separator: " ", maxSplits: 1)
         guard components.count == 2 else {
             return nil
         }
