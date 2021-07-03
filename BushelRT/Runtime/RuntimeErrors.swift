@@ -7,7 +7,7 @@ public struct RuntimeError: LocalizedError, Located {
     public let description: String
     
     /// The source location to which the error applies.
-    public let location: SourceLocation
+    public var location: SourceLocation
     
     public var errorDescription: String? {
         description
@@ -22,7 +22,7 @@ public struct RaisedObjectError: LocalizedError, Located {
     public let error: RT_Object
     
     /// The source location of the `raise` expression.
-    public let location: SourceLocation
+    public var location: SourceLocation
     
     public var errorDescription: String? {
         "\(error)"

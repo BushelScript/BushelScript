@@ -123,10 +123,11 @@ extension Runtime {
                     // Tried to send an inapplicable command to a remote object
                     // Ignore it and fall through to the next target
                     return nil
-                } catch let error as RaisedObjectError where error.error.rt !== rt {
-                    // This error originates from another file (with a different
-                    // source mapping). Its location info is meaningless to us.
-                    throw RaisedObjectError(error: error.error, location: rt.currentLocation!)
+                } catch var error as (Error & Located) where error.location.source != rt.currentLocation?.source {
+                    // This error comes from a different source mapping,
+                    // so its location info is meaningless to us.
+                    error.location = rt.currentLocation!
+                    throw error
                 }
             } ?? { throw CommandNotHandled(command: command) }()
         }
