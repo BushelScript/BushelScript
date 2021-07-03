@@ -25,9 +25,7 @@ public func propagate<Result>(from target: RT_Module? = nil, up moduleStack: RT_
         moduleStack.contents
         .reversed()
         .firstNonnil {
-            try function($0.bottom) ??
-                $0.contents
-                .dropFirst()
+            try $0.contents
                 .reversed()
                 .reduce(nil) { try $0 ?? function($1) }
         }
