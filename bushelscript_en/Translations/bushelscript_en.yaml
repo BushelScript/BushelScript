@@ -40,9 +40,11 @@ translation:
             res:
                 system: system
         constant:
-             ae4:
+            ae4:
                  'true': 'true'
                  fals: 'false'
+            id:
+                console: console
         type:
             ae4:
                 cobj: item
@@ -80,7 +82,6 @@ translation:
                 applescript:
                     - applescript
                     - AppleScript
-                console: console
         property:
             ae4:
                 pALL: properties
