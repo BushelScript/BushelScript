@@ -45,6 +45,16 @@ do
 	end
 end
 
+to expect
+	_ [direct] (lhs)
+	to contain (rhs)
+	since (reason): string
+do
+	generic expect that (lhs contains rhs) since reason default reason "containment" to format error do
+		(lhs as string) & " does not contain " & (rhs as string)
+	end
+end
+
 to fail
 	since [direct] (reason): string
 do
