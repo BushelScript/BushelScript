@@ -1366,47 +1366,37 @@ extension SourceParser {
             guard var (termString, term) = try findTerm(in: dictionary) else {
                 return nil
             }
-            
-            if role == nil, tryEating(prefix: ":") {
-                addingElement(styling(for: term.role)) {
-                    source.removeFirst(termString.count)
-                }
-                eatCommentsAndWhitespace()
-                
-                var sourceWithColon: Substring = source
-                repeat {
-                    // For explicit term specification Lhs : rhs,
-                    // only eat the colon if rhs is the name of a term defined
-                    // in the dictionary of Lhs.
+            guard role == nil || term.role == role else {
+                return nil
+            }
+            addingElement(styling(for: term.role)) {
+                source.removeFirst(termString.count)
+            }
+            if role == nil {
+                var sourceWithSlash: Substring = source
+                while tryEating(prefix: "/") {
+                    // For explicit term specification lhs / rhs,
+                    // only eat the slash if rhs is the name of a term defined
+                    // in the dictionary of lhs.
                     guard let result = try findTerm(in: term.dictionary) else {
-                        // Restore the colon. It may have come from some other construct,
-                        // e.g., a record key such as: {Math : pi: "the constant pi"}
-                        source = sourceWithColon
+                        // Restore the slash. It may have come from some other construct.
+                        source = sourceWithSlash
                         
                         return term
                     }
                     
                     // Eat rhs.
                     (termString, term) = result
-                    
                     addingElement(styling(for: term.role)) {
                         source.removeFirst(termString.count)
                     }
                     eatCommentsAndWhitespace()
                     
-                    // We're committed to this colon forming an explicit specification
-                    sourceWithColon = source
-                } while tryEating(prefix: ":")
-                
-                return term
-            } else if role == nil || term.role == role {
-                addingElement(styling(for: term.role)) {
-                    source.removeFirst(termString.count)
+                    // We're committed to this slash forming an explicit specification
+                    sourceWithSlash = source
                 }
-                return term
-            } else {
-                return nil
             }
+            return term
             
         }
         func eatRawFormTerm() throws -> Term? {
@@ -1531,8 +1521,6 @@ extension SourceParser {
     
     public func styling(for role: Term.SyntacticRole) -> Styling {
         switch role {
-        case .dictionary:
-            return .dictionary
         case .type:
             return .type
         case .property:

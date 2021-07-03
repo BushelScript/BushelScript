@@ -240,23 +240,20 @@ public struct Translation {
                     resourceTerms.append(resourceTerm)
                 }
             } else {
-                // For any other term with a pathname URI
                 if
-                    let scopes = termID.uri.pathname?.components.dropLast(),
-                    !scopes.isEmpty // That has two or more components (e.g., Math/pi)
+                    // For any other term with a pathname URI
+                    // that has two or more components (e.g., real/pi),
+                    let ancestorPath = termID.uri.pathname?.dropLast(),
+                    !ancestorPath.isEmpty,
+                    // For each of the terms identified by the ancestor path (e.g., real)
+                    let ancestorTerms = allTermsByURI[.id(ancestorPath)]
                 {
-                    // For each of the terms identified by the ancestor path (e.g., Math)
-                    let ancestorTerms = allTermsByURI[.id(Term.SemanticURI.Pathname(scopes.map { String($0) }))] ?? []
-                    
-                    let dictionaries: [TermDictionary] = ancestorTerms.map {
-                        $0.dictionary
-                    }
-                    
-                    // Add the nested terms to the appropriate dictionary.
-                    for dictionary in dictionaries {
-                        dictionary.add(terms)
-                    }
-                    if !dictionaries.isEmpty {
+                    let ancestorDictionaries = ancestorTerms.map { $0.dictionary }
+                    if !ancestorDictionaries.isEmpty {
+                        // Add the nested terms to the appropriate dictionary.
+                        for dictionary in ancestorDictionaries {
+                            dictionary.add(terms)
+                        }
                         // Remove from base dictionary. The term may still be
                         // accessible from the base through dictionary exporting,
                         // but it should not be redefined in it.

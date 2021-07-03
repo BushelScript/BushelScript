@@ -77,9 +77,9 @@ extension Term.SemanticURI {
     /// Otherwise, nil.
     public var pathname: Pathname? {
         switch self {
-        case .id(_):
+        case .id(let pathname):
             // Special-case target parameter
-            return isTargetParameter ? Pathname([Parameters.target.rawValue]) : nil
+            return isTargetParameter ? Pathname([Parameters.target.rawValue]) : pathname
         default:
             return nil
         }

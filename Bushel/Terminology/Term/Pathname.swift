@@ -29,3 +29,16 @@ extension Term.SemanticURI.Pathname: RawRepresentable, Hashable {
     }
     
 }
+
+// MARK: Transforming pathnames
+extension Term.SemanticURI.Pathname {
+    
+    public func dropLast() -> Term.SemanticURI.Pathname {
+        Term.SemanticURI.Pathname(components.dropLast())
+    }
+    
+    public var isEmpty: Bool {
+        components.isEmpty
+    }
+    
+}
