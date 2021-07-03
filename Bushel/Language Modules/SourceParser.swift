@@ -1401,7 +1401,7 @@ extension SourceParser {
         }
         func eatRawFormTerm() throws -> Term? {
             return try withCurrentIndex { startIndex in
-                guard source.removePrefix("«") else {
+                guard source.removePrefix("#") else {
                     return nil
                 }
                 
@@ -1413,8 +1413,7 @@ extension SourceParser {
                 
                 eatCommentsAndWhitespace()
                 
-                let uri = try eatTermURI(stoppingAt: "»")
-                try eatOrThrow(prefix: "»")
+                let uri = try eatTermURI(styling(for: role)) ?? lexicon.makeUniqueURI()
                 
                 let term = lexicon.term(id: Term.ID(role, uri)) ?? Term(role, uri)
                 
@@ -1427,16 +1426,31 @@ extension SourceParser {
         return try eatDefinedTerm() ?? eatRawFormTerm()
     }
     
-    // NOTE: Does not add any source elements.
-    public func eatTermURI(stoppingAt stop: String) throws -> Term.SemanticURI {
-        guard let stopRange = source.range(of: stop) else {
-            throw ParseError(.missing([.keyword(Term.Name(stop))]), at: currentLocation)
+    public func eatTermURI(_ styling: Styling) throws -> Term.SemanticURI? {
+        let start = "[", stop = "]"
+        guard tryEating(prefix: start, spacing: .left) else {
+            return nil
         }
-        let uriString = source[..<stopRange.lowerBound]
-        source = source[stopRange.lowerBound...]
-        guard let uri = Term.SemanticURI(normalized: String(uriString)) else {
-            throw ParseError(.missing([.termURI]), at: currentLocation)
-        }
+        let uri: Term.SemanticURI = try {
+            if tryEating(prefix: "direct") {
+                return Term.SemanticURI(Parameters.direct)
+            } else if tryEating(prefix: "target") {
+                return Term.SemanticURI(Parameters.target)
+            } else {
+                guard let stopRange = source.range(of: stop) else {
+                    throw ParseError(.missing([.termURIEndMarker]), at: currentLocation)
+                }
+                let uriString = source[..<stopRange.lowerBound]
+                guard let uri = Term.SemanticURI(normalized: String(uriString)) else {
+                    throw ParseError(.missing([.termURI]), at: currentLocation)
+                }
+                addingElement(styling) {
+                    source = source[stopRange.lowerBound...]
+                }
+                return uri
+            }
+        }()
+        try eatOrThrow(prefix: stop, spacing: .right)
         return uri
     }
     

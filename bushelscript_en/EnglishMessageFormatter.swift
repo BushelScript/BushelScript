@@ -44,8 +44,8 @@ public final class EnglishMessageFormatter: MessageFormatter {
                     return "record key"
                 case .termRole:
                     return "term role"
-                case .termURIAndRawFormEndMarker:
-                    return "term URI followed by ‘»’"
+                case .termURIEndMarker:
+                    return "term URI end marker ‘]’"
                 case .termURI:
                     return "term URI"
                 case .weaveDelimiter:

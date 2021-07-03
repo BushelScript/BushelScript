@@ -218,25 +218,7 @@ public final class EnglishParser: SourceParser {
             !isNext("do"),
             let parameterTermName = try parseTermNameEagerly(stoppingAt: ["[", "(", ":"], styling: .parameter)
         {
-            let parameterTermURI: Term.SemanticURI = try {
-                if tryEating(prefix: "[", spacing: .left) {
-                    let uri: Term.SemanticURI = try {
-                        if tryEating(prefix: "direct") {
-                            return Term.SemanticURI(Parameters.direct)
-                        } else if tryEating(prefix: "target") {
-                            return Term.SemanticURI(Parameters.target)
-                        } else {
-                            return try addingElement(.parameter) {
-                                try eatTermURI(stoppingAt: "]")
-                            }
-                        }
-                    }()
-                    try eatOrThrow(prefix: "]", spacing: .right)
-                    return uri
-                } else {
-                    return .id(Term.SemanticURI.Pathname([parameterTermName.normalized]))
-                }
-            }()
+            let parameterTermURI = try eatTermURI(.parameter) ?? .id(Term.SemanticURI.Pathname([parameterTermName.normalized]))
             parameters.append(Term(.parameter, parameterTermURI, name: parameterTermName))
             
             let argumentName: Term.Name = try {

@@ -60,7 +60,7 @@ public struct ParseError: ParseErrorProtocol {
             case recordItem
             case recordKey
             case termRole
-            case termURIAndRawFormEndMarker
+            case termURIEndMarker
             case termURI
             case weaveDelimiter
             case weaveDelimiterEndMarker
