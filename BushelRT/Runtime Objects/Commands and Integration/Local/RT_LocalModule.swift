@@ -66,8 +66,7 @@ public struct FunctionSet {
             for (parameter, argument) in arguments.contents {
                 guard
                     let parameterType = parameters[parameter],
-                    argument.type.isA(parameterType) ||
-                        argument.type.uri == Term.SemanticURI(Types.null)
+                    argument.type.isA(parameterType) || argument.type.uri == Term.SemanticURI(Types.unspecified)
                 else {
                     return bestSoFar
                 }
