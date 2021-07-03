@@ -10,7 +10,7 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     private var byName: [Term.Name : Term] = [:]
     
     /// Constituent terms that export their dictionary contents.
-    private(set) public var exportingTerms: Set<Term> = []
+    private(set) public var exportingTerms: [Term] = []
     
     /// Initializes with no contents.
     public init() {
@@ -87,9 +87,16 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     }
     
     private func findExportingTerms<Terms: Collection>(in terms: Terms) where Terms.Element == Term {
-        for term in terms {
+        nextTerm: for term in terms {
             if term.exports {
-                exportingTerms.insert(term)
+                // Insert in sorted position.
+                for i in 0..<exportingTerms.count {
+                    if term < exportingTerms[i] {
+                        exportingTerms.insert(term, at: i)
+                        continue nextTerm
+                    }
+                }
+                exportingTerms.append(term)
             }
         }
     }

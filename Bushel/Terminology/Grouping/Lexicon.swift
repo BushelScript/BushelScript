@@ -9,7 +9,7 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
     
     private(set) public var stack: [Term] = []
     private var exporting: [Term] {
-        stack.flatMap { $0.dictionary.exportingTerms.sorted() }
+        stack.flatMap { $0.dictionary.exportingTerms }
     }
     
     public init() {
