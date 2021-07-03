@@ -114,7 +114,7 @@ public final class EnglishParser: SourceParser {
         Term.Name("−"): .subtract,
         Term.Name("*"): .multiply,
         Term.Name("×"): .multiply,
-        Term.Name("/"): .divide,
+        Term.Name("div"): .divide,
         Term.Name("÷"): .divide,
         Term.Name("as"): .coerce,
     ]
