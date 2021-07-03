@@ -68,8 +68,8 @@ extension AppDelegate {
         let arguments = getArguments(from: event)
         
         let heading = string(from: arguments[Reflection.Parameter(.direct)]) ?? ""
-        let message = string(from: arguments[Reflection.Parameter(.GUI_alert_message)]) ?? ""
-        let title = string(from: arguments[Reflection.Parameter(.GUI_alert_title)]) ?? ""
+        let message = string(from: arguments[Reflection.Parameter(.alert_message)]) ?? ""
+        let title = string(from: arguments[Reflection.Parameter(.alert_title)]) ?? ""
         
         runAlert(heading: heading, message: message, title: title, suspension: suspendAppleEvent())
     }
@@ -84,10 +84,10 @@ extension AppDelegate {
             []
         let stringItems = items.compactMap { string(from: $0) }
         
-        let prompt = string(from: arguments[Reflection.Parameter(.GUI_chooseFrom_prompt)]) ?? ""
-        let okButtonName = string(from: arguments[Reflection.Parameter(.GUI_chooseFrom_confirm)]) ?? "OK"
-        let cancelButtonName = string(from: arguments[Reflection.Parameter(.GUI_chooseFrom_cancel)]) ?? "Cancel"
-        let title = string(from: arguments[Reflection.Parameter(.GUI_chooseFrom_title)]) ?? ""
+        let prompt = string(from: arguments[Reflection.Parameter(.chooseFrom_prompt)]) ?? ""
+        let okButtonName = string(from: arguments[Reflection.Parameter(.chooseFrom_confirm)]) ?? "OK"
+        let cancelButtonName = string(from: arguments[Reflection.Parameter(.chooseFrom_cancel)]) ?? "Cancel"
+        let title = string(from: arguments[Reflection.Parameter(.chooseFrom_title)]) ?? ""
         
         chooseFrom(list: stringItems, prompt: prompt, okButtonName: okButtonName, cancelButtonName: cancelButtonName, title: title, suspension: suspendAppleEvent())
     }
@@ -96,7 +96,7 @@ extension AppDelegate {
         let rt = Runtime()
         let arguments = getArguments(from: event)
         
-        let typeArg = arguments[Reflection.Parameter(.GUI_ask_dataType)]
+        let typeArg = arguments[Reflection.Parameter(.ask_dataType)]
         let type = typeArg?.coerce(to: RT_Type.self)?.value ??
             rt.reflection.types[.string]
         
@@ -105,7 +105,7 @@ extension AppDelegate {
             promptArg.map { String(describing: $0) } ??
             "Please enter a value:"
         
-        let titleArg = arguments[Reflection.Parameter(.GUI_ask_title)]
+        let titleArg = arguments[Reflection.Parameter(.ask_title)]
         let title = titleArg?.coerce(to: RT_String.self)?.value ??
             titleArg.map { String(describing: $0) } ??
             ""
@@ -117,9 +117,9 @@ extension AppDelegate {
         let arguments = getArguments(from: event)
         
         let message = string(from: arguments[Reflection.Parameter(.direct)]) ?? ""
-        let title = string(from: arguments[Reflection.Parameter(.GUI_notification_title)])
-        let subtitle = string(from: arguments[Reflection.Parameter(.GUI_notification_subtitle)]) ?? ""
-        let soundName = string(from: arguments[Reflection.Parameter(.GUI_notification_sound)])
+        let title = string(from: arguments[Reflection.Parameter(.notification_title)])
+        let subtitle = string(from: arguments[Reflection.Parameter(.notification_subtitle)]) ?? ""
+        let soundName = string(from: arguments[Reflection.Parameter(.notification_sound)])
         
         let content = UNMutableNotificationContent()
         if let title = title {

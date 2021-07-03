@@ -39,9 +39,9 @@ public class RT_List: RT_Object, Encodable {
     
     public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
         [
-            .Sequence_length: \RT_List.length,
-            .Sequence_reverse: \RT_List.reverse,
-            .Sequence_tail: \RT_List.tail
+            .list_length: \RT_List.length,
+            .list_reverse: \RT_List.reverse,
+            .list_tail: \RT_List.tail
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {

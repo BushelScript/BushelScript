@@ -46,8 +46,8 @@ extension Runtime {
         }
         
         func getSequenceLength(_ sequence: RT_Object) throws -> Int64 {
-            guard let length = try sequence.property(rt.reflection.properties[.Sequence_length])?.coerce(to: RT_Integer.self)?.value else {
-                throw NoNumericPropertyExists(type: sequence.type, property: rt.reflection.properties[.Sequence_length])
+            guard let length = try sequence.property(rt.reflection.properties[.list_length])?.coerce(to: RT_Integer.self)?.value else {
+                throw NoNumericPropertyExists(type: sequence.type, property: rt.reflection.properties[.list_length])
             }
             return length
         }

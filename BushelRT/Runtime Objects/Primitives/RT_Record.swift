@@ -40,7 +40,7 @@ public class RT_Record: RT_Object, Encodable {
     
     public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
         [
-            .Sequence_length: \RT_Record.length,
+            .list_length: \RT_Record.length,
             .record_keys: \RT_Record.keys,
             .record_values: \RT_Record.values
         ]

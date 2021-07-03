@@ -297,9 +297,9 @@ public enum Properties: String, Term.PredefinedID {
     
     case currentDate
     
-    case Sequence_length
-    case Sequence_reverse
-    case Sequence_tail
+    case list_length
+    case list_reverse
+    case list_tail
     
     case record_keys
     case record_values
@@ -313,15 +313,15 @@ public enum Properties: String, Term.PredefinedID {
     case date_hours
     case date_secondsSinceMidnight
     
-    case Math_NaN
-    case Math_inf
-    case Math_NaN_Q = "Math_NaN?"
-    case Math_inf_Q = "Math_inf?"
-    case Math_finite_Q = "Math_finite?"
-    case Math_normal_Q = "Math_normal?"
-    case Math_zero_Q = "Math_zero?"
-    case Math_pi
-    case Math_e
+    case real_NaN
+    case real_inf
+    case real_NaN_Q = "real_NaN?"
+    case real_inf_Q = "real_inf?"
+    case real_finite_Q = "real_finite?"
+    case real_normal_Q = "real_normal?"
+    case real_zero_Q = "real_zero?"
+    case real_pi
+    case real_e
     
     case environmentVariable_value
     
@@ -343,11 +343,11 @@ public enum Properties: String, Term.PredefinedID {
             return pID
         case .index:
             return pIndex
-        case .Sequence_length:
+        case .list_length:
             return try! FourCharCode(fourByteString: "leng")
-        case .Sequence_reverse:
+        case .list_reverse:
             return try! FourCharCode(fourByteString: "rvse")
-        case .Sequence_tail:
+        case .list_tail:
             return try! FourCharCode(fourByteString: "rest")
         case .environmentVariable_value:
             return try! FourCharCode(fourByteString: "valL")
@@ -373,11 +373,11 @@ public enum Properties: String, Term.PredefinedID {
             case pIndex:
                 self = .index
             case try! FourCharCode(fourByteString: "leng"):
-                self = .Sequence_length
+                self = .list_length
             case try! FourCharCode(fourByteString: "rvse"):
-                self = .Sequence_reverse
+                self = .list_reverse
             case try! FourCharCode(fourByteString: "rest"):
-                self = .Sequence_tail
+                self = .list_tail
             case try! FourCharCode(fourByteString: "valL"):
                 self = .environmentVariable_value
             default:
@@ -458,34 +458,34 @@ public enum Commands: String, Term.PredefinedID {
     
     case delay
     
-    case Math_abs
-    case Math_sqrt
-    case Math_cbrt
-    case Math_pow
-    case Math_ln
-    case Math_log10
-    case Math_log2
-    case Math_sin
-    case Math_cos
-    case Math_tan
-    case Math_asin
-    case Math_acos
-    case Math_atan
-    case Math_atan2
-    case Math_round
-    case Math_ceil
-    case Math_floor
+    case real_abs
+    case real_sqrt
+    case real_cbrt
+    case real_pow
+    case real_ln
+    case real_log10
+    case real_log2
+    case real_sin
+    case real_cos
+    case real_tan
+    case real_asin
+    case real_acos
+    case real_atan
+    case real_atan2
+    case real_round
+    case real_ceil
+    case real_floor
     
-    case Sequence_add
-    case Sequence_remove
-    case Sequence_pluck
+    case list_add
+    case list_remove
+    case list_pluck
     
-    case GUI_notification
-    case GUI_alert
-    case GUI_chooseFrom
-    case GUI_ask
+    case notification
+    case alert
+    case chooseFrom
+    case ask
     
-    case CLI_log
+    case log
     
     public var role: Term.SyntacticRole {
         .command
@@ -507,13 +507,13 @@ public enum Commands: String, Term.PredefinedID {
             return (class: kCoreEventClass, id: kAEPrintDocuments)
         case .quit:
             return (class: kCoreEventClass, id: kAEQuitApplication)
-        case .GUI_notification:
+        case .notification:
             return (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "notf"))
-        case .GUI_alert:
+        case .alert:
             return (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "disA"))
-        case .GUI_chooseFrom:
+        case .chooseFrom:
             return (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "chlt"))
-        case .GUI_ask:
+        case .ask:
             return (class: try! FourCharCode(fourByteString: "bShG"), id: try! FourCharCode(fourByteString: "ask "))
         default:
             return nil
@@ -539,13 +539,13 @@ public enum Commands: String, Term.PredefinedID {
             case (kCoreEventClass, kAEQuitApplication):
                 self = .quit
             case (try! FourCharCode(fourByteString: "bShG"), try! FourCharCode(fourByteString: "notf")):
-                self = .GUI_notification
+                self = .notification
             case (try! FourCharCode(fourByteString: "syso"), try! FourCharCode(fourByteString: "disA")):
-                self = .GUI_alert
+                self = .alert
             case (try! FourCharCode(fourByteString: "gtqp"), try! FourCharCode(fourByteString: "chlt")):
-                self = .GUI_chooseFrom
+                self = .chooseFrom
             case (try! FourCharCode(fourByteString: "bShG"), try! FourCharCode(fourByteString: "ask ")):
-                self = .GUI_ask
+                self = .ask
             default:
                 return nil
             }
@@ -567,32 +567,28 @@ public enum Parameters: String, Term.PredefinedID {
     case set_to
     case open_searchText
     
-    case Math_pow_exponent
-    case Math_atan2_x
+    case real_pow_exponent
+    case real_atan2_x
     
-    case Sequence_join_with
-    
-    case String_split_by
-    
-    case GUI_notification_title
-    case GUI_notification_subtitle
-    case GUI_notification_sound
-    case GUI_alert_title
-    case GUI_alert_message
-    case GUI_alert_kind
-    case GUI_alert_buttons
-    case GUI_alert_default
-    case GUI_alert_cancel
-    case GUI_alert_timeout
-    case GUI_chooseFrom_title
-    case GUI_chooseFrom_prompt
-    case GUI_chooseFrom_default
-    case GUI_chooseFrom_confirm
-    case GUI_chooseFrom_cancel
-    case GUI_chooseFrom_multipleSelection
-    case GUI_chooseFrom_noSelection
-    case GUI_ask_dataType
-    case GUI_ask_title
+    case notification_title
+    case notification_subtitle
+    case notification_sound
+    case alert_title
+    case alert_message
+    case alert_kind
+    case alert_buttons
+    case alert_default
+    case alert_cancel
+    case alert_timeout
+    case chooseFrom_title
+    case chooseFrom_prompt
+    case chooseFrom_default
+    case chooseFrom_confirm
+    case chooseFrom_cancel
+    case chooseFrom_multipleSelection
+    case chooseFrom_noSelection
+    case ask_dataType
+    case ask_title
     
     public var role: Term.SyntacticRole {
         .parameter
@@ -606,44 +602,44 @@ public enum Parameters: String, Term.PredefinedID {
                     return (.set, keyAEData)
                 case .open_searchText:
                     return (.open, keyAESearchText)
-                case .GUI_notification_title:
-                    return (.GUI_notification, try! FourCharCode(fourByteString: "appr"))
-                case .GUI_notification_subtitle:
-                    return (.GUI_notification, try! FourCharCode(fourByteString: "subt"))
-                case .GUI_notification_sound:
-                    return (.GUI_notification, try! FourCharCode(fourByteString: "nsou"))
-                case .GUI_alert_title:
-                    return (.GUI_alert, try! FourCharCode(fourByteString: "appr"))
-                case .GUI_alert_message:
-                    return (.GUI_alert, try! FourCharCode(fourByteString: "mesS"))
-                case .GUI_alert_kind:
-                    return (.GUI_alert, try! FourCharCode(fourByteString: "EAlT"))
-                case .GUI_alert_buttons:
-                    return (.GUI_alert, try! FourCharCode(fourByteString: "btns"))
-                case .GUI_alert_default:
-                    return (.GUI_alert, try! FourCharCode(fourByteString: "dflt"))
-                case .GUI_alert_cancel:
-                    return (.GUI_alert, try! FourCharCode(fourByteString: "cbtn"))
-                case .GUI_alert_timeout:
-                    return (.GUI_alert, try! FourCharCode(fourByteString: "givu"))
-                case .GUI_chooseFrom_title:
-                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "appr"))
-                case .GUI_chooseFrom_prompt:
-                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "prmp"))
-                case .GUI_chooseFrom_default:
-                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "inSL"))
-                case .GUI_chooseFrom_confirm:
-                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "okbt"))
-                case .GUI_chooseFrom_cancel:
-                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "cnbt"))
-                case .GUI_chooseFrom_multipleSelection:
-                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "mlsl"))
-                case .GUI_chooseFrom_noSelection:
-                    return (.GUI_chooseFrom, try! FourCharCode(fourByteString: "empL"))
-                case .GUI_ask_dataType:
-                    return (.GUI_ask, try! FourCharCode(fourByteString: "forT"))
-                case .GUI_ask_title:
-                    return (.GUI_ask, try! FourCharCode(fourByteString: "appr"))
+                case .notification_title:
+                    return (.notification, try! FourCharCode(fourByteString: "appr"))
+                case .notification_subtitle:
+                    return (.notification, try! FourCharCode(fourByteString: "subt"))
+                case .notification_sound:
+                    return (.notification, try! FourCharCode(fourByteString: "nsou"))
+                case .alert_title:
+                    return (.alert, try! FourCharCode(fourByteString: "appr"))
+                case .alert_message:
+                    return (.alert, try! FourCharCode(fourByteString: "mesS"))
+                case .alert_kind:
+                    return (.alert, try! FourCharCode(fourByteString: "EAlT"))
+                case .alert_buttons:
+                    return (.alert, try! FourCharCode(fourByteString: "btns"))
+                case .alert_default:
+                    return (.alert, try! FourCharCode(fourByteString: "dflt"))
+                case .alert_cancel:
+                    return (.alert, try! FourCharCode(fourByteString: "cbtn"))
+                case .alert_timeout:
+                    return (.alert, try! FourCharCode(fourByteString: "givu"))
+                case .chooseFrom_title:
+                    return (.chooseFrom, try! FourCharCode(fourByteString: "appr"))
+                case .chooseFrom_prompt:
+                    return (.chooseFrom, try! FourCharCode(fourByteString: "prmp"))
+                case .chooseFrom_default:
+                    return (.chooseFrom, try! FourCharCode(fourByteString: "inSL"))
+                case .chooseFrom_confirm:
+                    return (.chooseFrom, try! FourCharCode(fourByteString: "okbt"))
+                case .chooseFrom_cancel:
+                    return (.chooseFrom, try! FourCharCode(fourByteString: "cnbt"))
+                case .chooseFrom_multipleSelection:
+                    return (.chooseFrom, try! FourCharCode(fourByteString: "mlsl"))
+                case .chooseFrom_noSelection:
+                    return (.chooseFrom, try! FourCharCode(fourByteString: "empL"))
+                case .ask_dataType:
+                    return (.ask, try! FourCharCode(fourByteString: "forT"))
+                case .ask_title:
+                    return (.ask, try! FourCharCode(fourByteString: "appr"))
                 default:
                     return nil
                 }
@@ -674,44 +670,44 @@ public enum Parameters: String, Term.PredefinedID {
                 self = .set_to
             case (.open, keyAESearchText):
                 self = .open_searchText
-            case (.GUI_notification, try! FourCharCode(fourByteString: "appr")):
-                self = .GUI_notification_title
-            case (.GUI_notification, try! FourCharCode(fourByteString: "subt")):
-                self = .GUI_notification_subtitle
-            case (.GUI_notification, try! FourCharCode(fourByteString: "nsou")):
-                self = .GUI_notification_sound
-            case (.GUI_alert, try! FourCharCode(fourByteString: "appr")):
-                self = .GUI_alert_title
-            case (.GUI_alert, try! FourCharCode(fourByteString: "mesS")):
-                self = .GUI_alert_message
-            case (.GUI_alert, try! FourCharCode(fourByteString: "EAlT")):
-                self = .GUI_alert_kind
-            case (.GUI_alert, try! FourCharCode(fourByteString: "btns")):
-                self = .GUI_alert_buttons
-            case (.GUI_alert, try! FourCharCode(fourByteString: "dflt")):
-                self = .GUI_alert_default
-            case (.GUI_alert, try! FourCharCode(fourByteString: "cbtn")):
-                self = .GUI_alert_cancel
-            case (.GUI_alert, try! FourCharCode(fourByteString: "givu")):
-                self = .GUI_alert_timeout
-            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "appr")):
-                self = .GUI_chooseFrom_title
-            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "prmp")):
-                self = .GUI_chooseFrom_prompt
-            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "inSL")):
-                self = .GUI_chooseFrom_default
-            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "okbt")):
-                self = .GUI_chooseFrom_confirm
-            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "cnbt")):
-                self = .GUI_chooseFrom_cancel
-            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "mlsl")):
-                self = .GUI_chooseFrom_multipleSelection
-            case (.GUI_chooseFrom, try! FourCharCode(fourByteString: "empL")):
-                self = .GUI_chooseFrom_noSelection
-            case (.GUI_ask, try! FourCharCode(fourByteString: "forT")):
-                self = .GUI_ask_dataType
-            case (.GUI_ask, try! FourCharCode(fourByteString: "titl")):
-                self = .GUI_ask_title
+            case (.notification, try! FourCharCode(fourByteString: "appr")):
+                self = .notification_title
+            case (.notification, try! FourCharCode(fourByteString: "subt")):
+                self = .notification_subtitle
+            case (.notification, try! FourCharCode(fourByteString: "nsou")):
+                self = .notification_sound
+            case (.alert, try! FourCharCode(fourByteString: "appr")):
+                self = .alert_title
+            case (.alert, try! FourCharCode(fourByteString: "mesS")):
+                self = .alert_message
+            case (.alert, try! FourCharCode(fourByteString: "EAlT")):
+                self = .alert_kind
+            case (.alert, try! FourCharCode(fourByteString: "btns")):
+                self = .alert_buttons
+            case (.alert, try! FourCharCode(fourByteString: "dflt")):
+                self = .alert_default
+            case (.alert, try! FourCharCode(fourByteString: "cbtn")):
+                self = .alert_cancel
+            case (.alert, try! FourCharCode(fourByteString: "givu")):
+                self = .alert_timeout
+            case (.chooseFrom, try! FourCharCode(fourByteString: "appr")):
+                self = .chooseFrom_title
+            case (.chooseFrom, try! FourCharCode(fourByteString: "prmp")):
+                self = .chooseFrom_prompt
+            case (.chooseFrom, try! FourCharCode(fourByteString: "inSL")):
+                self = .chooseFrom_default
+            case (.chooseFrom, try! FourCharCode(fourByteString: "okbt")):
+                self = .chooseFrom_confirm
+            case (.chooseFrom, try! FourCharCode(fourByteString: "cnbt")):
+                self = .chooseFrom_cancel
+            case (.chooseFrom, try! FourCharCode(fourByteString: "mlsl")):
+                self = .chooseFrom_multipleSelection
+            case (.chooseFrom, try! FourCharCode(fourByteString: "empL")):
+                self = .chooseFrom_noSelection
+            case (.ask, try! FourCharCode(fourByteString: "forT")):
+                self = .ask_dataType
+            case (.ask, try! FourCharCode(fourByteString: "titl")):
+                self = .ask_title
             default:
                 return nil
             }

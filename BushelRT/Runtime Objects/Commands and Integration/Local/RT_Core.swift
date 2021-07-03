@@ -210,13 +210,13 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             return rt.lastResult
         }
         
-        functions.add(rt, .Sequence_add, parameters: [.target: .list, .direct: .item]) { arguments in
+        functions.add(rt, .list_add, parameters: [.target: .list, .direct: .item]) { arguments in
             let list = try arguments.for(.target, RT_List.self)
             let toAdd = try arguments.for(.direct)
             list.contents.append(toAdd)
             return list
         }
-        functions.add(rt, .Sequence_remove, parameters: [.target: .list, .direct: .item]) { arguments in
+        functions.add(rt, .list_remove, parameters: [.target: .list, .direct: .item]) { arguments in
             let list = try arguments.for(.target, RT_List.self)
             let toRemove = try arguments.for(.direct)
             if let index = list.contents.firstIndex(where: { toRemove.compareEqual(with: $0) }) {
@@ -224,7 +224,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             }
             return list
         }
-        functions.add(rt, .Sequence_pluck, parameters: [.target: .list, .direct: .item]) { arguments in
+        functions.add(rt, .list_pluck, parameters: [.target: .list, .direct: .item]) { arguments in
             let list = try arguments.for(.target, RT_List.self)
             let toTake = try arguments.for(.direct)
             if let index = list.contents.firstIndex(where: { toTake.compareEqual(with: $0) }) {
@@ -236,42 +236,42 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             }
         }
         
-        functions.add(rt, .Math_abs, parameters: [.direct: .integer]) { arguments in
+        functions.add(rt, .real_abs, parameters: [.direct: .integer]) { arguments in
             RT_Integer(rt, value: abs(try arguments.for(.direct, RT_Integer.self).value))
         }
-        functions.add(rt, .Math_abs, parameters: [.direct: .real]) { arguments in
+        functions.add(rt, .real_abs, parameters: [.direct: .real]) { arguments in
             RT_Real(rt, value: abs(try arguments.for(.direct, RT_Real.self).value))
         }
-        functions.add(rt, .Math_sqrt, parameters: [.direct: .integer]) { arguments in
+        functions.add(rt, .real_sqrt, parameters: [.direct: .integer]) { arguments in
             RT_Real(rt, value: sqrt(Double(try arguments.for(.direct, RT_Integer.self).value)))
         }
-        functions.add(rt, .Math_sqrt, parameters: [.direct: .real]) { arguments in
+        functions.add(rt, .real_sqrt, parameters: [.direct: .real]) { arguments in
             RT_Real(rt, value: sqrt(try arguments.for(.direct, RT_Real.self).value))
         }
-        functions.add(rt, .Math_cbrt, parameters: [.direct: .integer]) { arguments in
+        functions.add(rt, .real_cbrt, parameters: [.direct: .integer]) { arguments in
             RT_Real(rt, value: cbrt(Double(try arguments.for(.direct, RT_Integer.self).value)))
         }
-        functions.add(rt, .Math_cbrt, parameters: [.direct: .real]) { arguments in
+        functions.add(rt, .real_cbrt, parameters: [.direct: .real]) { arguments in
             RT_Real(rt, value: cbrt(try arguments.for(.direct, RT_Real.self).value))
         }
-        functions.add(rt, .Math_pow, parameters: [.direct: .integer, .Math_pow_exponent: .integer]) { arguments in
+        functions.add(rt, .real_pow, parameters: [.direct: .integer, .real_pow_exponent: .integer]) { arguments in
             let integer = try arguments.for(.direct, RT_Integer.self)
-            let exponent = try arguments.for(.Math_pow_exponent, RT_Integer.self)
+            let exponent = try arguments.for(.real_pow_exponent, RT_Integer.self)
             return RT_Integer(rt, value: Int64(pow(Double(integer.value), Double(exponent.value))))
         }
-        functions.add(rt, .Math_pow, parameters: [.direct: .integer, .Math_pow_exponent: .real]) { arguments in
+        functions.add(rt, .real_pow, parameters: [.direct: .integer, .real_pow_exponent: .real]) { arguments in
             let integer = try arguments.for(.direct, RT_Integer.self)
-            let exponent = try arguments.for(.Math_pow_exponent, RT_Real.self)
+            let exponent = try arguments.for(.real_pow_exponent, RT_Real.self)
             return RT_Real(rt, value: pow(Double(integer.value), exponent.value))
         }
-        functions.add(rt, .Math_pow, parameters: [.direct: .real, .Math_pow_exponent: .integer]) { arguments in
+        functions.add(rt, .real_pow, parameters: [.direct: .real, .real_pow_exponent: .integer]) { arguments in
             let real = try arguments.for(.direct, RT_Real.self)
-            let exponent = try arguments.for(.Math_pow_exponent, RT_Integer.self)
+            let exponent = try arguments.for(.real_pow_exponent, RT_Integer.self)
             return RT_Real(rt, value: pow(real.value, Double(exponent.value)))
         }
-        functions.add(rt, .Math_pow, parameters: [.direct: .real, .Math_pow_exponent: .real]) { arguments in
+        functions.add(rt, .real_pow, parameters: [.direct: .real, .real_pow_exponent: .real]) { arguments in
             let real = try arguments.for(.direct, RT_Real.self)
-            let exponent = try arguments.for(.Math_pow_exponent, RT_Real.self)
+            let exponent = try arguments.for(.real_pow_exponent, RT_Real.self)
             return RT_Real(rt, value: pow(real.value, exponent.value))
         }
         func elementaryFunction(_ function: @escaping (Double) -> Double) -> (_ arguments: RT_Arguments) throws -> RT_Real {
@@ -280,25 +280,25 @@ public final class RT_Core: RT_Object, RT_LocalModule {
                 return RT_Real(rt, value: function(real.value))
             }
         }
-        functions.add(rt, .Math_ln, parameters: [.direct: .real], implementation: elementaryFunction(log))
-        functions.add(rt, .Math_log10, parameters: [.direct: .real], implementation: elementaryFunction(log10))
-        functions.add(rt, .Math_log2, parameters: [.direct: .real], implementation: elementaryFunction(log2))
-        functions.add(rt, .Math_sin, parameters: [.direct: .real], implementation: elementaryFunction(sin))
-        functions.add(rt, .Math_cos, parameters: [.direct: .real], implementation: elementaryFunction(cos))
-        functions.add(rt, .Math_tan, parameters: [.direct: .real], implementation: elementaryFunction(tan))
-        functions.add(rt, .Math_asin, parameters: [.direct: .real], implementation: elementaryFunction(asin))
-        functions.add(rt, .Math_acos, parameters: [.direct: .real], implementation: elementaryFunction(acos))
-        functions.add(rt, .Math_atan, parameters: [.direct: .real], implementation: elementaryFunction(atan))
-        functions.add(rt, .Math_atan2, parameters: [.direct: .real, .Math_atan2_x: .real]) { arguments in
+        functions.add(rt, .real_ln, parameters: [.direct: .real], implementation: elementaryFunction(log))
+        functions.add(rt, .real_log10, parameters: [.direct: .real], implementation: elementaryFunction(log10))
+        functions.add(rt, .real_log2, parameters: [.direct: .real], implementation: elementaryFunction(log2))
+        functions.add(rt, .real_sin, parameters: [.direct: .real], implementation: elementaryFunction(sin))
+        functions.add(rt, .real_cos, parameters: [.direct: .real], implementation: elementaryFunction(cos))
+        functions.add(rt, .real_tan, parameters: [.direct: .real], implementation: elementaryFunction(tan))
+        functions.add(rt, .real_asin, parameters: [.direct: .real], implementation: elementaryFunction(asin))
+        functions.add(rt, .real_acos, parameters: [.direct: .real], implementation: elementaryFunction(acos))
+        functions.add(rt, .real_atan, parameters: [.direct: .real], implementation: elementaryFunction(atan))
+        functions.add(rt, .real_atan2, parameters: [.direct: .real, .real_atan2_x: .real]) { arguments in
             let y = try arguments.for(.direct, RT_Real.self)
-            let x = try arguments.for(.Math_atan2_x, RT_Real.self)
+            let x = try arguments.for(.real_atan2_x, RT_Real.self)
             return RT_Real(rt, value: atan2(y.value, x.value))
         }
-        functions.add(rt, .Math_ln, parameters: [.direct: .real], implementation: elementaryFunction(round))
-        functions.add(rt, .Math_ln, parameters: [.direct: .real], implementation: elementaryFunction(ceil))
-        functions.add(rt, .Math_ln, parameters: [.direct: .real], implementation: elementaryFunction(floor))
+        functions.add(rt, .real_ln, parameters: [.direct: .real], implementation: elementaryFunction(round))
+        functions.add(rt, .real_ln, parameters: [.direct: .real], implementation: elementaryFunction(ceil))
+        functions.add(rt, .real_ln, parameters: [.direct: .real], implementation: elementaryFunction(floor))
 
-        functions.add(rt, .CLI_log, parameters: [.direct: .item]) { arguments in
+        functions.add(rt, .log, parameters: [.direct: .item]) { arguments in
             let message = try arguments.for(.direct)
             print(message.coerce(to: RT_String.self)?.value ?? String(describing: message))
             return rt.lastResult
@@ -317,11 +317,11 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             
             var arguments = arguments
             if
-                arguments.contents.first(where: { $0.key.uri.ae4Code == Parameters.GUI_ask_title.ae12Code!.code }) == nil,
+                arguments.contents.first(where: { $0.key.uri.ae4Code == Parameters.ask_title.ae12Code!.code }) == nil,
                 let scriptName = Optional("")//rt.topScript.name
             // FIXME: fix
             {
-                arguments.contents[Reflection.Parameter(.GUI_ask_title)] = RT_String(rt, value: scriptName)
+                arguments.contents[Reflection.Parameter(.ask_title)] = RT_String(rt, value: scriptName)
             }
             
             return try RT_Application(rt, bundle: guiHostBundle).handle(arguments)
@@ -336,13 +336,13 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             return RT_List(rt, contents: rt.arguments.map { RT_String.init(rt, value: $0) })
         case .currentDate:
             return RT_Date(rt, value: Date())
-        case .Math_NaN:
+        case .real_NaN:
             return RT_Real(rt, value: Double.nan)
-        case .Math_inf:
+        case .real_inf:
             return RT_Real(rt, value: Double.infinity)
-        case .Math_pi:
+        case .real_pi:
             return RT_Real(rt, value: Double.pi)
-        case .Math_e:
+        case .real_e:
             return RT_Real(rt, value: exp(1))
         default:
             return nil

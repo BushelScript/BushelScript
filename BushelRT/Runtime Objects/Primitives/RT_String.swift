@@ -22,7 +22,7 @@ public class RT_String: RT_ValueWrapper<String> {
     
     public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
         [
-            .Sequence_length: \RT_String.length
+            .list_length: \RT_String.length
         ]
     }
     public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {

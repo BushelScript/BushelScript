@@ -43,8 +43,6 @@ translation:
             ae4:
                  'true': 'true'
                  fals: 'false'
-            id:
-                console: console
         type:
             ae4:
                 cobj: item
@@ -202,8 +200,7 @@ translation:
                     add: add
                     remove: remove
                     pluck: pluck
-                console:
-                    log: log
+                log: log
         parameter:
             ae12:
                 coresetddata: to
@@ -253,6 +250,5 @@ translation:
                         .target: from
                     pluck:
                         .target: from
-                console:
-                    log:
-                        .direct: message
+                log:
+                    .direct: message

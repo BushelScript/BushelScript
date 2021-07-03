@@ -21,15 +21,15 @@ public class RT_Real: RT_ValueWrapper<Double> {
     
     public override func property(_ property: Reflection.Property) throws -> RT_Object? {
         switch Properties(property.id) {
-        case .Math_NaN_Q:
+        case .real_NaN_Q:
             return RT_Boolean.withValue(rt, value.isNaN)
-        case .Math_inf_Q:
+        case .real_inf_Q:
             return RT_Boolean.withValue(rt, value.isInfinite)
-        case .Math_finite_Q:
+        case .real_finite_Q:
             return RT_Boolean.withValue(rt, value.isFinite)
-        case .Math_normal_Q:
+        case .real_normal_Q:
             return RT_Boolean.withValue(rt, value.isNormal)
-        case .Math_zero_Q:
+        case .real_zero_Q:
             return RT_Boolean.withValue(rt, value.isZero)
         default:
             return try super.property(property)
