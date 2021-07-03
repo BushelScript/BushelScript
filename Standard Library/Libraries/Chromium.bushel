@@ -2,14 +2,14 @@
 
 -- We define Chromium terms here because we can't know for certain
 -- which Chromium-derived app(s) is/are actually installed at parse time.
-define property active tab as «property ae4:acTa»
-define property URL as «property ae4:URL »
-define property index as «property ae4:pidx»
-define type window as «type ae4:cwin»
-defining command make as «command ae8:corecrel»
-	define parameter new as «parameter ae4:kocl»
-	define parameter at as «parameter ae4:insh»
-	define parameter with properties as «parameter ae4:prdt»
+define property active tab as [ae4:acTa]
+define property URL as [ae4:URL ]
+define property index as [ae4:pidx]
+define type window as [ae4:cwin]
+defining command make as [ae8:corecrel]
+	define parameter new as [ae4:kocl]
+	define parameter at as [ae4:insh]
+	define parameter with properties as [ae4:prdt]
 end
 
 -- "if already open" constants:

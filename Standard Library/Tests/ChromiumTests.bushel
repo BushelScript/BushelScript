@@ -27,7 +27,7 @@ tell require library Chromium
 		expect (get URL of active tab of win) to contain "example.com"
 		
 		-- Clean up as best we can.
-		tell get app named browser to «command ae8:coreclos» active tab of win
+		tell get app named browser to #command [ae8:coreclos] active tab of win
 	end
 
 end
