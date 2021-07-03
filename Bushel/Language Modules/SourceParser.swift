@@ -788,49 +788,51 @@ extension SourceParser {
         {
             // Allow outer awaiting() call to eat.
             return nil
+        } else if let integer = try parseInteger() {
+            return integer
+        } else if let double = try parseDouble() {
+            return double
         } else {
-            guard let c = source.first else {
-                return nil
-            }
-            
-            if c.isNumber || c == "." {
-                return try withCurrentIndex { startIndex in
-                    eatCommentsAndWhitespace()
-                    
-                    func parseInteger() -> Expression? {
-                        guard
-                            let match = tryEating(integerRegex, .number),
-                            let value = Int64(match.matchedString)
-                        else {
-                            return nil
-                        }
-                        return Expression(.integer(value), at: expressionLocation)
-                    }
-                    func parseDouble() throws -> Expression {
-                        guard
-                            let match = tryEating(doubleRegex, .number),
-                            let value = Double(match.matchedString)
-                        else {
-                            throw ParseError(.invalidNumber, at: expressionLocation)
-                        }
-                        return Expression(.double(value), at: expressionLocation)
-                    }
-                    return try parseInteger() ?? parseDouble()
-                }
-            } else {
-                os_log("Undefined term: %@", log: log, type: .debug, String(source))
-                throw ParseError(.undefinedTerm, at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource))
-            }
+            os_log("Undefined term: %@", log: log, type: .debug, String(source))
+            throw ParseError(.undefinedTerm, at: SourceLocation(currentIndex..<(source.firstIndex(where: { $0.isNewline }) ?? source.endIndex), source: entireSource))
         }
     }
     
 }
 
-private let integerRegex = Regex("^\\d++(?!\\.)")
-private let doubleRegex = Regex("^\\d*(?:\\.\\d++(?:[ep][-+]?\\d+)?)?", options: .ignoreCase)
+private let integerRegex = Regex("^[-+]?\\d++(?!\\.)")
+private let doubleRegex = Regex("^[-+]?\\d*(?:\\.\\d++(?:[ep][-+]?\\d+)?)?", options: .ignoreCase)
 
 // MARK: Parse helpers
 extension SourceParser {
+    
+    public func parseInteger() throws -> Expression? {
+        let rollbackSource = source
+        let rollbackElements = elements
+        guard
+            let match = tryEating(integerRegex, .number),
+            let value = Int64(match.matchedString)
+        else {
+            source = rollbackSource
+            elements = rollbackElements
+            return nil
+        }
+        return Expression(.integer(value), at: expressionLocation)
+    }
+    
+    public func parseDouble() throws -> Expression? {
+        let rollbackSource = source
+        let rollbackElements = elements
+        guard
+            let match = tryEating(doubleRegex, .number),
+            let value = Double(match.matchedString)
+        else {
+            source = rollbackSource
+            elements = rollbackElements
+            return nil
+        }
+        return Expression(.double(value), at: expressionLocation)
+    }
     
     public func parseGroupedExpression() throws -> Expression? {
         guard let (beginMarker, endMarker) = eatExpressionGroupingBeginMarker() else {
@@ -1365,7 +1367,7 @@ extension SourceParser {
                 }
             }
             
-            guard var (termString, term) = try findTerm(in: dictionary) else {
+             guard var (termString, term) = try findTerm(in: dictionary) else {
                 return nil
             }
             guard role == nil || term.role == role else {
