@@ -4,8 +4,24 @@ import Regex
 
 private let log = OSLog(subsystem: logSubsystem, category: "Source parser")
 
-public typealias KeywordHandler = () throws -> Expression.Kind?
-public typealias ResourceTypeHandler = (_ name: Term.Name) throws -> Term
+public struct KeywordHandler {
+    public init<Weak: AnyObject>(_ weak: Weak, _ fn: @escaping (Weak) -> () throws -> Expression.Kind?) {
+        self.fn = { [weak `weak`] in try fn(weak!)() }
+    }
+    public let fn: () throws -> Expression.Kind?
+    public func callAsFunction() throws -> Expression.Kind? {
+        try fn()
+    }
+}
+public struct ResourceTypeHandler {
+    public init<Weak: AnyObject>(_ weak: Weak, _ fn: @escaping (Weak) -> (_ name: Term.Name) throws -> Term) {
+        self.fn = { [weak `weak`] name in try fn(weak!)(name) }
+    }
+    public let fn: (_ name: Term.Name) throws -> Term
+    public func callAsFunction(_ name: Term.Name) throws -> Term {
+        try fn(name)
+    }
+}
 
 /// Parses source code into an AST.
 public protocol SourceParser: AnyObject {
@@ -198,6 +214,10 @@ extension SourceParser {
         return .require(resource: resourceTerm)
     }
     
+    public func handleUse() throws -> Expression.Kind? {
+        .use(module: try parsePrimaryOrThrow())
+    }
+    
     public func handleEnd() throws -> Expression.Kind? {
         endExpression = true
         return nil
@@ -208,17 +228,11 @@ extension SourceParser {
         return .return_(source.first?.isNewline ?? true ? nil : try parsePrimary())
     }
     
-    public func handleRaise(_ keyword: Term.Name) -> () throws -> Expression.Kind? {
-        { [weak self] in
-            try self?.handleRaise(keyword)
-        }
-    }
-    
-    public func handleRaise(_ keyword: Term.Name) throws -> Expression.Kind? {
+    public func handleRaise() throws -> Expression.Kind? {
         eatCommentsAndWhitespace()
         
         guard let error = try parsePrimary() else {
-            throw ParseError(.missing([.expression], .afterKeyword(keyword)), at: currentLocation)
+            throw ParseError(.missing([.expression]), at: currentLocation)
         }
         return .raise(error)
     }
@@ -239,28 +253,16 @@ extension SourceParser {
         .unspecified
     }
     
-    public func handleRef(_ keyword: Term.Name) -> () throws -> Expression.Kind? {
-        { [weak self] in
-            try self?.handleRef(keyword)
-        }
-    }
-    
-    public func handleRef(_ keyword: Term.Name) throws -> Expression.Kind? {
+    public func handleRef() throws -> Expression.Kind? {
         guard let expression = try parsePrimary() else {
-            throw ParseError(.missing([.expression], .afterKeyword(keyword)), at: currentLocation)
+            throw ParseError(.missing([.expression]), at: currentLocation)
         }
         return .reference(to: expression)
     }
     
-    public func handleGet(_ keyword: Term.Name) -> () throws -> Expression.Kind? {
-        { [weak self] in
-            try self?.handleGet(keyword)
-        }
-    }
-    
-    public func handleGet(_ keyword: Term.Name) throws -> Expression.Kind? {
+    public func handleGet() throws -> Expression.Kind? {
         guard let expression = try self.parsePrimary() else {
-            throw ParseError(.missing([.expression], .afterKeyword(keyword)), at: currentLocation)
+            throw ParseError(.missing([.expression]), at: currentLocation)
         }
         return .get(expression)
     }
@@ -378,7 +380,7 @@ extension SourceParser {
         return result
     }
     
-    public func parsePrimaryOrThrow(_ context: ParseError.Error.Context, allowSuffixSpecifier: Bool = true) throws -> Expression {
+    public func parsePrimaryOrThrow(_ context: ParseError.Error.Context? = nil, allowSuffixSpecifier: Bool = true) throws -> Expression {
         guard let expression = try parsePrimary(allowSuffixSpecifier: allowSuffixSpecifier) else {
             throw ParseError(.missing([.expression], context), at: currentLocation)
         }

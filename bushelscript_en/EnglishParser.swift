@@ -151,27 +151,34 @@ public final class EnglishParser: SourceParser {
     ]
     
     public lazy var keywords: [Term.Name : KeywordHandler] = [
-        Term.Name("end"): handleEnd,
-        Term.Name("on"): handleFunctionStart,
-        Term.Name("to"): handleFunctionStart,
-        Term.Name("take"): handleBlockArgumentNamesStart,
-        Term.Name("do"): handleBlockBodyStart,
-        Term.Name("try"): handleTry,
-        Term.Name("if"): handleIf,
-        Term.Name("repeat"): handleRepeat(Term.Name("repeat")),
-        Term.Name("repeating"): handleRepeat(Term.Name("repeating")),
-        Term.Name("tell"): handleTell,
-        Term.Name("use"): handleUse,
-        Term.Name("let"): handleLet,
-        Term.Name("define"): handleDefine,
-        Term.Name("defining"): handleDefining,
-        Term.Name("return"): handleReturn,
-        Term.Name("raise"): handleRaise(Term.Name("raise")),
-        Term.Name("require"): handleRequire,
-        Term.Name("that"): handleThat,
-        Term.Name("it"): handleIt,
-        Term.Name("missing"): handleMissing,
-        Term.Name("unspecified"): handleUnspecified,
+        Term.Name("require"): KeywordHandler(self, SourceParser.handleRequire),
+        Term.Name("use"): KeywordHandler(self, SourceParser.handleUse),
+        Term.Name("end"): KeywordHandler(self, SourceParser.handleEnd),
+        Term.Name("return"): KeywordHandler(self, SourceParser.handleReturn),
+        Term.Name("raise"): KeywordHandler(self, SourceParser.handleRaise),
+        Term.Name("that"): KeywordHandler(self, SourceParser.handleThat),
+        Term.Name("it"): KeywordHandler(self, SourceParser.handleIt),
+        Term.Name("missing"): KeywordHandler(self, SourceParser.handleMissing),
+        Term.Name("unspecified"): KeywordHandler(self, SourceParser.handleUnspecified),
+        Term.Name("ref"): KeywordHandler(self, SourceParser.handleRef),
+        Term.Name("get"): KeywordHandler(self, SourceParser.handleGet),
+        Term.Name("debug_inspect_term"): KeywordHandler(self, SourceParser.handleDebugInspectTerm),
+        Term.Name("debug_inspect_lexicon"): KeywordHandler(self, SourceParser.handleDebugInspectLexicon),
+        
+        Term.Name("set"): KeywordHandler(self, EnglishParser.handleSet),
+        Term.Name("on"): KeywordHandler(self, EnglishParser.handleFunctionStart),
+        Term.Name("to"): KeywordHandler(self, EnglishParser.handleFunctionStart),
+        Term.Name("take"): KeywordHandler(self, EnglishParser.handleBlockArgumentNamesStart),
+        Term.Name("do"): KeywordHandler(self, EnglishParser.handleBlockBodyStart),
+        Term.Name("try"): KeywordHandler(self, EnglishParser.handleTry),
+        Term.Name("if"): KeywordHandler(self, EnglishParser.handleIf),
+        Term.Name("repeat"): KeywordHandler(self, EnglishParser.handleRepeat),
+        Term.Name("repeating"): KeywordHandler(self, EnglishParser.handleRepeat),
+        Term.Name("tell"): KeywordHandler(self, EnglishParser.handleTell),
+        Term.Name("let"): KeywordHandler(self, EnglishParser.handleLet),
+        Term.Name("define"): KeywordHandler(self, EnglishParser.handleDefine),
+        Term.Name("defining"): KeywordHandler(self, EnglishParser.handleDefining),
+        
         Term.Name("every"): handleQuantifier(.all),
         Term.Name("all"): handleQuantifier(.all),
         Term.Name("first"): handleQuantifier(.first),
@@ -186,22 +193,17 @@ public final class EnglishParser: SourceParser {
         Term.Name("last position"): handleInsertionLocation(.end),
         Term.Name("position before"): handleInsertionLocation(.before),
         Term.Name("position after"): handleInsertionLocation(.after),
-        Term.Name("ref"): handleRef(Term.Name("ref")),
-        Term.Name("get"): handleGet(Term.Name("get")),
-        Term.Name("set"): handleSet,
-        Term.Name("debug_inspect_term"): handleDebugInspectTerm,
-        Term.Name("debug_inspect_lexicon"): handleDebugInspectLexicon,
     ]
     
     public lazy var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] = [
-        Term.Name("system"): (false, [], handleImportSystem),
+        Term.Name("system"): (false, [], ResourceTypeHandler(self, EnglishParser.handleImportSystem)),
         
-        Term.Name("app"): (true, [], handleImportApplicationName),
-        Term.Name("app id"): (true, [], handleImportApplicationID),
+        Term.Name("app"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportApplicationName)),
+        Term.Name("app id"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportApplicationID)),
         
-        Term.Name("library"): (true, [], handleImportLibrary),
+        Term.Name("library"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportLibrary)),
         
-        Term.Name("AppleScript"): (true, ["at"], handleImportAppleScript),
+        Term.Name("AppleScript"): (true, ["at"], ResourceTypeHandler(self, EnglishParser.handleImportAppleScript)),
     ]
     
     private func handleFunctionStart() throws -> Expression.Kind? {
@@ -382,20 +384,14 @@ public final class EnglishParser: SourceParser {
         return .if_(condition: condition, then: try parseThen(), else: try parseElse())
     }
     
-    private func handleRepeat(_ keyword: Term.Name) -> () throws -> Expression.Kind? {
-        { [weak self] in
-            try self?.handleRepeat(keyword)
-        }
-    }
-    
-    private func handleRepeat(_ keyword: Term.Name) throws -> Expression.Kind? {
+    private func handleRepeat() throws -> Expression.Kind? {
         func parseRepeatBlock() throws -> Expression {
             try eatLineBreakOrThrow(.toBeginBlock("repeat"))
             return try parseSequence()
         }
         
         if tryEating(prefix: "while") {
-            let condition = try parsePrimaryOrThrow(.afterKeyword(Term.Name(keyword.words + ["while"])))
+            let condition = try parsePrimaryOrThrow()
             return .repeatWhile(condition: condition, repeating: try parseRepeatBlock())
         } else if tryEating(prefix: "for") {
             let variableTerm = try parseVariableTermOrThrow(stoppingAt: ["in"])
@@ -404,7 +400,7 @@ public final class EnglishParser: SourceParser {
             lexicon.add(variableTerm)
             return .repeatFor(variable: variableTerm, container: expression, repeating: try parseRepeatBlock())
         } else {
-            let times = try parsePrimaryOrThrow(.afterKeyword(keyword))
+            let times = try parsePrimaryOrThrow()
             try eatOrThrow(prefix: "times")
             return .repeatTimes(times: times, repeating: try parseRepeatBlock())
         }
@@ -423,11 +419,6 @@ public final class EnglishParser: SourceParser {
             let body = try foundNewline ? parseSequence() : parsePrimaryOrThrow(.afterKeyword(Term.Name(["to"])))
             return .tell(target: target, to: body)
         }
-    }
-    
-    private func handleUse() throws -> Expression.Kind? {
-        let module = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["use"])))
-        return .use(module: module)
     }
     
     private func handleLet() throws -> Expression.Kind? {
@@ -555,15 +546,19 @@ public final class EnglishParser: SourceParser {
         return .set(destinationExpression, to: newValueExpression)
     }
     
-    private func handleQuantifier(_ kind: Specifier.Kind) -> () throws -> Expression.Kind? {
-        {
-            try self.parseSpecifierAfterQuantifier(kind: kind)
+    private func handleQuantifier(_ kind: Specifier.Kind) -> KeywordHandler {
+        KeywordHandler(self) { self_ in
+            {
+                try self_.parseSpecifierAfterQuantifier(kind: kind)
+            }
         }
     }
     
-    private func handleInsertionLocation(_ kind: InsertionSpecifier.Kind) -> () throws -> Expression.Kind? {
-        {
-            try self.parseInsertionSpecifierAfterInsertionLocation(kind: kind)
+    private func handleInsertionLocation(_ kind: InsertionSpecifier.Kind) -> KeywordHandler {
+        KeywordHandler(self) { self_ in
+            {
+                try self_.parseInsertionSpecifierAfterInsertionLocation(kind: kind)
+            }
         }
     }
     
