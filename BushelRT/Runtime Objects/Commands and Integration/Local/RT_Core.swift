@@ -303,9 +303,9 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             let x = try arguments.for(.real_atan2_x, RT_Real.self)
             return RT_Real(rt, value: atan2(y.value, x.value))
         }
-        functions.add(rt, .real_ln, parameters: [.direct: .real], implementation: elementaryFunction(round))
-        functions.add(rt, .real_ln, parameters: [.direct: .real], implementation: elementaryFunction(ceil))
-        functions.add(rt, .real_ln, parameters: [.direct: .real], implementation: elementaryFunction(floor))
+        functions.add(rt, .real_round, parameters: [.direct: .real], implementation: elementaryFunction(round))
+        functions.add(rt, .real_ceil, parameters: [.direct: .real], implementation: elementaryFunction(ceil))
+        functions.add(rt, .real_floor, parameters: [.direct: .real], implementation: elementaryFunction(floor))
 
         functions.add(rt, .log, parameters: [.direct: .item]) { arguments in
             let message = try arguments.for(.direct)
