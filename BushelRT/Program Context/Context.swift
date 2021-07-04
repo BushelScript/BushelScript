@@ -5,7 +5,7 @@ extension Runtime {
     /// Manages program context for a Runtime.
     final class Context {
         
-        var rt: Runtime
+        weak var rt: Runtime!
         public var frameStack: RT_FrameStack
         public var moduleStack: RT_ModuleStack
         public var targetStack: RT_TargetStack
@@ -111,7 +111,7 @@ extension Runtime {
         }
         
         func run(command: Reflection.Command, arguments: [Reflection.Parameter : RT_Object]) throws -> RT_Object {
-            var arguments = RT_Arguments(command, arguments)
+            var arguments = RT_Arguments(rt, command, arguments)
             if arguments[.target] == nil {
                 arguments.contents[command.parameters[.target]] = target
             }

@@ -3,7 +3,7 @@ import Bushel
 /// Base type for all runtime objects.
 @objc public class RT_Object: NSObject {
     
-    public var rt: Runtime
+    public weak var rt: Runtime!
     
     public init(_ rt: Runtime) {
         self.rt = rt

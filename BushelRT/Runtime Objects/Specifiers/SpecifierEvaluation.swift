@@ -8,7 +8,7 @@ extension RT_HierarchicalSpecifier {
         case let app as RT_Application:
             let get = rt.reflection.commands[.get]
             return try self.handleByAppleEvent(
-                RT_Arguments(get, [:]),
+                RT_Arguments(rt, get, [:]),
                 app: app.app
             )
         default:

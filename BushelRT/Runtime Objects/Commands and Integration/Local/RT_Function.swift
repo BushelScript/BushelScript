@@ -42,10 +42,12 @@ public protocol RT_Implementation {
 
 public struct RT_Arguments {
     
+    public weak var rt: Runtime!
     public var command: Reflection.Command
     public var contents: [Reflection.Parameter : RT_Object]
     
-    public init(_ command: Reflection.Command, _ contents: [Reflection.Parameter : RT_Object]) {
+    public init(_ rt: Runtime, _ command: Reflection.Command, _ contents: [Reflection.Parameter : RT_Object]) {
+        self.rt = rt
         self.command = command
         self.contents = contents
     }
