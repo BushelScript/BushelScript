@@ -14,7 +14,11 @@ public protocol SourceFormatter {
 extension SourceFormatter {
     
     public func format(_ expression: Expression) -> String {
-        return format(expression, level: -1)
+        var formatted = format(expression, level: -1)
+        if let last = formatted.last, !last.isNewline {
+            formatted.append("\n")
+        }
+        return formatted
     }
     
     public func format(_ expression: Expression, level: Int, beginKeyword: String? = nil, endKeyword: String? = nil) -> String {

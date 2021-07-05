@@ -9,7 +9,7 @@ to generic expect
 	to format error (formatter)
 do
 	set assertion count to assertion count + 1
-	if not condition then
+	if not condition
 		"Expected " & if reason then reason else default reason
 		if formatter then that & " but " & (tell formatter to run)
 		raise that

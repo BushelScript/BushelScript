@@ -38,7 +38,8 @@ public protocol SourceParser: AnyObject {
     var sequenceNestingLevel: Int { get set }
     var elements: Set<SourceElement> { get set }
     var awaitingExpressionEndKeywords: [Set<Term.Name>] { get set }
-    var endExpression: Bool { get set }
+    var defaultEndKeyword: Term.Name { get }
+    var lastEndKeyword: Term.Name { get set }
     var allowSuffixSpecifierStack: [Bool] { get set }
     
     var keywordsTraversalTable: TermNameTraversalTable { get set }
@@ -218,11 +219,6 @@ extension SourceParser {
         .use(module: try parsePrimaryOrThrow())
     }
     
-    public func handleEnd() throws -> Expression.Kind? {
-        endExpression = true
-        return nil
-    }
-    
     public func handleReturn() throws -> Expression.Kind? {
         eatCommentsAndWhitespace()
         return .return_(source.first?.isNewline ?? true ? nil : try parsePrimary())
@@ -291,93 +287,56 @@ extension SourceParser {
 // MARK: Primary and sequence parsing
 extension SourceParser {
     
-    public func parseSequence(stoppingAt stopKeywords: [String] = []) throws -> Expression {
-        // Matched by endExpression check below
+    public func parseSequence(stoppingAt endKeywords: [Term.Name] = []) throws -> Expression {
+        let endKeywords = endKeywords + [defaultEndKeyword]
+        
         sequenceNestingLevel += 1
+        defer {
+            sequenceNestingLevel -= 1
+        }
         
         var expressions: [Expression] = []
         
         @discardableResult
-        func addIndentation() -> SourceElement {
+        func addIndentation(_ level: Int) -> SourceElement {
             withCurrentIndex { startIndex in
                 eatCommentsAndWhitespace()
                 
                 let loc = SourceLocation(at: location(from: startIndex))
-                let element = SourceElement(Indentation(level: sequenceNestingLevel, location: loc))
+                let element = SourceElement(Indentation(level: level >= 0 ? level : 0, location: loc))
                 elements.insert(element)
                 return element
             }
         }
-        
-        func eatNewlines() {
-            eatCommentsAndWhitespace()
-            while let newline = parseNewline() {
-                expressions.append(newline)
-                addIndentation()
+        func eatEndKeyword() -> Bool {
+            if let endKeyword = endKeywords.first(where: { tryEating($0) }) {
+                lastEndKeyword = endKeyword
+                return true
             }
+            return false
         }
         
-        eatNewlines()
-        
         while true {
-            
-            var indentation = addIndentation()
-            
-            func endSequence() {
-                endExpression = false
-                if sequenceNestingLevel > 0 {
-                    sequenceNestingLevel -= 1
-                }
+            let indentation = addIndentation(sequenceNestingLevel)
+            if source.isEmpty || eatEndKeyword() {
                 elements.remove(indentation)
-                elements.insert(SourceElement(Indentation(level: sequenceNestingLevel, location: indentation.location)))
-            }
-            
-            
-            if source.isEmpty || stopKeywords.contains(where: { source.hasPrefix($0) }) {
-                endSequence()
+                elements.insert(SourceElement(Indentation(level: sequenceNestingLevel > 0 ? sequenceNestingLevel - 1 : 0, location: indentation.location)))
                 break
             }
-            
             if let primary = try parsePrimary() {
                 expressions.append(primary)
             }
-            if endExpression {
-                endSequence()
-                break
-            }
-            
-            eatCommentsAndWhitespace()
-            
-            let newline = parseNewline()
-            
-            if source.isEmpty {
-                if let newline = newline {
-                    expressions.append(newline)
-                    indentation = addIndentation()
-                }
-                endSequence()
-                break
-            }
-            
-            guard newline != nil else {
+            guard tryEatingLineBreak() || source.isEmpty else {
                 let nextNewline = source.firstIndex(where: { $0.isNewline }) ?? source.endIndex
                 let location = SourceLocation(source.startIndex..<nextNewline, source: entireSource)
-                throw ParseError(.missing([.lineBreak], .afterSequencedExpression), at: location, fixes: [PrependingFix(prepending: "\n", at: location)])
+                throw ParseError(.missing([.lineBreak], .afterSequencedExpression), at: location)
             }
-            
-            if stopKeywords.contains(where: { source.hasPrefix($0) }) {
-                expressions.append(newline!)
-                indentation = addIndentation()
-                endSequence()
-                break
-            }
-            
-            eatNewlines()
         }
         
-        let result = Expression(.sequence(expressions), at: expressionLocation)
-        eatCommentsAndWhitespace()
-        return result
+        defer {
+            eatCommentsAndWhitespace()
+        }
+        return Expression(.sequence(expressions), at: expressionLocation)
     }
     
     public func parsePrimaryOrThrow(_ context: ParseError.Error.Context? = nil, allowSuffixSpecifier: Bool = true) throws -> Expression {
@@ -523,7 +482,9 @@ extension SourceParser {
     private func parseUnprocessedPrimary() throws -> Expression? {
         eatCommentsAndWhitespace()
         
-        if let bihash = try eatBihash() {
+        if source.first?.isNewline ?? true {
+            return Expression(.empty, at: expressionLocation)
+        } else if let bihash = try eatBihash() {
             var body = ""
             
             while !source.isEmpty {
@@ -991,21 +952,6 @@ extension SourceParser {
         
         eatCommentsAndWhitespace(eatingNewlines: true)
         return item
-    }
-    
-    private func parseNewline() -> Expression? {
-        guard source.first?.isNewline ?? false else {
-            return nil
-        }
-        
-        let newline = Expression(.empty, at: currentLocation)
-        addingElement(.comment, spacing: .none) {
-            _ = source.removeFirst()
-        }
-        
-        eatCommentsAndWhitespace()
-        
-        return newline
     }
     
     private func eatBihash(delimiter: String? = nil) throws -> Bihash? {

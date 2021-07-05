@@ -34,27 +34,12 @@ class LanguageConstructTests: XCTestCase {
         let parser = module.parser()
         // if-end
         XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
-end
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
 end
 """))
         XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-end
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
 if 123
-end
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
-    789
 end
 """))
         XCTAssertNoThrow(try parser.parse(source: """
@@ -69,21 +54,8 @@ end
         
         // if-else-end
         XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
-else
-    789
-end
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
 if 123
     456
-else
-    789
-end
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
 else
     789
 end
@@ -92,15 +64,6 @@ end
 if 123
 else
     789
-end
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
-    789
-else
-    654
-    321
 end
 """))
         XCTAssertNoThrow(try parser.parse(source: """
@@ -121,39 +84,12 @@ end
         XCTAssertNoThrow(try parser.parse(source: """
 if 123
 else
-end
-"""))
-        
-        // single-line if with multi-line else
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then 456
-else 789
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then 456
-else
-    789
 end
 """))
         
         // multi-line if with single-line else
         XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
-else 789
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
 if 123
-    456
-else 789
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
-    456
-else 789
-"""))
-        XCTAssertNoThrow(try parser.parse(source: """
-if 123 then
     456
 else 789
 """))

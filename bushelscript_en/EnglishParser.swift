@@ -17,7 +17,8 @@ public final class EnglishParser: SourceParser {
     public var sequenceNestingLevel: Int = 0
     public var elements: Set<SourceElement> = []
     public var awaitingExpressionEndKeywords: [Set<Term.Name>] = []
-    public var endExpression: Bool = false
+    public let defaultEndKeyword = Term.Name(["end"])
+    public var lastEndKeyword = Term.Name(["end"])
     public var allowSuffixSpecifierStack: [Bool] = []
     
     public var keywordsTraversalTable: TermNameTraversalTable = [:]
@@ -153,7 +154,6 @@ public final class EnglishParser: SourceParser {
     public lazy var keywords: [Term.Name : KeywordHandler] = [
         Term.Name("require"): KeywordHandler(self, SourceParser.handleRequire),
         Term.Name("use"): KeywordHandler(self, SourceParser.handleUse),
-        Term.Name("end"): KeywordHandler(self, SourceParser.handleEnd),
         Term.Name("return"): KeywordHandler(self, SourceParser.handleReturn),
         Term.Name("raise"): KeywordHandler(self, SourceParser.handleRaise),
         Term.Name("that"): KeywordHandler(self, SourceParser.handleThat),
@@ -306,7 +306,11 @@ public final class EnglishParser: SourceParser {
         func parseBody() throws -> Expression {
             let foundNewline = tryEatingLineBreak()
             if foundNewline {
-                return try parseSequence(stoppingAt: ["handle"])
+                let body = try parseSequence(stoppingAt: [Term.Name(["handle"])])
+                guard lastEndKeyword == Term.Name(["handle"]) else {
+                    throw ParseError(.missing([.keyword(Term.Name(["handle"]))]), at: currentLocation)
+                }
+                return body
             } else {
                 guard let bodyExpression = try parsePrimary() else {
                     throw ParseError(.missing([.expression, .lineBreak], .afterKeyword(Term.Name(["try"]))), at: currentLocation)
@@ -316,9 +320,6 @@ public final class EnglishParser: SourceParser {
         }
         
         func parseHandle() throws -> Expression {
-            eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
-            try eatOrThrow(prefix: "handle")
-            
             if tryEatingLineBreak() {
                 return try parseSequence()
             } else {
@@ -335,53 +336,36 @@ public final class EnglishParser: SourceParser {
     
     private func handleIf() throws -> Expression.Kind? {
         let condition = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["if"])))
-        
-        func parseThen() throws -> Expression {
-            let thenStartIndex = currentIndex
-            let foundThen = tryEating(prefix: "then")
-            let foundNewline = tryEatingLineBreak()
-            guard foundThen || foundNewline else {
-                throw AdHocParseError("Expected ‘then’ or line break after condition expression", at: currentLocation, fixes: [AppendingFix(appending: "\n", at: currentLocation), AppendingFix(appending: " then", at: currentLocation)])
-            }
-            
-            if foundNewline {
-                return try parseSequence(stoppingAt: ["else"])
-            } else {
-                guard let thenExpression = try parsePrimary() else {
-                    let thenLocation = SourceLocation(thenStartIndex..<currentIndex, source: entireSource)
-                    throw ParseError(.missing([.expression, .lineBreak], .afterKeyword(Term.Name(["then"]))), at: thenLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is true", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: thenLocation))])
-                }
-                return thenExpression
-            }
-        }
-
-        func parseElse() throws -> Expression? {
+        if tryEatingLineBreak() {
+            let then = try parseSequence(stoppingAt: [Term.Name(["else"])])
             let rollbackSource = source
             let rollbackElements = elements
-            eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
-            
-            let elseStartIndex = currentIndex
-            guard tryEating(prefix: "else") else {
+            if lastEndKeyword == Term.Name(["else"]) {
+                if tryEatingLineBreak() {
+                    return .if_(condition: condition, then: then, else: try parseSequence())
+                } else {
+                    guard let `else` = try parsePrimary() else {
+                        throw ParseError(.missing([.expression, .lineBreak], .afterKeyword(Term.Name(["else"]))), at: currentLocation)
+                    }
+                    eatCommentsAndWhitespace()
+                    return .if_(condition: condition, then: then, else: `else`)
+                }
+            } else {
                 source = rollbackSource
                 elements = rollbackElements
-                return nil
+                return .if_(condition: condition, then: then, else: nil)
             }
-            
-            if tryEatingLineBreak() {
-                return try parseSequence()
+        } else if tryEating(prefix: "then") {
+            let then = try parsePrimaryOrThrow()
+            if tryEating(prefix: "else") {
+                eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
+                return .if_(condition: condition, then: then, else: try parsePrimaryOrThrow())
             } else {
-                guard let elseExpr = try parsePrimary() else {
-                    let elseLocation = SourceLocation(elseStartIndex..<currentIndex, source: entireSource)
-                    throw ParseError(.missing([.expression, .lineBreak], .afterKeyword(Term.Name(["else"]))), at: elseLocation, fixes: [SuggestingFix(suggesting: "add an expression to evaluate it when the condition is false", at: [currentLocation]), SuggestingFix(suggesting: "{FIX} to evaluate a sequence of expressions when the condition is true", by: AppendingFix(appending: "\n", at: elseLocation))])
-                }
-                
-                eatCommentsAndWhitespace()
-                
-                return elseExpr
+                return .if_(condition: condition, then: then, else: nil)
             }
+        } else {
+            throw ParseError(.missing([.keyword(Term.Name(["then"])), .lineBreak]), at: currentLocation)
         }
-        
-        return .if_(condition: condition, then: try parseThen(), else: try parseElse())
     }
     
     private func handleRepeat() throws -> Expression.Kind? {
