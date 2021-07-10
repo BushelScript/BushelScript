@@ -68,23 +68,27 @@ public class TermDictionaryCache {
     ///   - `SDEFError` if `url` refers to an ill-formed SDEF file or
     ///                 an app bundle with an ill-formed terminology definition.
     public func loadIgnoringCache(from url: URL) throws -> TermDictionary? {
-        if url.pathExtension == "bushel" {
-            return try parse(from: url).rootTerm.dictionary
-        } else {
-            guard let sdef = try readSDEF(from: url) else {
-                return nil
+        if let dictionary: TermDictionary = try ({
+            if url.pathExtension == "bushel" {
+                return try parse(from: url).rootTerm.dictionary
+            } else {
+                guard let sdef = try readSDEF(from: url) else {
+                    return nil
+                }
+                var terms = try parse(sdef: sdef, typeTree: typeTree)
+                // Don't import terms that shadow "set" or "get":
+                terms.removeAll { term in
+                    [Commands.get, Commands.set]
+                        .map { Term.ID($0) }
+                        .contains(term.id)
+                }
+                return TermDictionary(contents: terms)
             }
-            var terms = try parse(sdef: sdef, typeTree: typeTree)
-            // Don't import terms that shadow "set" or "get":
-            terms.removeAll { term in
-                [Commands.get, Commands.set]
-                    .map { Term.ID($0) }
-                    .contains(term.id)
-            }
-            let dictionary = TermDictionary(contents: terms)
+        }()) {
             dictionaryCache[url] = dictionary
             return dictionary
         }
+        return nil
     }
     
     /// The cached dictionary for `url`, if there is one.
