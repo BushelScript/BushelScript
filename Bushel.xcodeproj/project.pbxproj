@@ -80,6 +80,7 @@
 		3C6B75C82305D8EA0006C354 /* EnglishFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */; };
 		3C70A6A423C5898C00CD5F73 /* RT_TestSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C70A6A323C5898C00CD5F73 /* RT_TestSpecifier.swift */; };
 		3C75067223A1A4EF006E7591 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C35A5BB22C81DE7002D4582 /* Bushel.framework */; };
+		3C7FEF7E269A471900A314FE /* TermLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7FEF7D269A471900A314FE /* TermLoading.swift */; };
 		3C8FEEF322DE2B8300C1F1CF /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8FEEF222DE2B8300C1F1CF /* Context.swift */; };
 		3C906F00231CD30A0099B139 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906EFF231CD30A0099B139 /* Ordering.swift */; };
 		3C93A51926864BB20049187E /* RT_ValueWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C93A51826864BB20049187E /* RT_ValueWrapper.swift */; };
@@ -317,6 +318,7 @@
 		3C6B75C72305D8EA0006C354 /* EnglishFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnglishFormatter.swift; sourceTree = "<group>"; };
 		3C6B75CE2305F95A0006C354 /* LanguageModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageModule.swift; sourceTree = "<group>"; };
 		3C70A6A323C5898C00CD5F73 /* RT_TestSpecifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_TestSpecifier.swift; sourceTree = "<group>"; };
+		3C7FEF7D269A471900A314FE /* TermLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermLoading.swift; sourceTree = "<group>"; };
 		3C8FEEF222DE2B8300C1F1CF /* Context.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
 		3C906EFF231CD30A0099B139 /* Ordering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ordering.swift; sourceTree = "<group>"; };
 		3C93A51826864BB20049187E /* RT_ValueWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_ValueWrapper.swift; sourceTree = "<group>"; };
@@ -486,7 +488,6 @@
 			isa = PBXGroup;
 			children = (
 				3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */,
-				3C065BE025DB975500C86E5C /* SDEF.swift */,
 				3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */,
 				3C3065B2230B7E2000833CE8 /* ByNameTermLookup.swift */,
 			);
@@ -640,9 +641,19 @@
 			path = "bushelscript_en Tests";
 			sourceTree = "<group>";
 		};
+		3C7FEF7B269A46E800A314FE /* Loading */ = {
+			isa = PBXGroup;
+			children = (
+				3C7FEF7D269A471900A314FE /* TermLoading.swift */,
+				3C065BE025DB975500C86E5C /* SDEF.swift */,
+			);
+			path = Loading;
+			sourceTree = "<group>";
+		};
 		3C906F20231DD9D50099B139 /* Terminology */ = {
 			isa = PBXGroup;
 			children = (
+				3C7FEF7B269A46E800A314FE /* Loading */,
 				3C26BA8926812ADB00452D9E /* Types */,
 				3C065BC425DB313500C86E5C /* Grouping */,
 				3C065B9325DB29E800C86E5C /* Term */,
@@ -1345,6 +1356,7 @@
 				3CD18E0A2620A2B800144A3C /* SourceFix.swift in Sources */,
 				3C065BB625DB2F7D00C86E5C /* Resource.swift in Sources */,
 				3CC774812414270E00EC1E3B /* Formatting.swift in Sources */,
+				3C7FEF7E269A471900A314FE /* TermLoading.swift in Sources */,
 				3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */,
 				3CD18E472620A3ED00144A3C /* SourceFormatter.swift in Sources */,
 				3C3F06E123C14B15005BC0F2 /* Ranges.swift in Sources */,
