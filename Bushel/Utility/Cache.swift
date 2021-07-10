@@ -29,6 +29,15 @@ class Cache<Key, Value> where Key: Hashable {
         }()
     }
     
+    subscript(_ key: Key) -> Value? {
+        get {
+            cache[key]
+        }
+        set {
+            cache[key] = newValue
+        }
+    }
+    
     func clear() {
         cache.removeAll()
     }

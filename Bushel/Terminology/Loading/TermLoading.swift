@@ -81,13 +81,15 @@ public class TermDictionaryCache {
                     .map { Term.ID($0) }
                     .contains(term.id)
             }
-            return TermDictionary(contents: terms)
+            let dictionary = TermDictionary(contents: terms)
+            dictionaryCache[url] = dictionary
+            return dictionary
         }
     }
     
     /// The cached dictionary for `url`, if there is one.
     public func cached(for url: URL) -> TermDictionary? {
-        dictionaryCache.cached(for: url, orElse: { nil })
+        dictionaryCache[url]
     }
     
     /// Deletes all cached dictionaries.
