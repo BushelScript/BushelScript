@@ -61,13 +61,13 @@ public final class RT_InsertionSpecifier: RT_Object, RT_HierarchicalSpecifier {
         let (selfDescription, useOf): (String, Bool) = {
             switch kind {
             case .beginning:
-                return ("at beginning", true)
+                return ("first position", true)
             case .end:
-                return ("at end", true)
+                return ("last position", true)
             case .before:
-                return ("before", false)
+                return ("position before", false)
             case .after:
-                return ("after", false)
+                return ("position after", false)
             }
         }()
         
