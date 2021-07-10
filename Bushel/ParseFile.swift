@@ -2,6 +2,9 @@ import Regex
 
 private var defaultLanguageID = "bushelscript_en"
 
+public var globalTypeTree = TypeTree(rootType: Term.SemanticURI(Types.item))
+public var globalTermDictionaryCache = TermDictionaryCache(typeTree: globalTypeTree)
+
 public func parse(from url: URL, ignoringImports: Set<URL> = []) throws -> Program {
     try parse(source: String(contentsOf: url), ignoringImports: ignoringImports.union([url]))
 }

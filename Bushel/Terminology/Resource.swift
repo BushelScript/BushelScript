@@ -316,11 +316,12 @@ extension Resource {
     
 }
 
-// MARK: Dictionary loading
-extension Term {
+extension TermDictionaryCache {
     
-    public func loadDictionary(typeTree: TypeTree) throws {
-        try resource?.url.map { try dictionary.load(from: $0, typeTree: typeTree) }
+    public func loadResourceDictionary(for term: Term) throws {
+        if let resourceURL = term.resource?.url {
+            try load(from: resourceURL, into: term.dictionary)
+        }
     }
     
 }

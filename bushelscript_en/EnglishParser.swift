@@ -13,7 +13,8 @@ public final class EnglishParser: SourceParser {
     public lazy var termNameStartIndex: String.Index = entireSource.startIndex
     
     public var lexicon = Lexicon()
-    public var typeTree = TypeTree(rootType: Term.SemanticURI(Types.item))
+    public var typeTree = globalTypeTree
+    public var dictionaryCache = globalTermDictionaryCache
     public var sequenceNestingLevel: Int = 0
     public var elements: Set<SourceElement> = []
     public var awaitingExpressionEndKeywords: [Set<Term.Name>] = []
@@ -471,7 +472,7 @@ public final class EnglishParser: SourceParser {
         } else {
             // Resort to empty name.
             let term = Term(.resource, .res("system"), name: Term.Name([]), resource: system.enumerated())
-            try term.loadDictionary(typeTree: typeTree)
+            try dictionaryCache.loadResourceDictionary(for: term)
             return term
         }
     }
@@ -482,7 +483,7 @@ public final class EnglishParser: SourceParser {
         }
         
         let term = Term(.resource, .res("app:\(name)"), name: name, resource: application.enumerated())
-        try term.loadDictionary(typeTree: typeTree)
+        try dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
@@ -491,7 +492,7 @@ public final class EnglishParser: SourceParser {
             throw ParseError(.unmetResourceRequirement(.applicationByBundleID(bundleID: name.normalized)), at: termNameLocation)
         }
         let term = Term(.resource, .res("appid:\(name)"), name: name, resource: application.enumerated())
-        try term.loadDictionary(typeTree: typeTree)
+        try dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
@@ -501,7 +502,7 @@ public final class EnglishParser: SourceParser {
         }
         nativeImports.insert(library.url)
         let term = Term(.resource, .res("library:\(name)"), name: name, resource: library.enumerated())
-        try? term.loadDictionary(typeTree: typeTree)
+        try dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
@@ -519,7 +520,7 @@ public final class EnglishParser: SourceParser {
             throw ParseError(.unmetResourceRequirement(.applescriptAtPath(path: path)), at: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
         }
         let term = Term(.resource, .res("as:\(path)"), name: name, resource: applescript.enumerated())
-        try? term.loadDictionary(typeTree: typeTree)
+        try dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     

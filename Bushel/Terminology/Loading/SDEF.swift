@@ -11,52 +11,13 @@ private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 ///   - An application bundle that contains one or more of an SDEF,
 ///     a Cocoa Scripting plist pair, or a classic `aete` resource
 ///
-/// Maintains a cache, so external changes to previously read URLs may be
-/// ignored.
-///
 /// - Throws: `SDEFError` if the data cannot be read for any reason.
 public func readSDEF(from url: URL) throws -> Data? {
     do {
-        return try sdefCache.cached(for: url, orElse: {
-            try SDEFinitely.readSDEF(from: url)
-        }) as Data
+        return try SDEFinitely.readSDEF(from: url)
     } catch is NoSDEF {
         return nil
     }
-}
-
-private var sdefCache = Cache<URL, Data>()
-
-class Cache<Key, Value> where Key: Hashable {
-    
-    private let accessQueue = DispatchQueue(label: "Cache access")
-    private var cache: [Key : Value] = [:]
-    
-    func cached(for key: Key, orElse action: () throws -> Value) rethrows -> Value {
-        try accessQueue.sync {
-            cache[key]
-        } ?? {
-            let value = try action()
-            accessQueue.sync {
-                cache[key] = value
-            }
-            return value
-        }()
-    }
-    func cached(for key: Key, orElse action: () throws -> Value?) rethrows -> Value? {
-        try accessQueue.sync {
-            cache[key]
-        } ?? {
-            let value = try action()
-            if let value = value {
-                accessQueue.sync {
-                    cache[key] = value
-                }
-            }
-            return value
-        }()
-    }
-    
 }
 
 /// Parses and returns terms from SDEF data `sdef`,

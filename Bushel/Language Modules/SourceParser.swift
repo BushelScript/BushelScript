@@ -35,6 +35,7 @@ public protocol SourceParser: AnyObject {
     
     var lexicon: Lexicon { get set }
     var typeTree: TypeTree { get set }
+    var dictionaryCache: TermDictionaryCache { get set }
     var sequenceNestingLevel: Int { get set }
     var elements: Set<SourceElement> { get set }
     var awaitingExpressionEndKeywords: [Set<Term.Name>] { get set }
@@ -110,7 +111,7 @@ extension SourceParser {
         
         // Add all other terms.
         for translation in translations {
-            lexicon.add(translation.makeTerms(typeTree: typeTree))
+            lexicon.add(translation.makeTerms(cache: dictionaryCache))
         }
         
         lexicon.add(Term(Term.ID(Parameters.direct)))
