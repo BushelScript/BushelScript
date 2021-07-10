@@ -262,6 +262,15 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
         }
     }
     
+    @IBAction func reloadDictionaries(_ sender: Any?) {
+        Bushel.globalTermDictionaryCache.clearCache()
+        do {
+            _ = try compile(modelSourceCode)
+        } catch {
+            displayInlineError(error)
+        }
+    }
+    
     @IBAction func runScript(_ sender: Any?) {
         let program: Program
         do {
@@ -311,6 +320,8 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     }
     
     private func compile(_ source: String) throws -> Program {
+        removeErrorDisplay()
+        
         let program = try parse(source)
         
         let highlighted = NSMutableAttributedString(attributedString: highlight(source: Substring(source), program.elements, with: [

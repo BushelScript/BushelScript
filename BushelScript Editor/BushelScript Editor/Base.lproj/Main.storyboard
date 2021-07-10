@@ -397,7 +397,6 @@ DQ
                                                 <action selector="compileScript:" target="Ady-hI-5gd" id="IfF-yf-liX"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="Mec-fJ-byz"/>
                                         <menuItem title="Language" id="s9m-6B-xeh">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Language" id="sEm-nW-0Sh">
@@ -405,6 +404,13 @@ DQ
                                                     <outlet property="delegate" destination="sh2-hA-rfQ" id="Gc3-hs-yLR"/>
                                                 </connections>
                                             </menu>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="7LP-Y9-5TB"/>
+                                        <menuItem title="Reload Dictionaries" keyEquivalent="r" id="Ofd-MD-vbR">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="reloadDictionaries:" target="Ady-hI-5gd" id="g3o-cv-V6t"/>
+                                            </connections>
                                         </menuItem>
                                     </items>
                                 </menu>
@@ -637,6 +643,22 @@ DQ
                                     </button>
                                     <connections>
                                         <action selector="compileScript:" target="6f7-a7-6o1" id="H3j-B8-VOu"/>
+                                    </connections>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="463D2427-A981-43E1-8ECB-AF4869132DBA" label="Reload" paletteLabel="Reload Dictionaries" image="NSRefreshTemplate" bordered="YES" id="7GD-gf-F4s">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="44" height="25"/>
+                                    <size key="maxSize" width="44" height="25"/>
+                                    <button key="view" verticalHuggingPriority="750" id="jlI-3g-fN0">
+                                        <rect key="frame" x="33" y="14" width="44" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRefreshTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jm8-31-Jwc">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="smallSystem" size="13"/>
+                                        </buttonCell>
+                                    </button>
+                                    <connections>
+                                        <action selector="reloadDictionaries:" target="6f7-a7-6o1" id="e9C-DJ-sMa"/>
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="E33B5B42-3F40-46E6-9B3B-420181A6DE60" label="Sidebar" paletteLabel="Toggle Sidebar" image="sidebar.right.medium.medium" bordered="YES" id="Nnz-WS-rd6">
@@ -1127,6 +1149,7 @@ CQ
         </scene>
     </scenes>
     <resources>
+        <image name="NSRefreshTemplate" width="14" height="16"/>
         <image name="hammer.fill.medium.medium" width="142" height="118"/>
         <image name="play.fill.medium.medium" width="88" height="113"/>
         <image name="sidebar.right.medium.medium" width="140" height="113"/>
