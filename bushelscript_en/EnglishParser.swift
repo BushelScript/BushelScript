@@ -14,7 +14,7 @@ public final class EnglishParser: SourceParser {
     
     public var lexicon = Lexicon()
     public var typeTree = globalTypeTree
-    public var dictionaryCache = globalTermDictionaryCache
+    public var cache = globalCache
     public var sequenceNestingLevel: Int = 0
     public var elements: Set<SourceElement> = []
     public var awaitingExpressionEndKeywords: [Set<Term.Name>] = []
@@ -472,37 +472,36 @@ public final class EnglishParser: SourceParser {
         } else {
             // Resort to empty name.
             let term = Term(.resource, .res("system"), name: Term.Name([]), resource: system.enumerated())
-            try dictionaryCache.loadResourceDictionary(for: term)
+            try cache.dictionaryCache.loadResourceDictionary(for: term)
             return term
         }
     }
     
     private func handleImportApplicationName(name: Term.Name) throws -> Term {
-        guard let application = Resource.ApplicationByName(name: name.normalized) else {
+        guard let bundle = try cache.resourceCache.app(named: name.normalized) else {
             throw ParseError(.unmetResourceRequirement(.applicationByName(name: name.normalized)), at: termNameLocation)
         }
-        
-        let term = Term(.resource, .res("app:\(name)"), name: name, resource: application.enumerated())
-        try dictionaryCache.loadResourceDictionary(for: term)
+        let term = Term(.resource, .res("app:\(name)"), name: name, resource: .applicationByName(bundle: bundle))
+        try cache.dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
     private func handleImportApplicationID(name: Term.Name) throws -> Term {
-        guard let application = Resource.ApplicationByID(id: name.normalized) else {
+        guard let bundle = try cache.resourceCache.app(id: name.normalized) else {
             throw ParseError(.unmetResourceRequirement(.applicationByBundleID(bundleID: name.normalized)), at: termNameLocation)
         }
-        let term = Term(.resource, .res("appid:\(name)"), name: name, resource: application.enumerated())
-        try dictionaryCache.loadResourceDictionary(for: term)
+        let term = Term(.resource, .res("appid:\(name)"), name: name, resource: .applicationByID(bundle: bundle))
+        try cache.dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
     private func handleImportLibrary(name: Term.Name) throws -> Term {
-        guard let library = Resource.LibraryByName(name: name.normalized, ignoring: nativeImports) else {
+        guard let (url, library) = try cache.resourceCache.library(named: name.normalized, ignoring: nativeImports) else {
             throw ParseError(.unmetResourceRequirement(.libraryByName(name: name.normalized)), at: termNameLocation)
         }
-        nativeImports.insert(library.url)
-        let term = Term(.resource, .res("library:\(name)"), name: name, resource: library.enumerated())
-        try dictionaryCache.loadResourceDictionary(for: term)
+        nativeImports.insert(url)
+        let term = Term(.resource, .res("library:\(name)"), name: name, resource: .libraryByName(name: name.normalized, url: url, library: library))
+        try cache.dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
@@ -516,11 +515,11 @@ public final class EnglishParser: SourceParser {
         
         path = (path as NSString).expandingTildeInPath
         
-        guard let applescript = Resource.AppleScriptAtPath(path: path) else {
+        guard let applescript = try cache.resourceCache.applescript(at: path) else {
             throw ParseError(.unmetResourceRequirement(.applescriptAtPath(path: path)), at: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
         }
-        let term = Term(.resource, .res("as:\(path)"), name: name, resource: applescript.enumerated())
-        try dictionaryCache.loadResourceDictionary(for: term)
+        let term = Term(.resource, .res("as:\(path)"), name: name, resource: .applescriptAtPath(path: path, script: applescript))
+        try cache.dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     

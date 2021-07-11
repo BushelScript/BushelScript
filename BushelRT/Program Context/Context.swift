@@ -68,8 +68,6 @@ extension Runtime {
                 case let .applicationByName(bundle),
                      let .applicationByID(bundle):
                     return RT_Application(rt, bundle: bundle)
-                case .scriptingAdditionByName(_):
-                    return rt.core
                 case let .libraryByName(_, url, library):
                     switch library {
                     case let .native(program):

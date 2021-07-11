@@ -2,7 +2,42 @@ import Foundation
 import AEthereal
 import os.log
 
-private let log = OSLog(subsystem: logSubsystem, category: "Resource location")
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
+
+/// An in-memory cache for resolved resources.
+public class ResourceCache {
+    
+    public init() {
+    }
+    
+    public func library(named name: String, ignoring: Set<URL>) throws -> (url: URL, library: Library)? {
+        libraryCache.for(name, default:
+            findNativeLibrary(named: name, ignoring: ignoring) ??
+            findAppleScriptLibrary(named: name)
+        )
+    }
+    public func applescript(at path: String) throws -> NSAppleScript? {
+        applescriptCacheByPath.for(path, default: NSAppleScript(contentsOf: URL(fileURLWithPath: path), error: nil))
+    }
+    public func app(named name: String) throws -> Bundle? {
+        appCacheByName.for(name, default: Bundle(applicationName: name))
+    }
+    public func app(id: String) throws -> Bundle? {
+        appCacheByID.for(id, default: Bundle(applicationBundleIdentifier: id))
+    }
+    
+    /// Deletes the contents of the cache.
+    public func clearCache() {
+        libraryCache.clear()
+    }
+    
+    private var libraryCache = Cache<String, (url: URL, library: Library)>()
+    private var applescriptCacheByPath = Cache<String, NSAppleScript>()
+    private var appCacheByName = Cache<String, Bundle>()
+    private var appCacheByID = Cache<String, Bundle>()
+    
+}
+
 
 extension Bundle {
     

@@ -7,15 +7,8 @@ public enum Resource {
     case system(version: String?)
     case applicationByName(bundle: Bundle)
     case applicationByID(bundle: Bundle)
-    case scriptingAdditionByName(bundle: Bundle)
     case libraryByName(name: String, url: URL, library: Library)
     case applescriptAtPath(path: String, script: NSAppleScript)
-    
-}
-
-public protocol ResolvedResource {
-    
-    func enumerated() -> Resource
     
 }
 
@@ -37,18 +30,7 @@ public enum Library {
 // MARK: Resource resolution
 extension Resource {
     
-    public struct BushelScript: ResolvedResource {
-        
-        public init() {
-        }
-        
-        public func enumerated() -> Resource {
-            .bushelscript
-        }
-        
-    }
-    
-    public struct System: ResolvedResource {
+    public struct System {
         
         public let version: OperatingSystemVersion?
         
@@ -89,106 +71,6 @@ extension Resource {
         
     }
     
-    public struct ApplicationByName: ResolvedResource {
-        
-        public let bundle: Bundle
-        
-        public init?(name: String) {
-            guard let bundle = Bundle(applicationName: name) else {
-                return nil
-            }
-            
-            self.bundle = bundle
-        }
-        
-        public func enumerated() -> Resource {
-            .applicationByName(bundle: bundle)
-        }
-        
-    }
-    
-    public struct ApplicationByID: ResolvedResource {
-        
-        public let bundle: Bundle
-        
-        public init?(id: String) {
-            guard let bundle = Bundle(applicationBundleIdentifier: id) else {
-                return nil
-            }
-            
-            self.bundle = bundle
-        }
-        
-        public func enumerated() -> Resource {
-            .applicationByID(bundle: bundle)
-        }
-        
-    }
-    
-    public struct ScriptingAdditionByName: ResolvedResource {
-        
-        public let bundle: Bundle
-        
-        public init?(name: String) {
-            guard let bundle = Bundle(scriptingAdditionName: name) else {
-                return nil
-            }
-            
-            self.bundle = bundle
-        }
-        
-        public func enumerated() -> Resource {
-            .scriptingAdditionByName(bundle: bundle)
-        }
-        
-    }
-    
-    public struct LibraryByName: ResolvedResource {
-        
-        public let name: String
-        public let url: URL
-        public let library: Library
-        
-        public init?(name: String, ignoring: Set<URL>) {
-            guard let (url, library) =
-                findNativeLibrary(named: name, ignoring: ignoring) ??
-                findAppleScriptLibrary(named: name)
-            else {
-                return nil
-            }
-            
-            self.name = name
-            self.url = url
-            self.library = library
-        }
-        
-        public func enumerated() -> Resource {
-            .libraryByName(name: name, url: url, library: library)
-        }
-        
-    }
-    
-    public struct AppleScriptAtPath: ResolvedResource {
-        
-        public let path: String
-        public let script: NSAppleScript
-        
-        public init?(path: String) {
-            let fileURL = URL(fileURLWithPath: path)
-            guard let script = NSAppleScript(contentsOf: fileURL, error: nil) else {
-                return nil
-            }
-            
-            self.path = path
-            self.script = script
-        }
-        
-        public func enumerated() -> Resource {
-            .applescriptAtPath(path: path, script: script)
-        }
-        
-    }
-    
 }
 
 // MARK: Resource → String
@@ -207,7 +89,6 @@ extension Resource: CustomStringConvertible {
         case system
         case applicationByName = "app"
         case applicationByID = "appid"
-        case scriptingAdditionByName = "osax"
         case libraryByName = "library"
         case applescriptAtPath = "as"
     }
@@ -222,8 +103,6 @@ extension Resource: CustomStringConvertible {
             return .applicationByName
         case .applicationByID:
             return .applicationByID
-        case .scriptingAdditionByName:
-            return .scriptingAdditionByName
         case .libraryByName:
             return .libraryByName
         case .applescriptAtPath:
@@ -240,8 +119,6 @@ extension Resource: CustomStringConvertible {
             return bundle.fileSystemName
         case .applicationByID(let bundle):
             return bundle.bundleIdentifier!
-        case .scriptingAdditionByName(let bundle):
-            return bundle.fileSystemName
         case .libraryByName(let name, _, _):
             return name
         case .applescriptAtPath(let path, _):
@@ -254,7 +131,7 @@ extension Resource: CustomStringConvertible {
 // MARK: String → Resource
 extension Resource {
     
-    public init?(normalized: String) {
+    public init?(normalized: String, cache: ResourceCache) {
         let components = normalized.split(separator: ":", maxSplits: 1)
         guard
             components.indices.contains(0),
@@ -262,34 +139,31 @@ extension Resource {
         else {
             return nil
         }
-        self.init(kind: kind, data: components.indices.contains(1) ? String(components[1]) : "")
+        self.init(kind: kind, data: components.indices.contains(1) ? String(components[1]) : "", cache: cache)
     }
     
-    public init?(kind: Kind, data: String) {
+    public init?(kind: Kind, data: String, cache: ResourceCache) {
         guard
-            let resolved: ResolvedResource = { () -> ResolvedResource? in
+            let resolved: Resource = try? {
                 switch kind {
                 case .bushelscript:
-                    return BushelScript()
+                    return .bushelscript
                 case .system:
-                    return System()
+                    return System().enumerated()
                 case .applicationByName:
-                    return ApplicationByName(name: data)
+                    return try cache.app(named: data).map { .applicationByName(bundle: $0) }
                 case .applicationByID:
-                    return ApplicationByID(id: data)
-                case .scriptingAdditionByName:
-                    return ScriptingAdditionByName(name: data)
+                    return try cache.app(id: data).map { .applicationByID(bundle: $0) }
                 case .libraryByName:
-                    return LibraryByName(name: data, ignoring: [])
+                    return try cache.library(named: data, ignoring: []).map { .libraryByName(name: data, url: $0.url, library: $0.library) }
                 case .applescriptAtPath:
-                    return AppleScriptAtPath(path: data)
+                    return try cache.applescript(at: data).map { .applescriptAtPath(path: data, script: $0) }
                 }
             }()
         else {
             return nil
         }
-        
-        self = resolved.enumerated()
+        self = resolved
     }
     
 }
@@ -302,10 +176,9 @@ extension Resource {
         case .bushelscript:
             return nil
         case .system(_):
-            return ApplicationByID(id: "com.apple.systemevents")?.bundle.bundleURL
+            return Bundle(applicationBundleIdentifier: "com.apple.systemevents")?.bundleURL
         case let .applicationByName(bundle),
-             let .applicationByID(bundle),
-             let .scriptingAdditionByName(bundle):
+             let .applicationByID(bundle):
             return bundle.bundleURL
         case let .libraryByName(_, url, _):
             return url

@@ -309,8 +309,6 @@ extension Term {
             return "app \(name)"
         case .applicationByID:
             return "app id \(name)"
-        case .scriptingAdditionByName:
-            return "scripting addition \(name)"
         case .libraryByName:
             return "library \(name)"
         case .applescriptAtPath(let path, _):

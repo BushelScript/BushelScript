@@ -205,13 +205,13 @@ public struct Translation {
         mappings[typedUID]?.first
     }
     
-    public func makeTerms(cache dictionaryCache: TermDictionaryCache) -> Set<Term> {
+    public func makeTerms(cache: BushelCache) -> Set<Term> {
         var resourceTerms: [Term] = []
         
         let termPairs: [(Term.ID, [Term])] = mappings.map { kv in
             let (termID, termNames) = kv
             return (termID, termNames.compactMap { termName in
-                Term(termID, name: termName, resource: termID.role == .resource ? Resource(normalized: termName.normalized) : nil)
+                Term(termID, name: termName, resource: termID.role == .resource ? Resource(normalized: termName.normalized, cache: cache.resourceCache) : nil)
             })
         }
         let allTerms = [Term.ID : [Term]](uniqueKeysWithValues: termPairs)
@@ -264,7 +264,7 @@ public struct Translation {
         }
         
         for resourceTerm in resourceTerms {
-            try? dictionaryCache.loadResourceDictionary(for: resourceTerm)
+            try? cache.dictionaryCache.loadResourceDictionary(for: resourceTerm)
         }
         
         return resultTerms.values.reduce(into: Set()) { set, terms in set.formUnion(terms) }
