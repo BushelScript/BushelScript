@@ -394,7 +394,7 @@ DQ
                                         <menuItem isSeparatorItem="YES" id="1Hd-d6-r02"/>
                                         <menuItem title="Pretty Print" keyEquivalent="k" id="xgq-nk-h4r">
                                             <connections>
-                                                <action selector="compileScript:" target="Ady-hI-5gd" id="IfF-yf-liX"/>
+                                                <action selector="prettyPrint:" target="Ady-hI-5gd" id="IfF-yf-liX"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Language" id="s9m-6B-xeh">
@@ -642,7 +642,7 @@ DQ
                                         </buttonCell>
                                     </button>
                                     <connections>
-                                        <action selector="compileScript:" target="6f7-a7-6o1" id="H3j-B8-VOu"/>
+                                        <action selector="prettyPrint:" target="6f7-a7-6o1" id="H3j-B8-VOu"/>
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="463D2427-A981-43E1-8ECB-AF4869132DBA" label="Reload" paletteLabel="Reload Resources" image="NSRefreshTemplate" bordered="YES" id="7GD-gf-F4s">

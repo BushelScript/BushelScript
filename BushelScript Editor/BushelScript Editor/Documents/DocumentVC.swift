@@ -164,6 +164,10 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     }
     
     private func setModelSourceCodeUndoable(_ newValue: String, actionName: String) {
+        guard newValue != modelSourceCode else {
+            return
+        }
+        
         let oldValue = modelSourceCode
         
         modelSourceCode = newValue
@@ -303,7 +307,7 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
         document.rt.shouldTerminate = true
     }
     
-    @IBAction func compileScript( _ sender: Any?) {
+    @IBAction func prettyPrint( _ sender: Any?) {
         do {
             _ = try prettyPrint(modelSourceCode)
         } catch {
