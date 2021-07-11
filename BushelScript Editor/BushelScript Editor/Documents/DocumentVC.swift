@@ -262,7 +262,7 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
         }
     }
     
-    @IBAction func reloadDictionaries(_ sender: Any?) {
+    @IBAction func reloadResources(_ sender: Any?) {
         Bushel.globalCache.clearCache()
         do {
             _ = try compile(modelSourceCode)
