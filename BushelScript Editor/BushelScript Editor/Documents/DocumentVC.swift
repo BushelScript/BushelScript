@@ -18,27 +18,12 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     
     enum Status {
         
-        case loadingLanguageModule
-        case compiling
-        case highlighting
-        case prettyPrinting
         case running
-        case fetchingData
         
         var localizedDescription: String {
             switch self {
-            case .loadingLanguageModule:
-                return "Loading language module…"
-            case .compiling:
-                return "Compiling…"
-            case .highlighting:
-                return "Highlighting syntax…"
-            case .prettyPrinting:
-                return "Pretty printing…"
             case .running:
                 return "Running…"
-            case .fetchingData:
-                return "Fetching data…"
             }
         }
         
