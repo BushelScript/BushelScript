@@ -230,7 +230,7 @@ extension Runtime {
                     return try runPrimary(body)
                 }
             case .let_(let term, let initialValue): // MARK: .let_
-                let initialExprValue = try initialValue.map { try runPrimary($0) } ?? missing
+                let initialExprValue = try initialValue.map { try runPrimary($0) } ?? unspecified
                 context[variable: term] = initialExprValue
                 return initialExprValue
             case .define(_, as: _): // MARK: .define
