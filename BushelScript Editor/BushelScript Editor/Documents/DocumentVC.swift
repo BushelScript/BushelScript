@@ -459,7 +459,7 @@ extension DocumentVC: NSTextViewDelegate {
         let firstLineRect = window.convertFromScreen(firstLineScreenRect)
         // Flip coordinates for text view
         let firstLineFlippedRect = firstLineRect.applying(
-            CGAffineTransform(translationX: 0, y: textView.frame.height)
+            CGAffineTransform(translationX: 0, y: textView.enclosingScrollView!.documentVisibleRect.maxY)
                 .scaledBy(x: 1, y: -1)
         )
         
