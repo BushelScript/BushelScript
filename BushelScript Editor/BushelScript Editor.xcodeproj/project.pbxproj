@@ -22,6 +22,10 @@
 		3C204703268EB31E00C52E2B /* Libraries in Resources */ = {isa = PBXBuildFile; fileRef = 3C204702268EB31E00C52E2B /* Libraries */; };
 		3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C249D472319C1D700F5826E /* PreferencesViewController.swift */; };
 		3C26BA8D268184D800452D9E /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C26BA8C268184D800452D9E /* Menu.swift */; };
+		3C278EBE269D2DAD0003E79A /* main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C278EBC269D2DAD0003E79A /* main.xib */; };
+		3C278ECD269D30CF0003E79A /* Run_BushelScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C278ECC269D30CF0003E79A /* Run_BushelScript.swift */; };
+		3C278ECE269D35B50003E79A /* Run BushelScript.action in Embed Automator Actions */ = {isa = PBXBuildFile; fileRef = 3C278EB7269D2DAD0003E79A /* Run BushelScript.action */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3C278ED5269D3C790003E79A /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C278ED4269D3C790003E79A /* Logging.swift */; };
 		3C2A9CDE26793CF60084716C /* Bushel.framework in Embed Shared Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2A9CDF26793CF60084716C /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
 		3C2A9CE026793CF60084716C /* BushelRT.framework in Embed Shared Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -47,6 +51,8 @@
 		3C76927B23E1D8DA008FE565 /* InlineErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C76927A23E1D8DA008FE565 /* InlineErrorView.swift */; };
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
+		3C88833D269E2D6F00803197 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; };
+		3C88833E269E2D6F00803197 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
 		3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1D0602319A07100DD01A9 /* Defaults.swift */; };
 		3CEC9DBD267EED0D00E53CC0 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; };
 		3CEC9DBE267EED0D00E53CC0 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -117,6 +123,13 @@
 			remoteGlobalIDString = 3C0566A923135673004CDB1A;
 			remoteInfo = "BushelScript Editor";
 		};
+		3C278ECF269D35B50003E79A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C0566A223135673004CDB1A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3C278EB6269D2DAD0003E79A;
+			remoteInfo = "Run BushelScript";
+		};
 		3C554CB223F7AFE50029E71A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
@@ -169,6 +182,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		3C278ED1269D35B50003E79A /* Embed Automator Actions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = Contents/Library/Automator;
+			dstSubfolderSpec = 1;
+			files = (
+				3C278ECE269D35B50003E79A /* Run BushelScript.action in Embed Automator Actions */,
+			);
+			name = "Embed Automator Actions";
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		3C2A9CE126793CF60084716C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -229,6 +253,11 @@
 		3C204702268EB31E00C52E2B /* Libraries */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Libraries; path = "../Standard Library/Libraries"; sourceTree = "<group>"; };
 		3C249D472319C1D700F5826E /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 		3C26BA8C268184D800452D9E /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
+		3C278EB7269D2DAD0003E79A /* Run BushelScript.action */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Run BushelScript.action"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C278EBD269D2DAD0003E79A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/main.xib; sourceTree = "<group>"; };
+		3C278EBF269D2DAD0003E79A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3C278ECC269D30CF0003E79A /* Run_BushelScript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Run_BushelScript.swift; sourceTree = "<group>"; };
+		3C278ED4269D3C790003E79A /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		3C2A9CEF2679665E0084716C /* InterpreterPrefsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterpreterPrefsVC.swift; sourceTree = "<group>"; };
 		3C2A9D1E2679DE3A0084716C /* EditorTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTextView.swift; sourceTree = "<group>"; };
 		3C2BC9A923E258E400CB8C20 /* InlineErrorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineErrorVC.swift; sourceTree = "<group>"; };
@@ -290,6 +319,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3C278EB3269D2DAD0003E79A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C88833D269E2D6F00803197 /* Bushel.framework in Frameworks */,
+				3C88833E269E2D6F00803197 /* BushelRT.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -314,6 +352,7 @@
 				3C0566C123135675004CDB1A /* BushelScript EditorTests */,
 				3C10565E23E0AD7C00877A5C /* Headers */,
 				3C2046F0268EAEC100C52E2B /* Standard Library Tests */,
+				3C278EB8269D2DAD0003E79A /* Run BushelScript */,
 				3C0566AB23135673004CDB1A /* Products */,
 				3C05670C231356E7004CDB1A /* Frameworks */,
 			);
@@ -325,6 +364,7 @@
 				3C0566AA23135673004CDB1A /* BushelScript Editor.app */,
 				3C0566BE23135675004CDB1A /* BushelScript EditorTests.xctest */,
 				3C2046EF268EAEC100C52E2B /* Standard Library Tests.xctest */,
+				3C278EB7269D2DAD0003E79A /* Run BushelScript.action */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -412,6 +452,17 @@
 				3C204700268EB30F00C52E2B /* Tests */,
 			);
 			name = "Standard Library";
+			sourceTree = "<group>";
+		};
+		3C278EB8269D2DAD0003E79A /* Run BushelScript */ = {
+			isa = PBXGroup;
+			children = (
+				3C278ECC269D30CF0003E79A /* Run_BushelScript.swift */,
+				3C278EBC269D2DAD0003E79A /* main.xib */,
+				3C278EBF269D2DAD0003E79A /* Info.plist */,
+				3C278ED4269D3C790003E79A /* Logging.swift */,
+			);
+			path = "Run BushelScript";
 			sourceTree = "<group>";
 		};
 		3C2BC9B323E2754600CB8C20 /* Inline Errors */ = {
@@ -534,6 +585,7 @@
 				3C2A9CF12679890C0084716C /* Embed Shared Frameworks */,
 				3C2A9CE126793CF60084716C /* Embed Frameworks */,
 				3C2A9CE926793E780084716C /* Copy Language Modules */,
+				3C278ED1269D35B50003E79A /* Embed Automator Actions */,
 				3C6D20A023BA7A5500E7E321 /* Copy SPM Dependency Licenses */,
 			);
 			buildRules = (
@@ -543,6 +595,7 @@
 				3C906EF1231C7D380099B139 /* PBXTargetDependency */,
 				3C9FD7C023E5455700279945 /* PBXTargetDependency */,
 				3C9FD7BE23E5455200279945 /* PBXTargetDependency */,
+				3C278ED0269D35B50003E79A /* PBXTargetDependency */,
 			);
 			name = "BushelScript Editor";
 			packageProductDependencies = (
@@ -588,6 +641,24 @@
 			productReference = 3C2046EF268EAEC100C52E2B /* Standard Library Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		3C278EB6269D2DAD0003E79A /* Run BushelScript */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3C278ECB269D2DAD0003E79A /* Build configuration list for PBXNativeTarget "Run BushelScript" */;
+			buildPhases = (
+				3C278EB2269D2DAD0003E79A /* Sources */,
+				3C278EB3269D2DAD0003E79A /* Frameworks */,
+				3C278EB4269D2DAD0003E79A /* Resources */,
+				3C278EB5269D2DAD0003E79A /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Run BushelScript";
+			productName = "Run BushelScript";
+			productReference = 3C278EB7269D2DAD0003E79A /* Run BushelScript.action */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -609,6 +680,10 @@
 					3C2046EE268EAEC100C52E2B = {
 						CreatedOnToolsVersion = 12.5;
 						TestTargetID = 3C0566A923135673004CDB1A;
+					};
+					3C278EB6269D2DAD0003E79A = {
+						CreatedOnToolsVersion = 12.5.1;
+						LastSwiftMigration = 1250;
 					};
 				};
 			};
@@ -641,6 +716,7 @@
 				3C0566A923135673004CDB1A /* BushelScript Editor */,
 				3C0566BD23135675004CDB1A /* BushelScript EditorTests */,
 				3C2046EE268EAEC100C52E2B /* Standard Library Tests */,
+				3C278EB6269D2DAD0003E79A /* Run BushelScript */,
 			);
 		};
 /* End PBXProject section */
@@ -744,9 +820,35 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3C278EB4269D2DAD0003E79A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C278EBE269D2DAD0003E79A /* main.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		3C278EB5269D2DAD0003E79A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FULL_PRODUCT_NAME)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "amlint \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\n";
+		};
 		3C6D20A023BA7A5500E7E321 /* Copy SPM Dependency Licenses */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -822,6 +924,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3C278EB2269D2DAD0003E79A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C278ECD269D30CF0003E79A /* Run_BushelScript.swift in Sources */,
+				3C278ED5269D3C790003E79A /* Logging.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -834,6 +945,11 @@
 			isa = PBXTargetDependency;
 			target = 3C0566A923135673004CDB1A /* BushelScript Editor */;
 			targetProxy = 3C2046F8268EAEDF00C52E2B /* PBXContainerItemProxy */;
+		};
+		3C278ED0269D35B50003E79A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3C278EB6269D2DAD0003E79A /* Run BushelScript */;
+			targetProxy = 3C278ECF269D35B50003E79A /* PBXContainerItemProxy */;
 		};
 		3C554CB323F7AFE50029E71A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -864,6 +980,14 @@
 				3C0566B623135675004CDB1A /* Base */,
 			);
 			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		3C278EBC269D2DAD0003E79A /* main.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3C278EBD269D2DAD0003E79A /* Base */,
+			);
+			name = main.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -926,7 +1050,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG DEVENVIRONMENT";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PACKAGE_DEPS_DIR = "${OBJROOT}/../../SourcePackages/checkouts";
 			};
@@ -1144,6 +1268,82 @@
 			};
 			name = Profiling;
 		};
+		3C278EC3269D2DAD0003E79A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 6;
+				INFOPLIST_FILE = "Run BushelScript/Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Automator";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"@loader_path/../../../../../SharedFrameworks",
+				);
+				MARKETING_VERSION = 0.5.0;
+				OTHER_OSAFLAGS = "-x -t 0 -c 0";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.igregory.Run-BushelScript";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = action;
+			};
+			name = Debug;
+		};
+		3C278EC4269D2DAD0003E79A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 6;
+				INFOPLIST_FILE = "Run BushelScript/Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Automator";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"@loader_path/../../../../../SharedFrameworks",
+				);
+				MARKETING_VERSION = 0.5.0;
+				OTHER_OSAFLAGS = "-x -t 0 -c 0";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.igregory.Run-BushelScript";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = action;
+			};
+			name = Release;
+		};
+		3C278EC5269D2DAD0003E79A /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 6;
+				INFOPLIST_FILE = "Run BushelScript/Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Automator";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"@loader_path/../../../../../SharedFrameworks",
+				);
+				MARKETING_VERSION = 0.5.0;
+				OTHER_OSAFLAGS = "-x -t 0 -c 0";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.igregory.Run-BushelScript";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = action;
+			};
+			name = Profiling;
+		};
 		3C4897AF2400B9AE008EE9D1 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1194,6 +1394,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEVENVIRONMENT;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_PACKAGE_DEPS_DIR = "${OBJROOT}/../../../../../SourcePackages/checkouts";
@@ -1288,6 +1489,16 @@
 				3C2046F5268EAEC100C52E2B /* Debug */,
 				3C2046F6268EAEC100C52E2B /* Release */,
 				3C2046F7268EAEC100C52E2B /* Profiling */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3C278ECB269D2DAD0003E79A /* Build configuration list for PBXNativeTarget "Run BushelScript" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C278EC3269D2DAD0003E79A /* Debug */,
+				3C278EC4269D2DAD0003E79A /* Release */,
+				3C278EC5269D2DAD0003E79A /* Profiling */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

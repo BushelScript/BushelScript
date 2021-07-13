@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="Run_BushelScript" customModule="Run_BushelScript" customModuleProvider="target">
+            <connections>
+                <outlet property="fileConfigView" destination="jdR-Jc-7Pp" id="JCF-wk-zRI"/>
+                <outlet property="fileRadioButton" destination="5vK-Rl-fyB" id="Qam-sb-LGT"/>
+                <outlet property="inlineConfigView" destination="wLR-x0-WG9" id="SRm-Tf-fzd"/>
+                <outlet property="inlineRadioButton" destination="6MP-Z4-LKo" id="aHy-2j-8nu"/>
+                <outlet property="parametersController" destination="aFj-Nx-tzi" id="Uef-Zc-RGe"/>
+                <outlet property="view" destination="47Y-Ci-255" id="jdu-ND-x6j"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView misplaced="YES" id="47Y-Ci-255" userLabel="View">
+            <rect key="frame" x="0.0" y="0.0" width="407" height="130"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RHd-oJ-9tM">
+                    <rect key="frame" x="20" y="20" width="367" height="90"/>
+                    <subviews>
+                        <button identifier="inline" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6MP-Z4-LKo">
+                            <rect key="frame" x="-2" y="73" width="59" height="18"/>
+                            <buttonCell key="cell" type="radio" title="Inline" bezelStyle="regularSquare" imagePosition="left" alignment="left" enabled="NO" inset="2" id="sCf-Z2-nN4">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="smallSystem" size="13"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="setSourceType:" target="-2" id="vkx-Ed-wci"/>
+                            </connections>
+                        </button>
+                        <button identifier="file" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5vK-Rl-fyB">
+                            <rect key="frame" x="-2" y="49" width="48" height="18"/>
+                            <buttonCell key="cell" type="radio" title="File" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="b6f-yU-vNV">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="smallSystem" size="13"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="setSourceType:" target="-2" id="2UA-GC-Nji"/>
+                            </connections>
+                        </button>
+                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="wLR-x0-WG9">
+                            <rect key="frame" x="0.0" y="22" width="367" height="20"/>
+                            <subviews>
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ue2-PA-S26">
+                                    <rect key="frame" x="18" y="0.0" width="331" height="20"/>
+                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Inline scripts not yet implemented" id="GP0-ww-pht">
+                                        <font key="font" usesAppearanceFont="YES"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="Ue2-PA-S26" firstAttribute="leading" secondItem="wLR-x0-WG9" secondAttribute="leading" constant="20" symbolic="YES" id="Ls2-lK-rOx"/>
+                                <constraint firstItem="Ue2-PA-S26" firstAttribute="top" secondItem="wLR-x0-WG9" secondAttribute="top" id="jch-iF-VgL"/>
+                                <constraint firstAttribute="trailing" secondItem="Ue2-PA-S26" secondAttribute="trailing" constant="20" symbolic="YES" id="kWv-EN-mtU"/>
+                                <constraint firstAttribute="bottom" secondItem="Ue2-PA-S26" secondAttribute="bottom" id="sH6-ie-Xdm"/>
+                            </constraints>
+                        </customView>
+                        <stackView distribution="fill" orientation="horizontal" alignment="bottom" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jdR-Jc-7Pp">
+                            <rect key="frame" x="0.0" y="0.0" width="167" height="14"/>
+                            <subviews>
+                                <pathControl horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="751" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SB7-K2-RYF">
+                                    <rect key="frame" x="0.0" y="0.0" width="86" height="14"/>
+                                    <pathCell key="cell" controlSize="small" selectable="YES" editable="YES" alignment="left" placeholderString="Script.bushel" id="WgL-8w-rm5">
+                                        <font key="font" metaFont="system" size="11"/>
+                                        <allowedTypes>
+                                            <string>bushel</string>
+                                        </allowedTypes>
+                                    </pathCell>
+                                    <connections>
+                                        <binding destination="aFj-Nx-tzi" name="value" keyPath="selection.path" id="htL-w4-6cA">
+                                            <dictionary key="options">
+                                                <string key="NSValueTransformerName">PathToFileURLVT</string>
+                                            </dictionary>
+                                        </binding>
+                                    </connections>
+                                </pathControl>
+                                <button horizontalHuggingPriority="253" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7dx-uN-fOE">
+                                    <rect key="frame" x="88" y="-7" width="85" height="25"/>
+                                    <buttonCell key="cell" type="push" title="Choose…" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="r2R-Kw-30Y">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="smallSystem" size="13"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="chooseFile:" target="-2" id="Jvf-VA-9DS"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="SB7-K2-RYF" firstAttribute="top" secondItem="jdR-Jc-7Pp" secondAttribute="top" id="8lu-3e-NSh"/>
+                                <constraint firstItem="7dx-uN-fOE" firstAttribute="bottom" secondItem="SB7-K2-RYF" secondAttribute="bottom" id="KF7-Lk-L9G"/>
+                                <constraint firstAttribute="bottom" secondItem="SB7-K2-RYF" secondAttribute="bottom" id="a5N-nA-6d6"/>
+                                <constraint firstItem="7dx-uN-fOE" firstAttribute="top" secondItem="SB7-K2-RYF" secondAttribute="top" id="uyn-d7-Bvi"/>
+                            </constraints>
+                            <visibilityPriorities>
+                                <integer value="1000"/>
+                                <integer value="1000"/>
+                            </visibilityPriorities>
+                            <customSpacing>
+                                <real value="3.4028234663852886e+38"/>
+                                <real value="3.4028234663852886e+38"/>
+                            </customSpacing>
+                        </stackView>
+                    </subviews>
+                    <visibilityPriorities>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                    </visibilityPriorities>
+                    <customSpacing>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                    </customSpacing>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="RHd-oJ-9tM" firstAttribute="leading" secondItem="47Y-Ci-255" secondAttribute="leading" constant="20" symbolic="YES" id="V6O-8D-AmO"/>
+                <constraint firstItem="RHd-oJ-9tM" firstAttribute="top" secondItem="47Y-Ci-255" secondAttribute="top" constant="20" symbolic="YES" id="kl3-u8-cTY"/>
+                <constraint firstAttribute="trailing" secondItem="RHd-oJ-9tM" secondAttribute="trailing" constant="20" symbolic="YES" id="txv-51-eRP"/>
+                <constraint firstAttribute="bottom" secondItem="RHd-oJ-9tM" secondAttribute="bottom" constant="20" symbolic="YES" id="uh1-7v-zXw"/>
+            </constraints>
+            <point key="canvasLocation" x="143.5" y="158"/>
+        </customView>
+        <objectController id="aFj-Nx-tzi" userLabel="Parameters">
+            <connections>
+                <binding destination="-2" name="contentObject" keyPath="parameters" id="3tH-Nj-Jac"/>
+            </connections>
+        </objectController>
+    </objects>
+</document>
