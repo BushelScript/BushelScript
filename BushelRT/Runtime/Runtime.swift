@@ -47,7 +47,7 @@ public class Runtime {
     public lazy var core = RT_Core(self)
     
     /// The result of the last expression executed in sequence.
-    public lazy var lastResult: RT_Object = missing
+    public lazy var lastResult: RT_Object = unspecified
     
     /// The singleton `missing` instance.
     public lazy var missing = RT_Missing(self)
