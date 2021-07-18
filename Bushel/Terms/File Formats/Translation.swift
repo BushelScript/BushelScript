@@ -103,71 +103,10 @@ public struct Translation {
                         throw ParseError(.invalidURIName)
                     }
                     let uidsAndValueNodes: [(Term.SemanticURI, Yams.Node)] = try {
-                        var isRes: Bool = false
-                        switch uriScheme {
-                        case .res:
-                            isRes = true
-                            fallthrough
-                        case .id:
-                            // Requires special handling to support nesting
-                            enum ScopeNode {
-                                case leaf(name: Term.Name, node: Yams.Node)
-                                case branch([(name: Term.Name, node: ScopeNode)])
-                            }
-                            func process(uidDataName: Term.Name, valueNode: Yams.Node) throws -> ScopeNode {
-                                switch valueNode {
-                                case .scalar, .sequence:
-                                    return .leaf(name: uidDataName, node: valueNode)
-                                case .mapping(let valueMapping):
-                                    if valueMapping.values.contains(where: { value in
-                                            switch value {
-                                            case .sequence, .mapping:
-                                                return false
-                                            case .scalar(let valueScalar):
-                                                return valueScalar.string.hasPrefix("/")
-                                            }
-                                        })
-                                    {
-                                        return .leaf(name: uidDataName, node: valueNode)
-                                    }
-                                    return .branch(
-                                        try valueMapping.map { kv in
-                                            let (nestedUIDDataNode, nestedDataNode) = kv
-                                            guard case .scalar(let uidDataNodeScalar) = nestedUIDDataNode else {
-                                                throw ParseError(.invalidURIName)
-                                            }
-                                            let nestedUIDDataName = Term.Name(uidDataNodeScalar.string)
-                                            return (
-                                                name: uidDataName,
-                                                node: try process(uidDataName: nestedUIDDataName, valueNode: nestedDataNode)
-                                            )
-                                        }
-                                    )
-                                }
-                            }
-                            let scopeNode = try process(uidDataName: Term.Name(uidDataScalar.string), valueNode: valueNode)
-                            var namesAndNodes: [(name: Term.SemanticURI.Pathname, node: Yams.Node)] = []
-                            func traverse(scopeNode: ScopeNode, under currentScopeNames: [Term.Name]) {
-                                switch scopeNode {
-                                case .leaf(let name, let node):
-                                    namesAndNodes.append((
-                                        name: Term.SemanticURI.Pathname((currentScopeNames + [name]).map { $0.normalized }),
-                                        node: node
-                                    ))
-                                case .branch(let namesAndNodes):
-                                    for (name, node) in namesAndNodes {
-                                        traverse(scopeNode: node, under: currentScopeNames + [name])
-                                    }
-                                }
-                            }
-                            traverse(scopeNode: scopeNode, under: [])
-                            return namesAndNodes.map { (isRes ? Term.SemanticURI.res($0.name.rawValue) : Term.SemanticURI.id($0.name), $0.node) }
-                        default:
-                            guard let uid = Term.SemanticURI(scheme: uriScheme.rawValue, name: uidDataScalar.string) else {
-                                throw ParseError(.invalidURIName)
-                            }
-                            return [(uid, valueNode)]
+                        guard let uid = Term.SemanticURI(scheme: uriScheme.rawValue, name: uidDataScalar.string) else {
+                            throw ParseError(.invalidURIName)
                         }
+                        return [(uid, valueNode)]
                     }()
                     for (uid, valueNode) in uidsAndValueNodes {
                         func process(valueNode: Yams.Node, id: Term.ID) throws {

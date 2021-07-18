@@ -153,19 +153,15 @@ translation:
     mappings:
         property:
             id:
-                Math:
-                    pi: pi
+                Math/pi: pi
         command:
             id:
-                Math:
-                    abs: absolute value
-                    sqrt: √
+                Math/abs: absolute value
+                Math/sqrt: √
         parameter:
             id:
-                Math:
-                    pow:
-                        .direct: of
-                        exponent: to the
+                Math/pow/.direct: of
+                Math/pow/exponent: to the
 """
         let translation = try Translation(source: translationSource)
         

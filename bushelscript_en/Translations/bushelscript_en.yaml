@@ -98,40 +98,36 @@ translation:
                     - args
                     - arguments
                 current date: current date
-                record:
-                    keys: keys
-                    values: values
-                file:
-                    basename:
-                        - basename
-                        - base name
-                    extname:
-                        - extname
-                        - extension name
-                        - extension
-                    dirname:
-                        - dirname
-                        - directory name
-                date:
-                    seconds: seconds    # property id:date/seconds
-                    minutes: minutes
-                    hours: hours
-                    seconds since midnight: seconds since midnight
-                real:
-                    NaN: NaN
-                    inf:
-                        - inf
-                        - infinity
-                    NaN?: NaN?
-                    inf?:
-                        - inf?
-                        - infinity?
-                        - infinite?
-                    finite?: finite?
-                    normal?: normal?
-                    zero?: zero?
-                    pi: pi
-                    e: e
+                record/keys: keys
+                record/values: values
+                file/basename:
+                    - basename
+                    - base name
+                file/extname:
+                    - extname
+                    - extension name
+                    - extension
+                file/dirname:
+                    - dirname
+                    - directory name
+                date/seconds: seconds
+                date/minutes: minutes
+                date/hours: hours
+                date/seconds since midnight: seconds since midnight
+                real/NaN: NaN
+                real/inf:
+                    - inf
+                    - infinity
+                real/NaN?: NaN?
+                real/inf?:
+                    - inf?
+                    - infinity?
+                    - infinite?
+                real/finite?: finite?
+                real/normal?: normal?
+                real/zero?: zero?
+                real/pi: pi
+                real/e: e
         command:
             ae8:
                 # Standard AE-based application commands.
@@ -151,55 +147,53 @@ translation:
                 delay:
                     - delay
                     - wait
-                real:
-                    abs:
-                        - abs
-                        - absolute value
-                    sqrt:
-                        - sqrt
-                        - square root
-                        - √
-                    cbrt:
-                        - cbrt
-                        - cube root
-                        - cubic root
-                    pow:
-                        - pow
-                        - power
-                    ln: ln  # Cannot use "log" since that's taken by the console command
-                    log10: log10
-                    log2: log2
-                    sin:
-                        - sin
-                        - sine
-                    cos:
-                        - cos
-                        - cosine
-                    tan:
-                        - tan
-                        - tangent
-                    asin:
-                        - asin
-                        - arcsin
-                        - arcsine
-                    acos:
-                        - acos
-                        - arccos
-                        - arccosine
-                    atan:
-                        - atan
-                        - arctan
-                        - arctangent
-                    atan2: atan2
-                    round: round
-                    ceil:
-                        - ceil
-                        - ceiling
-                    floor: floor
-                list:
-                    add: add
-                    remove: remove
-                    pluck: pluck
+                real/abs:
+                    - abs
+                    - absolute value
+                real/sqrt:
+                    - sqrt
+                    - square root
+                    - √
+                real/cbrt:
+                    - cbrt
+                    - cube root
+                    - cubic root
+                real/pow:
+                    - pow
+                    - power
+                real/ln: ln  # Cannot use "log" since that's taken by the console command
+                real/log10: log10
+                real/log2: log2
+                real/sin:
+                    - sin
+                    - sine
+                real/cos:
+                    - cos
+                    - cosine
+                real/tan:
+                    - tan
+                    - tangent
+                real/asin:
+                    - asin
+                    - arcsin
+                    - arcsine
+                real/acos:
+                    - acos
+                    - arccos
+                    - arccosine
+                real/atan:
+                    - atan
+                    - arctan
+                    - arctangent
+                real/atan2: atan2
+                real/round: round
+                real/ceil:
+                    - ceil
+                    - ceiling
+                real/floor: floor
+                list/add: add
+                list/remove: remove
+                list/pluck: pluck
                 log: log
         parameter:
             ae12:
@@ -230,25 +224,14 @@ translation:
                     - as
                 bShGask appr: title
             id:
-                real:
-                    abs:
-                        .direct: of
-                    sqrt:
-                        .direct: of
-                    cbrt:
-                        .direct: of
-                    pow:
-                        .direct: of
-                        exponent: to the
-                    atan2:
-                        .direct: y
-                        x: x
-                list:
-                    add:
-                        .target: to
-                    remove:
-                        .target: from
-                    pluck:
-                        .target: from
-                log:
-                    .direct: message
+                real/abs/.direct: of
+                real/sqrt/.direct: of
+                real/cbrt/.direct: of
+                real/pow/.direct: of
+                real/pow/exponent: to the
+                real/atan2/.direct: 'y'
+                real/atan2/x: x
+                list/add/.target: to
+                list/remove/.target: from
+                list/pluck/.target: from
+                log/.direct: message
