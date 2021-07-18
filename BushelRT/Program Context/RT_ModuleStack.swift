@@ -1,10 +1,10 @@
 import Bushel
 
 /// A stack of substacks of runtime objects that can perform commands (modules).
-public typealias RT_ModuleStack = RT_Stack<RT_ModuleSubstack>
+public typealias RT_ModuleStack = Stack<RT_ModuleSubstack>
 
 /// A stack of runtime objects that can perform commands (modules).
-public typealias RT_ModuleSubstack = RT_Stack<RT_Module>
+public typealias RT_ModuleSubstack = Stack<RT_Module>
 
 extension RT_ModuleStack {
     
@@ -14,7 +14,7 @@ extension RT_ModuleStack {
         } else {
             let script = RT_Script(function.rt)
             script.functions.add(function)
-            push(RT_Stack<RT_Module>(bottom: script))
+            push(Stack<RT_Module>(bottom: script))
         }
     }
     

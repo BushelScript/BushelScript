@@ -259,7 +259,7 @@ public final class EnglishParser: SourceParser {
         try eatLineBreakOrThrow(.toBeginBlock("function body"))
         let body = try withScope {
             lexicon.add(Set(arguments))
-            lexicon.add(Term(Term.ID(Constants.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.dictionary))
+            lexicon.add(Term(Term.ID(Constants.function), name: Term.Name("function"), dictionary: lexicon.top.dictionary))
             return try parseSequence()
         }
         
@@ -290,7 +290,7 @@ public final class EnglishParser: SourceParser {
     private func parseBlockBody(arguments: [Term]) throws -> Expression.Kind? {
         let body = try withScope {
             lexicon.add(Set(arguments))
-            lexicon.add(Term(Term.ID(Constants.function), name: Term.Name("function"), dictionary: lexicon.stack.last!.dictionary))
+            lexicon.add(Term(Term.ID(Constants.function), name: Term.Name("function"), dictionary: lexicon.top.dictionary))
             if tryEatingLineBreak() {
                 return try parseSequence()
             } else {

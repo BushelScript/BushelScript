@@ -7,22 +7,13 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
     /// Default ID of the root term.
     public static let defaultRootTermID = Term.ID(Variables.Script)
     
-    private(set) public var stack: [Term] = []
+    private(set) public var stack: Stack<Term>
     private var exporting: [Term] {
-        stack.flatMap { $0.dictionary.exportingTerms }
+        stack.contents.flatMap { $0.dictionary.exportingTerms }
     }
     
-    public init() {
-        stack.append(Term(Lexicon.defaultRootTermID, exports: false))
-    }
-    
-    public var rootTerm: Term {
-        get {
-            stack[0]
-        }
-        set {
-            stack[0] = newValue
-        }
+    public init(_ stack: Stack<Term> = Stack<Term>(bottom: Term(Lexicon.defaultRootTermID, exports: false))) {
+        self.stack = stack
     }
     
     public func term(id: Term.ID) -> Term? {
@@ -38,7 +29,7 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
     }
     
     private func findTerm(_ extractTerm: (TermDictionary) -> Term?) -> Term? {
-        find(in: stack.reversed(), extractTerm) ?? find(in: exporting.reversed(), extractTerm)
+        find(in: stack.contents.reversed(), extractTerm) ?? find(in: exporting.reversed(), extractTerm)
     }
     
     private func find<Terms: Collection>(in terms: Terms, _ extractTerm: (TermDictionary) -> Term?) -> Term? where Terms.Element == Term {
@@ -64,7 +55,7 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
     ///                   dictionary.
     public func makeURI(forName name: Term.Name) -> Term.SemanticURI {
         var components: [String] = []
-        let lastStackTermURI = stack.last!.uri
+        let lastStackTermURI = stack.top.uri
         if let pathnameComponents = lastStackTermURI.pathname?.components {
             components.append(contentsOf: pathnameComponents)
         } else {
@@ -78,8 +69,21 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
         makeURI(forName: Term.Name(UUID().uuidString))
     }
     
+    public var bottom: Term {
+        stack.bottom
+    }
+    
+    public var top: Term {
+        get {
+            stack.top
+        }
+        set {
+            stack.top = newValue
+        }
+    }
+    
     public mutating func push(_ term: Term) {
-        stack.append(term)
+        stack.push(term)
     }
     
     public mutating func addPush(_ term: Term) {
@@ -98,14 +102,12 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
     }
     
     public mutating func pop() {
-        if stack.count > 1 {
-            stack.removeLast()
-        }
+        stack.pop()
     }
     
     @discardableResult
     public mutating func add(_ term: Term) -> Term {
-        stack.last!.dictionary.add(term)
+        stack.top.dictionary.add(term)
         return term
     }
     
@@ -118,7 +120,7 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
     }
     
     public var debugDescription: String {
-        stack
+        stack.contents
             .reversed()
             .enumerated()
             .map { "\($0.offset + 1): \($0.element.debugDescription)" }

@@ -95,7 +95,7 @@ extension SourceParser {
             if let scriptTermNames = translation.mappings[Lexicon.defaultRootTermID] {
                 translation.mappings.removeValue(forKey: Lexicon.defaultRootTermID)
                 
-                lexicon.rootTerm = Term(Lexicon.defaultRootTermID, name: scriptTermNames.first!)
+                lexicon = Lexicon(Stack(bottom: Term(Lexicon.defaultRootTermID, name: scriptTermNames.first!)))
             }
             
             let coreTermID = Term.ID(Variables.Core)
@@ -111,7 +111,7 @@ extension SourceParser {
         
         // Add all other terms.
         for translation in translations {
-            lexicon.add(translation.makeTerms(cache: cache))
+            lexicon.top.dictionary.merge(translation.makeTerms(cache: cache))
         }
         
         lexicon.add(Term(Term.ID(Parameters.direct)))
@@ -147,7 +147,7 @@ extension SourceParser {
         self.elements = []
         
         guard !entireSource.isEmpty else {
-            return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, rootTerm: lexicon.rootTerm, typeTree: typeTree)
+            return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, rootTerm: lexicon.bottom, typeTree: typeTree)
         }
         
         buildTraversalTables()
@@ -158,7 +158,7 @@ extension SourceParser {
         do {
             let sequence = try parseSequence()
             eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
-            return Program(sequence, elements, source: entireSource, rootTerm: lexicon.rootTerm, typeTree: typeTree)
+            return Program(sequence, elements, source: entireSource, rootTerm: lexicon.bottom, typeTree: typeTree)
         } catch var error as ParseErrorProtocol {
             if !entireSource.range.contains(error.location.range.lowerBound) {
                 error.location.range = entireSource.index(before: entireSource.endIndex)..<entireSource.endIndex

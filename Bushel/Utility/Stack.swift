@@ -1,11 +1,10 @@
-import Bushel
 
-/// A stack with a constant, non-nil bottom element.
-public struct RT_Stack<Element> {
+/// A nonempty stack.
+public struct Stack<Element> {
     
     public private(set) var contents: [Element]
     
-    /// Initializes with constant `bottom` element and, optionally,
+    /// Initializes with a `bottom` element and, optionally,
     /// additional elements `rest`.
     public init(bottom: Element, rest: [Element] = []) {
         self.contents = [bottom] + rest

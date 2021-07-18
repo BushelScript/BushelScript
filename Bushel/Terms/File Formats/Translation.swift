@@ -205,7 +205,7 @@ public struct Translation {
         mappings[typedUID]?.first
     }
     
-    public func makeTerms(cache: BushelCache) -> Set<Term> {
+    public func makeTerms(cache: BushelCache) -> TermDictionary {
         var resourceTerms: [Term] = []
         
         let termPairs: [(Term.ID, [Term])] = mappings.map { kv in
@@ -267,7 +267,7 @@ public struct Translation {
             try? cache.dictionaryCache.loadResourceDictionary(for: resourceTerm)
         }
         
-        return resultTerms.values.reduce(into: Set()) { set, terms in set.formUnion(terms) }
+        return TermDictionary(contents: resultTerms.values.reduce(into: Set()) { set, terms in set.formUnion(terms) })
     }
     
 }
