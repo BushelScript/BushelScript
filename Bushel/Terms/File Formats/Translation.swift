@@ -3,12 +3,12 @@ import Yams
 
 private let log = OSLog(subsystem: logSubsystem, category: "Translations")
 
-/// A collection of name mappings for term UIDs.
+/// A mapping from term IDs to localized names and documentation.
 ///
 /// Can be constructed from the contents of a YAML-based translation file.
 public struct Translation {
     
-    public static let currentFormat = 0.4
+    public static let currentFormat = 0.6
     
     public struct ParseError: Error {
         
@@ -38,7 +38,8 @@ public struct Translation {
     
     public var format: Double
     public var language: String
-    public var mappings: [Term.ID : Set<Term.Name>] = [:]
+    public var termIDToNames: [Term.ID : Set<Term.Name>] = [:]
+    public var termIDToDoc: [Term.ID : String] = [:]
     
     public init(from url: URL) throws {
         do {
@@ -112,13 +113,19 @@ public struct Translation {
                         func process(valueNode: Yams.Node, id: Term.ID) throws {
                             switch valueNode {
                             case .scalar(let termNameScalar):
-                                addMapping(id: id, termName: Term.Name(termNameScalar.string))
+                                addTermName(id: id, termName: Term.Name(termNameScalar.string))
                             case .sequence(let synonymsSequence):
                                 for synonym in synonymsSequence {
                                     try process(valueNode: synonym, id: id)
                                 }
-                            default:
-                                throw ParseError(.invalidTermName)
+                            case .mapping(let mapping):
+                                guard let name = mapping["name"] else {
+                                    throw ParseError(.invalidTermName)
+                                }
+                                try process(valueNode: name, id: id)
+                                if case .scalar(let doc) = mapping["doc"] {
+                                    self.termIDToDoc[id] = doc.string
+                                }
                             }
                         }
                         
@@ -130,24 +137,28 @@ public struct Translation {
         }
     }
     
-    private mutating func addMapping(id: Term.ID, termName: Term.Name) {
-        if self.mappings[id] == nil {
-            self.mappings[id] = []
+    private mutating func addTermName(id: Term.ID, termName: Term.Name) {
+        if self.termIDToNames[id] == nil {
+            self.termIDToNames[id] = []
         }
-        self.mappings[id]!.insert(termName)
+        self.termIDToNames[id]!.insert(termName)
     }
     
-    public subscript(_ typedUID: Term.ID) -> Set<Term.Name> {
-        mappings[typedUID] ?? []
+    public subscript(_ id: Term.ID) -> Set<Term.Name> {
+        termIDToNames[id] ?? []
     }
-    public subscript(_ typedUID: Term.ID) -> Term.Name? {
-        mappings[typedUID]?.first
+    public subscript(_ id: Term.ID) -> Term.Name? {
+        termIDToNames[id]?.first
+    }
+    
+    public func doc(for id: Term.ID) -> String {
+        termIDToDoc[id] ?? ""
     }
     
     public func makeTerms(cache: BushelCache) -> TermDictionary {
         var resourceTerms: [Term] = []
         
-        let termPairs: [(Term.ID, [Term])] = mappings.map { kv in
+        let termPairs: [(Term.ID, [Term])] = termIDToNames.map { kv in
             let (termID, termNames) = kv
             return (termID, termNames.compactMap { termName in
                 Term(termID, name: termName, resource: termID.role == .resource ? Resource(normalized: termName.normalized, cache: cache.resourceCache) : nil)
@@ -209,6 +220,15 @@ public struct Translation {
         return TermDictionary(contents: resultTerms.values.reduce(into: Set()) { set, terms in set.formUnion(terms) })
     }
     
+    public func makeTermDocs(for rootDictionary: TermDictionary) -> Set<TermDoc> {
+        var docs: Set<TermDoc> = []
+        for term in rootDictionary.contents {
+            docs.insert(TermDoc(term: term, doc: termIDToDoc[term.id] ?? ""))
+            docs.formUnion(makeTermDocs(for: term.dictionary))
+        }
+        return docs
+    }
+    
 }
 
 /// List of term UID domains the translation file parser understands.
@@ -227,7 +247,7 @@ extension Translation.ParseError: LocalizedError {
         "Failed to parse translation\(path.map { " at \($0)" } ?? ""): " + {
             switch error {
             case .invalidSyntax:
-                return "The file contains malformed YAML syntax."
+                return "The file contains ill-formed YAML."
             case .noOuterMapping:
                 return "File does not start with a 'translation:' mapping."
             case .missingFormat:
@@ -235,7 +255,7 @@ extension Translation.ParseError: LocalizedError {
             case .missingLanguage:
                 return "The 'translation' mapping has no 'language' key. This required field declares what language module the translation applies to."
             case .invalidFormat:
-                return "The file's declared format is unrecognized. The file is malformed or written for a later version of BushelScript."
+                return "The file's declared format is incompatible."
             case .invalidTermRole:
                 return "An unrecognized term role was found. Valid values are: \(Term.SyntacticRole.allCases.map { $0.rawValue }.joined(separator: ", "))."
             case .invalidURISchemeMapping:

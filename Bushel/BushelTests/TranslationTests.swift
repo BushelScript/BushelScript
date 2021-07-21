@@ -5,9 +5,9 @@ import XCTest
 
 private typealias Pathname = Term.SemanticURI.Pathname
 
+private let currentFormat = Translation.currentFormat
+
 class TranslationParserTests: XCTestCase {
-    
-    private let currentFormat = Translation.currentFormat
     
     func test_parsesMetadata() throws {
         let translationSource = """
@@ -48,10 +48,13 @@ translation:
                 cobj: item
         property:
             ae4:
-                pALL: properties
+                pALL:
+                    name: properties
         constant:
             ae4:
-                'true': 'true'
+                'true':
+                    name: 'true'
+                    doc: Symbol representing truth.
 """
         let translation = try Translation(source: translationSource)
         
@@ -234,4 +237,56 @@ translation:
         )
     }
     
+    static let docTranslationSource = """
+translation:
+    format: \(currentFormat)
+    language: bushelscript_en
+    mappings:
+        command:
+            ae8:
+                coresetd:
+                    name: set
+                    doc: Assign a value to a property.
+            id:
+                util/delay:
+                    name: delay
+                    doc: Stall for a fixed amount of time.
+"""
+    
+    func test_parsesDoc() throws {
+        let translation = try Translation(source: TranslationParserTests.docTranslationSource)
+        
+        XCTAssertEqual(
+            translation.doc(for: Term.ID(.command, .ae8(class: 1668248165, id: 1936028772))),
+            "Assign a value to a property."
+        )
+        XCTAssertEqual(
+            translation.doc(for: Term.ID(.command, .id(Pathname(["util", "delay"])))),
+            "Stall for a fixed amount of time."
+        )
+    }
+    
+}
+
+class TranslationTermDocTests: XCTestCase {
+    
+    func test_makeDocs() throws {
+        let translation = try Translation(source: TranslationParserTests.docTranslationSource)
+        let cache = makeEmptyCache()
+        let terms = translation.makeTerms(cache: cache)
+        let docs = translation.makeTermDocs(for: terms)
+        
+        XCTAssertEqual(
+            docs,
+            [
+                TermDoc(term: terms.term(id: Term.ID(.command, .ae8(class: 1668248165, id: 1936028772)))!, doc: "Assign a value to a property."),
+                TermDoc(term: terms.term(id: Term.ID(.command, .id(Pathname(["util", "delay"]))))!, doc: "Stall for a fixed amount of time.")
+            ]
+        )
+    }
+    
+}
+
+private func makeEmptyCache() -> BushelCache {
+    BushelCache(dictionaryCache: TermDictionaryCache(typeTree: TypeTree(rootType: Term.SemanticURI(Types.item))), resourceCache: ResourceCache())
 }

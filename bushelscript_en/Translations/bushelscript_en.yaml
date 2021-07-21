@@ -1,5 +1,5 @@
 translation:
-    format: 0.4
+    format: 0.6
     language: bushelscript_en
     mappings:
         variable:
@@ -41,33 +41,67 @@ translation:
                 system: system
         constant:
             ae4:
-                 'true': 'true'
-                 fals: 'false'
+                 'true':
+                     name: 'true'
+                     doc: Symbol representing truth.
+                 fals:
+                     name: 'false'
+                     doc: Symbol representing falsity.
         type:
             ae4:
-                cobj: item
-                enum: constant
-                pcls: type
-                bool: boolean
-                nmbr: number
-                comp: integer
-                doub: real
-                utxt: string
-                'cha ': character
-                utf8: UTF-8 text
-                list: list
-                reco: record
-                'obj ': specifier
-                cmpd: comparison test specifier
-                logi: logical test specifier
-                'ldt ': date
-                file: file
-                alis: alias
+                cobj:
+                    name: item
+                    doc: Anything.
+                enum:
+                    name: constant
+                    doc: A symbolic constant.
+                pcls:
+                    name: type
+                    doc: An item type.
+                bool:
+                    name: boolean
+                    doc: The symbolic constant true, or the symbolic constant false.
+                nmbr:
+                    name: number
+                    doc: (Not yet implemented) An integer or a real number.
+                comp:
+                    name: integer
+                    doc: A positive or negative whole number.
+                doub:
+                    name: real
+                    doc: A number with fractions allowed. Strictly speaking, a double-precision floating-point value.
+                utxt:
+                    name: string
+                    doc: A sequence of characters.
+                'cha ':
+                    name: character
+                    doc: A Unicode character.
+                list:
+                    name: list
+                    doc: An ordered list of items.
+                reco:
+                    name: record
+                    doc: An unordered list of items identified by index items (keys).
+                'obj ':
+                    name: specifier
+                    doc: An object specifier or insertion specifier.
+                'ldt ':
+                    name: date
+                    doc: A specific date and time.
+                file:
+                    name: file
+                    doc: A path to a file or folder, which does not necessarily exist.
                 capp:
-                    - application
-                    - app
-                cwin: window
-                docu: document
+                    name:
+                        - app
+                        - application
+                    doc: An installed app. Can handle commands through AppleScript events.
+                cwin:
+                    name: window
+                    doc: A window of an app.
+                docu:
+                    name: document
+                    doc: A document of an app.
             id:
                 core object: core object
                 script: script
@@ -91,7 +125,7 @@ translation:
                 rest: tail
                 bhit: button returned
                 # Apparently defined by System Events or something.
-                # This would be id:environment variable:value
+                # This would be id:environment variable/value
                 valL: value
             id:
                 arguments:
