@@ -288,5 +288,11 @@ class TranslationTermDocTests: XCTestCase {
 }
 
 private func makeEmptyCache() -> BushelCache {
-    BushelCache(dictionaryCache: TermDictionaryCache(typeTree: TypeTree(rootType: Term.SemanticURI(Types.item))), resourceCache: ResourceCache())
+    BushelCache(
+        dictionaryCache: TermDictionaryCache(
+            termDocs: Ref(Set<TermDoc>()),
+            typeTree: TypeTree(rootType: Term.SemanticURI(Types.item))
+        ),
+        resourceCache: ResourceCache()
+    )
 }

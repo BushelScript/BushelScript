@@ -5,10 +5,12 @@ private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 /// An in-memory cache for dictionaries loaded from external sources.
 public class TermDictionaryCache {
     
-    public init(typeTree: TypeTree) {
+    public init(termDocs: Ref<Set<TermDoc>>, typeTree: TypeTree) {
+        self.termDocs = termDocs
         self.typeTree = typeTree
     }
     
+    private var termDocs: Ref<Set<TermDoc>>
     private var typeTree: TypeTree
     
     /// Loads the scripting definition at `url` into `dictionary`.
@@ -68,27 +70,27 @@ public class TermDictionaryCache {
     ///   - `SDEFError` if `url` refers to an ill-formed SDEF file or
     ///                 an app bundle with an ill-formed terminology definition.
     public func loadIgnoringCache(from url: URL) throws -> TermDictionary? {
-        if let dictionary: TermDictionary = try ({
-            if url.pathExtension == "bushel" {
-                return try parse(from: url).rootTerm.dictionary
-            } else {
-                guard let sdef = try readSDEF(from: url) else {
-                    return nil
-                }
-                var terms = try parse(sdef: sdef, typeTree: typeTree)
-                // Don't import terms that shadow "set" or "get":
-                terms.removeAll { term in
-                    [Commands.get, Commands.set]
-                        .map { Term.ID($0) }
-                        .contains(term.id)
-                }
-                return TermDictionary(contents: terms)
+        if url.pathExtension == "bushel" {
+            let program = try parse(from: url)
+            let dictionary = program.rootTerm.dictionary
+            dictionaryCache[url] = dictionary
+            termDocs.value.formUnion(program.termDocs.value)
+            return dictionary
+        } else {
+            guard let sdef = try readSDEF(from: url) else {
+                return nil
             }
-        }()) {
+            var terms = try parse(sdef: sdef, typeTree: typeTree)
+            // Don't import terms that shadow "set" or "get":
+            terms.removeAll { term in
+                [Commands.get, Commands.set]
+                    .map { Term.ID($0) }
+                    .contains(term.id)
+            }
+            let dictionary = TermDictionary(contents: terms)
             dictionaryCache[url] = dictionary
             return dictionary
         }
-        return nil
     }
     
     /// The cached dictionary for `url`, if there is one.
@@ -96,7 +98,7 @@ public class TermDictionaryCache {
         dictionaryCache[url]
     }
     
-    /// Deletes all cached dictionaries.
+    /// Deletes all cached dictionaries and docs.
     public func clearCache() {
         dictionaryCache.clear()
     }

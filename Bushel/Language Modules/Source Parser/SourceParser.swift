@@ -34,7 +34,6 @@ public protocol SourceParser: AnyObject {
     var termNameStartIndex: String.Index { get set }
     
     var lexicon: Lexicon { get set }
-    var typeTree: TypeTree { get set }
     var cache: BushelCache { get set }
     var sequenceNestingLevel: Int { get set }
     var elements: Set<SourceElement> { get set }
@@ -111,7 +110,10 @@ extension SourceParser {
         
         // Add all other terms.
         for translation in translations {
-            lexicon.top.dictionary.merge(translation.makeTerms(cache: cache))
+            let newTerms = translation.makeTerms(cache: cache)
+            lexicon.top.dictionary.merge(newTerms)
+            let newDocs = translation.makeTermDocs(for: newTerms)
+            globalTermDocs.value.formUnion(newDocs)
         }
         
         lexicon.add(Term(Term.ID(Parameters.direct)))
@@ -147,7 +149,7 @@ extension SourceParser {
         self.elements = []
         
         guard !entireSource.isEmpty else {
-            return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, rootTerm: lexicon.bottom, typeTree: typeTree)
+            return Program(Expression(.sequence([]), at: currentLocation), [], source: entireSource, rootTerm: lexicon.bottom, termDocs: globalTermDocs, typeTree: globalTypeTree)
         }
         
         buildTraversalTables()
@@ -158,7 +160,7 @@ extension SourceParser {
         do {
             let sequence = try parseSequence()
             eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true)
-            return Program(sequence, elements, source: entireSource, rootTerm: lexicon.bottom, typeTree: typeTree)
+            return Program(sequence, elements, source: entireSource, rootTerm: lexicon.bottom, termDocs: globalTermDocs, typeTree: globalTypeTree)
         } catch var error as ParseErrorProtocol {
             if !entireSource.range.contains(error.location.range.lowerBound) {
                 error.location.range = entireSource.index(before: entireSource.endIndex)..<entireSource.endIndex

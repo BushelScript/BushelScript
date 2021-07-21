@@ -114,6 +114,7 @@
 		3CC224892391CFF300448D25 /* Property.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224882391CFF300448D25 /* Property.swift */; };
 		3CC224942391D9D500448D25 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224932391D9D500448D25 /* Command.swift */; };
 		3CC224982391E08800448D25 /* Predefined.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC224972391E08800448D25 /* Predefined.swift */; };
+		3CC2A61926A8E12800509362 /* Ref.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2A61826A8E12800509362 /* Ref.swift */; };
 		3CC3E5F22647904800516559 /* RT_Module.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC3E5F12647904800516559 /* RT_Module.swift */; };
 		3CC3E6052647930600516559 /* RT_Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC3E6042647930600516559 /* RT_Function.swift */; };
 		3CC5E80B267E6747002E2562 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC5E807267E6747002E2562 /* Atomic.swift */; };
@@ -362,6 +363,7 @@
 		3CC224972391E08800448D25 /* Predefined.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Predefined.swift; sourceTree = "<group>"; };
 		3CC224992391F3C400448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3CC2249D2391F6A100448D25 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		3CC2A61826A8E12800509362 /* Ref.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ref.swift; sourceTree = "<group>"; };
 		3CC3E5F12647904800516559 /* RT_Module.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Module.swift; sourceTree = "<group>"; };
 		3CC3E6042647930600516559 /* RT_Function.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_Function.swift; sourceTree = "<group>"; };
 		3CC5E807267E6747002E2562 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
@@ -673,6 +675,7 @@
 				3C906EFF231CD30A0099B139 /* Ordering.swift */,
 				3C7FEF7F269A4E2600A314FE /* Cache.swift */,
 				3C17600426A3D56D00D14C4D /* Stack.swift */,
+				3CC2A61826A8E12800509362 /* Ref.swift */,
 				3CD113DA22FC6E9300329583 /* Logging.swift */,
 			);
 			path = Utility;
@@ -1375,6 +1378,7 @@
 				3C68D2452353BA300059FD3E /* BinaryOperation.swift in Sources */,
 				3CCD8BA522CFA6020049C74F /* PrettyPrinting.swift in Sources */,
 				3C35A5DD22C81E60002D4582 /* Expression.swift in Sources */,
+				3CC2A61926A8E12800509362 /* Ref.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

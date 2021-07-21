@@ -13,7 +13,6 @@ public final class EnglishParser: SourceParser {
     public lazy var termNameStartIndex: String.Index = entireSource.startIndex
     
     public var lexicon = Lexicon()
-    public var typeTree = globalTypeTree
     public var cache = globalCache
     public var sequenceNestingLevel: Int = 0
     public var elements: Set<SourceElement> = []
