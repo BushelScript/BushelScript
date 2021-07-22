@@ -122,7 +122,9 @@ extension Expression {
         }
     }
     
-    public func term() -> Term? {
+    /// The term that this expression puts on the stack when it is the target
+    /// of a "tell" expression.
+    public func principalTerm() -> Term? {
         switch kind {
         case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .missing, .unspecified, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
             return nil
@@ -137,6 +139,31 @@ extension Expression {
              let .function(term, _, _, _, _),
              let .debugInspectTerm(term, _):
             return term
+        }
+    }
+    
+    /// Term ID related to this expression for the purposes of displaying
+    /// documentation in an editor.
+    public func termIDForDocs() -> Term.ID? {
+        switch kind {
+        case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .missing, .unspecified, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
+            return nil
+        case let .require(term),
+             let .resource(term),
+             let .variable(term),
+             let .enumerator(term),
+             let .type(term),
+             let .let_(term, _),
+             let .define(term, _),
+             let .defining(term, _, _),
+             let .function(term, _, _, _, _),
+             let .debugInspectTerm(term, _),
+             let .command(term, _):
+            return term.id
+        case .get:
+            return Term.ID(Commands.get)
+        case .set:
+            return Term.ID(Commands.set)
         }
     }
     
