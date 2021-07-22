@@ -30,6 +30,24 @@ final class NotificationObservation: NSObject, Tiable {
     
 }
 
+final class KeyValueObservation: NSObject, Tiable {
+    
+    private var observation: NSKeyValueObservation
+    private var lifetimeAssociation: LifetimeAssociation?
+    
+    init<Object: NSObject, Value>(_ object: Object, options: NSKeyValueObservingOptions = [], _ keyPath: KeyPath<Object, Value>, handler: @escaping (Object, NSKeyValueObservedChange<Value>) -> Void) {
+        observation = object.observe(keyPath, options: options, changeHandler: handler)
+    }
+    
+    func tie(to owner: AnyObject) -> Self {
+        lifetimeAssociation = LifetimeAssociation(of: self, with: owner, deinitHandler: { [weak self] in
+            self?.observation.invalidate()
+        })
+        return self
+    }
+    
+}
+
 func tie<T: Tiable>(to owner: AnyObject, _ tiables: [T]) {
     for tiable in tiables {
         tiable.tie(to: owner)
