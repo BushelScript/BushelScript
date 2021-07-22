@@ -14,8 +14,6 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     
     private var runQueue = DispatchQueue(label: "Run program", qos: .userInitiated)
     
-    private var program: Bushel.Program?
-    
     enum Status {
         
         case running
@@ -208,7 +206,6 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
             return
         }
         document.languageID = moduleDescriptor.identifier
-        program = nil
     }
     
     @IBAction func setIndentType(_ sender: Any?) {
@@ -343,7 +340,7 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     
     private func parse(_ source: String) throws -> Program {
         let program = try Bushel.parse(source: source, languageID: document.languageID, ignoringImports: document.fileURL.map { [$0] } ?? [])
-        self.program = program
+        document.program = program
         return program
     }
     
@@ -407,10 +404,6 @@ extension DocumentVC: NSTextViewDelegate {
         
         let source = textView.string
         modelSourceCode = source
-        
-        if program != nil {
-            program = nil
-        }
         
         if Defaults[.liveParsingEnabled] {
             do {
@@ -508,7 +501,7 @@ extension DocumentVC: NSTextViewDelegate {
             return
         }
         
-        guard let program = program, modelSourceCode.range.contains(range) else {
+        guard let program = document.program, modelSourceCode.range.contains(range) else {
             NotificationCenter.default.post(name: .selection, object: document)
             return
         }

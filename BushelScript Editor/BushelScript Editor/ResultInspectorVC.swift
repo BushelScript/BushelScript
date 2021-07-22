@@ -16,7 +16,7 @@ class ResultInspectorVC: ObjectInspector2VC {
             return os_log("No document available", log: log, type: .debug)
         }
         self.document = document
-        tying(to: self, [
+        tie(to: self, [
             NotificationObservation(.result, document) { [weak self] (document, userInfo) in
                 self?.representedObject = userInfo[.payload]
             }

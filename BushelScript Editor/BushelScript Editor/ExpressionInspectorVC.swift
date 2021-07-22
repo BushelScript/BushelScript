@@ -13,13 +13,37 @@ class ExpressionInspectorVC: ObjectInspector2VC {
     
     override func viewWillAppear() {
         super.viewWillAppear()
+        
+        guard self.document == nil else {
+            return
+        }
+        
         guard let document = view.window?.windowController?.document as? Document else {
             return os_log("No document available", log: log, type: .debug)
         }
         self.document = document
-        tying(to: self, [
+        
+        tie(to: self, [
             NotificationObservation(.selectedExpression, document) { [weak self] (document, userInfo) in
-                self?.representedObject = (userInfo[.payload] as? Expression).map { "\($0.kindName): \($0.kindDescription)" }
+                guard let self = self else {
+                    return
+                }
+                guard let expression = userInfo[.payload] as? Expression else {
+                    self.representedObject = nil
+                    return
+                }
+                var termDocString = ""
+                if let termIDForDocs = expression.termIDForDocs() {
+                    let doc = document?.program?.termDocs.value[termIDForDocs]
+                    if let term =
+                        doc.flatMap({ $0.term }) ??
+                        document?.program?.rootTerm.dictionary.term(id: termIDForDocs)
+                    {
+                        termDocString = "\(term)\(doc.map { ": \($0)" } ?? "")\n\n"
+                    }
+                }
+                let expressionDocString = "\(expression.kindName): \(expression.kindDescription)"
+                self.representedObject = termDocString + expressionDocString
             }
         ])
     }

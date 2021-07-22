@@ -13,9 +13,14 @@ private let log = OSLog(subsystem: logSubsystem, category: "Document read/write"
 class Document: NSDocument {
     
     @objc var sourceCode: String = ""
-    @objc dynamic var languageID: String = "bushelscript_en"
+    @objc dynamic var languageID: String = "bushelscript_en" {
+        didSet {
+            program = nil
+        }
+    }
     @objc dynamic var indentMode = IndentMode()
     
+    var program: Bushel.Program?
     var rt = BushelRT.Runtime()
     
     @objc dynamic var isRunning: Bool = false {

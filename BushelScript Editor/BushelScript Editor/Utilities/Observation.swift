@@ -30,7 +30,7 @@ final class NotificationObservation: NSObject, Tiable {
     
 }
 
-func tying<T: Tiable>(to owner: AnyObject, _ tiables: [T]) {
+func tie<T: Tiable>(to owner: AnyObject, _ tiables: [T]) {
     for tiable in tiables {
         tiable.tie(to: owner)
     }

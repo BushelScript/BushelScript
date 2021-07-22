@@ -1,6 +1,6 @@
 import Foundation
 
-public struct TermDoc: Hashable {
+public struct TermDoc: Hashable, CustomStringConvertible {
     
     public init(term: Term, summary: String, discussion: String) {
         self.term = term
@@ -27,6 +27,10 @@ public struct TermDoc: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(term)
+    }
+    
+    public var description: String {
+        summary + (discussion.isEmpty ? "" : "\n\n\(discussion)")
     }
     
 }
