@@ -80,15 +80,18 @@ public class TermDictionaryCache {
             guard let sdef = try readSDEF(from: url) else {
                 return nil
             }
-            var terms = try parse(sdef: sdef, typeTree: typeTree)
+            var (newTerms, newDocs) = try parse(sdef: sdef, typeTree: typeTree)
             // Don't import terms that shadow "set" or "get":
-            terms.removeAll { term in
+            newTerms.removeAll { term in
                 [Commands.get, Commands.set]
                     .map { Term.ID($0) }
                     .contains(term.id)
             }
-            let dictionary = TermDictionary(contents: terms)
+            let dictionary = TermDictionary(contents: newTerms)
             dictionaryCache[url] = dictionary
+            for doc in newDocs {
+                termDocs.value[doc.term.id] = doc
+            }
             return dictionary
         }
     }

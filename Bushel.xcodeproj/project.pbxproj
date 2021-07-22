@@ -2439,8 +2439,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ThatsJustCheesy/SDEFinitely.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.0;
+				branch = master;
+				kind = branch;
 			};
 		};
 		3CD8397E23DD32F4000F2516 /* XCRemoteSwiftPackageReference "Yams" */ = {

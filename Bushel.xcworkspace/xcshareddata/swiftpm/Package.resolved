@@ -59,9 +59,9 @@
         "package": "SDEFinitely",
         "repositoryURL": "https://github.com/ThatsJustCheesy/SDEFinitely.git",
         "state": {
-          "branch": null,
-          "revision": "824fdabbc2b23c2da0b50eb2edb158d0a8ebd643",
-          "version": "1.2.0"
+          "branch": "master",
+          "revision": "1b375a73e6498342a96fc826e0e91f1057b6149f",
+          "version": null
         }
       },
       {

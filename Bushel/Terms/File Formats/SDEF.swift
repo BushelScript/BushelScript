@@ -12,7 +12,7 @@ private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 ///     a Cocoa Scripting plist pair, or a classic `aete` resource
 ///
 /// - Throws: `SDEFError` if the data cannot be read for any reason.
-public func readSDEF(from url: URL) throws -> Data? {
+func readSDEF(from url: URL) throws -> Data? {
     do {
         return try SDEFinitely.readSDEF(from: url)
     } catch is NoSDEF {
@@ -26,7 +26,7 @@ public func readSDEF(from url: URL) throws -> Data? {
 /// SDEF data can be obtained from `readSDEF(from:)`.
 ///
 /// - Throws: `SDEFError` if the data cannot be parsed for any reason.
-public func parse(sdef: Data, typeTree: TypeTree) throws -> [Term] {
+func parse(sdef: Data, typeTree: TypeTree) throws -> ([Term], [TermDoc]) {
     let delegate = SetOfTermSDEFParserDelegate()
     try SDEFParser(delegate: delegate).parse(sdef)
     
@@ -38,25 +38,28 @@ public func parse(sdef: Data, typeTree: TypeTree) throws -> [Term] {
         }
     }
     
-    return delegate.terms
+    return (delegate.terms, delegate.termDocs)
 }
 
 private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
     
     var terms: [Term] = []
+    var termDocs: [TermDoc] = []
     var nameToClassType: [Term.Name : Term] = [:]
     var inheritedClassTypes: [(type: Term, supertypeName: Term.Name)] = []
     
-    private func add(_ term: Term) {
-        terms.append(term)
+    private func add(_ termDoc: TermDoc) {
+        terms.append(termDoc.term)
+        termDocs.append(termDoc)
     }
     
     func addType(_ term: SDEFinitely.KeywordTerm) {
-        add(convertAE4(.type, term))
+        add(convertAE4Term(.type, term))
     }
     func addClass(_ term: SDEFinitely.ClassTerm) {
-        let classType = convertAE4(.type, term)
-        add(classType)
+        let classTypeDoc = convertAE4Term(.type, term)
+        let classType = classTypeDoc.term
+        add(classTypeDoc)
         if let name = classType.name {
             nameToClassType[name] = classType
         }
@@ -65,22 +68,33 @@ private class SetOfTermSDEFParserDelegate: SDEFParserDelegate {
         }
     }
     func addProperty(_ term: SDEFinitely.KeywordTerm) {
-        add(convertAE4(.property, term))
+        add(convertAE4Term(.property, term))
     }
     func addEnumerator(_ term: SDEFinitely.KeywordTerm) {
-        add(convertAE4(.constant, term))
+        add(convertAE4Term(.constant, term))
     }
     func addCommand(_ term: SDEFinitely.CommandTerm) {
-        add(Term(
-            .command,
-            .ae8(class: term.eventClass, id: term.eventID),
-            name: Term.Name(term.name),
-            dictionary: TermDictionary(contents: term.parameters.map { convertAE4(.parameter, $0) })
+        add(TermDoc(
+            term: Term(
+                .command,
+                .ae8(class: term.eventClass, id: term.eventID),
+                name: Term.Name(term.name),
+                dictionary: TermDictionary(contents: term.parameters.map { parameter in
+                    let doc = convertAE4Term(.parameter, parameter)
+                    termDocs.append(doc)
+                    return doc.term
+                })
+            ),
+            doc: term.termDescription ?? ""
         ))
     }
     
-    private func convertAE4(_ role: Term.SyntacticRole, _ term: SDEFinitely.KeywordTermProtocol) -> Term {
-        Term(role, .ae4(code: term.code), name: Term.Name(term.name))
+    private func convertAE4Term(_ role: Term.SyntacticRole, _ term: SDEFinitely.KeywordTermProtocol) -> TermDoc {
+        TermDoc(
+            term: Term(role, .ae4(code: term.code),
+            name: Term.Name(term.name)),
+            doc: term.termDescription ?? ""
+        )
     }
     
 }
