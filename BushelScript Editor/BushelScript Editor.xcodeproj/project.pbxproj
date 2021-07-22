@@ -53,6 +53,11 @@
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
 		3C88833D269E2D6F00803197 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; };
 		3C88833E269E2D6F00803197 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
+		3CC2A62126A929BD00509362 /* DictionaryBrowser.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2A62026A929BD00509362 /* DictionaryBrowser.storyboard */; };
+		3CC2A62326A92C3800509362 /* DictionaryBrowserVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2A62226A92C3800509362 /* DictionaryBrowserVC.swift */; };
+		3CC2A62526A92C9600509362 /* DictionaryBrowserSidebarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2A62426A92C9600509362 /* DictionaryBrowserSidebarVC.swift */; };
+		3CC2A62726A92CA100509362 /* DictionaryBrowserContentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2A62626A92CA100509362 /* DictionaryBrowserContentVC.swift */; };
+		3CC2A62926A93A6A00509362 /* DictionaryBrowserWC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2A62826A93A6A00509362 /* DictionaryBrowserWC.swift */; };
 		3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1D0602319A07100DD01A9 /* Defaults.swift */; };
 		3CEC9DBD267EED0D00E53CC0 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; };
 		3CEC9DBE267EED0D00E53CC0 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -279,6 +284,11 @@
 		3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSADictionaryWindowCustomization.swift; sourceTree = "<group>"; };
 		3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryDocument.swift; sourceTree = "<group>"; };
 		3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = bushelscript.xcodeproj; path = ../bushelscript/bushelscript.xcodeproj; sourceTree = "<group>"; };
+		3CC2A62026A929BD00509362 /* DictionaryBrowser.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DictionaryBrowser.storyboard; sourceTree = "<group>"; };
+		3CC2A62226A92C3800509362 /* DictionaryBrowserVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryBrowserVC.swift; sourceTree = "<group>"; };
+		3CC2A62426A92C9600509362 /* DictionaryBrowserSidebarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryBrowserSidebarVC.swift; sourceTree = "<group>"; };
+		3CC2A62626A92CA100509362 /* DictionaryBrowserContentVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryBrowserContentVC.swift; sourceTree = "<group>"; };
+		3CC2A62826A93A6A00509362 /* DictionaryBrowserWC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryBrowserWC.swift; sourceTree = "<group>"; };
 		3CD1D0602319A07100DD01A9 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
 		3CEF50422352948E008603E3 /* BushelScript Editor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BushelScript Editor.entitlements"; sourceTree = "<group>"; };
@@ -376,6 +386,7 @@
 				3C2A9D1E2679DE3A0084716C /* EditorTextView.swift */,
 				3CFEC5112677EFEF001EEF12 /* SidebarVC.swift */,
 				3CFEC51E26781714001EEF12 /* MainSplitVC.swift */,
+				3CC2A61A26A9299400509362 /* Dictionary Browser */,
 				3CFEC52026781BD1001EEF12 /* ObjectInspector2VC.swift */,
 				3CFEC52226781C06001EEF12 /* ObjectInspector2.storyboard */,
 				3CFEC52426781CEC001EEF12 /* ResultInspectorVC.swift */,
@@ -570,6 +581,18 @@
 				3C9FD7B923E53E5500279945 /* bushelscript */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		3CC2A61A26A9299400509362 /* Dictionary Browser */ = {
+			isa = PBXGroup;
+			children = (
+				3CC2A62026A929BD00509362 /* DictionaryBrowser.storyboard */,
+				3CC2A62826A93A6A00509362 /* DictionaryBrowserWC.swift */,
+				3CC2A62226A92C3800509362 /* DictionaryBrowserVC.swift */,
+				3CC2A62426A92C9600509362 /* DictionaryBrowserSidebarVC.swift */,
+				3CC2A62626A92CA100509362 /* DictionaryBrowserContentVC.swift */,
+			);
+			path = "Dictionary Browser";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -792,6 +815,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CC2A62126A929BD00509362 /* DictionaryBrowser.storyboard in Resources */,
 				3C2A9CEA267940360084716C /* bushelscript in Resources */,
 				3C2A9CE826793E690084716C /* BushelGUIHost.app in Resources */,
 				3C204703268EB31E00C52E2B /* Libraries in Resources */,
@@ -889,9 +913,13 @@
 				3C3C1813231AA65300553072 /* LinkOpener.swift in Sources */,
 				3C0566AE23135673004CDB1A /* AppDelegate.swift in Sources */,
 				3C3355F123490F2500AEAAE9 /* NSTabViewController+SelectionConvenience.swift in Sources */,
+				3CC2A62526A92C9600509362 /* DictionaryBrowserSidebarVC.swift in Sources */,
 				3C0566B223135673004CDB1A /* Document.swift in Sources */,
 				3C0430022314BECD00758339 /* ModelPropagation.swift in Sources */,
+				3CC2A62326A92C3800509362 /* DictionaryBrowserVC.swift in Sources */,
 				3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */,
+				3CC2A62726A92CA100509362 /* DictionaryBrowserContentVC.swift in Sources */,
+				3CC2A62926A93A6A00509362 /* DictionaryBrowserWC.swift in Sources */,
 				3CFEC5272678237A001EEF12 /* ExpressionInspectorVC.swift in Sources */,
 				3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */,
 				3C26BA8D268184D800452D9E /* Menu.swift in Sources */,
