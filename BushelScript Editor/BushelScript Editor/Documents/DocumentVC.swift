@@ -491,6 +491,10 @@ extension DocumentVC: NSTextViewDelegate {
     }
 
     private func textViewDidChangeSelection() {
+        guard let document = document else {
+            return
+        }
+        
         let ranges = textView.selectedRanges
         guard !ranges.isEmpty else {
             return
