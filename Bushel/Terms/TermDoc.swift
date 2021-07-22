@@ -44,6 +44,9 @@ extension TermDoc: Comparable {
 private enum NLP {
     
     static func firstSentence(in string: String) -> Substring {
+        guard !string.isEmpty else {
+            return string[...]
+        }
         let tagger = NSLinguisticTagger(tagSchemes: [.lexicalClass], options: 0)
         tagger.string = string
         let sentenceNSRange = tagger.tokenRange(at: 0, unit: .sentence)
