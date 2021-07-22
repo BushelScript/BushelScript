@@ -5,12 +5,12 @@ private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 /// An in-memory cache for dictionaries loaded from external sources.
 public class TermDictionaryCache {
     
-    public init(termDocs: Ref<Set<TermDoc>>, typeTree: TypeTree) {
+    public init(termDocs: Ref<[Term.ID : TermDoc]>, typeTree: TypeTree) {
         self.termDocs = termDocs
         self.typeTree = typeTree
     }
     
-    private var termDocs: Ref<Set<TermDoc>>
+    private var termDocs: Ref<[Term.ID : TermDoc]>
     private var typeTree: TypeTree
     
     /// Loads the scripting definition at `url` into `dictionary`.
@@ -74,7 +74,7 @@ public class TermDictionaryCache {
             let program = try parse(from: url)
             let dictionary = program.rootTerm.dictionary
             dictionaryCache[url] = dictionary
-            termDocs.value.formUnion(program.termDocs.value)
+            termDocs.value.merge(program.termDocs.value, uniquingKeysWith: { old, new in new })
             return dictionary
         } else {
             guard let sdef = try readSDEF(from: url) else {

@@ -252,16 +252,18 @@ translation:
                     name: delay
                     doc: Stall for a fixed amount of time.
 """
+    static let setCommandID = Term.ID(.command, .ae8(class: 1668248165, id: 1936028772))
+    static let delayCommandID = Term.ID(.command, .id(Pathname(["util", "delay"])))
     
     func test_parsesDoc() throws {
         let translation = try Translation(source: TranslationParserTests.docTranslationSource)
         
         XCTAssertEqual(
-            translation.doc(for: Term.ID(.command, .ae8(class: 1668248165, id: 1936028772))),
+            translation.doc(for: TranslationParserTests.setCommandID),
             "Assign a value to a property."
         )
         XCTAssertEqual(
-            translation.doc(for: Term.ID(.command, .id(Pathname(["util", "delay"])))),
+            translation.doc(for: TranslationParserTests.delayCommandID),
             "Stall for a fixed amount of time."
         )
     }
@@ -279,8 +281,8 @@ class TranslationTermDocTests: XCTestCase {
         XCTAssertEqual(
             docs,
             [
-                TermDoc(term: terms.term(id: Term.ID(.command, .ae8(class: 1668248165, id: 1936028772)))!, doc: "Assign a value to a property."),
-                TermDoc(term: terms.term(id: Term.ID(.command, .id(Pathname(["util", "delay"]))))!, doc: "Stall for a fixed amount of time.")
+                TranslationParserTests.setCommandID: TermDoc(term: terms.term(id: TranslationParserTests.setCommandID)!, doc: "Assign a value to a property."),
+                TranslationParserTests.delayCommandID: TermDoc(term: terms.term(id: TranslationParserTests.delayCommandID)!, doc: "Stall for a fixed amount of time.")
             ]
         )
     }
@@ -290,7 +292,7 @@ class TranslationTermDocTests: XCTestCase {
 private func makeEmptyCache() -> BushelCache {
     BushelCache(
         dictionaryCache: TermDictionaryCache(
-            termDocs: Ref(Set<TermDoc>()),
+            termDocs: Ref([:]),
             typeTree: TypeTree(rootType: Term.SemanticURI(Types.item))
         ),
         resourceCache: ResourceCache()

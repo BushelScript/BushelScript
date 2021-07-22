@@ -113,7 +113,7 @@ extension SourceParser {
             let newTerms = translation.makeTerms(cache: cache)
             lexicon.top.dictionary.merge(newTerms)
             let newDocs = translation.makeTermDocs(for: newTerms)
-            globalTermDocs.value.formUnion(newDocs)
+            globalTermDocs.value.merge(newDocs, uniquingKeysWith: { old, new in new })
         }
         
         lexicon.add(Term(Term.ID(Parameters.direct)))
@@ -1241,7 +1241,7 @@ extension SourceParser {
     }
     
     public func withTerminology<Result>(of expression: Expression, parse: () throws -> Result) throws -> Result {
-        if let term = expression.term() {
+        if let term = expression.principalTerm() {
             return try withTerminology(of: term, parse: parse)
         } else {
             return try parse()

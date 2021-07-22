@@ -220,11 +220,11 @@ public struct Translation {
         return TermDictionary(contents: resultTerms.values.reduce(into: Set()) { set, terms in set.formUnion(terms) })
     }
     
-    public func makeTermDocs(for rootDictionary: TermDictionary) -> Set<TermDoc> {
-        var docs: Set<TermDoc> = []
+    public func makeTermDocs(for rootDictionary: TermDictionary) -> [Term.ID : TermDoc] {
+        var docs: [Term.ID : TermDoc] = [:]
         for term in rootDictionary.contents {
-            docs.insert(TermDoc(term: term, doc: termIDToDoc[term.id] ?? ""))
-            docs.formUnion(makeTermDocs(for: term.dictionary))
+            docs[term.id] = TermDoc(term: term, doc: termIDToDoc[term.id] ?? "")
+            docs.merge(makeTermDocs(for: term.dictionary), uniquingKeysWith: { old, new in new })
         }
         return docs
     }
