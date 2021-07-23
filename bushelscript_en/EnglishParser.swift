@@ -213,91 +213,99 @@ public final class EnglishParser: SourceParser {
         
         try eatLineBreakOrThrow()
         
+        var commandTerm: Term?
         var parameters: [Term] = []
         var types: [Expression?] = []
         var arguments: [Term] = []
-        while
-            ({ eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true); return true }()),
-            !isNext("do"),
-            let parameterTermName = try parseTermNameEagerly(stoppingAt: ["[", "(", ":"], styling: .parameter)
-        {
-            let parameterTermURI = try eatTermURI(.parameter) ?? .id(Term.SemanticURI.Pathname([parameterTermName.normalized]))
-            parameters.append(Term(.parameter, parameterTermURI, name: parameterTermName))
-            
-            let argumentName: Term.Name = try {
-                if tryEating(prefix: "(", spacing: .left) {
-                    let name = try parseTermNameEagerly(stoppingAt: [")"], styling: .variable) ?? parameterTermName
-                    try eatOrThrow(prefix: ")", spacing: .right)
-                    return name
-                } else {
-                    return parameterTermName
-                }
-            }()
-            arguments.append(Term(.variable, lexicon.makeIDURI(forName: argumentName), name: argumentName))
-            
-            if
-                tryEating(prefix: ":", spacing: .right),
-                let type = try parsePrimary()
-            {
-                types.append(type)
-            } else {
-                types.append(nil)
-            }
-            
-            if !(tryEatingLineBreak() || tryEating(prefix: ",", spacing: .right)) {
-                break
-            }
-        }
-        eatCommentsAndWhitespace(eatingNewlines: true)
-        guard tryEating(prefix: "do") else {
-            return nil
-        }
-        
-        let commandTerm = lexicon.lookUpOrDefine(.command, name: functionName, dictionary: TermDictionary(contents: parameters))
-        
-        try eatLineBreakOrThrow(.toBeginBlock("function body"))
         let body = try withScope {
+            while
+                ({ eatCommentsAndWhitespace(eatingNewlines: true, isSignificant: true); return true }()),
+                !isNext("do"),
+                let parameterTermName = try parseTermNameEagerly(stoppingAt: ["[", "(", ":"], styling: .parameter)
+            {
+                let parameterTermURI = try eatTermURI(.parameter) ?? .id(Term.SemanticURI.Pathname([parameterTermName.normalized]))
+                parameters.append(Term(.parameter, parameterTermURI, name: parameterTermName))
+                
+                let argumentName: Term.Name = try {
+                    if tryEating(prefix: "(", spacing: .left) {
+                        let name = try parseTermNameEagerly(stoppingAt: [")"], styling: .variable) ?? parameterTermName
+                        try eatOrThrow(prefix: ")", spacing: .right)
+                        return name
+                    } else {
+                        return parameterTermName
+                    }
+                }()
+                arguments.append(Term(.variable, lexicon.makeIDURI(forName: argumentName), name: argumentName))
+                
+                if
+                    tryEating(prefix: ":", spacing: .right),
+                    let type = try parsePrimary()
+                {
+                    types.append(type)
+                } else {
+                    types.append(nil)
+                }
+                
+                if !(tryEatingLineBreak() || tryEating(prefix: ",", spacing: .right)) {
+                    break
+                }
+            }
+            eatCommentsAndWhitespace(eatingNewlines: true)
+            try eatOrThrow(prefix: "do")
+            
+            // Define command term (and parameter terms) outside
+            // the function scope before parsing body:
+            let functionScope = lexicon.top
+            lexicon.pop()
+            commandTerm = lexicon.lookUpOrDefine(.command, name: functionName, dictionary: TermDictionary(contents: parameters))
+            lexicon.push(functionScope)
+            
+            try eatLineBreakOrThrow(.toBeginBlock("function body"))
             lexicon.add(Set(arguments))
             return try parseSequence()
         }
         
-        return .function(name: commandTerm, parameters: parameters, types: types, arguments: arguments, body: body)
+        return .function(name: commandTerm!, parameters: parameters, types: types, arguments: arguments, body: body)
     }
     
     private func handleBlockArgumentNamesStart() throws -> Expression.Kind? {
         var arguments: [Term] = []
-        while let argumentName = try parseTermNameEagerly(stoppingAt: [",", "do"], styling: .variable) {
-            arguments.append(Term(.variable, lexicon.makeIDURI(forName: argumentName), name: argumentName))
-            
-            if !tryEating(prefix: ",", spacing: .right) {
-                break
+        let body = try withScope {
+            while let argumentName = try parseTermNameEagerly(stoppingAt: [",", "do"], styling: .variable) {
+                arguments.append(Term(.variable, lexicon.makeIDURI(forName: argumentName), name: argumentName))
+                
+                if !tryEating(prefix: ",", spacing: .right) {
+                    break
+                }
             }
+            
+            lexicon.add(Set(arguments))
+            
+            guard tryEating(prefix: "do") else {
+                throw ParseError(.missing([.blockBody]), at: expressionLocation)
+            }
+            
+            return try parseBlockBody(arguments: [])
         }
-        
-        guard tryEating(prefix: "do") else {
-            throw ParseError(.missing([.blockBody]), at: expressionLocation)
-        }
-        
-        return try parseBlockBody(arguments: arguments)
+        return .block(arguments: arguments, body: body)
     }
     
     private func handleBlockBodyStart() throws -> Expression.Kind? {
-        try parseBlockBody(arguments: [])
+        let body = try withScope {
+            try parseBlockBody(arguments: [])
+        }
+        return Expression.Kind.block(arguments: [], body: body)
     }
     
-    private func parseBlockBody(arguments: [Term]) throws -> Expression.Kind? {
-        let body = try withScope {
-            lexicon.add(Set(arguments))
-            if tryEatingLineBreak() {
-                return try parseSequence()
-            } else {
-                guard let expression = try parsePrimary() else {
-                    throw ParseError(.missing([.blockBody]), at: expressionLocation)
-                }
-                return expression
+    private func parseBlockBody(arguments: [Term]) throws -> Expression {
+        if tryEatingLineBreak() {
+            return try parseSequence()
+        } else {
+            guard let expression = try parsePrimary() else {
+                throw ParseError(.missing([.blockBody]), at: expressionLocation)
             }
+            return expression
         }
-        return .block(arguments: arguments, body: body)
     }
     
     private func handleTry() throws -> Expression.Kind? {
