@@ -463,17 +463,9 @@ public final class EnglishParser: SourceParser {
             
             system = resolved
         }
-        
-        // Term should be defined in translation files (we don't have a name
-        // for it here).
-        if let term = lexicon.term(id: Term.ID(Variables.Core))!.dictionary.term(id: Term.ID(Resources.system)) {
-            return term
-        } else {
-            // Resort to empty name.
-            let term = Term(.resource, .res("system"), name: Term.Name([]), resource: system.enumerated())
-            try cache.dictionaryCache.loadResourceDictionary(for: term)
-            return term
-        }
+        let term = Term(.resource, .res("system"), name: Term.Name(["system"]), resource: system.enumerated())
+        try cache.dictionaryCache.loadResourceDictionary(for: term)
+        return term
     }
     
     private func handleImportApplicationName(name: Term.Name) throws -> Term {
