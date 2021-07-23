@@ -38,7 +38,8 @@ public struct Translation {
     
     public var format: Double
     public var language: String
-    public var termIDToNames: [Term.ID : Set<Term.Name>] = [:]
+    public var terms: NSMutableOrderedSet/*<Term>*/ = []
+    public var termIDToNames: [Term.ID : [Term.Name]] = [:]
     public var termIDToDoc: [Term.ID : String] = [:]
     
     public init(from url: URL) throws {
@@ -138,14 +139,24 @@ public struct Translation {
     }
     
     private mutating func addTermName(id: Term.ID, termName: Term.Name) {
-        if self.termIDToNames[id] == nil {
-            self.termIDToNames[id] = []
+        let term = Term(id, name: termName)
+        if !terms.contains(term) {
+            terms.add(term)
         }
-        self.termIDToNames[id]!.insert(termName)
+        var termNames = termIDToNames[id] ?? []
+        termNames.append(termName)
+        termIDToNames[id] = termNames
+    }
+    
+    public mutating func removeTerm(for id: Term.ID) {
+        for name in termIDToNames[id] ?? [] {
+            terms.remove(Term(id, name: name))
+        }
+        termIDToNames.removeValue(forKey: id)
     }
     
     public subscript(_ id: Term.ID) -> Set<Term.Name> {
-        termIDToNames[id] ?? []
+        Set(termIDToNames[id] ?? [])
     }
     public subscript(_ id: Term.ID) -> Term.Name? {
         termIDToNames[id]?.first
@@ -158,35 +169,40 @@ public struct Translation {
     public func makeTerms(cache: BushelCache) -> TermDictionary {
         var resourceTerms: [Term] = []
         
-        let termPairs: [(Term.ID, [Term])] = termIDToNames.map { kv in
-            let (termID, termNames) = kv
-            return (termID, termNames.compactMap { termName in
-                Term(termID, name: termName, resource: termID.role == .resource ? Resource(normalized: termName.normalized, cache: cache.resourceCache) : nil)
-            })
+        let allTerms: [Term] = terms.map { term in
+            let term = term as! Term
+            return Term(term.id, name: term.name, resource: term.role == .resource ? Resource(normalized: term.name!.normalized, cache: cache.resourceCache) : nil)
         }
-        let allTerms = [Term.ID : [Term]](uniqueKeysWithValues: termPairs)
-        let allTermsByURI = [Term.SemanticURI : [Term]](allTerms.map { (key: $0.key.uri, value: $0.value) }, uniquingKeysWith: {
-            (left: [Term], right: [Term]) -> [Term] in
-            Term.SyntacticRole.allCases.firstIndex(of: left.first!.role)! < Term.SyntacticRole.allCases.firstIndex(of: right.first!.role)! ? right : left
-        })
+        let allTermsByID: [Term.ID : [Term]] = allTerms.reduce(into: [:]) { allTermsByID, term in
+            var termsForID = allTermsByID[term.id] ?? []
+            termsForID.append(term)
+            allTermsByID[term.id] = termsForID
+        }
+        let allTermsByURI: [Term.SemanticURI : [Term]] = allTerms.reduce(into: [:]) { allTermsByURI, term in
+            var termsForURI = allTermsByURI[term.uri] ?? []
+            termsForURI.append(term)
+            allTermsByURI[term.uri] = termsForURI
+        }
         
         // Convert flat allTerms to dictionary-nested resultTerms
         var resultTerms = allTerms
-        for (termID, terms) in allTerms {
+        for i in 0..<allTerms.count {
+            let term = allTerms[i]
+            let termID = term.id
             if termID.role == .parameter {
-                for parameterTerm in terms where parameterTerm.role == .parameter {
+                for case let parameterTerm as Term in terms where parameterTerm.role == .parameter {
                     if
                         let commandURI = parameterTerm.uri.commandURI,
-                        let commandTerms = allTerms[Term.ID(.command, commandURI)]
+                        let commandTerms = allTermsByID[Term.ID(.command, commandURI)]
                     {
                         for commandTerm in commandTerms {
                             commandTerm.dictionary.add(parameterTerm)
                         }
                     }
                 }
-                resultTerms.removeValue(forKey: termID)
+                resultTerms.remove(at: i - (allTerms.count - resultTerms.count))
             } else if termID.role == .resource {
-                for resourceTerm in terms where resourceTerm.role == .resource {
+                for case let resourceTerm as Term in terms where resourceTerm.role == .resource {
                     resourceTerms.append(resourceTerm)
                 }
             } else {
@@ -202,12 +218,12 @@ public struct Translation {
                     if !ancestorDictionaries.isEmpty {
                         // Add the nested terms to the appropriate dictionary.
                         for dictionary in ancestorDictionaries {
-                            dictionary.add(terms)
+                            dictionary.add(terms.array as! [Term])
                         }
                         // Remove from base dictionary. The term may still be
                         // accessible from the base through dictionary exporting,
                         // but it should not be redefined in it.
-                        resultTerms.removeValue(forKey: termID)
+                        resultTerms.remove(at: i - (allTerms.count - resultTerms.count))
                     }
                 }
             }
@@ -217,7 +233,7 @@ public struct Translation {
             try? cache.dictionaryCache.loadResourceDictionary(for: resourceTerm)
         }
         
-        return TermDictionary(contents: resultTerms.values.reduce(into: Set()) { set, terms in set.formUnion(terms) })
+        return TermDictionary(contents: resultTerms)
     }
     
     public func makeTermDocs(for rootDictionary: TermDictionary) -> [Term.ID : TermDoc] {

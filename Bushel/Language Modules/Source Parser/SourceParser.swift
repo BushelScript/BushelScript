@@ -91,17 +91,17 @@ extension SourceParser {
         for index in allTranslations.indices {
             var translation = allTranslations[index]
             
-            if let scriptTermNames = translation.termIDToNames[Lexicon.defaultRootTermID] {
-                translation.termIDToNames.removeValue(forKey: Lexicon.defaultRootTermID)
+            if let scriptTermName = translation[Lexicon.defaultRootTermID] {
+                translation.removeTerm(for: Lexicon.defaultRootTermID)
                 
-                lexicon = Lexicon(Stack(bottom: Term(Lexicon.defaultRootTermID, name: scriptTermNames.first!)))
+                lexicon = Lexicon(Stack(bottom: Term(Lexicon.defaultRootTermID, name: scriptTermName)))
             }
             
             let coreTermID = Term.ID(Variables.Core)
-            if let coreTermNames = translation.termIDToNames[coreTermID] {
-                translation.termIDToNames.removeValue(forKey: coreTermID)
+            if let coreTermName = translation[coreTermID] {
+                translation.removeTerm(for: coreTermID)
                 
-                let coreTerm = Term(coreTermID, name: coreTermNames.first!, exports: true)
+                let coreTerm = Term(coreTermID, name: coreTermName, exports: true)
                 lexicon.addPush(coreTerm)
             }
             
