@@ -20,7 +20,7 @@ class DictionaryBrowserSidebarVC: NSViewController, NSOutlineViewDelegate, NSOut
     
     var termToContainingTerm: [Term : Term] = [:]
     func indexContainingTerms(for containingTerm: Term) {
-        for term in containingTerm.dictionary.contents {
+        for term in containingTerm.dictionary.contents where termToContainingTerm[term as! Term] == nil {
             let term = term as! Term
             termToContainingTerm[term] = containingTerm
             indexContainingTerms(for: term)
