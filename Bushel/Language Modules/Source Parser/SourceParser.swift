@@ -833,7 +833,7 @@ extension SourceParser {
         else {
             return nil
         }
-        return Term(.variable, lexicon.makeURI(forName: termName), name: termName)
+        return Term(.variable, lexicon.makeIDURI(forName: termName), name: termName)
     }
     
     public func parseTermNameEagerlyOrThrow(stoppingAt: [String] = [], styling: Styling = .keyword, _ context: ParseError.Error.Context? = nil) throws -> Term.Name {

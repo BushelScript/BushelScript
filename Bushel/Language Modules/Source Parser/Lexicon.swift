@@ -46,14 +46,14 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
             existing.dictionary.merge(dictionary)
             return existing
         }
-        return add(Term(role, makeURI(forName: name), name: name, dictionary: dictionary))
+        return add(Term(role, makeIDURI(forName: name), name: name, dictionary: dictionary))
     }
     
     /// Constructs a `SemanticURI` with the `id` scheme that uniquely represents
     /// a term defined in the current dictionary with the provided name.
     /// - Parameter name: The name of the term residing in the current
     ///                   dictionary.
-    public func makeURI(forName name: Term.Name) -> Term.SemanticURI {
+    public func makeIDURI(forName name: Term.Name) -> Term.SemanticURI {
         var components: [String] = []
         let lastStackTermURI = stack.top.uri
         if let pathnameComponents = lastStackTermURI.pathname?.components {
@@ -66,7 +66,7 @@ public struct Lexicon: ByNameTermLookup, CustomDebugStringConvertible {
     }
     /// Constructs a universally unique `SemanticURI` with the `id` scheme.
     public func makeUniqueURI() -> Term.SemanticURI {
-        makeURI(forName: Term.Name(UUID().uuidString))
+        makeIDURI(forName: Term.Name(UUID().uuidString))
     }
     
     public var bottom: Term {

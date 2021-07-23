@@ -233,7 +233,7 @@ public final class EnglishParser: SourceParser {
                     return parameterTermName
                 }
             }()
-            arguments.append(Term(.variable, .id(Term.SemanticURI.Pathname([argumentName.normalized])), name: argumentName))
+            arguments.append(Term(.variable, lexicon.makeIDURI(forName: argumentName), name: argumentName))
             
             if
                 tryEating(prefix: ":", spacing: .right),
@@ -267,7 +267,7 @@ public final class EnglishParser: SourceParser {
     private func handleBlockArgumentNamesStart() throws -> Expression.Kind? {
         var arguments: [Term] = []
         while let argumentName = try parseTermNameEagerly(stoppingAt: [",", "do"], styling: .variable) {
-            arguments.append(Term(.variable, .id(Term.SemanticURI.Pathname([argumentName.normalized])), name: argumentName))
+            arguments.append(Term(.variable, lexicon.makeIDURI(forName: argumentName), name: argumentName))
             
             if !tryEating(prefix: ",", spacing: .right) {
                 break
@@ -420,7 +420,7 @@ public final class EnglishParser: SourceParser {
                 return nil
             }
             return try eatTermURI(Styling(for: role)) ?? eatTermOrThrow()
-        }() ?? lexicon.makeURI(forName: name)
+        }() ?? lexicon.makeIDURI(forName: name)
         
         let term = Term(role, uriProvider.uri, name: name)
         lexicon.add(term)
