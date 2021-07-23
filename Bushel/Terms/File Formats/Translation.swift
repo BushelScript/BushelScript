@@ -39,7 +39,7 @@ public struct Translation {
     public var format: Double
     public var language: String
     public var terms: NSMutableOrderedSet/*<Term>*/ = []
-    public var termIDToNames: [Term.ID : [Term.Name]] = [:]
+    public var termIDToTerms: [Term.ID : [Term]] = [:]
     public var termIDToDoc: [Term.ID : String] = [:]
     
     public init(from url: URL) throws {
@@ -143,23 +143,23 @@ public struct Translation {
         if !terms.contains(term) {
             terms.add(term)
         }
-        var termNames = termIDToNames[id] ?? []
-        termNames.append(termName)
-        termIDToNames[id] = termNames
+        var termsForID = termIDToTerms[id] ?? []
+        termsForID.append(term)
+        termIDToTerms[id] = termsForID
     }
     
     public mutating func removeTerm(for id: Term.ID) {
-        for name in termIDToNames[id] ?? [] {
-            terms.remove(Term(id, name: name))
+        for term in termIDToTerms[id] ?? [] {
+            terms.remove(term)
         }
-        termIDToNames.removeValue(forKey: id)
+        termIDToTerms.removeValue(forKey: id)
     }
     
     public subscript(_ id: Term.ID) -> Set<Term.Name> {
-        Set(termIDToNames[id] ?? [])
+        Set(termIDToTerms[id]?.compactMap { $0.name } ?? [])
     }
     public subscript(_ id: Term.ID) -> Term.Name? {
-        termIDToNames[id]?.first
+        termIDToTerms[id]?.first?.name
     }
     
     public func doc(for id: Term.ID) -> String {
@@ -169,10 +169,7 @@ public struct Translation {
     public func makeTerms(cache: BushelCache) -> TermDictionary {
         var resourceTerms: [Term] = []
         
-        let allTerms: [Term] = terms.map { term in
-            let term = term as! Term
-            return Term(term.id, name: term.name, resource: term.role == .resource ? Resource(normalized: term.name!.normalized, cache: cache.resourceCache) : nil)
-        }
+        let allTerms: [Term] = terms.map { $0 as! Term }
         let allTermsByID: [Term.ID : [Term]] = allTerms.reduce(into: [:]) { allTermsByID, term in
             var termsForID = allTermsByID[term.id] ?? []
             termsForID.append(term)
