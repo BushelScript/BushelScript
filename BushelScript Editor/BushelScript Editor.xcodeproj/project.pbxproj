@@ -59,6 +59,8 @@
 		3CC2A62726A92CA100509362 /* DictionaryBrowserContentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2A62626A92CA100509362 /* DictionaryBrowserContentVC.swift */; };
 		3CC2A62926A93A6A00509362 /* DictionaryBrowserWC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2A62826A93A6A00509362 /* DictionaryBrowserWC.swift */; };
 		3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1D0602319A07100DD01A9 /* Defaults.swift */; };
+		3CE531D726AA54C300E7E1B8 /* TermRoleIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE531D626AA54C300E7E1B8 /* TermRoleIconView.swift */; };
+		3CE531DE26AA61C400E7E1B8 /* HighlightColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE531DD26AA61C400E7E1B8 /* HighlightColors.swift */; };
 		3CEC9DBD267EED0D00E53CC0 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; };
 		3CEC9DBE267EED0D00E53CC0 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CFEC5122677EFEF001EEF12 /* SidebarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFEC5112677EFEF001EEF12 /* SidebarVC.swift */; };
@@ -290,6 +292,8 @@
 		3CC2A62626A92CA100509362 /* DictionaryBrowserContentVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryBrowserContentVC.swift; sourceTree = "<group>"; };
 		3CC2A62826A93A6A00509362 /* DictionaryBrowserWC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryBrowserWC.swift; sourceTree = "<group>"; };
 		3CD1D0602319A07100DD01A9 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
+		3CE531D626AA54C300E7E1B8 /* TermRoleIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermRoleIconView.swift; sourceTree = "<group>"; };
+		3CE531DD26AA61C400E7E1B8 /* HighlightColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HighlightColors.swift; path = "BushelScript Editor/HighlightColors.swift"; sourceTree = SOURCE_ROOT; };
 		3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
 		3CEF50422352948E008603E3 /* BushelScript Editor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BushelScript Editor.entitlements"; sourceTree = "<group>"; };
 		3CFEC5112677EFEF001EEF12 /* SidebarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarVC.swift; sourceTree = "<group>"; };
@@ -393,6 +397,7 @@
 				3CFEC5262678237A001EEF12 /* ExpressionInspectorVC.swift */,
 				3CFEC51A2677F33B001EEF12 /* Notification.swift */,
 				3C2BC9EF23E27FAE00CB8C20 /* Documents */,
+				3CE531DD26AA61C400E7E1B8 /* HighlightColors.swift */,
 				3C2BC9B323E2754600CB8C20 /* Inline Errors */,
 				3C04308223199A1800758339 /* Preferences */,
 				3C2BC9EE23E27F4F00CB8C20 /* Utilities */,
@@ -591,6 +596,7 @@
 				3CC2A62226A92C3800509362 /* DictionaryBrowserVC.swift */,
 				3CC2A62426A92C9600509362 /* DictionaryBrowserSidebarVC.swift */,
 				3CC2A62626A92CA100509362 /* DictionaryBrowserContentVC.swift */,
+				3CE531D626AA54C300E7E1B8 /* TermRoleIconView.swift */,
 			);
 			path = "Dictionary Browser";
 			sourceTree = "<group>";
@@ -917,6 +923,7 @@
 				3C0566B223135673004CDB1A /* Document.swift in Sources */,
 				3C0430022314BECD00758339 /* ModelPropagation.swift in Sources */,
 				3CC2A62326A92C3800509362 /* DictionaryBrowserVC.swift in Sources */,
+				3CE531D726AA54C300E7E1B8 /* TermRoleIconView.swift in Sources */,
 				3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */,
 				3CC2A62726A92CA100509362 /* DictionaryBrowserContentVC.swift in Sources */,
 				3CC2A62926A93A6A00509362 /* DictionaryBrowserWC.swift in Sources */,
@@ -928,6 +935,7 @@
 				3CFEC51F26781714001EEF12 /* MainSplitVC.swift in Sources */,
 				3C76927B23E1D8DA008FE565 /* InlineErrorView.swift in Sources */,
 				3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */,
+				3CE531DE26AA61C400E7E1B8 /* HighlightColors.swift in Sources */,
 				3CFEC51B2677F33B001EEF12 /* Notification.swift in Sources */,
 				3C76927923E0FC76008FE565 /* GeneralPrefsVC.swift in Sources */,
 				3C76927123E0E635008FE565 /* UnarchiveFontVT.swift in Sources */,

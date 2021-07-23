@@ -1324,7 +1324,7 @@ extension SourceParser {
             guard role == nil || term.role == role else {
                 return nil
             }
-            addingElement(styling(for: term.role)) {
+            addingElement(Styling(for: term.role)) {
                 source.removeFirst(termString.count)
             }
             if role == nil {
@@ -1342,7 +1342,7 @@ extension SourceParser {
                     
                     // Eat rhs.
                     (termString, term) = result
-                    addingElement(styling(for: term.role)) {
+                    addingElement(Styling(for: term.role)) {
                         source.removeFirst(termString.count)
                     }
                     eatCommentsAndWhitespace()
@@ -1368,7 +1368,7 @@ extension SourceParser {
                 
                 eatCommentsAndWhitespace()
                 
-                let uri = try eatTermURI(styling(for: role)) ?? lexicon.makeUniqueURI()
+                let uri = try eatTermURI(Styling(for: role)) ?? lexicon.makeUniqueURI()
                 
                 let term = lexicon.term(id: Term.ID(role, uri)) ?? Term(role, uri)
                 
@@ -1486,23 +1486,29 @@ extension SourceParser {
         elements.insert(SourceElement(Terminal(slice, at: loc, spacing: spacing, styling: styling)))
     }
     
-    public func styling(for role: Term.SyntacticRole) -> Styling {
-        switch role {
-        case .type:
-            return .type
-        case .property:
-            return .property
-        case .constant:
-            return .constant
-        case .command:
-            return .command
-        case .parameter:
-            return .parameter
-        case .variable:
-            return .variable
-        case .resource:
-            return .resource
-        }
+}
+
+extension Styling {
+    
+    public init(for role: Term.SyntacticRole) {
+        self = {
+            switch role {
+            case .type:
+                return .type
+            case .property:
+                return .property
+            case .constant:
+                return .constant
+            case .command:
+                return .command
+            case .parameter:
+                return .parameter
+            case .variable:
+                return .variable
+            case .resource:
+                return .resource
+            }
+        }()
     }
     
 }

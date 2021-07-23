@@ -416,12 +416,12 @@ public final class EnglishParser: SourceParser {
         guard let role = eatTermRoleName() else {
             throw ParseError(.missing([.termRole]), at: currentLocation)
         }
-        let name = try parseTermNameEagerlyOrThrow(stoppingAt: ["as"], styling: styling(for: role))
+        let name = try parseTermNameEagerlyOrThrow(stoppingAt: ["as"], styling: Styling(for: role))
         let uriProvider: TermSemanticURIProvider = try { () -> TermSemanticURIProvider? in
             guard tryEating(prefix: "as") else {
                 return nil
             }
-            return try eatTermURI(styling(for: role)) ?? eatTermOrThrow()
+            return try eatTermURI(Styling(for: role)) ?? eatTermOrThrow()
         }() ?? lexicon.makeURI(forName: name)
         
         let term = Term(role, uriProvider.uri, name: name)
