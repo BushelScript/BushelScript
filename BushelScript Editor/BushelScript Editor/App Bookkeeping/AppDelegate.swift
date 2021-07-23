@@ -90,6 +90,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         OSADictionary.choose()
     }
     
+    lazy var dictionaryBrowserWC: DictionaryBrowserWC = NSStoryboard(name: "DictionaryBrowser", bundle: nil).instantiateInitialController() as! DictionaryBrowserWC
+    
+    @IBAction func showDictionaryBrowserForCurrentDocument(_ sender: Any?) {
+        dictionaryBrowserWC.selectFrontDocument()
+        dictionaryBrowserWC.showWindow(nil)
+    }
+    
 }
 
 class ScriptLanguageMenuDelegate: NSObject, NSMenuDelegate {

@@ -359,6 +359,12 @@ Gw
                                             </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="v1Y-Xt-WaQ"/>
+                                        <menuItem title="Show Dictionary Browser for Document" keyEquivalent="0" id="1vN-6l-t4g">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="showDictionaryBrowserForCurrentDocument:" target="Voe-Tx-rLC" id="wlY-w4-ALB"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
@@ -428,13 +434,6 @@ DQ
                                             <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                             <connections>
                                                 <action selector="performZoom:" target="Ady-hI-5gd" id="DIl-cC-cCs"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="Nsy-mY-kNl"/>
-                                        <menuItem title="Dictionary Browser" keyEquivalent="0" id="HgZ-bC-EjN">
-                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
-                                            <connections>
-                                                <segue destination="TUZ-iw-KZ3" kind="show" id="Jfj-gY-1sX"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
@@ -717,14 +716,6 @@ DQ
                 <customObject id="6f7-a7-6o1" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="84" y="337"/>
-        </scene>
-        <!--DictionaryBrowser-->
-        <scene sceneID="BHg-5j-zBj">
-            <objects>
-                <controllerPlaceholder storyboardName="DictionaryBrowser" id="TUZ-iw-KZ3" sceneMemberID="viewController"/>
-                <customObject id="RIz-1A-1OM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="557" y="-96"/>
         </scene>
         <!--Preferences-->
         <scene sceneID="M0A-eC-fXg">

@@ -23,21 +23,44 @@
                         </view>
                         <toolbar key="toolbar" implicitIdentifier="09D11707-F4A3-4FD5-970E-AC5832E91C2B" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="Nvz-u5-U6M">
                             <allowedToolbarItems>
+                                <toolbarItem implicitItemIdentifier="CC9E98D7-5428-410E-8D83-85721AC9541F" label="Document" paletteLabel="Select Document" bordered="YES" sizingBehavior="auto" id="waQ-gW-mGb">
+                                    <nil key="toolTip"/>
+                                    <popUpButton key="view" verticalHuggingPriority="750" id="9Ph-kT-kwQ">
+                                        <rect key="frame" x="32" y="14" width="35" height="25"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Lhs-8p-I3q">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="menu"/>
+                                            <menu key="menu" id="5QP-GJ-lHM"/>
+                                        </popUpButtonCell>
+                                    </popUpButton>
+                                </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="pte-A5-NLI"/>
                                 <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="a29-hq-9XF"/>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="YKg-9m-EfH"/>
                             </allowedToolbarItems>
-                            <defaultToolbarItems/>
+                            <defaultToolbarItems>
+                                <toolbarItem reference="waQ-gW-mGb"/>
+                            </defaultToolbarItems>
                         </toolbar>
                         <connections>
                             <outlet property="delegate" destination="8bj-71-bov" id="XUx-zN-C0u"/>
                         </connections>
                     </window>
                     <connections>
+                        <outlet property="documentMenuDelegate" destination="p1a-pX-b2m" id="Nah-Lv-zpa"/>
+                        <outlet property="documentPUB" destination="9Ph-kT-kwQ" id="mC8-Ai-x0M"/>
+                        <outlet property="documentPUBMenu" destination="5QP-GJ-lHM" id="QDm-Zw-K5N"/>
                         <segue destination="FBT-4b-aFU" kind="relationship" relationship="window.shadowedContentViewController" id="Rlx-Ml-Ppk"/>
                     </connections>
                 </windowController>
                 <customObject id="SxZ-0D-3Ve" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="p1a-pX-b2m" customClass="DictionaryBrowserDocumentMenuDelegate" customModule="BushelScript_Editor" customModuleProvider="target">
+                    <connections>
+                        <outlet property="documentPUB" destination="9Ph-kT-kwQ" id="Iuu-ke-VYZ"/>
+                        <outlet property="windowController" destination="8bj-71-bov" id="OSw-B5-dTg"/>
+                    </connections>
+                </customObject>
             </objects>
             <point key="canvasLocation" x="145" y="-136"/>
         </scene>

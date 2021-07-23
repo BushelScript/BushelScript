@@ -35,7 +35,7 @@ final class KeyValueObservation: NSObject, Tiable {
     private var observation: NSKeyValueObservation
     private var lifetimeAssociation: LifetimeAssociation?
     
-    init<Object: NSObject, Value>(_ object: Object, options: NSKeyValueObservingOptions = [], _ keyPath: KeyPath<Object, Value>, handler: @escaping (Object, NSKeyValueObservedChange<Value>) -> Void) {
+    init<Object: NSObject, Value>(_ object: Object, _ keyPath: KeyPath<Object, Value>, options: NSKeyValueObservingOptions = [], handler: @escaping (Object, NSKeyValueObservedChange<Value>) -> Void) {
         observation = object.observe(keyPath, options: options, changeHandler: handler)
     }
     
