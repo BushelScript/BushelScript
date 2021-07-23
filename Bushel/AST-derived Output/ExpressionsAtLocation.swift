@@ -142,11 +142,11 @@ extension Expression {
         }
     }
     
-    /// Term ID related to this expression for the purposes of displaying
+    /// Term related to this expression for the purposes of displaying
     /// documentation in an editor.
-    public func termIDForDocs() -> Term.ID? {
+    public func termForDocs() -> Term? {
         switch kind {
-        case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .missing, .unspecified, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
+        case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .missing, .unspecified, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
             return nil
         case let .require(term),
              let .resource(term),
@@ -159,11 +159,7 @@ extension Expression {
              let .function(term, _, _, _, _),
              let .debugInspectTerm(term, _),
              let .command(term, _):
-            return term.id
-        case .get:
-            return Term.ID(Commands.get)
-        case .set:
-            return Term.ID(Commands.set)
+            return term
         }
     }
     

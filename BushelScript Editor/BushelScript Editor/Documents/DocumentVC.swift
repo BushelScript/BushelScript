@@ -333,6 +333,8 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     
     private var inlineErrorVC: InlineErrorVC?
     
+    var selectedExpression: Expression?
+    
 }
 
 // MARK: NSTextViewDelegate
@@ -501,6 +503,7 @@ extension DocumentVC: NSTextViewDelegate {
             return
         }
         
+        document.selectedExpressions = expressionsAtLocation
         NotificationCenter.default.post(name: .selectedExpression, object: self.document, userInfo: [UserInfo.payload: expressionsAtLocation.first! as Any])
     }
     

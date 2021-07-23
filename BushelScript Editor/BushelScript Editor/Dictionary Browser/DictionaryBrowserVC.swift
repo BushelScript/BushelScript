@@ -41,4 +41,8 @@ class DictionaryBrowserVC: NSSplitViewController {
         }
     }
     
+    func reveal(_ term: Term) {
+        sidebarVC?.reveal(term)
+    }
+    
 }

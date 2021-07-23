@@ -4,6 +4,9 @@
 
 import AppKit
 import Bushel
+import os.log
+
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
 class DictionaryBrowserSidebarVC: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource {
     
@@ -15,10 +18,41 @@ class DictionaryBrowserSidebarVC: NSViewController, NSOutlineViewDelegate, NSOut
         representedObject as? Term
     }
     
+    var termToContainingTerm: [Term : Term] = [:]
+    func indexContainingTerms(for containingTerm: Term) {
+        for term in containingTerm.dictionary.contents {
+            let term = term as! Term
+            termToContainingTerm[term] = containingTerm
+            indexContainingTerms(for: term)
+        }
+    }
+    
     override var representedObject: Any? {
         didSet {
+            termToContainingTerm.removeAll()
+            if let rootTerm = rootTerm {
+                indexContainingTerms(for: rootTerm)
+            }
+            
             outlineView?.reloadData()
         }
+    }
+    
+    func drillDown(to term: Term) {
+        if let containingTerm = termToContainingTerm[term] {
+            drillDown(to: containingTerm)
+        }
+        outlineView.expandItem(term)
+    }
+    
+    func reveal(_ term: Term) {
+        drillDown(to: term)
+        let row = outlineView.row(forItem: term)
+        guard row != -1 else {
+            os_log("Cannot reveal term without outline entry: %@", log: log, "\(term)")
+            return
+        }
+        outlineView.selectRowIndexes([row], byExtendingSelection: false)
     }
     
     @IBOutlet var outlineView: NSOutlineView!
@@ -43,19 +77,24 @@ class DictionaryBrowserSidebarVC: NSViewController, NSOutlineViewDelegate, NSOut
         }
     }
     
-    private func term<TC: TermCollection>(at index: Int, of collection: TC) -> Term {
-        collection[collection.index(collection.startIndex, offsetBy: index)]
+    private func term(at index: Int, of set: NSOrderedSet) -> Term {
+        set.object(at: index) as! Term
     }
     
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-        !((item as? Term)?.dictionary.contents.isEmpty ?? true)
+        (item as! Term).dictionary.contents.count != 0
     }
     
     func outlineView(_ outlineView: NSOutlineView, objectValueFor tableColumn: NSTableColumn?, byItem item: Any?) -> Any? {
         guard let termDocs = termDocs, let term = item as? Term else {
             return nil
         }
-        return DictionaryBrowserTermDoc(termDocs.value[term.id] ?? TermDoc(term: term))
+        let doc = termDocs.value[term.id] ?? TermDoc(term: term)
+        // TODO: This dance shouldn't be necessary.
+        //       TermDocs should be created for each available synonym,
+        //       or be coalesced in some other way.
+        let synonymDoc = TermDoc(term: term, summary: doc.summary, discussion: doc.discussion)
+        return DictionaryBrowserTermDoc(synonymDoc)
     }
     
     // MARK: NSOutlineViewDelegate

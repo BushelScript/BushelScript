@@ -33,14 +33,9 @@ class ExpressionInspectorVC: ObjectInspector2VC {
                     return
                 }
                 var termDocString = ""
-                if let termIDForDocs = expression.termIDForDocs() {
-                    let doc = document?.program?.termDocs.value[termIDForDocs]
-                    if let term =
-                        doc.flatMap({ $0.term }) ??
-                        document?.program?.rootTerm.dictionary.term(id: termIDForDocs)
-                    {
-                        termDocString = "\(term)\(doc.map { ": \($0)" } ?? "")\n\n"
-                    }
+                if let termForDocs = expression.termForDocs() {
+                    let doc = document?.program?.termDocs.value[termForDocs.id]
+                    termDocString = "\(termForDocs)\(doc.map { ": \($0)" } ?? "")\n\n"
                 }
                 let expressionDocString = "\(expression.kindName): \(expression.kindDescription)"
                 self.representedObject = termDocString + expressionDocString

@@ -57,6 +57,10 @@ class DictionaryBrowserWC: NSWindowController {
         self.scriptDocument = sender?.representedObject as? Document
     }
     
+    func reveal(_ term: Term) {
+        (contentViewController as! DictionaryBrowserVC).reveal(term)
+    }
+    
 }
 
 class DictionaryBrowserDocumentMenuDelegate: NSObject, NSMenuDelegate {

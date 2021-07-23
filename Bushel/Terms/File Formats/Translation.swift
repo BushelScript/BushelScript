@@ -223,6 +223,7 @@ public struct Translation {
     public func makeTermDocs(for rootDictionary: TermDictionary) -> [Term.ID : TermDoc] {
         var docs: [Term.ID : TermDoc] = [:]
         for term in rootDictionary.contents {
+            let term = term as! Term
             docs[term.id] = TermDoc(term: term, doc: termIDToDoc[term.id] ?? "")
             docs.merge(makeTermDocs(for: term.dictionary), uniquingKeysWith: { old, new in new })
         }

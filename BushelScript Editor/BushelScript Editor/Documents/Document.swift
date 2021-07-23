@@ -21,6 +21,7 @@ class Document: NSDocument {
     @objc dynamic var indentMode = IndentMode()
     
     var program: Bushel.Program?
+    var selectedExpressions: [Expression] = []
     var rt = BushelRT.Runtime()
     
     @objc dynamic var isRunning: Bool = false {

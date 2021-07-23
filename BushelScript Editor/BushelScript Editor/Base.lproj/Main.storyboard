@@ -365,6 +365,13 @@ Gw
                                                 <action selector="showDictionaryBrowserForCurrentDocument:" target="Voe-Tx-rLC" id="wlY-w4-ALB"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Reveal Selection in Dictionary Browser" keyEquivalent="j" id="bYD-xl-E9l">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="revealSelectionInDictionaryBrowser:" target="Voe-Tx-rLC" id="maa-F4-K9x"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="XcH-JP-GSx"/>
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>

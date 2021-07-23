@@ -97,6 +97,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         dictionaryBrowserWC.showWindow(nil)
     }
     
+    func revealInDictionaryBrowser(_ term: Term) {
+        showDictionaryBrowserForCurrentDocument(nil)
+        dictionaryBrowserWC.reveal(term)
+    }
+    
+    @IBAction func revealSelectionInDictionaryBrowser(_ sender: Any?) {
+        guard let document = NSApplication.shared.orderedDocuments.first as? Document else {
+            return
+        }
+        for expression in document.selectedExpressions {
+            if let termForDocs = expression.termForDocs() {
+                revealInDictionaryBrowser(termForDocs)
+                break
+            }
+        }
+    }
+    
 }
 
 class ScriptLanguageMenuDelegate: NSObject, NSMenuDelegate {

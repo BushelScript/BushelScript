@@ -4,7 +4,10 @@ import SDEFinitely
 // MARK: Definition
 
 /// A collection of terms.
-public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
+public final class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
+    
+    /// The terms in the dictionary.
+    public private(set) var contents: NSMutableOrderedSet/*<Term>*/ = []
     
     private var byID: [Term.ID : Term] = [:]
     private var byName: [Term.Name : Term] = [:]
@@ -18,6 +21,7 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     
     /// Initializes with the terms in `contents`.
     public init<Contents: TermCollection>(contents: Contents) {
+        self.contents = NSMutableOrderedSet(array: Array(contents))
         self.byID = Dictionary(contents.map { (key: $0.id, value: $0) }, uniquingKeysWith: TermDictionary.resolveTermConflict)
         self.byName = Dictionary(
             contents.compactMap { term in
@@ -27,18 +31,20 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
         findExportingTerms(in: contents)
     }
     
+    /// Initializes a copy of `dictionary`.
+    public init(_ dictionary: TermDictionary) {
+        self.contents = dictionary.contents
+        self.byID = dictionary.byID
+        self.byName = dictionary.byName
+        self.exportingTerms = dictionary.exportingTerms
+    }
+    
     /// Initializes from the terms in `old` and then merges all terms in `new`
     /// into the new dictionary, resolving conflicts in a way that preserves
     /// AppleScript compatibility.
-    public init(merging new: TermDictionary, into old: TermDictionary) {
-        self.byID = new.byID.merging(old.byID, uniquingKeysWith: TermDictionary.resolveTermConflict)
-        self.byName = new.byName.merging(old.byName, uniquingKeysWith: TermDictionary.resolveTermConflict)
-        findExportingTerms(in: self.byID.values)
-    }
-    
-    /// The terms in the dictionary.
-    public var contents: some TermCollection {
-        byID.values
+    public convenience init(merging new: TermDictionary, into old: TermDictionary) {
+        self.init(new)
+        merge(old)
     }
     
     /// The term with ID `id`, or nil if such a term is not in the dictionary.
@@ -65,6 +71,7 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
     
     /// Adds all terms in `terms` to the dictionary.
     public func add(_ terms: [Term]) {
+        contents.insert(terms as [Any], at: IndexSet(integersIn: contents.count..<(contents.count + terms.count)))
         byID.merge(terms.map { (key: $0.id, value: $0) }, uniquingKeysWith: TermDictionary.resolveTermConflict)
         byName.merge(
             terms.compactMap { term in
@@ -81,6 +88,18 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
         if self === dictionary {
             return
         }
+        let contents = dictionary.contents
+        for i in 0..<contents.count {
+            let term = contents.object(at: i) as! Term
+            let index = self.contents.index(of: term)
+            if index != NSNotFound {
+                contents.setObject(TermDictionary.resolveTermConflict(self.contents.object(at: index) as! Term, term), at: i)
+            }
+        }
+        for term in self.contents {
+            contents.insert(term, at: contents.count)
+        }
+        self.contents = contents
         byID.merge(dictionary.byID, uniquingKeysWith: TermDictionary.resolveTermConflict)
         byName.merge(dictionary.byName, uniquingKeysWith: TermDictionary.resolveTermConflict)
         findExportingTerms(in: dictionary.byID.values)
@@ -157,11 +176,11 @@ public class TermDictionary: ByNameTermLookup, CustomDebugStringConvertible {
 extension TermDictionary: Hashable {
     
     public static func == (lhs: TermDictionary, rhs: TermDictionary) -> Bool {
-        return lhs.byID == rhs.byID
+        return lhs.contents.set == rhs.contents.set
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(byID)
+        hasher.combine(contents.set)
     }
     
 }
