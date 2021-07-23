@@ -6,7 +6,7 @@ class TermRoleIconView: NSView {
     @IBOutlet var tableCellView: NSTableCellView!
     @objc var termDoc: DictionaryBrowserTermDoc?
     
-    var role: Term.SyntacticRole! {
+    var role: Term.SyntacticRole? {
         termDoc?.termDoc.term.role
     }
     
@@ -23,6 +23,9 @@ class TermRoleIconView: NSView {
     }
     
     private func drawRoundedRectangle() {
+        guard let role = role else {
+            return
+        }
         let bezier = NSBezierPath(roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius)
         let fillColor = NSColor(cgColor: highlightColors[Styling(for: role)]!)!.usingColorSpace(.deviceRGB)!
         let strokeColor = NSColor(hue: fillColor.hueComponent, saturation: fillColor.saturationComponent, brightness: fillColor.brightnessComponent * 0.8, alpha: 1.0)
@@ -33,6 +36,9 @@ class TermRoleIconView: NSView {
     }
     
     private func drawText() {
+        guard let role = role else {
+            return
+        }
         let string = String(role.rawValue.first!) as NSString
         let attributes: [NSAttributedString.Key : Any] = [
             .font: NSFont.systemFont(ofSize: 12),
