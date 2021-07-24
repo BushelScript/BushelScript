@@ -23,9 +23,9 @@ class DictionaryBrowserWC: NSWindowController {
         
         selectFrontDocument()
         tie(to: self, [
-            KeyValueObservation(NSDocumentController.shared, \.documents, options: [.initial], handler: { [weak self] _, _ in
+            KeyValueObservation(NSDocumentController.shared, \.documents, options: [.initial]) { [weak self] (_, _) in
                 self?.updateDocumentMenu()
-            })
+            }
         ])
     }
     

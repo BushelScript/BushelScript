@@ -48,7 +48,7 @@ final class KeyValueObservation: NSObject, Tiable {
     
 }
 
-func tie<T: Tiable>(to owner: AnyObject, _ tiables: [T]) {
+func tie<TC: Collection>(to owner: AnyObject, _ tiables: TC) where TC.Element == Tiable {
     for tiable in tiables {
         tiable.tie(to: owner)
     }

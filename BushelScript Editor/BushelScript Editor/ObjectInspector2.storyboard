@@ -199,7 +199,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i92-r6-a9l">
-                                <rect key="frame" x="18" y="110" width="164" height="16"/>
+                                <rect key="frame" x="18" y="110" width="136" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" title="Selection" id="GYM-LY-ffG">
                                     <font key="font" usesAppearanceFont="YES"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -271,18 +271,40 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
+                            <button toolTip="Reveal in Dictionary Browser" translatesAutoresizingMaskIntoConstraints="NO" id="ghc-QE-6C0">
+                                <rect key="frame" x="160" y="106" width="20" height="26"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="n16-FK-4xR"/>
+                                    <constraint firstAttribute="height" constant="20" id="nmN-Tc-Ta4"/>
+                                </constraints>
+                                <buttonCell key="cell" type="square" title="Show in Dictionary Browser" bezelStyle="shadowlessSquare" image="NSFollowLinkFreestandingTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="cFV-eu-Q0w">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="revealSelectionInDictionaryBrowser:" target="UR2-PV-8kF" id="CGE-ip-ZVe"/>
+                                    <binding destination="UR2-PV-8kF" name="hidden" keyPath="canRevealInDictionaryBrowser" id="Dky-hY-9D8">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="8j2-IH-NM8" secondAttribute="trailing" constant="20" symbolic="YES" id="0NH-O9-rcQ"/>
                             <constraint firstItem="i92-r6-a9l" firstAttribute="leading" secondItem="Jv5-JM-7M7" secondAttribute="leading" constant="20" symbolic="YES" id="2al-xC-akZ"/>
+                            <constraint firstItem="gLN-6Y-IbO" firstAttribute="top" secondItem="ghc-QE-6C0" secondAttribute="bottom" constant="7" id="6sk-jz-9pV"/>
+                            <constraint firstItem="ghc-QE-6C0" firstAttribute="leading" secondItem="i92-r6-a9l" secondAttribute="trailing" constant="8" symbolic="YES" id="78D-nJ-XU8"/>
                             <constraint firstItem="8j2-IH-NM8" firstAttribute="top" secondItem="gLN-6Y-IbO" secondAttribute="bottom" constant="8" id="9fJ-N6-UiD"/>
                             <constraint firstItem="C1j-bE-ydR" firstAttribute="centerY" secondItem="Jv5-JM-7M7" secondAttribute="centerY" id="C0c-tx-egk"/>
+                            <constraint firstItem="ghc-QE-6C0" firstAttribute="top" secondItem="Jv5-JM-7M7" secondAttribute="top" constant="17" id="CH9-aW-FA2"/>
                             <constraint firstAttribute="bottom" secondItem="8j2-IH-NM8" secondAttribute="bottom" constant="20" symbolic="YES" id="CIg-AZ-rLe"/>
-                            <constraint firstAttribute="trailing" secondItem="i92-r6-a9l" secondAttribute="trailing" constant="20" symbolic="YES" id="DQP-UH-NoF"/>
                             <constraint firstItem="gLN-6Y-IbO" firstAttribute="top" secondItem="i92-r6-a9l" secondAttribute="bottom" constant="8" symbolic="YES" id="IO2-7k-Y0n"/>
                             <constraint firstItem="i92-r6-a9l" firstAttribute="top" secondItem="Jv5-JM-7M7" secondAttribute="top" constant="20" symbolic="YES" id="TGp-IN-oHV"/>
                             <constraint firstAttribute="trailing" secondItem="gLN-6Y-IbO" secondAttribute="trailing" constant="20" symbolic="YES" id="Wfp-WD-wOv"/>
                             <constraint firstItem="C1j-bE-ydR" firstAttribute="centerX" secondItem="Jv5-JM-7M7" secondAttribute="centerX" id="fwE-HK-0nt"/>
+                            <constraint firstAttribute="trailing" secondItem="ghc-QE-6C0" secondAttribute="trailing" constant="20" symbolic="YES" id="knh-1k-q3l"/>
                             <constraint firstItem="8j2-IH-NM8" firstAttribute="leading" secondItem="Jv5-JM-7M7" secondAttribute="leading" constant="20" symbolic="YES" id="mlf-MG-fzr"/>
                             <constraint firstItem="gLN-6Y-IbO" firstAttribute="leading" secondItem="Jv5-JM-7M7" secondAttribute="leading" constant="20" symbolic="YES" id="wgO-s1-4sv"/>
                         </constraints>
@@ -293,4 +315,7 @@
             <point key="canvasLocation" x="1512" y="675"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="NSFollowLinkFreestandingTemplate" width="15" height="15"/>
+    </resources>
 </document>

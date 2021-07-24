@@ -39,8 +39,17 @@ class ExpressionInspectorVC: ObjectInspector2VC {
                 }
                 let expressionDocString = "\(expression.kindName): \(expression.kindDescription)"
                 self.representedObject = termDocString + expressionDocString
+            },
+            KeyValueObservation(NSApplication.shared.delegate as! AppDelegate, \.canRevealSelectionInDictionaryBrowser, options: [.initial, .new]) { [weak self] (appDelegate, userInfo) in
+                self?.canRevealInDictionaryBrowser = userInfo.newValue!
             }
         ])
+    }
+    
+    @objc dynamic var canRevealInDictionaryBrowser: Bool = false
+    
+    @IBAction func revealSelectionInDictionaryBrowser(_ sender: Any?) {
+        (NSApplication.shared.delegate as! AppDelegate).revealSelectionInDictionaryBrowser(nil)
     }
     
 }

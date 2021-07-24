@@ -10,7 +10,7 @@ import os
 private let log = OSLog(subsystem: logSubsystem, category: "App delegate")
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
     
     private var defaultsObservations: [DefaultsObservation] = []
     
@@ -39,6 +39,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 Defaults[.smartSuggestionKinds]["ScriptingObjects"] = false
             }
         ]
+        tie(to: self, [
+            NotificationObservation(.selectedExpression) { [weak self] (_: Document?, _) in
+                self?.calculateCanRevealSelectionInDictionaryBrowser()
+            },
+            NotificationObservation(NSWindow.didBecomeKeyNotification) { [weak self] (_: NSWindow?, _) in
+                self?.calculateCanRevealSelectionInDictionaryBrowser()
+            }
+        ])
+        calculateCanRevealSelectionInDictionaryBrowser()
     }
     
     var runningDocuments: Set<Document> = []
@@ -111,6 +120,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 revealInDictionaryBrowser(termForDocs)
                 break
             }
+        }
+    }
+    
+    private func calculateCanRevealSelectionInDictionaryBrowser() {
+        canRevealSelectionInDictionaryBrowser = {
+            if let document = NSApplication.shared.orderedDocuments.first as? Document {
+                for expression in document.selectedExpressions {
+                    if expression.termForDocs() != nil {
+                        return true
+                    }
+                }
+            }
+            return false
+        }()
+    }
+    
+    @objc dynamic var canRevealSelectionInDictionaryBrowser: Bool = false
+    
+    func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+        switch item.action {
+        case #selector(revealSelectionInDictionaryBrowser(_:)):
+            return canRevealSelectionInDictionaryBrowser
+        default:
+            return true
         }
     }
     
