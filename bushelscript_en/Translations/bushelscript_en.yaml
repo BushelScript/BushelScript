@@ -218,7 +218,7 @@ translation:
                 GURLGURL:
                     name: open location
                     doc: |-
-                        Opens a URL. This is an AppleScript command that many apps understand. If handled by an app, the app should open the URL given in the direct parameter. This is the standard event that the system sends (often to web browsers) to open links from other apps.
+                        Open a URL. This is an AppleScript command that many apps understand. If handled by an app, the app should open the URL given in the direct parameter. This is the standard event that the system sends (often to web browsers) to open links from other apps.
                 # GUIHost commands.
                 bShGnotf: notification
                 bShGdisA: alert
@@ -234,7 +234,6 @@ translation:
                 real/sqrt:
                     - sqrt
                     - square root
-                    - √
                 real/cbrt:
                     - cbrt
                     - cube root
