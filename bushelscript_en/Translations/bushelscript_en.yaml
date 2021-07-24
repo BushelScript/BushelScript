@@ -102,24 +102,48 @@ translation:
             id:
                 core object: core object
                 script: script
-                function: function
+                function:
+                    name: function
+                    doc: >-
+                        A BushelScript function.
+                        May be a named function or an anonymous function (also known as a block). To call a function value, call "run" on the Core object with the function as the current target.
                 environment variable:
-                    - environment variable
-                    - environment var
-                    - env variable
-                    - env var
+                    name:
+                        - environment variable
+                        - environment var
+                        - env variable
+                        - env var
+                    doc: >-
+                        An environment variable (env var).
+                        You can get an environment variable by name from the Core object. Use its "value" property to get or set the value of the variable.
                 applescript:
-                    - applescript
-                    - AppleScript
+                    name:
+                        - applescript
+                        - AppleScript
+                    doc: An AppleScript script.
         property:
             ae4:
-                pALL: properties
-                pnam: name
-                'ID  ': id
-                pidx: index
-                leng: length
-                rvse: reverse
-                rest: tail
+                pALL:
+                    name: properties
+                    doc: (Read-only) A record of all the properties of an item (except this one).
+                pnam:
+                    name: name
+                    doc: The human-readable name of an item. This property is used when evaluating by-name specifiers.
+                'ID  ':
+                    name: id
+                    doc: A value that uniquely identifies an item. This property is used when evaluating by-ID specifiers.
+                pidx:
+                    name: index
+                    doc: The index of an item in its primary container. The exact meaning of "primary container" depends on the item's type. This property is used when evaluating by-index specifiers.
+                leng:
+                    name: length
+                    doc: The number of items in a sequence. Sequences include strings, lists, and records.
+                rvse:
+                    name: reverse
+                    doc: The reversal of a sequence.
+                rest:
+                    name: tail
+                    doc: A copy of a sequence with the first item, if any, removed.
                 bhit: button returned
                 # Apparently defined by System Events or something.
                 # This would be id:environment variable/value
@@ -162,13 +186,39 @@ translation:
         command:
             ae8:
                 # Standard AE-based application commands.
-                aevtoapp: run
-                aevtrapp: reopen
-                aevtodoc: open
-                aevtpdoc: print documents   # Let's not have random sheets of paper coming out of people's printers.
-                aevtquit: quit
-                miscactv: activate
-                GURLGURL: open location
+                aevtoapp:
+                    name: run
+                    doc: |-
+                        Run a program or piece of code. This is a standard AppleScript command that all apps understand. If handled by an app, the app is launched (but not necessarily made frontmost).
+                        
+                        If handled by the Core object and the current target is a function, calls the function.
+                        If a direct argument is given, it is passed to the function. For named functions, this becomes the direct parameter. For blocks, the direct argument is made the current target in the block body, and:
+                          • if the direct argument is a list, its items are assigned to the block parameters in order
+                          • otherwise (if the direct argument is not a list), it is assigned to the first block parameter.
+                aevtrapp:
+                    name: reopen
+                    doc: |-
+                        Simulate opening an app or selecting its dock icon while it's already open. This is a standard AppleScript command that all apps understand. If handled by an app, the app may perform some app-specific action, such as opening an untitled document, a template chooser, or a startup window.
+                aevtodoc:
+                    name: open
+                    doc: |-
+                        Open files in an app. This is an AppleScript command that many apps understand. If handled by an app, the app should attempt to open the document(s) given in the direct parameter.
+                aevtpdoc:
+                    name: print documents # Let's not have random sheets of paper coming out of people's printers.
+                    doc: |-
+                        Open and immediately print (without a preview!) files in an app. This is an AppleScript command that many apps understand. If handled by an app, the app should attempt to open the document(s) given in the direct parameter, then print them with the default settings for the default printer. You may not be offered a preview or other confirmation, use at own risk!
+                aevtquit:
+                    name: quit
+                    doc: |-
+                        Quit an app. This is a standard AppleScript command that all apps understand. If handled by an app, the app is politely asked to quit. This command is equivalent to selecting Quit in the app's Dock menu, or pressing Command-Q in the Command-Tab app switcher.
+                miscactv:
+                    name: activate
+                    doc: |-
+                        Activate an app. This is a standard AppleScript command that all apps understand. If handled by an app, the app is made frontmost.
+                GURLGURL:
+                    name: open location
+                    doc: |-
+                        Opens a URL. This is an AppleScript command that many apps understand. If handled by an app, the app should open the URL given in the direct parameter. This is the standard event that the system sends (often to web browsers) to open links from other apps.
                 # GUIHost commands.
                 bShGnotf: notification
                 bShGdisA: alert
