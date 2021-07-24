@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
-        <capability name="NSView safe area layout guides" minToolsVersion="12.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -63,36 +62,6 @@
                 </customObject>
             </objects>
             <point key="canvasLocation" x="145" y="-136"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="e6C-q8-OhU">
-            <objects>
-                <viewController id="POF-bT-b6S" sceneMemberID="viewController">
-                    <view key="view" id="Xxz-Yf-mPn">
-                        <rect key="frame" x="0.0" y="0.0" width="149" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <viewLayoutGuide key="safeArea" id="KKj-o1-GYN"/>
-                        <viewLayoutGuide key="layoutMargins" id="8Zi-tD-ie4"/>
-                    </view>
-                </viewController>
-                <customObject id="OYf-TA-dbk" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1352" y="-458"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="i9b-e6-Ke2">
-            <objects>
-                <viewController id="Pib-Gq-s6p" sceneMemberID="viewController">
-                    <view key="view" id="uVe-7z-Bx0">
-                        <rect key="frame" x="0.0" y="0.0" width="302" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <viewLayoutGuide key="safeArea" id="17j-Si-sVL"/>
-                        <viewLayoutGuide key="layoutMargins" id="SnC-HD-V1d"/>
-                    </view>
-                </viewController>
-                <customObject id="OAA-JK-VNI" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1428" y="-86"/>
         </scene>
         <!--Dictionary Browser-->
         <scene sceneID="kuV-Nd-2Sv">
