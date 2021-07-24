@@ -34,7 +34,7 @@ public class RT_List: RT_Object, Encodable {
         RT_List(rt, contents: contents.reversed())
     }
     public var tail: RT_List {
-        RT_List(rt, contents: [RT_Object](contents[1...]))
+        RT_List(rt, contents: [RT_Object](contents.isEmpty ? [] : contents[1...]))
     }
     
     public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
