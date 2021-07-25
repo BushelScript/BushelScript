@@ -3,7 +3,12 @@ import Regex
 private var defaultLanguageID = "bushelscript_en"
 
 public var globalTermDocs = Ref([Term.ID : TermDoc]())
-public var globalTypeTree = TypeTree(rootType: Term.SemanticURI(Types.item))
+public var globalTypeTree: TypeTree = {
+    let tree = TypeTree(rootType: Term.SemanticURI(Types.item))
+    tree.add(Term.SemanticURI(Types.integer), supertype: Term.SemanticURI(Types.number))
+    tree.add(Term.SemanticURI(Types.real), supertype: Term.SemanticURI(Types.number))
+    return tree
+}()
 public var globalCache = BushelCache(
     dictionaryCache: TermDictionaryCache(
         termDocs: globalTermDocs,

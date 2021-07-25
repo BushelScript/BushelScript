@@ -60,7 +60,7 @@ translation:
                     doc: The symbolic constant true, or the symbolic constant false.
                 nmbr:
                     name: number
-                    doc: (Not yet implemented) An integer or a real number.
+                    doc: An integer or a real number.
                 comp:
                     name: integer
                     doc: A positive or negative whole number.
