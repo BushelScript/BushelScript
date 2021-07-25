@@ -46,6 +46,8 @@ extension Expression {
             return []
         case let .defining(_, as: _, body):
             return [body]
+        case .subtype(_, of: _):
+            return []
         case let .function(name: _, parameters: _, types, arguments: _, body):
             return types.compactMap { $0 } + [body]
         case let .block(arguments: _, body):
@@ -126,7 +128,7 @@ extension Expression {
     /// of a "tell" expression.
     public func principalTerm() -> Term? {
         switch kind {
-        case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .missing, .unspecified, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
+        case .parentheses, .scoped, .sequence, .empty, .that, .it, .use, .tell, .missing, .unspecified, .integer, .double, .string, .multilineString, .list, .record, .specifier, .insertionSpecifier, .reference, .get, .set, .command, .prefixOperator, .postfixOperator, .infixOperator, .weave, .subtype, .block, .return_, .raise, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .debugInspectLexicon:
             return nil
         case let .require(term),
              let .resource(term),
@@ -160,6 +162,8 @@ extension Expression {
              let .debugInspectTerm(term, _),
              let .command(term, _):
             return term
+        case let .subtype(uriProvider, _):
+            return uriProvider as? Term
         }
     }
     

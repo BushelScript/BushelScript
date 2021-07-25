@@ -96,7 +96,8 @@ public struct Expression {
         /// of `to` as the `ae4:data` argument.
         case set(Expression, to: Expression)
         /// Evaluates each `value` expression in `parameters`, then calls its
-        /// constituent command term with the result of each `value` as the argument for its key-value pair's `key` parameter term. Yields the
+        /// constituent command term with the result of each `value` as the
+        /// argument for its key-value pair's `key` parameter term. Yields the
         /// result of the call.
         case command(Term, parameters: [(key: Term, value: Expression)])
         /// Evaluates `operand`, then yields `operation` applied to the result.
@@ -133,6 +134,10 @@ public struct Expression {
         /// _T_, pushes _T_'s dictionary _D_ on the lexicon, evaluates `body`,
         /// and then pops _D_ off the lexicon. Yields the result of `body`.
         case defining(Term, as: TermSemanticURIProvider?, body: Expression)
+        /// Marks the type identified by the constituent term('s) URI
+        /// as a subtype of `of`.
+        /// Yields the equivalent of `.that`.
+        case subtype(TermSemanticURIProvider, of: TermSemanticURIProvider)
         /// Defines a function by adding `name` to the current dictionary as a
         /// command term with parameter terms `parameters`.
         ///
@@ -264,7 +269,7 @@ extension Expression {
         case .empty, .that, .it, .missing, .unspecified, .resource, .integer, .double, .string, .variable, .enumerator, .type, .multilineString, .debugInspectTerm, .debugInspectLexicon:
             assert(subexpressions().isEmpty)
             return false
-        case .sequence, .scoped, .parentheses, .function, .block, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .let_, .define, .defining, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
+        case .sequence, .scoped, .parentheses, .function, .block, .try_, .if_, .repeatWhile, .repeatTimes, .repeatFor, .tell, .let_, .define, .defining, .subtype, .return_, .raise, .list, .record, .specifier, .insertionSpecifier, .reference, .get:
             return subexpressions().contains(where: { $0.hasSideEffects })
         case .require, .use, .prefixOperator, .postfixOperator, .infixOperator, .set, .command, .weave:
             return true
@@ -331,6 +336,8 @@ extension Expression.Kind {
             return ("Define expression", "Defines a new term in the current dictionary.")
         case .defining:
             return ("Defining expression", "Defines a new term in the current dictionary, and elaborates on its contents by opening a block where it is the new current dictionary (i.e., is pushed onto the lexicon).")
+        case .subtype:
+            return ("Subtype expression", "Defines a type as a subtype of another type.")
         case .function:
             return ("Function definition", "Defines a custom, reusable function.")
         case .block:

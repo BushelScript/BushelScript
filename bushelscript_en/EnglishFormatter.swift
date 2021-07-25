@@ -54,6 +54,8 @@ public final class EnglishFormatter: SourceFormatter {
             }
             formatted += format(body, level: level)
             return formatted
+        case let .subtype(uriProvider, of: existingURIProvider):
+            return "subtype \(uriProvider) from \(existingURIProvider)"
         case .return_(let returnValue):
             var formatted = "return"
             if let returnValue = returnValue {

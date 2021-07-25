@@ -178,6 +178,7 @@ public final class EnglishParser: SourceParser {
         Term.Name("let"): KeywordHandler(self, EnglishParser.handleLet),
         Term.Name("define"): KeywordHandler(self, EnglishParser.handleDefine),
         Term.Name("defining"): KeywordHandler(self, EnglishParser.handleDefining),
+        Term.Name("subtype"): KeywordHandler(self, EnglishParser.handleSubtype),
         
         Term.Name("every"): handleQuantifier(.all),
         Term.Name("all"): handleQuantifier(.all),
@@ -447,6 +448,17 @@ public final class EnglishParser: SourceParser {
             try parseSequence()
         }
         return .defining(term, as: uri, body: body)
+    }
+    
+    private func handleSubtype() throws -> Expression.Kind? {
+        func eatURIProvider() throws -> TermSemanticURIProvider {
+            try eatTermURI(Styling(for: .type)) ??
+                eatTermOrThrow()
+        }
+        let subtype = try eatURIProvider()
+        try eatOrThrow(prefix: "from")
+        let supertype = try eatURIProvider()
+        return .subtype(subtype, of: supertype)
     }
     
     private func handleImportSystem(name _: Term.Name) throws -> Term {

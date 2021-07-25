@@ -237,6 +237,9 @@ extension Runtime {
                 return lastResult
             case .defining(_, as: _, body: let body): // MARK: .defining
                 return try runPrimary(body)
+            case .subtype(let subtype, of: let supertype): // MARK: .subtype
+                globalTypeTree.add(subtype.uri, supertype: supertype.uri)
+                return lastResult
             case .return_(let returnValue): // MARK: .return_
                 let returnExprValue = try returnValue.map { try runPrimary($0) } ??
                     lastResult
