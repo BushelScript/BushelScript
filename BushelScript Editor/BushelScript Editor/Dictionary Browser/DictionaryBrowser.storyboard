@@ -159,7 +159,7 @@
                                                                         <outlet property="tableCellView" destination="mcV-e0-b8S" id="Mst-sL-mM2"/>
                                                                     </connections>
                                                                 </customView>
-                                                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cTt-f9-wbS">
+                                                                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cTt-f9-wbS">
                                                                     <rect key="frame" x="25" y="3" width="130" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="nIe-Ud-ics">
