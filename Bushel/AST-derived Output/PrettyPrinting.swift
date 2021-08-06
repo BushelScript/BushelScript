@@ -75,19 +75,18 @@ public func prettyPrint(_ elements: Set<SourceElement>) -> String {
     return result
 }
 
-public func highlight(source: Substring, _ elements: Set<SourceElement>, with colors: SyntaxColors) -> NSAttributedString {
+public func highlight(source: Substring, _ elements: Set<SourceElement>, with styles: Styles) -> NSAttributedString {
     let elements = elements.sorted()
-    let colors = colors.compactMapValues { NSColor(cgColor: $0) }
     
-    guard let commentColor = colors[.comment] else {
+    guard let commentAttributes = styles[.comment] else {
         return NSAttributedString(string: String(source))
     }
     
-    let result = NSMutableAttributedString(string: String(source), attributes: [.foregroundColor: commentColor])
+    let result = NSMutableAttributedString(string: String(source), attributes: commentAttributes)
     for element in elements {
-        let color = colors[element.styling] ?? commentColor
+        let attributes = styles[element.styling] ?? commentAttributes
         let range = NSRange(element.location.range, in: source)
-        result.addAttribute(.foregroundColor, value: color, range: range)
+        result.addAttributes(attributes, range: range)
     }
     
     return result
@@ -200,4 +199,4 @@ public enum Styling {
     case weave
 }
 
-public typealias SyntaxColors = [Styling : CGColor]
+public typealias Styles = [Styling : [NSAttributedString.Key : Any]]

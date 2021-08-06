@@ -310,7 +310,7 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
         
         let program = try parse(source)
         
-        let highlighted = NSMutableAttributedString(attributedString: highlight(source: Substring(source), program.elements, with: highlightColors))
+        let highlighted = NSMutableAttributedString(attributedString: highlight(source: Substring(source), program.elements, with: highlightStyles))
         
         highlighted.addAttribute(.font, value: self.documentFont, range: NSRange(location: 0, length: (highlighted.string as NSString).length))
         
