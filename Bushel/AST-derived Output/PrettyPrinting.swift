@@ -186,7 +186,6 @@ public enum Styling {
     case comment
     case keyword
     case `operator`
-    case dictionary
     case type
     case property
     case constant

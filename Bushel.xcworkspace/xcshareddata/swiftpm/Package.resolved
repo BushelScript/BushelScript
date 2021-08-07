@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/BushelScript/AEthereal.git",
         "state": {
           "branch": "main",
-          "revision": "3720b7b35600e10c4a13230c134a5792253d487e",
+          "revision": "62cad00f24fcbdc1d9ca94cf4265fca0d9e99034",
           "version": null
         }
       },
@@ -17,6 +17,15 @@
           "branch": null,
           "revision": "55ffea9487fb9b559406d909ee31dcd955fe77aa",
           "version": "3.1.1"
+        }
+      },
+      {
+        "package": "FootlessParser",
+        "repositoryURL": "https://github.com/kareman/FootlessParser",
+        "state": {
+          "branch": null,
+          "revision": "11c7a366720a2cc62d13ee69c8bdb8372bb3bb2b",
+          "version": "0.5.2"
         }
       },
       {
@@ -69,8 +78,17 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "986d191f94cec88f6350056da59c2e59e83d1229",
-          "version": "0.4.3"
+          "revision": "83b23d940471b313427da226196661856f6ba3e0",
+          "version": "0.4.4"
+        }
+      },
+      {
+        "package": "TooMuchTheme",
+        "repositoryURL": "https://github.com/ThatsJustCheesy/TooMuchTheme.git",
+        "state": {
+          "branch": "main",
+          "revision": "71cbc0d3299770227185820d75c3463016192783",
+          "version": null
         }
       },
       {

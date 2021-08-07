@@ -10,6 +10,7 @@ extension Defaults.Keys {
     static let cltInstallPath = Key<String>("CLTInstallPath", default: "/usr/local/bin/bushelscript")
     
     static let sourceCodeFont = NSSecureCodingKey<NSFont>("SourceCodeFont", default: NSFont(name: "Menlo", size: 12) ?? NSFont.systemFont(ofSize: -1))
+    static let themeFileName = Key<String>("ThemeName", default: "Sunburst.tmTheme")
     static let prettyPrintBeforeRunning = Key<Bool>("PrettyPrintBeforeRunning", default: false)
     
     static let liveParsingEnabled = Key<Bool>("EnableLiveParsing", default: true)

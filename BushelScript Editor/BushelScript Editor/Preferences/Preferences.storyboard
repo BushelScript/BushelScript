@@ -373,18 +373,18 @@
                 <customObject id="cm4-IT-0RW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="5uH-Ee-YZn"/>
             </objects>
-            <point key="canvasLocation" x="723" y="180"/>
+            <point key="canvasLocation" x="723" y="243"/>
         </scene>
         <!--Editor-->
         <scene sceneID="elx-bb-SDp">
             <objects>
                 <viewController title="Editor" id="Jnz-gE-XA3" customClass="GeneralPrefsVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="wh5-5I-Lfb">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="97"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="137"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="b4f-od-XRB">
-                                <rect key="frame" x="18" y="60" width="187" height="18"/>
+                                <rect key="frame" x="18" y="100" width="187" height="18"/>
                                 <buttonCell key="cell" type="check" title="Pretty print before running" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="FQS-WS-zd2">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="smallSystem" size="13"/>
@@ -394,7 +394,7 @@
                                 </connections>
                             </button>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D0l-CV-9OY">
-                                <rect key="frame" x="136" y="20" width="204" height="21"/>
+                                <rect key="frame" x="136" y="60" width="204" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="XH4-1a-uJM"/>
                                 </constraints>
@@ -424,7 +424,7 @@
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3g2-cK-8m5">
-                                <rect key="frame" x="18" y="23" width="112" height="16"/>
+                                <rect key="frame" x="18" y="63" width="112" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Source code font:" id="RHJ-Xw-zhn">
                                     <font key="font" usesAppearanceFont="YES"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -432,7 +432,7 @@
                                 </textFieldCell>
                             </textField>
                             <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IbS-NN-ySd">
-                                <rect key="frame" x="341" y="14" width="96" height="32"/>
+                                <rect key="frame" x="341" y="54" width="96" height="32"/>
                                 <buttonCell key="cell" type="push" title="Modify" bezelStyle="rounded" image="NSFontPanel" imagePosition="leading" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="W78-Zu-MMd">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem" size="13"/>
@@ -441,30 +441,62 @@
                                     <action selector="modifyFont:" target="Jnz-gE-XA3" id="k6e-Ae-cid"/>
                                 </connections>
                             </button>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N2O-uw-GbS">
+                                <rect key="frame" x="71" y="16" width="363" height="25"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="LcJ-qF-xuf">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="s9L-lV-w5a">
+                                        <connections>
+                                            <outlet property="delegate" destination="fyH-UB-2gb" id="EL5-XP-shm"/>
+                                        </connections>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oSc-OH-qO8">
+                                <rect key="frame" x="18" y="23" width="50" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Theme:" id="Ybd-e1-i5i">
+                                    <font key="font" metaFont="smallSystem" size="13"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="oSc-OH-qO8" firstAttribute="leading" secondItem="wh5-5I-Lfb" secondAttribute="leading" constant="20" symbolic="YES" id="1FE-kn-Cgv"/>
                             <constraint firstItem="D0l-CV-9OY" firstAttribute="leading" secondItem="3g2-cK-8m5" secondAttribute="trailing" constant="8" symbolic="YES" id="74I-N4-1Mt"/>
                             <constraint firstItem="b4f-od-XRB" firstAttribute="top" secondItem="wh5-5I-Lfb" secondAttribute="top" constant="20" symbolic="YES" id="9nk-zJ-6lW"/>
+                            <constraint firstItem="N2O-uw-GbS" firstAttribute="leading" secondItem="oSc-OH-qO8" secondAttribute="trailing" constant="8" symbolic="YES" id="EYy-F4-CaP"/>
                             <constraint firstAttribute="trailing" secondItem="IbS-NN-ySd" secondAttribute="trailing" constant="20" symbolic="YES" id="Eiw-2n-e6r"/>
+                            <constraint firstAttribute="bottom" secondItem="N2O-uw-GbS" secondAttribute="bottom" constant="20" symbolic="YES" id="Fn2-FH-q1E"/>
                             <constraint firstItem="IbS-NN-ySd" firstAttribute="leading" secondItem="D0l-CV-9OY" secondAttribute="trailing" constant="8" symbolic="YES" id="GKZ-vQ-9CV"/>
-                            <constraint firstAttribute="bottom" secondItem="D0l-CV-9OY" secondAttribute="bottom" constant="20" symbolic="YES" id="Msh-fd-cWA"/>
                             <constraint firstItem="3g2-cK-8m5" firstAttribute="top" secondItem="b4f-od-XRB" secondAttribute="bottom" constant="22" id="fcH-eC-lzX"/>
                             <constraint firstItem="D0l-CV-9OY" firstAttribute="centerY" secondItem="3g2-cK-8m5" secondAttribute="centerY" id="i3t-wX-Hdn"/>
+                            <constraint firstItem="oSc-OH-qO8" firstAttribute="firstBaseline" secondItem="N2O-uw-GbS" secondAttribute="firstBaseline" id="igR-Pm-bcX"/>
                             <constraint firstItem="3g2-cK-8m5" firstAttribute="leading" secondItem="wh5-5I-Lfb" secondAttribute="leading" constant="20" symbolic="YES" id="mQh-pJ-0O9"/>
+                            <constraint firstAttribute="trailing" secondItem="N2O-uw-GbS" secondAttribute="trailing" constant="20" symbolic="YES" id="oEM-ol-GBG"/>
                             <constraint firstItem="b4f-od-XRB" firstAttribute="leading" secondItem="wh5-5I-Lfb" secondAttribute="leading" constant="20" symbolic="YES" id="uEq-wK-azV"/>
+                            <constraint firstItem="N2O-uw-GbS" firstAttribute="top" secondItem="D0l-CV-9OY" secondAttribute="bottom" constant="20" symbolic="YES" id="vj5-j0-Vtw"/>
                             <constraint firstItem="IbS-NN-ySd" firstAttribute="centerY" secondItem="D0l-CV-9OY" secondAttribute="centerY" id="wy8-vC-KQs"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="fontManager" destination="bNU-sQ-sWR" id="nOv-qV-EPi"/>
                         <outlet property="fontPreviewTF" destination="D0l-CV-9OY" id="ZPC-YD-hhq"/>
+                        <outlet property="themeMenu" destination="s9L-lV-w5a" id="Rwa-6C-jn5"/>
+                        <outlet property="themeMenuDelegate" destination="fyH-UB-2gb" id="M9d-dd-Ibm"/>
                     </connections>
                 </viewController>
                 <customObject id="F8B-Jg-BKK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="EbU-qF-leD"/>
                 <customObject id="bNU-sQ-sWR" customClass="NSFontManager"/>
+                <customObject id="fyH-UB-2gb" customClass="ThemeMenuDelegate" customModule="BushelScript_Editor" customModuleProvider="target">
+                    <connections>
+                        <outlet property="themePUB" destination="N2O-uw-GbS" id="NiP-hK-HyM"/>
+                    </connections>
+                </customObject>
             </objects>
-            <point key="canvasLocation" x="723" y="-128.5"/>
+            <point key="canvasLocation" x="723" y="-124"/>
         </scene>
         <!--Privacy-->
         <scene sceneID="1rs-y2-HM7">
@@ -550,7 +582,7 @@
                                 <rect key="frame" x="18" y="117" width="412" height="18"/>
                                 <buttonCell key="cell" type="check" title="Automatically check for updates" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="LSR-48-udr">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
+                                    <font key="font" metaFont="smallSystem" size="13"/>
                                 </buttonCell>
                                 <connections>
                                     <binding destination="RRE-20-w0l" name="value" keyPath="automaticallyChecksForUpdates" id="o0P-sc-AwW"/>
@@ -560,7 +592,7 @@
                                 <rect key="frame" x="13" y="13" width="178" height="32"/>
                                 <buttonCell key="cell" type="push" title="Check for Updates Now" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nZr-Z8-eDw">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
+                                    <font key="font" metaFont="smallSystem" size="13"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="checkForUpdates:" target="RRE-20-w0l" id="I1I-T0-qll"/>

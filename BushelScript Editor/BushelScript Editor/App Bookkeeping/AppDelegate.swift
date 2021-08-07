@@ -28,6 +28,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        func updateDefaultSizeHighlightStyles<Change>(_ change: Change) {
+            do {
+                defaultSizeHighlightStyles = try makeHighlightStyles()
+            } catch {
+                NSApplication.shared.presentError(error)
+            }
+        }
+        
         defaultsObservations += [
             Defaults.observe(.liveParsingEnabled) { change in
                 if !change.newValue {
@@ -37,7 +45,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
             },
             Defaults.observe(.privacyFetchAppForSmartSuggestions) { change in
                 Defaults[.smartSuggestionKinds]["ScriptingObjects"] = false
-            }
+            },
+            Defaults.observe(.sourceCodeFont, handler: updateDefaultSizeHighlightStyles),
+            Defaults.observe(.themeFileName, handler: updateDefaultSizeHighlightStyles)
         ]
         tie(to: self, [
             NotificationObservation(.selectedExpression) { [weak self] (_: Document?, _) in

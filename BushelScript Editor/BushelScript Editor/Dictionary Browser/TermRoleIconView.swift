@@ -27,7 +27,7 @@ class TermRoleIconView: NSView {
             return
         }
         let bezier = NSBezierPath(roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius)
-        let fillColor = (highlightStyles[Styling(for: role)]?[.foregroundColor] as? NSColor ?? .clear).usingColorSpace(.deviceRGB)!
+        let fillColor = (defaultSizeHighlightStyles?[Styling(for: role)]?[.foregroundColor] as? NSColor ?? .clear).usingColorSpace(.deviceRGB)!
         let strokeColor = NSColor(hue: fillColor.hueComponent, saturation: fillColor.saturationComponent, brightness: fillColor.brightnessComponent * 0.8, alpha: 1.0)
         fillColor.setFill()
         strokeColor.setStroke()

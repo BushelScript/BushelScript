@@ -17,6 +17,7 @@
 		3C0566B423135675004CDB1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C0566B323135675004CDB1A /* Assets.xcassets */; };
 		3C056717231359C6004CDB1A /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C056716231359C6004CDB1A /* Errors.swift */; };
 		3C12EFA12354E7640057E0CC /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 3C12EFA02354E7640057E0CC /* Defaults */; };
+		3C13326626BCEDA1000DE21E /* TooMuchTheme in Frameworks */ = {isa = PBXBuildFile; productRef = 3C13326526BCEDA1000DE21E /* TooMuchTheme */; };
 		3C2046F2268EAEC100C52E2B /* StandardLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2046F1268EAEC100C52E2B /* StandardLibraryTests.swift */; };
 		3C204701268EB30F00C52E2B /* Tests in Resources */ = {isa = PBXBuildFile; fileRef = 3C204700268EB30F00C52E2B /* Tests */; };
 		3C204703268EB31E00C52E2B /* Libraries in Resources */ = {isa = PBXBuildFile; fileRef = 3C204702268EB31E00C52E2B /* Libraries */; };
@@ -60,7 +61,7 @@
 		3CC2A62926A93A6A00509362 /* DictionaryBrowserWC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2A62826A93A6A00509362 /* DictionaryBrowserWC.swift */; };
 		3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1D0602319A07100DD01A9 /* Defaults.swift */; };
 		3CE531D726AA54C300E7E1B8 /* TermRoleIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE531D626AA54C300E7E1B8 /* TermRoleIconView.swift */; };
-		3CE531DE26AA61C400E7E1B8 /* HighlightColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE531DD26AA61C400E7E1B8 /* HighlightColors.swift */; };
+		3CE531DE26AA61C400E7E1B8 /* HighlightStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE531DD26AA61C400E7E1B8 /* HighlightStyles.swift */; };
 		3CEC9DBD267EED0D00E53CC0 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; };
 		3CEC9DBE267EED0D00E53CC0 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CFEC5122677EFEF001EEF12 /* SidebarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFEC5112677EFEF001EEF12 /* SidebarVC.swift */; };
@@ -293,7 +294,7 @@
 		3CC2A62826A93A6A00509362 /* DictionaryBrowserWC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryBrowserWC.swift; sourceTree = "<group>"; };
 		3CD1D0602319A07100DD01A9 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		3CE531D626AA54C300E7E1B8 /* TermRoleIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermRoleIconView.swift; sourceTree = "<group>"; };
-		3CE531DD26AA61C400E7E1B8 /* HighlightColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HighlightColors.swift; path = "BushelScript Editor/HighlightColors.swift"; sourceTree = SOURCE_ROOT; };
+		3CE531DD26AA61C400E7E1B8 /* HighlightStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HighlightStyles.swift; path = "BushelScript Editor/HighlightStyles.swift"; sourceTree = SOURCE_ROOT; };
 		3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
 		3CEF50422352948E008603E3 /* BushelScript Editor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BushelScript Editor.entitlements"; sourceTree = "<group>"; };
 		3CFEC5112677EFEF001EEF12 /* SidebarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarVC.swift; sourceTree = "<group>"; };
@@ -311,6 +312,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C13326626BCEDA1000DE21E /* TooMuchTheme in Frameworks */,
 				3C12EFA12354E7640057E0CC /* Defaults in Frameworks */,
 				3C2A9CE726793D6F0084716C /* Bushel.framework in Frameworks */,
 				3CEC9DBD267EED0D00E53CC0 /* Sparkle.framework in Frameworks */,
@@ -397,7 +399,7 @@
 				3CFEC5262678237A001EEF12 /* ExpressionInspectorVC.swift */,
 				3CFEC51A2677F33B001EEF12 /* Notification.swift */,
 				3C2BC9EF23E27FAE00CB8C20 /* Documents */,
-				3CE531DD26AA61C400E7E1B8 /* HighlightColors.swift */,
+				3CE531DD26AA61C400E7E1B8 /* HighlightStyles.swift */,
 				3C2BC9B323E2754600CB8C20 /* Inline Errors */,
 				3C04308223199A1800758339 /* Preferences */,
 				3C2BC9EE23E27F4F00CB8C20 /* Utilities */,
@@ -629,6 +631,7 @@
 			name = "BushelScript Editor";
 			packageProductDependencies = (
 				3C12EFA02354E7640057E0CC /* Defaults */,
+				3C13326526BCEDA1000DE21E /* TooMuchTheme */,
 			);
 			productName = "BushelScript Editor";
 			productReference = 3C0566AA23135673004CDB1A /* BushelScript Editor.app */;
@@ -727,6 +730,7 @@
 			mainGroup = 3C0566A123135673004CDB1A;
 			packageReferences = (
 				3C12EF9F2354E7640057E0CC /* XCRemoteSwiftPackageReference "Defaults" */,
+				3C13326426BCEDA1000DE21E /* XCRemoteSwiftPackageReference "TooMuchTheme" */,
 			);
 			productRefGroup = 3C0566AB23135673004CDB1A /* Products */;
 			projectDirPath = "";
@@ -935,7 +939,7 @@
 				3CFEC51F26781714001EEF12 /* MainSplitVC.swift in Sources */,
 				3C76927B23E1D8DA008FE565 /* InlineErrorView.swift in Sources */,
 				3CD1D0612319A07100DD01A9 /* Defaults.swift in Sources */,
-				3CE531DE26AA61C400E7E1B8 /* HighlightColors.swift in Sources */,
+				3CE531DE26AA61C400E7E1B8 /* HighlightStyles.swift in Sources */,
 				3CFEC51B2677F33B001EEF12 /* Notification.swift in Sources */,
 				3C76927923E0FC76008FE565 /* GeneralPrefsVC.swift in Sources */,
 				3C76927123E0E635008FE565 /* UnarchiveFontVT.swift in Sources */,
@@ -1550,6 +1554,14 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		3C13326426BCEDA1000DE21E /* XCRemoteSwiftPackageReference "TooMuchTheme" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ThatsJustCheesy/TooMuchTheme.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1557,6 +1569,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3C12EF9F2354E7640057E0CC /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		3C13326526BCEDA1000DE21E /* TooMuchTheme */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3C13326426BCEDA1000DE21E /* XCRemoteSwiftPackageReference "TooMuchTheme" */;
+			productName = TooMuchTheme;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

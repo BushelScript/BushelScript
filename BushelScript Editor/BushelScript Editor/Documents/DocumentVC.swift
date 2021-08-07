@@ -7,7 +7,7 @@ import Bushel
 import BushelRT
 import Defaults
 
-class DocumentVC: NSViewController, NSUserInterfaceValidations {
+class DocumentVC: NSViewController, NSUserInterfaceValidations, NSTextViewDelegate {
     
     @IBOutlet var textView: NSTextView!
     @IBOutlet var progressIndicator: NSProgressIndicator!
@@ -62,39 +62,60 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     
     var customFontSize: CGFloat? {
         didSet {
-            updateTextAttributes()
+            updateHighlightStyle()
         }
     }
-    
-    override func viewDidLoad() {
-        Defaults.observe(.sourceCodeFont) { [weak self] _ in
-            self?.updateTextAttributes()
-        }.tieToLifetime(of: self)
-    }
-    
-    private func updateTextAttributes() {
-        if let textStorage = textView.textStorage {
-            textStorage.addAttribute(.font, value: documentFont, range: NSRange(location: 0, length: textStorage.length))
-        }
-        resetTypingAttributes()
-    }
-    private func resetTypingAttributes() {
-        textView.typingAttributes.merge(sourceCodeAttributes, uniquingKeysWith: { old, new in new })
-    }
-    
-    private var documentFont: NSFont {
-        if let fontSize = customFontSize {
-            return Defaults[.sourceCodeFont].withSize(fontSize)
+    var documentFont: NSFont {
+        if let customFontSize = customFontSize {
+            return NSFontManager.shared.convert(
+                Defaults[.sourceCodeFont],
+                toSize: customFontSize
+            )
         } else {
             return Defaults[.sourceCodeFont]
         }
     }
     
-    private var sourceCodeAttributes: [NSAttributedString.Key : Any] {
-        [
-            .font: documentFont,
-            .foregroundColor: NSColor.white
-        ]
+    var documentHighlightStyle: Styles = defaultSizeHighlightStyles ?? Styles()
+    private func updateHighlightStyle() {
+        documentHighlightStyle = (try? makeHighlightStyles(fontSize: customFontSize)) ?? Styles()
+        rehighlight()
+        if let backgroundColor = typingAttributes[.backgroundColor] as? NSColor {
+            textView.backgroundColor = backgroundColor
+        }
+    }
+    
+    override func viewDidLoad() {
+        Defaults.observe(.sourceCodeFont) { [weak self] _ in
+            self?.updateHighlightStyle()
+        }.tieToLifetime(of: self)
+        Defaults.observe(.themeFileName) { [weak self] _ in
+            self?.updateHighlightStyle()
+        }.tieToLifetime(of: self)
+    }
+    
+    private func rehighlight() {
+        DispatchQueue.main.async {
+            do {
+                _ = try self.compile(self.modelSourceCode)
+            } catch {
+                if let textStorage = self.textView.textStorage {
+                    textStorage.addAttributes(self.typingAttributes, range: NSRange(location: 0, length: textStorage.length))
+                }
+            }
+        }
+        resetTypingAttributes()
+    }
+    private func resetTypingAttributes() {
+        textView.typingAttributes.merge(typingAttributes, uniquingKeysWith: { $1 })
+    }
+    
+    private var typingAttributes: [NSAttributedString.Key : Any] {
+        var attributes = documentHighlightStyle[.comment] ?? [:]
+        if attributes[.font] == nil {
+            attributes[.font] = Defaults[.sourceCodeFont]
+        }
+        return attributes
     }
     
     var displayedAttributedSourceCode = NSAttributedString(string: "") {
@@ -133,7 +154,7 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
             displayedAttributedSourceCode.string
         }
         set {
-            displayedAttributedSourceCode = NSAttributedString(string: newValue, attributes: sourceCodeAttributes)
+            displayedAttributedSourceCode = NSAttributedString(string: newValue, attributes: typingAttributes)
         }
     }
     
@@ -186,10 +207,11 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
                         wc.updateLanguageMenu()
                     }
                     DispatchQueue.main.async {
+                        self.removeInlineError()
                         do {
                             _ = try self.compile(document.sourceCode)
                         } catch {
-                            self.displayInlineError(error)
+                            self.displayError(error)
                         }
                     }
                 }
@@ -253,20 +275,23 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
         do {
             _ = try compile(modelSourceCode)
         } catch {
-            displayInlineError(error)
+            displayError(error)
         }
     }
     
     @IBAction func runScript(_ sender: Any?) {
+        removeInlineError()
+        
         let program: Program
         do {
             program = try Defaults[.prettyPrintBeforeRunning] ?
                 self.prettyPrint(self.modelSourceCode) :
                 self.compile(self.modelSourceCode)
         } catch {
-            self.displayInlineError(error)
+            self.displayError(error)
             return
         }
+        
         runQueue.async {
             self.statusStack.append(.running)
             defer {
@@ -277,10 +302,10 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
                 let result = try self.document.rt.run(program)
                 NotificationCenter.default.post(name: .result, object: self.document, userInfo: [UserInfo.payload: result])
                 DispatchQueue.main.async {
-                    self.removeErrorDisplay()
+                    self.removeInlineError()
                 }
             } catch {
-                self.displayInlineError(error)
+                self.displayError(error)
             }
         }
     }
@@ -290,10 +315,11 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     }
     
     @IBAction func prettyPrint( _ sender: Any?) {
+        removeInlineError()
         do {
             _ = try prettyPrint(modelSourceCode)
         } catch {
-            displayInlineError(error)
+            displayError(error)
         }
     }
     
@@ -306,13 +332,9 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     }
     
     private func compile(_ source: String) throws -> Program {
-        removeErrorDisplay()
-        
         let program = try parse(source)
         
-        let highlighted = NSMutableAttributedString(attributedString: highlight(source: Substring(source), program.elements, with: highlightStyles))
-        
-        highlighted.addAttribute(.font, value: self.documentFont, range: NSRange(location: 0, length: (highlighted.string as NSString).length))
+        let highlighted = NSMutableAttributedString(attributedString: highlight(source: Substring(source), program.elements, with: documentHighlightStyle))
         
         self.document.undoManager?.disableUndoRegistration()
         defer {
@@ -334,11 +356,6 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations {
     private var inlineErrorVC: InlineErrorVC?
     
     var selectedExpression: Expression?
-    
-}
-
-// MARK: NSTextViewDelegate
-extension DocumentVC: NSTextViewDelegate {
     
     func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         switch commandSelector {
@@ -383,38 +400,49 @@ extension DocumentVC: NSTextViewDelegate {
     }
     
     func textDidChange(_ notification: Notification) {
-        textDidChange()
+        if textView.string != modelSourceCode {
+            sourceCodeChanged()
+        }
     }
     
-    private func textDidChange() {
-        removeErrorDisplay()
+    private func sourceCodeChanged() {
+        removeInlineError()
         
         let source = textView.string
         modelSourceCode = source
         
+        removeInlineError()
         if Defaults[.liveParsingEnabled] {
             do {
                 _ = try compile(source)
             } catch {
                 if Defaults[.liveErrorsEnabled] {
-                    displayInlineError(error)
+                    displayError(error)
                 }
             }
         }
     }
     
-    private func displayInlineError(_ error: Error) {
+    private func displayError(_ error: Error) {
         DispatchQueue.main.async {
-            guard let location = (error as? Located)?.location else {
+            guard let located = error as? (Error & Located) else {
                 self.presentError(error)
                 return
             }
-            self.display(error: error, at: location.range)
+            self.inlineError = located
+            self.displayInlineError()
         }
     }
     
-    private func display(error: Error, at sourceRange: Range<String.Index>) {
-        self.removeErrorDisplay()
+    private var inlineError: (Error & Located)?
+    
+    private func displayInlineError() {
+        guard let inlineError = inlineError else {
+            return
+        }
+        
+        removeInlineErrorView()
+        let sourceRange = inlineError.location.range
         
         guard
             let textStorage = textView.textStorage,
@@ -445,7 +473,7 @@ extension DocumentVC: NSTextViewDelegate {
         
         let inlineErrorVC = InlineErrorVC()
         self.inlineErrorVC = inlineErrorVC
-        inlineErrorVC.representedObject = error.localizedDescription
+        inlineErrorVC.representedObject = inlineError.localizedDescription
         
         let errorView = inlineErrorVC.view
         textView.addSubview(errorView)
@@ -456,21 +484,17 @@ extension DocumentVC: NSTextViewDelegate {
         errorView.trailingAnchor.constraint(equalTo: textView.trailingAnchor).isActive = true
     }
     
-    private func removeErrorDisplay() {
-        func clearErrorHighlighting() {
-            let entireSourceRange = NSRange(location: 0, length: (self.textView.string as NSString).length)
-            textView.textStorage?.removeAttribute(.backgroundColor, range: entireSourceRange)
-            resetTypingAttributes()
-        }
-        func removeInlineErrorView() {
-            guard let oldInlineErrorVC = self.inlineErrorVC else {
-                return
-            }
-            self.inlineErrorVC = nil
-            oldInlineErrorVC.view.removeFromSuperview()
-        }
-        clearErrorHighlighting()
+    private func removeInlineError() {
+        inlineError = nil
         removeInlineErrorView()
+    }
+    
+    private func removeInlineErrorView() {
+        guard let oldInlineErrorVC = self.inlineErrorVC else {
+            return
+        }
+        self.inlineErrorVC = nil
+        oldInlineErrorVC.view.removeFromSuperview()
     }
     
     func textViewDidChangeSelection(_ notification: Notification) {
