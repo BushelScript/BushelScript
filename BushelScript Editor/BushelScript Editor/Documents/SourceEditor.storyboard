@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="bU7-R8-ocO">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Source Editor-->
+        <scene sceneID="PEd-7d-5j0">
+            <objects>
+                <customObject id="9uD-mB-xHs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <viewController id="bU7-R8-ocO" customClass="SourceEditor" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
+                    <customView key="view" id="5OS-h5-sTp">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <subviews>
+                            <scrollView appearanceType="darkAqua" verticalCompressionResistancePriority="1000" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="flo-bI-Pnj">
+                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="86t-vT-cmi">
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textView importsGraphics="NO" horizontallyResizable="YES" verticallyResizable="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" textCompletion="NO" spellingCorrection="YES" smartInsertDelete="YES" id="LKJ-vn-DUO" customClass="EditorTextView" customModule="BushelScript_Editor" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="60" width="18" height="15"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="backgroundColor" red="0.1058823529" green="0.1058823529" blue="0.1215686275" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <size key="maxSize" width="10000000" height="10000000"/>
+                                            <attributedString key="textStorage">
+                                                <fragment content=" ">
+                                                    <attributes>
+                                                        <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <font key="NSFont" size="13" name="SFMono-Regular"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                    </attributes>
+                                                </fragment>
+                                            </attributedString>
+                                            <color key="insertionPointColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="enabledTextCheckingTypes">
+                                                    <integer key="value" value="0"/>
+                                                </userDefinedRuntimeAttribute>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <outlet property="delegate" destination="bU7-R8-ocO" id="xMT-iG-xQk"/>
+                                            </connections>
+                                        </textView>
+                                    </subviews>
+                                </clipView>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="JPl-6u-bTc"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="200" id="KwI-7M-tkP"/>
+                                </constraints>
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="13n-12-fd9">
+                                    <rect key="frame" x="-100" y="-100" width="240" height="16"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="24m-dZ-0gU">
+                                    <rect key="frame" x="-16" y="0.0" width="16" height="0.0"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="flo-bI-Pnj" secondAttribute="trailing" id="OuK-1b-GCd"/>
+                            <constraint firstItem="flo-bI-Pnj" firstAttribute="leading" secondItem="5OS-h5-sTp" secondAttribute="leading" id="Pl8-5d-iK8"/>
+                            <constraint firstItem="flo-bI-Pnj" firstAttribute="top" secondItem="5OS-h5-sTp" secondAttribute="top" id="jmP-mu-AKg"/>
+                            <constraint firstAttribute="bottom" secondItem="flo-bI-Pnj" secondAttribute="bottom" id="vrf-fh-Yw1"/>
+                        </constraints>
+                    </customView>
+                    <connections>
+                        <outlet property="textView" destination="LKJ-vn-DUO" id="Tx2-GX-o7O"/>
+                    </connections>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="22" y="131"/>
+        </scene>
+    </scenes>
+</document>

@@ -24,7 +24,7 @@ class ExpressionInspectorVC: ObjectInspector2VC {
         self.document = document
         
         tie(to: self, [
-            NotificationObservation(.selectedExpression, document) { [weak self] (document, userInfo) in
+            NotificationObservation(.documentSelectedExpressions, document) { [weak self] (document, userInfo) in
                 guard let self = self else {
                     return
                 }

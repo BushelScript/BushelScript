@@ -17,7 +17,7 @@ class ResultInspectorVC: ObjectInspector2VC {
         }
         self.document = document
         tie(to: self, [
-            NotificationObservation(.result, document) { [weak self] (document, userInfo) in
+            NotificationObservation(.documentResult, document) { [weak self] (document, userInfo) in
                 self?.representedObject = userInfo[.payload]
             }
         ])

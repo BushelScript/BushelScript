@@ -50,7 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
             Defaults.observe(.themeFileName, handler: updateDefaultSizeHighlightStyles)
         ]
         tie(to: self, [
-            NotificationObservation(.selectedExpression) { [weak self] (_: Document?, _) in
+            NotificationObservation(.documentSelectedExpressions) { [weak self] (_: Document?, _) in
                 self?.calculateCanRevealSelectionInDictionaryBrowser()
             },
             NotificationObservation(NSWindow.didBecomeKeyNotification) { [weak self] (_: NSWindow?, _) in

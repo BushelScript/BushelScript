@@ -1012,87 +1012,45 @@ CQ
                                     <constraint firstItem="1za-9N-l7c" firstAttribute="top" secondItem="cX1-w8-oNb" secondAttribute="top" constant="2" id="peP-TI-Re0"/>
                                 </constraints>
                             </customView>
-                            <splitView verticalHuggingPriority="249" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l0q-o3-ggk">
-                                <rect key="frame" x="0.0" y="23" width="800" height="477"/>
-                                <subviews>
-                                    <scrollView appearanceType="darkAqua" verticalCompressionResistancePriority="1000" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="97e-Pl-npf">
-                                        <rect key="frame" x="0.0" y="0.0" width="800" height="477"/>
-                                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="maB-Wi-doq">
-                                            <rect key="frame" x="0.0" y="0.0" width="800" height="477"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <subviews>
-                                                <textView importsGraphics="NO" horizontallyResizable="YES" verticallyResizable="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" textCompletion="NO" smartInsertDelete="YES" id="hPn-VJ-vRi" customClass="EditorTextView" customModule="BushelScript_Editor" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="60" width="800" height="477"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <color key="backgroundColor" red="0.10588235294117647" green="0.10588235294117647" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <size key="minSize" width="800" height="477"/>
-                                                    <size key="maxSize" width="10000000" height="10000000"/>
-                                                    <attributedString key="textStorage">
-                                                        <fragment content=" ">
-                                                            <attributes>
-                                                                <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                <font key="NSFont" size="13" name="SFMono-Regular"/>
-                                                                <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
-                                                            </attributes>
-                                                        </fragment>
-                                                    </attributedString>
-                                                    <color key="insertionPointColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="number" keyPath="enabledTextCheckingTypes">
-                                                            <integer key="value" value="0"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                    </userDefinedRuntimeAttributes>
-                                                    <connections>
-                                                        <outlet property="delegate" destination="5gI-5U-AMq" id="RSJ-qy-XjX"/>
-                                                    </connections>
-                                                </textView>
-                                            </subviews>
-                                        </clipView>
-                                        <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="4v7-Cj-Cqh"/>
-                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="200" id="efg-dy-Lyo"/>
-                                        </constraints>
-                                        <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="7R6-kd-GEo">
-                                            <rect key="frame" x="-100" y="-100" width="240" height="16"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="whd-Mx-xlS">
-                                            <rect key="frame" x="784" y="0.0" width="16" height="477"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                    </scrollView>
-                                </subviews>
-                                <holdingPriorities>
-                                    <real value="250"/>
-                                </holdingPriorities>
-                            </splitView>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="onq-yo-EFK">
+                                <rect key="frame" x="0.0" y="24" width="800" height="476"/>
+                                <connections>
+                                    <segue destination="2kU-aw-yqJ" kind="embed" id="7i9-Gc-3Ph"/>
+                                </connections>
+                            </containerView>
                             <box verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="H7Z-cU-gdd">
                                 <rect key="frame" x="0.0" y="18" width="800" height="5"/>
                             </box>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="l0q-o3-ggk" firstAttribute="top" secondItem="ERx-hH-rdd" secondAttribute="top" id="2IJ-zu-tj5"/>
-                            <constraint firstItem="l0q-o3-ggk" firstAttribute="leading" secondItem="ERx-hH-rdd" secondAttribute="leading" id="FJ4-Rr-bJg"/>
+                            <constraint firstItem="cX1-w8-oNb" firstAttribute="top" secondItem="onq-yo-EFK" secondAttribute="bottom" constant="2" id="Cza-iC-Tb1"/>
                             <constraint firstAttribute="bottom" secondItem="cX1-w8-oNb" secondAttribute="bottom" id="H2A-Hs-yoM"/>
+                            <constraint firstItem="onq-yo-EFK" firstAttribute="leading" secondItem="ERx-hH-rdd" secondAttribute="leading" id="J3z-eo-Ima"/>
                             <constraint firstItem="H7Z-cU-gdd" firstAttribute="leading" secondItem="ERx-hH-rdd" secondAttribute="leading" id="REi-vv-Dh9"/>
                             <constraint firstAttribute="trailing" secondItem="H7Z-cU-gdd" secondAttribute="trailing" id="U5v-NG-sFc"/>
                             <constraint firstAttribute="trailing" secondItem="cX1-w8-oNb" secondAttribute="trailing" id="aXJ-Ol-LJc"/>
-                            <constraint firstItem="H7Z-cU-gdd" firstAttribute="top" secondItem="l0q-o3-ggk" secondAttribute="bottom" constant="2" id="dzP-Ek-Rtq"/>
                             <constraint firstItem="cX1-w8-oNb" firstAttribute="leading" secondItem="ERx-hH-rdd" secondAttribute="leading" id="eXb-cL-e6I"/>
-                            <constraint firstAttribute="trailing" secondItem="l0q-o3-ggk" secondAttribute="trailing" id="hvC-vo-zNF"/>
+                            <constraint firstAttribute="trailing" secondItem="onq-yo-EFK" secondAttribute="trailing" id="j4T-dn-tVi"/>
+                            <constraint firstItem="onq-yo-EFK" firstAttribute="top" secondItem="ERx-hH-rdd" secondAttribute="top" id="qhJ-NU-TEe"/>
                             <constraint firstItem="cX1-w8-oNb" firstAttribute="top" secondItem="H7Z-cU-gdd" secondAttribute="bottom" constant="-2" id="uRg-Z1-zwp"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="progressIndicator" destination="1za-9N-l7c" id="5Yu-Zp-nRy"/>
-                        <outlet property="textView" destination="hPn-VJ-vRi" id="VAV-ir-PgQ"/>
                     </connections>
                 </viewController>
                 <customObject id="2Tp-Fl-jBw" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="unH-Oi-by7"/>
             </objects>
             <point key="canvasLocation" x="-733" y="1410"/>
+        </scene>
+        <!--SourceEditor-->
+        <scene sceneID="Jy4-b6-sbW">
+            <objects>
+                <controllerPlaceholder storyboardName="SourceEditor" id="2kU-aw-yqJ" sceneMemberID="viewController"/>
+                <customObject id="6fz-M6-NZZ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-733" y="1763"/>
         </scene>
         <!--SidebarVC-->
         <scene sceneID="xEg-FQ-snh">
