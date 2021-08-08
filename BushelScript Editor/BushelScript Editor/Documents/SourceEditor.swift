@@ -414,7 +414,7 @@ extension SourceEditor: NSTextViewDelegate {
             return
         }
         
-        NotificationCenter.default.post(name: .sourceEditorSelectedExpressions, object: self, userInfo: [UserInfo.payload: expressionsAtLocation.first! as Any])
+        NotificationCenter.default.post(name: .sourceEditorSelectedExpressions, object: self, userInfo: [UserInfo.payload: expressionsAtLocation])
     }
     
     public func textView(_ textView: NSTextView, completions words: [String], forPartialWordRange charRange: NSRange, indexOfSelectedItem index: UnsafeMutablePointer<Int>?) -> [String] {

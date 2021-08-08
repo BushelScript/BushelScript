@@ -28,17 +28,20 @@ class ExpressionInspectorVC: ObjectInspector2VC {
                 guard let self = self else {
                     return
                 }
-                guard let expression = userInfo[.payload] as? Expression else {
+                guard let expressions = userInfo[.payload] as! [Expression]? else {
                     self.representedObject = nil
                     return
                 }
-                var termDocString = ""
-                if let termForDocs = expression.termForDocs() {
-                    let doc = document?.program?.termDocs.value[termForDocs.id]
-                    termDocString = "\(termForDocs)\(doc.map { ": \($0)" } ?? "")\n\n"
-                }
-                let expressionDocString = "\(expression.kindName): \(expression.kindDescription)"
-                self.representedObject = termDocString + expressionDocString
+                
+                self.representedObject = expressions.lazy.map { expression in
+                    (expression.termForDocs().map { termForDocs in
+                        let doc = document?.program?.termDocs.value[termForDocs.id]
+                        return "\(termForDocs)\(doc.map { ": \($0)" } ?? "")\n\n"
+                    } ?? "") +
+                    "\(expression.kindName): \(expression.kindDescription)"
+                    // TODO: Figure out a nicer way to give syntax help.
+                }.joined(separator: "\n") as String
+                
             },
             KeyValueObservation(NSApplication.shared.delegate as! AppDelegate, \.canRevealSelectionInDictionaryBrowser, options: [.initial, .new]) { [weak self] (appDelegate, userInfo) in
                 self?.canRevealInDictionaryBrowser = userInfo.newValue!

@@ -152,7 +152,7 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations, SourceEditor.Del
                 guard let document = self?.document else {
                     return
                 }
-                document.selectedExpressions = userInfo[.payload] as? [Expression] ?? []
+                document.selectedExpressions = userInfo[.payload] as! [Expression]? ?? []
                 NotificationCenter.default.post(name: .documentSelectedExpressions, object: document, userInfo: userInfo)
             },
             NotificationObservation(.sourceEditorResult, sourceEditor) { [weak self] (sourceEditor, userInfo) in
