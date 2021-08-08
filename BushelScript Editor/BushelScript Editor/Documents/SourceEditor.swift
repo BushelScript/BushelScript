@@ -51,16 +51,14 @@ public class SourceEditor: NSViewController {
             textView.backgroundColor = backgroundColor
         }
         if let sourceCode = delegate.sourceCode {
-            DispatchQueue.main.async {
-                do {
-                    _ = try self.highlight(sourceCode)
-                } catch {
-                    if let textStorage = self.textView.textStorage {
-                        textStorage.addAttributes(self.typingAttributes, range: NSRange(location: 0, length: textStorage.length))
-                    }
+            do {
+                _ = try self.highlight(sourceCode)
+            } catch {
+                if let textStorage = self.textView.textStorage {
+                    textStorage.addAttributes(self.typingAttributes, range: NSRange(location: 0, length: textStorage.length))
                 }
-                self.resetTypingAttributes()
             }
+            self.resetTypingAttributes()
         }
     }
     
@@ -121,7 +119,7 @@ public class SourceEditor: NSViewController {
         let pretty = Bushel.prettyPrint(program.elements)
         
         delegate.sourceCode = pretty
-        return try highlight(pretty)
+        return try highlight(pretty, registerUndo: true)
     }
     
     /// Parses `source` into a Bushel program as if by `parse(_:)`, then
@@ -129,6 +127,7 @@ public class SourceEditor: NSViewController {
     /// highlight styles.
     ///
     /// - Parameter source: Source code to parse and highlight.
+    /// - Parameter registerUndo: Register changes as undoable?
     /// - Throws: Errors thrown by the language parser.
     /// - Returns: The `Program` resulting from parsing `source`.
     ///
@@ -140,17 +139,19 @@ public class SourceEditor: NSViewController {
     ///   - getter:highlightStyles
     /// - To propagate the parsed program:
     ///   - setter:program
-    public func highlight(_ source: String) throws -> Program {
+    public func highlight(_ source: String, registerUndo: Bool = false) throws -> Program {
         removeInlineError()
         
         let program = try parse(source)
         let highlighted = Bushel.highlight(source: Substring(source), program.elements, with: delegate.highlightStyles)
         
-        undoManager?.disableUndoRegistration()
-        defer {
-            undoManager?.enableUndoRegistration()
+        if !registerUndo, let undoManager = undoManager {
+            undoManager.withoutRegistration {
+                attributedSourceCode = highlighted
+            }
+        } else {
+            attributedSourceCode = highlighted
         }
-        attributedSourceCode = highlighted
         
         return program
     }

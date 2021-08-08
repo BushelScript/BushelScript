@@ -14,4 +14,12 @@ extension UndoManager {
         return try action()
     }
     
+    func group<Result>(do action: () throws -> Result) rethrows -> Result {
+        beginUndoGrouping()
+        defer {
+            endUndoGrouping()
+        }
+        return try action()
+    }
+    
 }

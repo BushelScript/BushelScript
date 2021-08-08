@@ -123,7 +123,9 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations, SourceEditor.Del
     
     private func updateHighlightStyles() {
         highlightStyles = (try? makeHighlightStyles(fontSize: customFontSize)) ?? Styles()
-        sourceEditor?.reload()
+        DispatchQueue.main.async {
+            self.sourceEditor?.reload()
+        }
     }
     
     var useLiveParsing: Bool {
@@ -184,11 +186,11 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations, SourceEditor.Del
     
     @objc private var document: Document? {
         didSet {
-            undoManager?.withoutRegistration {
-                sourceEditor?.reload()
-            }
-            
             DispatchQueue.main.async {
+                self.undoManager?.withoutRegistration {
+                    self.sourceEditor?.reload()
+                }
+                
                 self.documentLanguageIDObservation = self.document?.observe(\.languageID, options: [.initial]) { [weak self] (document, change) in
                     guard let self = self else {
                         return
