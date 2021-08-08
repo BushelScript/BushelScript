@@ -53,7 +53,7 @@ public class SourceEditor: NSViewController {
         if let sourceCode = delegate.sourceCode {
             DispatchQueue.main.async {
                 do {
-                    self.delegate.program = try self.highlight(sourceCode)
+                    _ = try self.highlight(sourceCode)
                 } catch {
                     if let textStorage = self.textView.textStorage {
                         textStorage.addAttributes(self.typingAttributes, range: NSRange(location: 0, length: textStorage.length))
@@ -112,6 +112,8 @@ public class SourceEditor: NSViewController {
     ///   - setter:sourceCode
     /// - To configure the highlighter:
     ///   - getter:highlightStyles
+    /// - To propagate the parsed program:
+    ///   - setter:program
     public func prettyPrint(_ source: String) throws -> Program {
         removeInlineError()
         
@@ -136,6 +138,8 @@ public class SourceEditor: NSViewController {
     ///   - getter:documentURL
     /// - To configure the highlighter:
     ///   - getter:highlightStyles
+    /// - To propagate the parsed program:
+    ///   - setter:program
     public func highlight(_ source: String) throws -> Program {
         removeInlineError()
         
@@ -162,12 +166,16 @@ public class SourceEditor: NSViewController {
     /// - To configure the parser:
     ///   - getter:languageID
     ///   - getter:documentURL
+    /// - To propagate the parsed program:
+    ///   - setter:program
     public func parse(_ source: String) throws -> Program {
-        try Bushel.parse(
+        let program = try Bushel.parse(
             source: source,
             languageID: delegate.languageID,
             ignoringImports: delegate.documentURL.map { [$0] } ?? []
         )
+        delegate.program = program
+        return program
     }
     
     private func resetTypingAttributes() {
