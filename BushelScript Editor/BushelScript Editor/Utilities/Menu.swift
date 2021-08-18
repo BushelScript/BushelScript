@@ -5,7 +5,7 @@
 extension NSMenu {
     
     @discardableResult
-    func addItem(title: String, target: AnyObject? = nil, action: Selector, tag: Int = 0, representedObject: Any? = nil, isOn: Bool = false) -> NSMenuItem {
+    func addItem(title: String, target: AnyObject? = nil, action: Selector? = nil, tag: Int = 0, representedObject: Any? = nil, isOn: Bool = false, indentationLevel: Int? = nil, submenu: NSMenu? = nil) -> NSMenuItem {
         let item = addItem(withTitle: title, action: action, keyEquivalent: "")
         if let target = target {
             item.target = target
@@ -14,6 +14,12 @@ extension NSMenu {
         item.representedObject = representedObject
         if isOn {
             item.state = .on
+        }
+        if let indentationLevel = indentationLevel {
+            item.indentationLevel = indentationLevel
+        }
+        if let submenu = submenu {
+            item.submenu = submenu
         }
         return item
     }

@@ -56,6 +56,7 @@
 		3C76927B23E1D8DA008FE565 /* InlineErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C76927A23E1D8DA008FE565 /* InlineErrorView.swift */; };
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
+		3C880B1B26C6EB28006839AB /* Themes in Resources */ = {isa = PBXBuildFile; fileRef = 3C880B1526C6EB28006839AB /* Themes */; };
 		3C88833D269E2D6F00803197 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; };
 		3C88833E269E2D6F00803197 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
 		3CC2A62126A929BD00509362 /* DictionaryBrowser.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2A62026A929BD00509362 /* DictionaryBrowser.storyboard */; };
@@ -294,6 +295,7 @@
 		3C7A6CBD23CBCB25007F5D84 /* OSADictionaryWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSADictionaryWindowController.h; sourceTree = "<group>"; };
 		3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSADictionaryWindowCustomization.swift; sourceTree = "<group>"; };
 		3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryDocument.swift; sourceTree = "<group>"; };
+		3C880B1526C6EB28006839AB /* Themes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Themes; sourceTree = "<group>"; };
 		3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = bushelscript.xcodeproj; path = ../bushelscript/bushelscript.xcodeproj; sourceTree = "<group>"; };
 		3CC2A62026A929BD00509362 /* DictionaryBrowser.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DictionaryBrowser.storyboard; sourceTree = "<group>"; };
 		3CC2A62226A92C3800509362 /* DictionaryBrowserVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryBrowserVC.swift; sourceTree = "<group>"; };
@@ -524,6 +526,7 @@
 			isa = PBXGroup;
 			children = (
 				3C0566B323135675004CDB1A /* Assets.xcassets */,
+				3C880B1526C6EB28006839AB /* Themes */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -841,6 +844,7 @@
 				3C2A9CEA267940360084716C /* bushelscript in Resources */,
 				3C2A9CE826793E690084716C /* BushelGUIHost.app in Resources */,
 				3C204703268EB31E00C52E2B /* Libraries in Resources */,
+				3C880B1B26C6EB28006839AB /* Themes in Resources */,
 				3C0566B423135675004CDB1A /* Assets.xcassets in Resources */,
 				3C2BC9EC23E27E6200CB8C20 /* Main.storyboard in Resources */,
 				3C04308423199A2800758339 /* Preferences.storyboard in Resources */,

@@ -5,7 +5,9 @@ import Defaults
 var defaultSizeHighlightStyles: Styles? = try? makeHighlightStyles()
 
 func makeHighlightStyles(fontSize: CGFloat? = nil) throws -> Styles {
-    let themeFile = try makeThemesDir().appendingPathComponent(Defaults[.themeFileName])
+    guard let themeFile = try themeFile(for: Defaults[.themeFileName]) else {
+        return [:]
+    }
     let plist = try Data(contentsOf: themeFile)
     let theme = try PropertyListDecoder().decode(Theme.self, from: plist)
     
@@ -27,6 +29,20 @@ func makeHighlightStyles(fontSize: CGFloat? = nil) throws -> Styles {
     ]
 }
 
+private func themeFile(for themeFileName: String) throws -> URL? {
+    let userTheme = try makeUserThemesDir().appendingPathComponent(themeFileName)
+    if FileManager.default.fileExists(atPath: userTheme.path) {
+        return userTheme
+    }
+    if let builtInThemesDir = builtInThemesDir {
+        let builtInTheme = builtInThemesDir.appendingPathComponent(themeFileName)
+        if FileManager.default.fileExists(atPath: builtInTheme.path) {
+            return builtInTheme
+        }
+    }
+    return nil
+}
+
 private struct FontProvider: TooMuchTheme.FontProvider {
     
     var size: CGFloat
@@ -43,7 +59,9 @@ private struct FontProvider: TooMuchTheme.FontProvider {
     
 }
 
-func makeThemesDir() throws -> URL {
+let builtInThemesDir = Bundle.main.url(forResource: "Themes", withExtension: "")
+
+func makeUserThemesDir() throws -> URL {
     let themesDir = try
         FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         .appendingPathComponent("BushelScript Editor")

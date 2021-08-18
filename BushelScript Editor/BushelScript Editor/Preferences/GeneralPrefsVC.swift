@@ -82,9 +82,21 @@ class ThemeMenuDelegate: NSObject, NSMenuDelegate {
         menu.removeAllItems()
         
         do {
-            for themeFile in try FileManager.default.contentsOfDirectory(at: makeThemesDir(), includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]) {
-                let title = themeFile.deletingPathExtension().lastPathComponent
-                menu.addItem(title: title, target: self, action: #selector(setTheme(_:)), representedObject: themeFile, isOn: themeFile.lastPathComponent == Defaults[.themeFileName])
+            func addItems(for themeDir: URL, label: String) throws {
+                menu.addItem(title: "Open \(label) Folder…", target: self, action: #selector(openFolder(_:)), representedObject: themeDir)
+                menu.addItem(.separator())
+                
+                for themeFile in try FileManager.default.contentsOfDirectory(at: themeDir, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]) {
+                    let title = themeFile.deletingPathExtension().lastPathComponent
+                    menu.addItem(title: title, target: self, action: #selector(setTheme(_:)), representedObject: themeFile, isOn: themeFile.lastPathComponent == Defaults[.themeFileName], indentationLevel: 1)
+                }
+            }
+            
+            try addItems(for: makeUserThemesDir(), label: "User Themes")
+            
+            if let builtInThemesDir = builtInThemesDir {
+                menu.addItem(.separator())
+                try addItems(for: builtInThemesDir, label: "Default Themes")
             }
         } catch {
             NSApplication.shared.presentError(error)
@@ -94,7 +106,6 @@ class ThemeMenuDelegate: NSObject, NSMenuDelegate {
         menu.addItem(.separator())
         
         menu.addItem(title: "Browse…", target: self, action: #selector(browseForTheme(_:)))
-        menu.addItem(title: "Open Themes Folder", target: self, action: #selector(openFolder(_:)))
         
         DispatchQueue.main.async(execute: selectCorrectMenuItem)
     }
@@ -111,12 +122,13 @@ class ThemeMenuDelegate: NSObject, NSMenuDelegate {
         let openPanel = NSOpenPanel()
         openPanel.allowedFileTypes = ["tmTheme", "plist"]
         openPanel.allowsMultipleSelection = false
+        openPanel.message = "Select a theme file."
         
         switch openPanel.runModal() {
         case .OK:
             do {
                 let selectedThemeURL = openPanel.url!
-                try FileManager.default.copyItem(at: selectedThemeURL, to: makeThemesDir().appendingPathComponent(selectedThemeURL.lastPathComponent))
+                try FileManager.default.copyItem(at: selectedThemeURL, to: makeUserThemesDir().appendingPathComponent(selectedThemeURL.lastPathComponent))
                 
                 Defaults[.themeFileName] = selectedThemeURL.lastPathComponent
                 
@@ -130,14 +142,10 @@ class ThemeMenuDelegate: NSObject, NSMenuDelegate {
         }
     }
     
-    @IBAction func openFolder(_ sender: Any?) {
+    @IBAction func openFolder(_ sender: NSMenuItem) {
         selectCorrectMenuItem()
         
-        do {
-            NSWorkspace.shared.open(try makeThemesDir())
-        } catch {
-            NSApplication.shared.presentError(error)
-        }
+        NSWorkspace.shared.open(sender.representedObject as! URL)
     }
     
 }
