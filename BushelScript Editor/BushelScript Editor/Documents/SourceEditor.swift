@@ -17,7 +17,7 @@ public protocol SourceEditorDelegate: AnyObject {
     
     var indentMode: IndentMode? { get }
     var defaultFont: NSFont { get }
-    var highlightStyles: Styles { get }
+    var highlightStyles: HighlightStyles { get }
     
     var useLiveParsing: Bool { get }
     var useLiveErrors: Bool { get }
@@ -143,7 +143,7 @@ public class SourceEditor: NSViewController {
         removeInlineError()
         
         let program = try parse(source)
-        let highlighted = Bushel.highlight(source: Substring(source), program.elements, with: delegate.highlightStyles)
+        let highlighted = Bushel.highlight(source: Substring(source), program.elements, with: delegate.highlightStyles.highlighted)
         
         if !registerUndo, let undoManager = undoManager {
             undoManager.withoutRegistration {
@@ -184,7 +184,7 @@ public class SourceEditor: NSViewController {
     }
     
     private var typingAttributes: [NSAttributedString.Key : Any] {
-        var attributes = delegate.highlightStyles[.comment] ?? [:]
+        var attributes = delegate.highlightStyles.unhighlighted
         if attributes[.font] == nil {
             attributes[.font] = delegate.defaultFont
         }

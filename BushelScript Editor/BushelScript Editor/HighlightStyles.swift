@@ -2,31 +2,60 @@ import Bushel
 import TooMuchTheme
 import Defaults
 
-var defaultSizeHighlightStyles: Styles? = try? makeHighlightStyles()
+public struct HighlightStyles {
+    
+    public var highlighted: Bushel.Styles
+    public var unhighlighted: [AttributedString.Key : Any]
+    
+    public subscript(_ styling: Bushel.Styling) -> [AttributedString.Key : Any]? {
+        highlighted[styling]
+    }
+    
+    public init(highlighted: Bushel.Styles, unhighlighted: [AttributedString.Key : Any]) {
+        self.highlighted = highlighted
+        self.unhighlighted = unhighlighted
+    }
+    public init() {
+        self.init(highlighted: [:], unhighlighted: [:])
+    }
+    
+}
 
-func makeHighlightStyles(fontSize: CGFloat? = nil) throws -> Styles {
+var defaultSizeHighlightStyles: HighlightStyles? = try? makeHighlightStyles()
+
+func makeHighlightStyles(fontSize: CGFloat? = nil) throws -> HighlightStyles {
     guard let themeFile = try themeFile(for: Defaults[.themeFileName]) else {
-        return [:]
+        return HighlightStyles()
     }
     let plist = try Data(contentsOf: themeFile)
-    let theme = try PropertyListDecoder().decode(Theme.self, from: plist)
+    let theme: Theme
+    do {
+    theme = try PropertyListDecoder().decode(Theme.self, from: plist)
+    } catch {
+        print(error.localizedDescription)
+        print(error)
+        fatalError()
+    }
     
     let fontProvider = FontProvider(size: fontSize ?? Defaults[.sourceCodeFont].pointSize)
-    return try [
-        .comment: theme.attributes(for: Scope("source.bushelscript comment.bushelscript"), fontProvider: fontProvider),
-        .keyword: theme.attributes(for: Scope("source.bushelscript keyword.bushelscript"), fontProvider: fontProvider),
-        .operator: theme.attributes(for: Scope("source.bushelscript keyword.operator.bushelscript"), fontProvider: fontProvider),
-        .type: theme.attributes(for: Scope("source.bushelscript storage.type.bushelscript"), fontProvider: fontProvider),
-        .property: theme.attributes(for: Scope("source.bushelscript support.variable.property.bushelscript"), fontProvider: fontProvider),
-        .constant: theme.attributes(for: Scope("source.bushelscript support.type.symbol.bushelscript"), fontProvider: fontProvider),
-        .command: theme.attributes(for: Scope("source.bushelscript support.function.command.bushelscript"), fontProvider: fontProvider),
-        .parameter: theme.attributes(for: Scope("source.bushelscript support.constant.parameter.bushelscript"), fontProvider: fontProvider),
-        .variable: theme.attributes(for: Scope("source.bushelscript variable.other.bushelscript"), fontProvider: fontProvider),
-        .resource: theme.attributes(for: Scope("source.bushelscript entity.name.type.bushelscript"), fontProvider: fontProvider),
-        .number: theme.attributes(for: Scope("source.bushelscript constant.numeric.bushelscript"), fontProvider: fontProvider),
-        .string: theme.attributes(for: Scope("source.bushelscript string.quoted.bushelscript"), fontProvider: fontProvider),
-        .weave: theme.attributes(for: Scope("source.bushelscript string.interpolated.bushelscript"), fontProvider: fontProvider),
-    ]
+    return try HighlightStyles(
+        highlighted: [
+            .comment: theme.attributes(for: Scope("source.bushelscript comment.bushelscript"), fontProvider: fontProvider),
+            .keyword: theme.attributes(for: Scope("source.bushelscript keyword.bushelscript"), fontProvider: fontProvider),
+            .operator: theme.attributes(for: Scope("source.bushelscript keyword.operator.bushelscript"), fontProvider: fontProvider),
+            .type: theme.attributes(for: Scope("source.bushelscript storage.type.bushelscript"), fontProvider: fontProvider),
+            .property: theme.attributes(for: Scope("source.bushelscript support.variable.property.bushelscript"), fontProvider: fontProvider),
+            .constant: theme.attributes(for: Scope("source.bushelscript support.type.symbol.bushelscript"), fontProvider: fontProvider),
+            .command: theme.attributes(for: Scope("source.bushelscript support.function.command.bushelscript"), fontProvider: fontProvider),
+            .parameter: theme.attributes(for: Scope("source.bushelscript support.constant.parameter.bushelscript"), fontProvider: fontProvider),
+            .variable: theme.attributes(for: Scope("source.bushelscript variable.other.bushelscript"), fontProvider: fontProvider),
+            .resource: theme.attributes(for: Scope("source.bushelscript entity.name.type.bushelscript"), fontProvider: fontProvider),
+            .number: theme.attributes(for: Scope("source.bushelscript constant.numeric.bushelscript"), fontProvider: fontProvider),
+            .string: theme.attributes(for: Scope("source.bushelscript string.quoted.bushelscript"), fontProvider: fontProvider),
+            .weave: theme.attributes(for: Scope("source.bushelscript string.interpolated.bushelscript"), fontProvider: fontProvider),
+        ],
+        unhighlighted: theme.attributes(for: nil, fontProvider: fontProvider)
+    )
 }
 
 private func themeFile(for themeFileName: String) throws -> URL? {
