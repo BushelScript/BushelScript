@@ -1,3 +1,4 @@
+import Foundation
 import os.log
 
 private let log = OSLog(subsystem: logSubsystem, category: #fileID)

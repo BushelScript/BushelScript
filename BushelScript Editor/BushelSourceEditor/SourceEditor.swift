@@ -27,6 +27,13 @@ public class SourceEditor: NSViewController {
     
     public var delegate: Delegate!
     
+    public static func create(delegate: Delegate) -> SourceEditor {
+        let storyboard = NSStoryboard(name: "SourceEditor", bundle: Bundle(for: self))
+        let sourceEditor = storyboard.instantiateInitialController() as! SourceEditor
+        sourceEditor.delegate = delegate
+        return sourceEditor
+    }
+    
     @IBOutlet private var textView: NSTextView!
     
     /// Throws away all previous data fetched from the delegate and

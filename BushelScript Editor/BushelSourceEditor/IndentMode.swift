@@ -1,3 +1,4 @@
+import Foundation
 
 public class IndentMode: NSObject {
     
