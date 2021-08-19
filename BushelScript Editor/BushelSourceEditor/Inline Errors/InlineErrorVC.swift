@@ -1,8 +1,4 @@
-// BushelScript Editor application
-// © 2019-2021 Ian Gregory.
-// See file LICENSE.txt for licensing information.
-
-import Cocoa
+import AppKit
 import os
 
 private let log = OSLog(subsystem: logSubsystem, category: "InlineErrorVC")

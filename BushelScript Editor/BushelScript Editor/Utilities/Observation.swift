@@ -2,6 +2,8 @@
 // © 2019-2021 Ian A. Gregory.
 // See file LICENSE.txt for licensing information.
 
+import BushelSourceEditor
+
 final class NotificationObservation: NSObject, Tiable {
     
     private var observation: NSObjectProtocol

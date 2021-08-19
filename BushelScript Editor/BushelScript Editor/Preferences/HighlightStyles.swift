@@ -1,25 +1,7 @@
 import Bushel
+import BushelSourceEditor
 import TooMuchTheme
 import Defaults
-
-public struct HighlightStyles {
-    
-    public var highlighted: Bushel.Styles
-    public var unhighlighted: [AttributedString.Key : Any]
-    
-    public subscript(_ styling: Bushel.Styling) -> [AttributedString.Key : Any]? {
-        highlighted[styling]
-    }
-    
-    public init(highlighted: Bushel.Styles, unhighlighted: [AttributedString.Key : Any]) {
-        self.highlighted = highlighted
-        self.unhighlighted = unhighlighted
-    }
-    public init() {
-        self.init(highlighted: [:], unhighlighted: [:])
-    }
-    
-}
 
 var defaultSizeHighlightStyles: HighlightStyles? = try? makeHighlightStyles()
 
@@ -28,14 +10,7 @@ func makeHighlightStyles(fontSize: CGFloat? = nil) throws -> HighlightStyles {
         return HighlightStyles()
     }
     let plist = try Data(contentsOf: themeFile)
-    let theme: Theme
-    do {
-    theme = try PropertyListDecoder().decode(Theme.self, from: plist)
-    } catch {
-        print(error.localizedDescription)
-        print(error)
-        fatalError()
-    }
+    let theme = try PropertyListDecoder().decode(Theme.self, from: plist)
     
     let fontProvider = FontProvider(size: fontSize ?? Defaults[.sourceCodeFont].pointSize)
     return try HighlightStyles(

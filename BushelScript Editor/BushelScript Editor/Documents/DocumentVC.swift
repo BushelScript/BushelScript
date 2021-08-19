@@ -5,6 +5,7 @@
 import Cocoa
 import Bushel
 import BushelRT
+import BushelSourceEditor
 import Defaults
 
 class DocumentVC: NSViewController, NSUserInterfaceValidations, SourceEditor.Delegate {

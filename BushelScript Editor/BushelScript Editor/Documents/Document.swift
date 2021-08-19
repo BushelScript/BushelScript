@@ -6,6 +6,7 @@ import AppKit
 import Defaults
 import Bushel
 import BushelRT
+import BushelSourceEditor
 import os
 
 private let log = OSLog(subsystem: logSubsystem, category: "Document read/write")
