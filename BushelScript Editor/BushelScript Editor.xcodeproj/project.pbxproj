@@ -75,6 +75,7 @@
 		3CE8E39C26CDF6E1005C708B /* IndentMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4EC6B726BF25CD00AD5E31 /* IndentMode.swift */; };
 		3CE8E39D26CDF6F3005C708B /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFEC51A2677F33B001EEF12 /* Notifications.swift */; };
 		3CE8E3A026CDF731005C708B /* UndoRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4EC6BD26BF516B00AD5E31 /* UndoRegistration.swift */; };
+		3CE8E3A326CE0390005C708B /* BushelSourceEditor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CE8E37526CDF521005C708B /* BushelSourceEditor.framework */; };
 		3CEC9DBD267EED0D00E53CC0 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; };
 		3CEC9DBE267EED0D00E53CC0 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEC9DB7267EED0D00E53CC0 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CFEC5122677EFEF001EEF12 /* SidebarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFEC5112677EFEF001EEF12 /* SidebarVC.swift */; };
@@ -370,6 +371,7 @@
 			files = (
 				3C88833D269E2D6F00803197 /* Bushel.framework in Frameworks */,
 				3C88833E269E2D6F00803197 /* BushelRT.framework in Frameworks */,
+				3CE8E3A326CE0390005C708B /* BushelSourceEditor.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -712,12 +714,12 @@
 			buildRules = (
 			);
 			dependencies = (
+				3CE8E37B26CDF521005C708B /* PBXTargetDependency */,
 				3C554CB323F7AFE50029E71A /* PBXTargetDependency */,
 				3C906EF1231C7D380099B139 /* PBXTargetDependency */,
 				3C9FD7C023E5455700279945 /* PBXTargetDependency */,
 				3C9FD7BE23E5455200279945 /* PBXTargetDependency */,
 				3C278ED0269D35B50003E79A /* PBXTargetDependency */,
-				3CE8E37B26CDF521005C708B /* PBXTargetDependency */,
 			);
 			name = "BushelScript Editor";
 			packageProductDependencies = (
@@ -771,7 +773,7 @@
 				3C278EB2269D2DAD0003E79A /* Sources */,
 				3C278EB3269D2DAD0003E79A /* Frameworks */,
 				3C278EB4269D2DAD0003E79A /* Resources */,
-				3C278EB5269D2DAD0003E79A /* ShellScript */,
+				3C278EB5269D2DAD0003E79A /* Automator Lint */,
 			);
 			buildRules = (
 			);
@@ -987,7 +989,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3C278EB5269D2DAD0003E79A /* ShellScript */ = {
+		3C278EB5269D2DAD0003E79A /* Automator Lint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -997,6 +999,7 @@
 			inputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/$(FULL_PRODUCT_NAME)",
 			);
+			name = "Automator Lint";
 			outputFileListPaths = (
 			);
 			outputPaths = (
