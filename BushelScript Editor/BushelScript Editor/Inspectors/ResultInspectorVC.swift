@@ -6,7 +6,7 @@ import os.log
 
 private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
-class ResultInspectorVC: ObjectInspector2VC {
+class ResultInspectorVC: NSViewController {
     
     var document: Document?
     

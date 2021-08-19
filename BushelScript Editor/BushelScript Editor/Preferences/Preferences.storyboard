@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="tIW-kw-HeA">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -378,7 +377,7 @@
         <!--Editor-->
         <scene sceneID="elx-bb-SDp">
             <objects>
-                <viewController title="Editor" id="Jnz-gE-XA3" customClass="GeneralPrefsVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Editor" id="Jnz-gE-XA3" customClass="EditingPrefsVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="wh5-5I-Lfb">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="137"/>
                         <autoresizingMask key="autoresizingMask"/>

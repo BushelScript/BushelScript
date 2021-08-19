@@ -7,7 +7,7 @@ import Bushel
 
 private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
-class ExpressionInspectorVC: ObjectInspector2VC {
+class ExpressionInspectorVC: NSViewController {
     
     var document: Document?
     

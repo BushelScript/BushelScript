@@ -1080,7 +1080,7 @@ CQ
         <!--ResultInspectorVC-->
         <scene sceneID="Aj4-oV-wAS">
             <objects>
-                <controllerPlaceholder storyboardName="ObjectInspector2" referencedIdentifier="ResultInspectorVC" id="ZMt-MW-Z8n" sceneMemberID="viewController"/>
+                <controllerPlaceholder storyboardName="Inspectors" referencedIdentifier="ResultInspectorVC" id="ZMt-MW-Z8n" sceneMemberID="viewController"/>
                 <customObject id="Q0g-DI-fv2" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="328" y="1696"/>
@@ -1113,7 +1113,7 @@ CQ
         <!--ExpressionInspectorVC-->
         <scene sceneID="Mi7-xb-a5x">
             <objects>
-                <controllerPlaceholder storyboardName="ObjectInspector2" referencedIdentifier="ExpressionInspectorVC" id="6cF-ES-M72" sceneMemberID="viewController"/>
+                <controllerPlaceholder storyboardName="Inspectors" referencedIdentifier="ExpressionInspectorVC" id="6cF-ES-M72" sceneMemberID="viewController"/>
                 <customObject id="OqO-2s-mIK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="517" y="1482"/>

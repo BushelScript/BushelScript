@@ -5,7 +5,7 @@
 import AppKit
 import Defaults
 
-class GeneralPrefsVC: NSViewController {
+class EditingPrefsVC: NSViewController {
     
     @IBOutlet var fontManager: NSFontManager!
     @IBOutlet var themeMenuDelegate: ThemeMenuDelegate!
@@ -54,7 +54,7 @@ class GeneralPrefsVC: NSViewController {
     
 }
 
-extension GeneralPrefsVC: NSWindowDelegate, NSFontChanging {
+extension EditingPrefsVC: NSWindowDelegate, NSFontChanging {
     
     func validModesForFontPanel(_ fontPanel: NSFontPanel) -> NSFontPanel.ModeMask {
         [.collection, .face, .size]
