@@ -219,7 +219,7 @@ translation:
                     name: open location
                     doc: |-
                         Open a URL. This is an AppleScript command that many apps understand. If handled by an app, the app should open the URL given in the direct parameter. This is the standard event that the system sends (often to web browsers) to open links from other apps.
-                # GUIHost commands.
+                # GUI commands.
                 bShGnotf: notification
                 bShGdisA: alert
                 bShGchlt: choose from

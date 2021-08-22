@@ -2,6 +2,14 @@ import Cocoa
 
 final class RadioChoicesVC: NSViewController {
     
+    init() {
+        super.init(nibName: nil, bundle: Bundle(for: Self.self))
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
     @IBOutlet var choicesStackView: NSStackView!
     @IBOutlet var radioButtonTemplate: NSButton!
     

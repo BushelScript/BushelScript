@@ -31,7 +31,6 @@
 		3C2A9CDF26793CF60084716C /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
 		3C2A9CE026793CF60084716C /* BushelRT.framework in Embed Shared Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2A9CE726793D6F0084716C /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; };
-		3C2A9CE826793E690084716C /* BushelGUIHost.app in Resources */ = {isa = PBXBuildFile; fileRef = 3CFA68C623EE300E00A3E87E /* BushelGUIHost.app */; };
 		3C2A9CEA267940360084716C /* bushelscript in Resources */ = {isa = PBXBuildFile; fileRef = 3C9FD7B923E53E5500279945 /* bushelscript */; };
 		3C2A9CEC267953450084716C /* bushelscript_en.bundle in Copy Language Modules */ = {isa = PBXBuildFile; fileRef = 3C0566FC23135690004CDB1A /* bushelscript_en.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2A9CF02679665E0084716C /* InterpreterPrefsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2A9CEF2679665E0084716C /* InterpreterPrefsVC.swift */; };
@@ -150,13 +149,6 @@
 			remoteGlobalIDString = 3C278EB6269D2DAD0003E79A;
 			remoteInfo = "Run BushelScript";
 		};
-		3C554CB223F7AFE50029E71A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3CB328E423EDAD4C003BF646;
-			remoteInfo = BushelGUIHost;
-		};
 		3C906EF0231C7D380099B139 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
@@ -198,13 +190,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3C94570223E8FBC200D59C2C;
 			remoteInfo = BushelLanguageTestingTools;
-		};
-		3CFA68C523EE300E00A3E87E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C0566DB23135690004CDB1A /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3CB328E523EDAD4C003BF646;
-			remoteInfo = BushelGUIHost;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -465,7 +450,6 @@
 				3C0566FE23135690004CDB1A /* bushelscript_en Tests.xctest */,
 				3C0566EE23135690004CDB1A /* BushelRT.framework */,
 				3C0566F023135690004CDB1A /* BushelRTTests.xctest */,
-				3CFA68C623EE300E00A3E87E /* BushelGUIHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -715,7 +699,6 @@
 			);
 			dependencies = (
 				3CE8E37B26CDF521005C708B /* PBXTargetDependency */,
-				3C554CB323F7AFE50029E71A /* PBXTargetDependency */,
 				3C906EF1231C7D380099B139 /* PBXTargetDependency */,
 				3C9FD7C023E5455700279945 /* PBXTargetDependency */,
 				3C9FD7BE23E5455200279945 /* PBXTargetDependency */,
@@ -926,13 +909,6 @@
 			remoteRef = 3CFA68C323EE300E00A3E87E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		3CFA68C623EE300E00A3E87E /* BushelGUIHost.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = BushelGUIHost.app;
-			remoteRef = 3CFA68C523EE300E00A3E87E /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -942,7 +918,6 @@
 			files = (
 				3CC2A62126A929BD00509362 /* DictionaryBrowser.storyboard in Resources */,
 				3C2A9CEA267940360084716C /* bushelscript in Resources */,
-				3C2A9CE826793E690084716C /* BushelGUIHost.app in Resources */,
 				3C204703268EB31E00C52E2B /* Libraries in Resources */,
 				3C880B1B26C6EB28006839AB /* Themes in Resources */,
 				3C0566B423135675004CDB1A /* Assets.xcassets in Resources */,
@@ -1126,11 +1101,6 @@
 			isa = PBXTargetDependency;
 			target = 3C278EB6269D2DAD0003E79A /* Run BushelScript */;
 			targetProxy = 3C278ECF269D35B50003E79A /* PBXContainerItemProxy */;
-		};
-		3C554CB323F7AFE50029E71A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = BushelGUIHost;
-			targetProxy = 3C554CB223F7AFE50029E71A /* PBXContainerItemProxy */;
 		};
 		3C906EF1231C7D380099B139 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

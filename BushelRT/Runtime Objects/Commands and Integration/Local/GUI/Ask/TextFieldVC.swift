@@ -2,6 +2,14 @@ import Cocoa
 
 final class TextFieldVC: NSViewController, NSTextFieldDelegate {
     
+    init() {
+        super.init(nibName: nil, bundle: Bundle(for: Self.self))
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
     @IBOutlet weak var textFieldFormatter: CharacterLimitFormatter?
     
     @IBOutlet weak var textField: NSTextField!

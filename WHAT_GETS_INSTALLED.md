@@ -23,7 +23,6 @@ The app package contains the following core components:
       - `TypeSupport.scptd`
       - `Web.scptd`
     - …any other installed libraries…
-  - Background app responsible for GUI commands: `BushelGUIHost.app`
   - Command line tool (script runner and REPL): `bushelscript`
     - This is symlinked into the appropriate location when the user installs it in Preferences
 

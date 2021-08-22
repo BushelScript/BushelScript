@@ -1,17 +1,11 @@
 import Cocoa
 
 final class FileChooserVC: NSViewController {
-
-    @IBOutlet private weak var pathTextField: NSTextField?
-    
-    override func viewDidLoad() {
-        pathTextField?.placeholderString = (defaultLocation.path as NSString).abbreviatingWithTildeInPath
-    }
     
     private(set) var defaultLocation: URL = FileManager.default.homeDirectoryForCurrentUser
     
     init(defaultLocation: URL? = nil) {
-        super.init(nibName: nil, bundle: nil)
+        super.init(nibName: nil, bundle: Bundle(for: Self.self))
         if let defaultLocation = defaultLocation {
             self.defaultLocation = defaultLocation
         }
@@ -19,6 +13,12 @@ final class FileChooserVC: NSViewController {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+    }
+    
+    @IBOutlet private weak var pathTextField: NSTextField?
+    
+    override func viewDidLoad() {
+        pathTextField?.placeholderString = (defaultLocation.path as NSString).abbreviatingWithTildeInPath
     }
     
     var location: URL {

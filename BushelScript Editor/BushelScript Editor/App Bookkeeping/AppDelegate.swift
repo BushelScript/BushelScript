@@ -17,15 +17,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
     
     func applicationWillFinishLaunching(_ notification: Notification) {
         LanguageModule.appBundle = Bundle.main
-        registerGUIApp()
-    }
-    
-    private func registerGUIApp() {
-        guard let guiAppURL = Bundle.main.url(forResource: "BushelGUIHost", withExtension: "app") else {
-            os_log("Couldn't find (and register) BushelGUIHost app", log: log, type: .error)
-            return
-        }
-        LSRegisterURL(guiAppURL as CFURL, true)
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {

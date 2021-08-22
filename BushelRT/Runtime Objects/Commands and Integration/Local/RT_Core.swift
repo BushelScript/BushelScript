@@ -1,5 +1,9 @@
 import Bushel
 import AEthereal
+import UserNotifications
+import os.log
+
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
 public final class RT_Core: RT_Object, RT_LocalModule {
     
@@ -289,7 +293,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
                 return RT_Real(arguments.rt, value: function(real.value))
             }
         }
-        functions.add(rt, .real_ln, parameters: [.direct: .real], implementation: elementaryFunction(log))
+        functions.add(rt, .real_ln, parameters: [.direct: .real], implementation: elementaryFunction(Darwin.log))
         functions.add(rt, .real_log10, parameters: [.direct: .real], implementation: elementaryFunction(log10))
         functions.add(rt, .real_log2, parameters: [.direct: .real], implementation: elementaryFunction(log2))
         functions.add(rt, .real_sin, parameters: [.direct: .real], implementation: elementaryFunction(sin))
@@ -312,31 +316,184 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             print(message.coerce(to: RT_String.self)?.value ?? String(describing: message))
             return arguments.rt.lastResult
         }
-    }
-    
-    public func handle(_ arguments: RT_Arguments) throws -> RT_Object? {
-        if
-            let commandClass = arguments.command.id.ae8Code?.class,
-            commandClass == (try! FourCharCode(fourByteString: "bShG"))
-        {
-            // Run GUIHost command
-            guard let guiHostBundle = Bundle(applicationBundleIdentifier: "com.justcheesy.BushelGUIHost") else {
-                throw MissingResource(resourceDescription: "BushelGUIHost application")
-            }
-            
-            var arguments = arguments
-            if
-                arguments.contents.first(where: { $0.key.uri.ae4Code == Parameters.ask_title.ae12Code!.code }) == nil,
-                let scriptName = Optional("")//rt.topScript.name
-            // FIXME: fix
-            {
-                arguments.contents[Reflection.Parameter(.ask_title)] = RT_String(rt, value: scriptName)
-            }
-            
-            return try RT_Application(rt, bundle: guiHostBundle).handle(arguments)
-        }
         
-        return try self.handleByLocalFunction(arguments)
+        functions.add(rt, .notification, parameters: [
+            .direct: .item,
+            .notification_title: .item,
+            .notification_subtitle: .item,
+            .notification_sound: .item
+        ]) { arguments in
+            let message = arguments[.direct, RT_String.self]
+            let title = arguments[.notification_title, RT_String.self]
+            let subtitle = arguments[.notification_subtitle, RT_String.self]
+            let soundName = arguments[.notification_sound, RT_String.self]
+            
+            let content = UNMutableNotificationContent()
+            if let title = title {
+                content.title = title.value
+                content.body = message?.value ?? ""
+            } else {
+                content.title = message?.value ?? ""
+            }
+            content.subtitle = subtitle?.value ?? ""
+            content.sound = soundName.map { soundName in
+                UNNotificationSound(named: UNNotificationSoundName(rawValue: soundName.value))
+            }
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+            
+            let notificationCenter = UNUserNotificationCenter.current()
+            notificationCenter.requestAuthorization(options: [.sound, .alert]) { (isAuthorized, error) in
+                if let error = error {
+                    os_log("Error requesting user notification authorization: %@", log: log, "\(error)")
+                    DispatchQueue.main.async {
+                        NSApplication.shared.presentError(error)
+                    }
+                }
+                guard isAuthorized else {
+                    os_log("Not authorized to send user notifications", log: log)
+                    return
+                }
+                
+                notificationCenter.add(request, withCompletionHandler: { error in
+                    if let error = error {
+                        os_log("Error delivering user notification: %@", log: log, "\(error)")
+                        DispatchQueue.main.async {
+                            NSApp.presentError(error)
+                        }
+                    }
+                })
+            }
+            
+            return arguments.rt.lastResult
+        }
+        functions.add(rt, .alert, parameters: [
+            .direct: .item,
+            .alert_message: .item,
+            .alert_title: .item
+        ]) { arguments in
+            let heading = arguments[.direct, RT_String.self]
+            let message = arguments[.alert_message, RT_String.self]
+            let title = arguments[.alert_title, RT_String.self]
+            
+            return DispatchQueue.main.sync {
+                let wc = AlertWC(windowNibName: "AlertWC")
+                wc.loadWindow()
+                wc.heading = heading?.value
+                wc.message = message?.value
+                
+                let window = wc.window!
+                window.title = title?.value ?? ""
+                
+                displayModally(window: window)
+                return wc.response.map { RT_String(arguments.rt, value: $0) } ?? arguments.rt.missing
+            }
+        }
+        functions.add(rt, .chooseFrom, parameters: [
+            .direct: .list,
+            .chooseFrom_prompt: .item,
+            .chooseFrom_confirm: .item,
+            .chooseFrom_cancel: .item,
+            .chooseFrom_title: .item
+        ]) { arguments in
+            let items = try arguments.for(.direct, RT_List.self).contents
+            let prompt = arguments[.chooseFrom_prompt, RT_String.self]
+            let okButtonName = arguments[.chooseFrom_confirm, RT_String.self]
+            let cancelButtonName = arguments[.chooseFrom_cancel, RT_String.self]
+            let title = arguments[.chooseFrom_title, RT_String.self]
+            
+            return DispatchQueue.main.sync {
+                let wc = ChooseFromWC(windowNibName: "ChooseFromWC")
+                wc.loadWindow()
+                wc.items = items.map { item in
+                    (item.coerce(to: RT_String.self)?.value ?? "\(item)")
+                }
+                wc.prompt = prompt?.value ?? "Please select an option."
+                wc.okButtonName = okButtonName?.value ?? "OK"
+                wc.cancelButtonName = cancelButtonName?.value ?? "Cancel"
+                
+                let window = wc.window!
+                window.title = title?.value ?? arguments.rt.topScript.name ?? ""
+                
+                displayModally(window: window)
+                return wc.response.map { RT_String(arguments.rt, value: $0) } ?? arguments.rt.missing
+            }
+        }
+        functions.add(rt, .ask, parameters: [
+            .ask_dataType: .type,
+            .direct: .item,
+            .ask_title: .item
+        ]) { arguments in
+            typealias Constructor = () -> RT_Object
+            
+            func makeViewController(for type: Reflection.`Type`) -> (NSViewController, Constructor) {
+                func uneditableVC() -> (UneditableVC, Constructor) {
+                    (UneditableVC(), { arguments.rt.missing })
+                }
+                func fileChooserVC(defaultLocation: URL? = nil, constructor: @escaping (FileChooserVC) -> RT_Object) -> (FileChooserVC, Constructor) {
+                    let vc = FileChooserVC(defaultLocation: defaultLocation)
+                    return (vc, { constructor(vc) })
+                }
+                func radioChoicesVC(choices: [String], constructor: @escaping (RadioChoicesVC) -> RT_Object) -> (RadioChoicesVC, Constructor) {
+                    let vc = RadioChoicesVC()
+                    for choice in choices {
+                        vc.addChoice(named: choice)
+                    }
+                    return (vc, { constructor(vc) })
+                }
+                func checkboxVC(constructor: @escaping (CheckboxVC) -> RT_Object) -> (CheckboxVC, Constructor) {
+                    let vc = CheckboxVC()
+                    return (vc, { constructor(vc) })
+                }
+                func textFieldVC(characterLimit: Int? = nil, constructor: @escaping (TextFieldVC) -> RT_Object) -> (TextFieldVC, Constructor) {
+                    let vc = TextFieldVC()
+                    vc.characterLimit = characterLimit
+                    return (vc, { constructor(vc) })
+                }
+                func numberFieldVC(integersOnly: Bool = false, constructor: @escaping (NumberFieldVC) -> RT_Object) -> (NumberFieldVC, Constructor) {
+                    let vc = NumberFieldVC()
+                    vc.integersOnly = integersOnly
+                    return (vc, { constructor(vc) })
+                }
+                
+                switch Types(type.uri) {
+                case .boolean:
+                    return checkboxVC { RT_Boolean.withValue(arguments.rt, $0.value) }
+                case .string:
+                    return textFieldVC { RT_String(arguments.rt, value: $0.value) }
+                case .character:
+                    return textFieldVC(characterLimit: 1) { $0.value.first.map { RT_Character(arguments.rt, value: $0) } ?? arguments.rt.missing }
+                case .number:
+                    return numberFieldVC() { RT_Real(arguments.rt, value: $0.value.doubleValue) }
+                case .integer:
+                    return numberFieldVC(integersOnly: true) { RT_Integer(arguments.rt, value: $0.value.int64Value) }
+                case .real:
+                    return numberFieldVC() { RT_Real(arguments.rt, value: $0.value.doubleValue) }
+                case .file, .alias:
+                    return fileChooserVC() { RT_File(arguments.rt, value: $0.location) }
+                default:
+                    // TODO: Implement for custom types
+                    return uneditableVC()
+                }
+            }
+            
+            let type = arguments[.ask_dataType, RT_Type.self]
+            let prompt = arguments[.direct, RT_String.self]
+            let title = arguments[.ask_title, RT_String.self]
+            
+            return DispatchQueue.main.sync {
+                let (vc, constructor) = makeViewController(for: type?.value ?? arguments.rt.reflection.types[.string])
+                let wc = AskWC(windowNibName: "AskWC")
+                wc.loadWindow()
+                wc.embed(viewController: vc)
+                wc.prompt = prompt?.value ?? "Please enter a value."
+                
+                let window = wc.window!
+                window.title = title?.value ?? arguments.rt.topScript.name ?? ""
+                
+                displayModally(window: window)
+                return constructor()
+            }
+        }
     }
     
     public override func property(_ property: Reflection.Property) throws -> RT_Object? {
