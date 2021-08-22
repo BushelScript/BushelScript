@@ -13,6 +13,10 @@ The app package contains the following core components:
   - Language modules: `Languages/`
     - `bushelscript_en.bundle`
   - Libraries: `Libraries/`
+    - BushelScript standard libraries
+      - `Unit Test.bushel`
+      - `List.bushel`
+      - `Chromium.bushel`
     - [AppleScript "standard" libraries][AppleScript-stdlib]:
       - `Date.scptd`
       - `File.scptd`
