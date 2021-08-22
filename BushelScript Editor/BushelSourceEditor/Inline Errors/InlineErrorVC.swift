@@ -5,9 +5,12 @@ private let log = OSLog(subsystem: logSubsystem, category: "InlineErrorVC")
 
 class InlineErrorVC: NSViewController {
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do view setup here.
+    init() {
+        super.init(nibName: nil, bundle: Bundle(for: Self.self))
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
     }
     
 }
