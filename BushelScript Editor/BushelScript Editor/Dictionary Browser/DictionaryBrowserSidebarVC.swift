@@ -53,6 +53,7 @@ class DictionaryBrowserSidebarVC: NSViewController, NSOutlineViewDelegate, NSOut
             return
         }
         outlineView.selectRowIndexes([row], byExtendingSelection: false)
+        outlineView.scrollRowToVisible(row)
     }
     
     @IBOutlet var outlineView: NSOutlineView!
