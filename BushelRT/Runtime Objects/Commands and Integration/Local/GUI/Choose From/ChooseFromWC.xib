@@ -16,6 +16,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="documentWindow" titlebarAppearsTransparent="YES" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowCollectionBehavior key="collectionBehavior" moveToActiveSpace="YES" managed="YES" participatesInCycle="YES" fullScreenAuxiliary="YES"/>
             <rect key="contentRect" x="196" y="240" width="337" height="270"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="875"/>
             <view key="contentView" id="se5-gp-TjO">
