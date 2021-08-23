@@ -108,7 +108,7 @@ Gw
                                     </tableColumns>
                                     <connections>
                                         <action trigger="doubleAction" selector="itemSelected:" target="-2" id="6Hh-dr-S8d"/>
-                                        <binding destination="-2" name="content" keyPath="items" id="WVR-yb-Yi7"/>
+                                        <binding destination="-2" name="content" keyPath="copiableItems" id="OZx-Xc-LT9"/>
                                     </connections>
                                 </tableView>
                             </subviews>

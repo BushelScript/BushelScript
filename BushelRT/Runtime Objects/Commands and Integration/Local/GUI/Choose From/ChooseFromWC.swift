@@ -2,7 +2,15 @@ import Cocoa
 
 final class ChooseFromWC: NSWindowController {
     
-    @objc dynamic var items: [String] = []
+    @objc private dynamic var copiableItems: [TriviallyCopiable] = []
+    var items: [Any] {
+        get {
+            copiableItems.map { $0.value }
+        }
+        set {
+            copiableItems = newValue.map(TriviallyCopiable.init)
+        }
+    }
     
     @objc dynamic var prompt: String?
     
@@ -11,7 +19,7 @@ final class ChooseFromWC: NSWindowController {
     
     @IBOutlet var listTableView: NSTableView!
     
-    var response: String?
+    var response: Any?
     
     @IBAction func buttonClicked(_ sender: NSButton) {
         if sender.tag == 2 {
@@ -30,13 +38,30 @@ final class ChooseFromWC: NSWindowController {
         guard
             selectedRow != -1,
             let rowView = tableView.rowView(atRow: selectedRow, makeIfNecessary: false),
-            let cellView = rowView.view(atColumn: 0) as? NSTableCellView,
-            let value = cellView.objectValue
+            let cellView = rowView.view(atColumn: 0) as? NSTableCellView
         else {
             return
         }
         
-        response = "\(value)"
+        response = (cellView.objectValue as! TriviallyCopiable).value
+    }
+    
+}
+
+private final class TriviallyCopiable: NSObject, NSCopying {
+    
+    init(value: Any) {
+        self.value = value
+    }
+    
+    var value: Any
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        value
+    }
+    
+    override func forwardingTarget(for aSelector: Selector!) -> Any? {
+        value
     }
     
 }

@@ -404,9 +404,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             let wc: ChooseFromWC = displayWindowAndBlockUntilClosed {
                 let wc = ChooseFromWC(windowNibName: "ChooseFromWC")
                 wc.loadWindow()
-                wc.items = items.map { item in
-                    (item.coerce(to: RT_String.self)?.value ?? "\(item)")
-                }
+                wc.items = items
                 wc.prompt = prompt?.value ?? "Please select an option."
                 wc.okButtonName = okButtonName?.value ?? "OK"
                 wc.cancelButtonName = cancelButtonName?.value ?? "Cancel"
@@ -416,7 +414,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
                 
                 return wc
             }
-            return wc.response.map { RT_String(arguments.rt, value: $0) } ?? arguments.rt.missing
+            return (wc.response as? RT_Object) ?? arguments.rt.missing
         }
         functions.add(rt, .ask, parameters: [
             .ask_dataType: .type,
