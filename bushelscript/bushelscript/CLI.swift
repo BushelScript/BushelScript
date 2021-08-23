@@ -31,6 +31,23 @@ let stdin = "/dev/stdin"
 let defaultLanguageID = "bushelscript_en"
 
 @main
+class AppDelegate: NSObject, NSApplicationDelegate {
+    
+    private static var appDelegate = AppDelegate()
+    static func main() {
+        NSApplication.shared.delegate = appDelegate
+        _ = NSApplicationMain(CommandLine.argc, CommandLine.unsafeArgv)
+    }
+    
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            BushelScript.main()
+            (notification.object as! NSApplication).terminate(nil)
+        }
+    }
+    
+}
+
 struct BushelScript: ParsableCommand {
     
     static var configuration = CommandConfiguration(

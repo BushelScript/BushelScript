@@ -34,8 +34,6 @@
 	<string>This permission is needed to be able to communicate with the Contacts app.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2020-2021 Ian Gregory. All rights reserved.</string>
-	<key>NSMainStoryboardFile</key>
-	<string>Main</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>This permission is needed to be able to communicate with the Reminders app. If you deny, you will not be able to script Reminders from within the editor.</string>
 </dict>
