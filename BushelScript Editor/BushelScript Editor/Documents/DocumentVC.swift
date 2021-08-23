@@ -150,14 +150,23 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations, SourceEditor.Del
         }.tieToLifetime(of: self)
         tie(to: self, [
             NotificationObservation(.sourceEditorSelectedExpressions, sourceEditor) { [weak self] (sourceEditor, userInfo) in
-                guard let document = self?.document else {
+                guard
+                    let document = self?.document,
+                    // This observation seems to get added while
+                    // self.sourceEditor is still nil.
+                    sourceEditor === self?.sourceEditor
+                else {
                     return
                 }
                 document.selectedExpressions = userInfo[.payload] as! [Expression]? ?? []
                 NotificationCenter.default.post(name: .documentSelectedExpressions, object: document, userInfo: userInfo)
             },
             NotificationObservation(.sourceEditorResult, sourceEditor) { [weak self] (sourceEditor, userInfo) in
-                guard let document = self?.document else {
+                guard
+                    let document = self?.document,
+                    // Ditto.
+                    sourceEditor === self?.sourceEditor
+                else {
                     return
                 }
                 NotificationCenter.default.post(name: .documentResult, object: document, userInfo: userInfo)
