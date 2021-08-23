@@ -163,7 +163,7 @@
                                                                     </connections>
                                                                 </customView>
                                                                 <textField verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cTt-f9-wbS">
-                                                                    <rect key="frame" x="25" y="3" width="130" height="17"/>
+                                                                    <rect key="frame" x="25" y="3" width="130" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="nIe-Ud-ics">
                                                                         <font key="font" metaFont="smallSystem" size="13"/>

@@ -23,11 +23,11 @@
                 <rect key="frame" x="0.0" y="0.0" width="421" height="93"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <stackView orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalHuggingPriority="751" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gQv-u2-3Xr">
-                        <rect key="frame" x="20" y="20" width="381" height="20"/>
-                        <endViews>
-                            <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zzA-hl-qiS">
-                                <rect key="frame" x="335" y="-7" width="53" height="32"/>
+                    <stackView distribution="equalSpacing" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalHuggingPriority="751" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gQv-u2-3Xr">
+                        <rect key="frame" x="321" y="20" width="80" height="20"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zzA-hl-qiS">
+                                <rect key="frame" x="-7" y="-7" width="94" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="tpj-mj-ERN"/>
                                 </constraints>
@@ -42,7 +42,7 @@ DQ
                                     <action selector="buttonClicked:" target="-2" id="FTU-wi-3iu"/>
                                 </connections>
                             </button>
-                        </endViews>
+                        </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="zzA-hl-qiS" secondAttribute="bottom" id="7zS-7X-13y"/>
                             <constraint firstItem="zzA-hl-qiS" firstAttribute="top" secondItem="gQv-u2-3Xr" secondAttribute="top" id="kbM-C8-Dxz"/>
@@ -118,7 +118,7 @@ DQ
                 <constraints>
                     <constraint firstItem="Nwb-NQ-l5M" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="JDE-pk-idp"/>
                     <constraint firstAttribute="bottom" secondItem="gQv-u2-3Xr" secondAttribute="bottom" constant="20" symbolic="YES" id="MiP-ON-cQI"/>
-                    <constraint firstItem="gQv-u2-3Xr" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Z05-cz-2up"/>
+                    <constraint firstItem="gQv-u2-3Xr" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Z05-cz-2up"/>
                     <constraint firstItem="gz5-1j-3Hc" firstAttribute="top" secondItem="Nwb-NQ-l5M" secondAttribute="bottom" constant="8" symbolic="YES" id="ZRJ-yz-hAM"/>
                     <constraint firstAttribute="trailing" secondItem="gQv-u2-3Xr" secondAttribute="trailing" constant="20" symbolic="YES" id="bo2-Rp-Wdv"/>
                     <constraint firstItem="gz5-1j-3Hc" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="16" id="eS8-Rf-tRl"/>
