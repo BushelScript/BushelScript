@@ -1,6 +1,4 @@
-// BushelScript Editor application
-// © 2019-2021 Ian A. Gregory.
-// See file LICENSE.txt for licensing information.
+import Dispatch
 
 @propertyWrapper
 public struct Atomic<Value> {

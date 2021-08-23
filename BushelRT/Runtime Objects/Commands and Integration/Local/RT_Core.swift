@@ -375,7 +375,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             let message = arguments[.alert_message, RT_String.self]
             let title = arguments[.alert_title, RT_String.self]
             
-            return DispatchQueue.main.sync {
+            return executeSyncOnMainThread {
                 let wc = AlertWC(windowNibName: "AlertWC")
                 wc.loadWindow()
                 wc.heading = heading?.value
@@ -401,7 +401,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             let cancelButtonName = arguments[.chooseFrom_cancel, RT_String.self]
             let title = arguments[.chooseFrom_title, RT_String.self]
             
-            return DispatchQueue.main.sync {
+            return executeSyncOnMainThread {
                 let wc = ChooseFromWC(windowNibName: "ChooseFromWC")
                 wc.loadWindow()
                 wc.items = items.map { item in
@@ -480,7 +480,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             let prompt = arguments[.direct, RT_String.self]
             let title = arguments[.ask_title, RT_String.self]
             
-            return DispatchQueue.main.sync {
+            return executeSyncOnMainThread {
                 let (vc, constructor) = makeViewController(for: type?.value ?? arguments.rt.reflection.types[.string])
                 let wc = AskWC(windowNibName: "AskWC")
                 wc.loadWindow()
