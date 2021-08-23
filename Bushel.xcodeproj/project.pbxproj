@@ -92,6 +92,8 @@
 		3C83CAA026D2F39400C07A56 /* NumberFieldVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CBD4BE023F5DCD200C09DC5 /* NumberFieldVC.swift */; };
 		3C83CAA126D2F4D700C07A56 /* GUIDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C43D4ED2409B7F700981DDB /* GUIDisplay.swift */; };
 		3C83CAA826D3102A00C07A56 /* ExecuteSyncOnMainThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C83CAA726D3102A00C07A56 /* ExecuteSyncOnMainThread.swift */; };
+		3C83CAB426D41CD700C07A56 /* TriviallyCopiable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C83CAB226D41CD700C07A56 /* TriviallyCopiable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C83CAB526D41CD700C07A56 /* TriviallyCopiable.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C83CAB326D41CD700C07A56 /* TriviallyCopiable.m */; };
 		3C8FEEF322DE2B8300C1F1CF /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8FEEF222DE2B8300C1F1CF /* Context.swift */; };
 		3C906F00231CD30A0099B139 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906EFF231CD30A0099B139 /* Ordering.swift */; };
 		3C93A51926864BB20049187E /* RT_ValueWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C93A51826864BB20049187E /* RT_ValueWrapper.swift */; };
@@ -307,6 +309,8 @@
 		3C7FEF7F269A4E2600A314FE /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		3C7FEF81269A6C1B00A314FE /* BushelCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BushelCache.swift; sourceTree = "<group>"; };
 		3C83CAA726D3102A00C07A56 /* ExecuteSyncOnMainThread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecuteSyncOnMainThread.swift; sourceTree = "<group>"; };
+		3C83CAB226D41CD700C07A56 /* TriviallyCopiable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TriviallyCopiable.h; sourceTree = "<group>"; };
+		3C83CAB326D41CD700C07A56 /* TriviallyCopiable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TriviallyCopiable.m; sourceTree = "<group>"; };
 		3C8FEEF222DE2B8300C1F1CF /* Context.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
 		3C906EFF231CD30A0099B139 /* Ordering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ordering.swift; sourceTree = "<group>"; };
 		3C93A51826864BB20049187E /* RT_ValueWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RT_ValueWrapper.swift; sourceTree = "<group>"; };
@@ -724,6 +728,8 @@
 		3CC2249F2391F9CE00448D25 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				3C83CAB226D41CD700C07A56 /* TriviallyCopiable.h */,
+				3C83CAB326D41CD700C07A56 /* TriviallyCopiable.m */,
 				3C83CAA726D3102A00C07A56 /* ExecuteSyncOnMainThread.swift */,
 				3CC5E807267E6747002E2562 /* Atomic.swift */,
 				3CCA1C7B235D0C010037058C /* Logging.swift */,
@@ -925,6 +931,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C83CAB426D41CD700C07A56 /* TriviallyCopiable.h in Headers */,
 				3CCD8ABF22CC45040049C74F /* BushelRT.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1104,7 +1111,7 @@
 					};
 					3CCD8AAE22CC45040049C74F = {
 						CreatedOnToolsVersion = 10.2.1;
-						LastSwiftMigration = 1020;
+						LastSwiftMigration = 1250;
 					};
 					3CCD8AB622CC45040049C74F = {
 						CreatedOnToolsVersion = 10.2.1;
@@ -1399,6 +1406,7 @@
 				3C70A6A423C5898C00CD5F73 /* RT_TestSpecifier.swift in Sources */,
 				3CD82157264852C200493B89 /* RT_TargetStack.swift in Sources */,
 				3C12EF8F2354E4130057E0CC /* Errors.swift in Sources */,
+				3C83CAB526D41CD700C07A56 /* TriviallyCopiable.m in Sources */,
 				3C83CAA826D3102A00C07A56 /* ExecuteSyncOnMainThread.swift in Sources */,
 				3CC3E5F22647904800516559 /* RT_Module.swift in Sources */,
 				3C5B345423E7BCF90040766D /* RT_File.swift in Sources */,

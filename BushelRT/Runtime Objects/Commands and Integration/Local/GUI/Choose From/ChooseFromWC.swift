@@ -2,13 +2,13 @@ import Cocoa
 
 final class ChooseFromWC: NSWindowController {
     
-    @objc private dynamic var copiableItems: [TriviallyCopiable] = []
+    @objc private dynamic var copiableItems: [BushelRT_TriviallyCopiable] = []
     var items: [Any] {
         get {
             copiableItems.map { $0.value }
         }
         set {
-            copiableItems = newValue.map(TriviallyCopiable.init)
+            copiableItems = newValue.map(BushelRT_TriviallyCopiable.init)
         }
     }
     
@@ -43,25 +43,7 @@ final class ChooseFromWC: NSWindowController {
             return
         }
         
-        response = (cellView.objectValue as! TriviallyCopiable).value
-    }
-    
-}
-
-private final class TriviallyCopiable: NSObject, NSCopying {
-    
-    init(value: Any) {
-        self.value = value
-    }
-    
-    var value: Any
-    
-    func copy(with zone: NSZone? = nil) -> Any {
-        value
-    }
-    
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        value
+        response = (cellView.objectValue as! BushelRT_TriviallyCopiable).value
     }
     
 }
