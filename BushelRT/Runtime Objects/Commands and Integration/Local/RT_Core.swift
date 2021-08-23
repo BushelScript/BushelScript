@@ -375,7 +375,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             let message = arguments[.alert_message, RT_String.self]
             let title = arguments[.alert_title, RT_String.self]
             
-            return executeSyncOnMainThread {
+            let wc: AlertWC = displayWindowAndBlockUntilClosed {
                 let wc = AlertWC(windowNibName: "AlertWC")
                 wc.loadWindow()
                 wc.heading = heading?.value
@@ -384,9 +384,9 @@ public final class RT_Core: RT_Object, RT_LocalModule {
                 let window = wc.window!
                 window.title = title?.value ?? ""
                 
-                displayModally(window: window)
-                return wc.response.map { RT_String(arguments.rt, value: $0) } ?? arguments.rt.missing
+                return wc
             }
+            return wc.response.map { RT_String(arguments.rt, value: $0) } ?? arguments.rt.missing
         }
         functions.add(rt, .chooseFrom, parameters: [
             .direct: .list,
@@ -401,7 +401,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             let cancelButtonName = arguments[.chooseFrom_cancel, RT_String.self]
             let title = arguments[.chooseFrom_title, RT_String.self]
             
-            return executeSyncOnMainThread {
+            let wc: ChooseFromWC = displayWindowAndBlockUntilClosed {
                 let wc = ChooseFromWC(windowNibName: "ChooseFromWC")
                 wc.loadWindow()
                 wc.items = items.map { item in
@@ -414,9 +414,9 @@ public final class RT_Core: RT_Object, RT_LocalModule {
                 let window = wc.window!
                 window.title = title?.value ?? arguments.rt.topScript.name ?? ""
                 
-                displayModally(window: window)
-                return wc.response.map { RT_String(arguments.rt, value: $0) } ?? arguments.rt.missing
+                return wc
             }
+            return wc.response.map { RT_String(arguments.rt, value: $0) } ?? arguments.rt.missing
         }
         functions.add(rt, .ask, parameters: [
             .ask_dataType: .type,
@@ -480,8 +480,10 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             let prompt = arguments[.direct, RT_String.self]
             let title = arguments[.ask_title, RT_String.self]
             
-            return executeSyncOnMainThread {
-                let (vc, constructor) = makeViewController(for: type?.value ?? arguments.rt.reflection.types[.string])
+            var constructor: Constructor!
+            _ = displayWindowAndBlockUntilClosed {
+                let (vc, constructor_) = makeViewController(for: type?.value ?? arguments.rt.reflection.types[.string])
+                constructor = constructor_
                 let wc = AskWC(windowNibName: "AskWC")
                 wc.loadWindow()
                 wc.embed(viewController: vc)
@@ -490,9 +492,9 @@ public final class RT_Core: RT_Object, RT_LocalModule {
                 let window = wc.window!
                 window.title = title?.value ?? arguments.rt.topScript.name ?? ""
                 
-                displayModally(window: window)
-                return constructor()
+                return wc
             }
+            return constructor()
         }
     }
     

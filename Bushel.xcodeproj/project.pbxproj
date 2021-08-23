@@ -90,7 +90,7 @@
 		3C83CA9E26D2F39400C07A56 /* AlertWC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C43D4E82409AC0200981DDB /* AlertWC.xib */; };
 		3C83CA9F26D2F39400C07A56 /* AskWC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFA68E923EE59DE00A3E87E /* AskWC.swift */; };
 		3C83CAA026D2F39400C07A56 /* NumberFieldVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CBD4BE023F5DCD200C09DC5 /* NumberFieldVC.swift */; };
-		3C83CAA126D2F4D700C07A56 /* ModalDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C43D4ED2409B7F700981DDB /* ModalDisplay.swift */; };
+		3C83CAA126D2F4D700C07A56 /* GUIDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C43D4ED2409B7F700981DDB /* GUIDisplay.swift */; };
 		3C83CAA826D3102A00C07A56 /* ExecuteSyncOnMainThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C83CAA726D3102A00C07A56 /* ExecuteSyncOnMainThread.swift */; };
 		3C8FEEF322DE2B8300C1F1CF /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8FEEF222DE2B8300C1F1CF /* Context.swift */; };
 		3C906F00231CD30A0099B139 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C906EFF231CD30A0099B139 /* Ordering.swift */; };
@@ -276,7 +276,7 @@
 		3C3F06E023C14B15005BC0F2 /* Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ranges.swift; sourceTree = "<group>"; };
 		3C43D4E72409AC0200981DDB /* AlertWC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertWC.swift; sourceTree = "<group>"; };
 		3C43D4E82409AC0200981DDB /* AlertWC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlertWC.xib; sourceTree = "<group>"; };
-		3C43D4ED2409B7F700981DDB /* ModalDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalDisplay.swift; sourceTree = "<group>"; };
+		3C43D4ED2409B7F700981DDB /* GUIDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GUIDisplay.swift; sourceTree = "<group>"; };
 		3C43D4F72409BB6200981DDB /* ChooseFromWC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseFromWC.swift; sourceTree = "<group>"; };
 		3C43D4F82409BB6200981DDB /* ChooseFromWC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChooseFromWC.xib; sourceTree = "<group>"; };
 		3C57DD4B2352C55A00F9F2A0 /* Weave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weave.swift; sourceTree = "<group>"; };
@@ -626,7 +626,7 @@
 		3C83CA8926D2F37700C07A56 /* GUI */ = {
 			isa = PBXGroup;
 			children = (
-				3C43D4ED2409B7F700981DDB /* ModalDisplay.swift */,
+				3C43D4ED2409B7F700981DDB /* GUIDisplay.swift */,
 				3C43D4E62409ABE100981DDB /* Alerts */,
 				3C43D4FB2409BB6E00981DDB /* Choose From */,
 				3CCDDED023EDA4EF007684D1 /* Ask */,
@@ -1394,7 +1394,7 @@
 				3CCDDECA23ED06E8007684D1 /* RT_AppleScript.swift in Sources */,
 				3C26BA832680E2FB00452D9E /* Reflection.swift in Sources */,
 				3CD15236268FBB1B00EB8975 /* RT_Unspecified.swift in Sources */,
-				3C83CAA126D2F4D700C07A56 /* ModalDisplay.swift in Sources */,
+				3C83CAA126D2F4D700C07A56 /* GUIDisplay.swift in Sources */,
 				3C12EF7D2354E2B50057E0CC /* RT_Boolean.swift in Sources */,
 				3C70A6A423C5898C00CD5F73 /* RT_TestSpecifier.swift in Sources */,
 				3CD82157264852C200493B89 /* RT_TargetStack.swift in Sources */,
