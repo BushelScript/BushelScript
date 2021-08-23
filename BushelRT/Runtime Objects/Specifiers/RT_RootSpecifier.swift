@@ -24,6 +24,10 @@ public final class RT_RootSpecifier: RT_Object, RT_AEQuery {
         super.init(rt)
     }
     
+    public override func evaluateSpecifierRootedAtSelf(_ specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
+        try rt.context.target.evaluateSpecifierRootedAtSelf(specifier)
+    }
+    
     public func appleEventQuery() -> AEthereal.Query? {
         switch kind {
         case .application:

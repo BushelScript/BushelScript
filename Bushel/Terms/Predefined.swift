@@ -297,6 +297,8 @@ public enum Properties: String, Term.PredefinedID {
     
     case currentDate
     
+    case app_running_Q = "app_running?"
+    
     case list_length
     case list_reverse
     case list_tail

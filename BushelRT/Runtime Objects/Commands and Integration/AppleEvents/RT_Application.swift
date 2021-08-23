@@ -58,6 +58,36 @@ public class RT_Application: RT_Object, RT_AEQuery, RT_Module {
         .app
     }
     
+    public var id: RT_Object {
+        target.bundleIdentifier.map { RT_String(rt, value: $0) } ?? rt.missing
+    }
+    
+    public var isRunning: RT_Boolean {
+        RT_Boolean.withValue(rt, target.isRunning)
+    }
+    
+    public override class var propertyKeyPaths: [Properties : AnyKeyPath] {
+        [
+            .id: \RT_Application.id,
+            .app_running_Q: \RT_Application.isRunning
+        ]
+    }
+    public override func evaluateStaticProperty(_ keyPath: AnyKeyPath) -> RT_Object? {
+        keyPath.evaluate(on: self)
+    }
+    
+    public override func evaluateSpecifierRootedAtSelf(_ specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
+        do {
+            return try super.evaluateSpecifierRootedAtSelf(specifier)
+        } catch {
+            let get = rt.reflection.commands[.get]
+            return try specifier.handleByAppleEvent(
+                RT_Arguments(rt, get, [:]),
+                app: app
+            )
+        }
+    }
+    
     // MARK: RT_AEQuery
     
     public func appleEventQuery() throws -> Query? {

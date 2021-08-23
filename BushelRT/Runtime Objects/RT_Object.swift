@@ -146,7 +146,14 @@ import Bushel
     }
     
     public func evaluate() throws -> RT_Object {
-        try (self as? RT_HierarchicalSpecifier)?.evaluate_() ?? self
+        if let specifier = self as? RT_HierarchicalSpecifier {
+            return try specifier.rootAncestor().evaluateSpecifierRootedAtSelf(specifier)
+        }
+        return self
+    }
+    
+    public func evaluateSpecifierRootedAtSelf(_ specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
+        try evaluateLocalSpecifierRootedAtSelf(specifier)
     }
     
     /// The ordering of this object relative to another object, or `nil` if

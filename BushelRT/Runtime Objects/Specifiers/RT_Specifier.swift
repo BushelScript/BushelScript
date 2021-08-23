@@ -186,7 +186,10 @@ public final class RT_Specifier: RT_Object, RT_HierarchicalSpecifier, RT_Module 
         
         switch kind {
         case let .property(property):
-            return .objectSpecifier(parentSpecifier.byProperty(AE4.AEType(rawValue: property.uri.ae4Code!)))
+            guard let propertyAE4 = property.uri.ae4Code else {
+                throw Unencodable(object: property)
+            }
+            return .objectSpecifier(parentSpecifier.byProperty(AE4.AEType(rawValue: propertyAE4)))
         case let .element(element):
             guard let code = element.type.id.ae4Code else {
                 return nil

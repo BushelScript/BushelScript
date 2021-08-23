@@ -152,6 +152,7 @@ translation:
                 arguments:
                     - args
                     - arguments
+                app/running?: running?
                 current date: current date
                 record/keys: keys
                 record/values: values
