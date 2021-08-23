@@ -143,7 +143,7 @@
                                                                 <outlet property="textField" destination="9xW-eD-hA3" id="Uh4-lq-Ljb"/>
                                                             </connections>
                                                         </tableCellView>
-                                                        <tableCellView identifier="DataCell" id="mcV-e0-b8S">
+                                                        <tableCellView identifier="DataCell" id="mcV-e0-b8S" customClass="DictionaryBrowserSidebarCellView" customModule="BushelScript_Editor" customModuleProvider="target">
                                                             <rect key="frame" x="11" y="17" width="155" height="20"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
@@ -176,6 +176,7 @@
                                                                 </textField>
                                                             </subviews>
                                                             <connections>
+                                                                <outlet property="termRoleIconView" destination="FbN-xp-a26" id="DHo-ZT-9QQ"/>
                                                                 <outlet property="textField" destination="cTt-f9-wbS" id="oUN-lj-6xk"/>
                                                             </connections>
                                                         </tableCellView>

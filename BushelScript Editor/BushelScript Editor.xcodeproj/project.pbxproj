@@ -47,6 +47,7 @@
 		3C76927923E0FC76008FE565 /* EditingPrefsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C76927823E0FC76008FE565 /* EditingPrefsVC.swift */; };
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
+		3C83CAB826D431EE00C07A56 /* DictionaryBrowserSidebarCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C83CAB726D431EE00C07A56 /* DictionaryBrowserSidebarCellView.swift */; };
 		3C880B1B26C6EB28006839AB /* Themes in Resources */ = {isa = PBXBuildFile; fileRef = 3C880B1526C6EB28006839AB /* Themes */; };
 		3C88833D269E2D6F00803197 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; };
 		3C88833E269E2D6F00803197 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
@@ -295,6 +296,7 @@
 		3C7A6CBD23CBCB25007F5D84 /* OSADictionaryWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSADictionaryWindowController.h; sourceTree = "<group>"; };
 		3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSADictionaryWindowCustomization.swift; sourceTree = "<group>"; };
 		3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryDocument.swift; sourceTree = "<group>"; };
+		3C83CAB726D431EE00C07A56 /* DictionaryBrowserSidebarCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryBrowserSidebarCellView.swift; sourceTree = "<group>"; };
 		3C880B1526C6EB28006839AB /* Themes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Themes; sourceTree = "<group>"; };
 		3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = bushelscript.xcodeproj; path = ../bushelscript/bushelscript.xcodeproj; sourceTree = "<group>"; };
 		3CC2A62026A929BD00509362 /* DictionaryBrowser.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DictionaryBrowser.storyboard; sourceTree = "<group>"; };
@@ -618,6 +620,7 @@
 				3CC2A62826A93A6A00509362 /* DictionaryBrowserWC.swift */,
 				3CC2A62226A92C3800509362 /* DictionaryBrowserVC.swift */,
 				3CC2A62426A92C9600509362 /* DictionaryBrowserSidebarVC.swift */,
+				3C83CAB726D431EE00C07A56 /* DictionaryBrowserSidebarCellView.swift */,
 				3CC2A62626A92CA100509362 /* DictionaryBrowserContentVC.swift */,
 				3CE531D626AA54C300E7E1B8 /* TermRoleIconView.swift */,
 			);
@@ -1038,6 +1041,7 @@
 				3CE531DE26AA61C400E7E1B8 /* HighlightStyles.swift in Sources */,
 				3C76927923E0FC76008FE565 /* EditingPrefsVC.swift in Sources */,
 				3C76927123E0E635008FE565 /* UnarchiveFontVT.swift in Sources */,
+				3C83CAB826D431EE00C07A56 /* DictionaryBrowserSidebarCellView.swift in Sources */,
 				3C2A9CF02679665E0084716C /* InterpreterPrefsVC.swift in Sources */,
 				3C3C1815231AA70B00553072 /* Logging.swift in Sources */,
 			);

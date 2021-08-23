@@ -10,10 +10,6 @@ class TermRoleIconView: NSView {
         termDoc?.termDoc.term.role
     }
     
-    override func awakeFromNib() {
-        bind(NSBindingName("termDoc"), to: tableCellView!, withKeyPath: "objectValue", options: [:])
-    }
-    
     @IBInspectable var cornerRadius: CGFloat = 0
     @IBInspectable var outlineWidth: CGFloat = 0
     @IBInspectable var textFontSize: CGFloat = 12
