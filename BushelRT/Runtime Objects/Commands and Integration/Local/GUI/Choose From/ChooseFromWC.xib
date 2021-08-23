@@ -14,7 +14,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="alertPanel" titlebarAppearsTransparent="YES" id="F0z-JX-Cv5">
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="documentWindow" titlebarAppearsTransparent="YES" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <rect key="contentRect" x="196" y="240" width="337" height="270"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="875"/>
@@ -69,7 +69,7 @@ Gw
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn width="283" minWidth="40" maxWidth="1000" id="t17-s1-MaU">
+                                        <tableColumn width="254" minWidth="40" maxWidth="1000" id="t17-s1-MaU">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -82,11 +82,11 @@ Gw
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
                                                 <tableCellView id="TVS-nf-jtM">
-                                                    <rect key="frame" x="1" y="1" width="292" height="17"/>
+                                                    <rect key="frame" x="11" y="1" width="263" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1M1-J2-oRg">
-                                                            <rect key="frame" x="0.0" y="0.0" width="292" height="17"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="263" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="gOf-Qm-YzM">
                                                                 <font key="font" metaFont="smallSystem" size="13"/>
