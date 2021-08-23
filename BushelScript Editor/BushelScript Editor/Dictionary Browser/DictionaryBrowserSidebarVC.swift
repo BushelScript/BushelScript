@@ -40,9 +40,9 @@ class DictionaryBrowserSidebarVC: NSViewController, NSOutlineViewDelegate, NSOut
     
     func drillDown(to term: Term) {
         if let containingTerm = termToContainingTerm[term] {
+            outlineView.expandItem(containingTerm)
             drillDown(to: containingTerm)
         }
-        outlineView.expandItem(term)
     }
     
     func reveal(_ term: Term) {
