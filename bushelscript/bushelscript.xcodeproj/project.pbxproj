@@ -74,13 +74,6 @@
 			remoteGlobalIDString = 3C94570223E8FBC200D59C2C;
 			remoteInfo = BushelLanguageTestingTools;
 		};
-		3CBF21C523FF9B0E00E3074A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3C1D24F92306E33300D202FA /* Bushel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3CB328E523EDAD4C003BF646;
-			remoteInfo = BushelGUIHost;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -133,7 +126,6 @@
 				3C1D251C2306E33300D202FA /* bushelscript_en Tests.xctest */,
 				3C1D250C2306E33300D202FA /* BushelRT.framework */,
 				3C1D250E2306E33300D202FA /* BushelRTTests.xctest */,
-				3CBF21C623FF9B0E00E3074A /* BushelGUIHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -294,13 +286,6 @@
 			fileType = wrapper.framework;
 			path = BushelLanguageTestingTools.framework;
 			remoteRef = 3CBF21C323FF9B0E00E3074A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3CBF21C623FF9B0E00E3074A /* BushelGUIHost.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = BushelGUIHost.app;
-			remoteRef = 3CBF21C523FF9B0E00E3074A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
