@@ -4,10 +4,11 @@ import Bushel
 class TermRoleIconView: NSView {
     
     @IBOutlet var tableCellView: NSTableCellView!
-    @objc var termDoc: DictionaryBrowserTermDoc?
     
     var role: Term.SyntacticRole? {
-        termDoc?.termDoc.term.role
+        didSet {
+            needsDisplay = true
+        }
     }
     
     @IBInspectable var cornerRadius: CGFloat = 0
