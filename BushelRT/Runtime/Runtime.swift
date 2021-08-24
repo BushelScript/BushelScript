@@ -138,9 +138,9 @@ extension Runtime {
             case .empty: // MARK: .empty
                 return lastResult
             case .that: // MARK: .that
-                return try evaluateSpecifiers ? context.evaluate(specifier: lastResult) : lastResult
+                return lastResult
             case .it: // MARK: .it
-                return try evaluateSpecifiers ? context.evaluate(specifier: context.target) : context.target
+                return context.target
             case .missing: // MARK: .missing
                 return missing
             case .unspecified: // MARK: .unspecified
