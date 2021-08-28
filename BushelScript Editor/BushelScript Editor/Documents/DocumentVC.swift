@@ -142,10 +142,10 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations, SourceEditor.Del
     }
     
     override func viewDidLoad() {
-        Defaults.observe(.sourceCodeFont) { [weak self] _ in
+        Defaults.observe(.sourceCodeFont, options: [.initial]) { [weak self] _ in
             self?.updateHighlightStyles()
         }.tieToLifetime(of: self)
-        Defaults.observe(.themeFileName) { [weak self] _ in
+        Defaults.observe(.themeFileName, options: []) { [weak self] _ in
             self?.updateHighlightStyles()
         }.tieToLifetime(of: self)
         tie(to: self, [
