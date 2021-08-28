@@ -1,10 +1,13 @@
 
-class Cache<Key, Value> where Key: Hashable {
+public class Cache<Key, Value> where Key: Hashable {
     
     private let accessQueue = DispatchQueue(label: "Cache access")
     private var cache: [Key : Value] = [:]
     
-    subscript(_ key: Key) -> Value? {
+    public init() {
+    }
+    
+    public subscript(_ key: Key) -> Value? {
         get {
             accessQueue.sync {
                 cache[key]
@@ -17,7 +20,7 @@ class Cache<Key, Value> where Key: Hashable {
         }
     }
     
-    func clear() {
+    public func clear() {
         cache.removeAll()
     }
     
@@ -25,14 +28,14 @@ class Cache<Key, Value> where Key: Hashable {
 
 extension Cache {
     
-    func `for`(_ key: Key, default action: @autoclosure () throws -> Value) rethrows -> Value {
+    public func `for`(_ key: Key, default action: @autoclosure () throws -> Value) rethrows -> Value {
         try self[key] ?? {
             let value = try action()
             self[key] = value
             return value
         }()
     }
-    func `for`(_ key: Key, default action: @autoclosure () throws -> Value?) rethrows -> Value? {
+    public func `for`(_ key: Key, default action: @autoclosure () throws -> Value?) rethrows -> Value? {
         try self[key] ?? {
             let value = try action()
             if let value = value {
