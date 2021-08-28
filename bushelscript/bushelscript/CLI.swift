@@ -212,18 +212,18 @@ struct BushelScript: ParsableCommand {
                 return
             }
             guard !trimmed.isEmpty else {
-                parser.entireSource += "\n"
+                parser.state.entireSource += "\n"
                 continue
             }
-            let oldEntireSource = parser.entireSource
+            let oldEntireSource = parser.state.entireSource
             let lineBreak = (lineNumber == 1) ? "" : "\n"
             do {
                 let program = try parser.continueParsing(from: lineBreak + line)
                 let result = try rt.run(program)
                 print(result)
             } catch {
-                printError(error, in: parser.entireSource, fileName: scriptName)
-                parser.entireSource = oldEntireSource + lineBreak
+                printError(error, in: parser.state.entireSource, fileName: scriptName)
+                parser.state.entireSource = oldEntireSource + lineBreak
                 continue
             }
         }
@@ -238,7 +238,7 @@ struct BushelScript: ParsableCommand {
                 print(result)
             }
         } catch {
-            printError(error, in: parser.entireSource, fileName: fileName)
+            printError(error, in: parser.state.entireSource, fileName: fileName)
             throw ExitCode.failure
         }
     }

@@ -3,213 +3,186 @@ import Regex
 
 public final class EnglishParser: SourceParser {
     
-    public static var sdefCache: [URL : Data] = [:]
-    
     public let messageFormatter: MessageFormatter = EnglishMessageFormatter()
     
-    public var entireSource: String = ""
-    public lazy var source: Substring = Substring(entireSource)
-    public var expressionStartIndices: [String.Index] = []
-    public lazy var termNameStartIndex: String.Index = entireSource.startIndex
-    
-    public var lexicon = Lexicon()
-    public var cache = globalCache
-    public var sequenceNestingLevel: Int = 0
-    public var elements: Set<SourceElement> = []
-    public var awaitingExpressionEndKeywords: [Set<Term.Name>] = []
-    public let defaultEndKeyword = Term.Name(["end"])
-    public var lastEndKeyword = Term.Name(["end"])
-    public var allowSuffixSpecifierStack: [Bool] = []
-    
-    public var keywordsTraversalTable: TermNameTraversalTable = [:]
-    public var prefixOperatorsTraversalTable: TermNameTraversalTable = [:]
-    public var postfixOperatorsTraversalTable: TermNameTraversalTable = [:]
-    public var binaryOperatorsTraversalTable: TermNameTraversalTable = [:]
-    
-    public var nativeImports: Set<URL> = []
+    public var state = SourceParserState()
+    public lazy var config = SourceParserConfig(
+        defaultEndKeyword: Term.Name(["end"]),
+        keywords: [
+            Term.Name("require"): KeywordHandler(self, SourceParser.handleRequire),
+            Term.Name("use"): KeywordHandler(self, SourceParser.handleUse),
+            Term.Name("return"): KeywordHandler(self, SourceParser.handleReturn),
+            Term.Name("raise"): KeywordHandler(self, SourceParser.handleRaise),
+            Term.Name("that"): KeywordHandler(self, SourceParser.handleThat),
+            Term.Name("it"): KeywordHandler(self, SourceParser.handleIt),
+            Term.Name("missing"): KeywordHandler(self, SourceParser.handleMissing),
+            Term.Name("unspecified"): KeywordHandler(self, SourceParser.handleUnspecified),
+            Term.Name("ref"): KeywordHandler(self, SourceParser.handleRef),
+            Term.Name("get"): KeywordHandler(self, SourceParser.handleGet),
+            Term.Name("debug_inspect_term"): KeywordHandler(self, SourceParser.handleDebugInspectTerm),
+            Term.Name("debug_inspect_lexicon"): KeywordHandler(self, SourceParser.handleDebugInspectLexicon),
+            
+            Term.Name("set"): KeywordHandler(self, EnglishParser.handleSet),
+            Term.Name("on"): KeywordHandler(self, EnglishParser.handleFunctionStart),
+            Term.Name("to"): KeywordHandler(self, EnglishParser.handleFunctionStart),
+            Term.Name("take"): KeywordHandler(self, EnglishParser.handleBlockArgumentNamesStart),
+            Term.Name("do"): KeywordHandler(self, EnglishParser.handleBlockBodyStart),
+            Term.Name("try"): KeywordHandler(self, EnglishParser.handleTry),
+            Term.Name("if"): KeywordHandler(self, EnglishParser.handleIf),
+            Term.Name("repeat"): KeywordHandler(self, EnglishParser.handleRepeat),
+            Term.Name("repeating"): KeywordHandler(self, EnglishParser.handleRepeat),
+            Term.Name("tell"): KeywordHandler(self, EnglishParser.handleTell),
+            Term.Name("let"): KeywordHandler(self, EnglishParser.handleLet),
+            Term.Name("define"): KeywordHandler(self, EnglishParser.handleDefine),
+            Term.Name("defining"): KeywordHandler(self, EnglishParser.handleDefining),
+            Term.Name("subtype"): KeywordHandler(self, EnglishParser.handleSubtype),
+            
+            Term.Name("every"): handleQuantifier(.all),
+            Term.Name("all"): handleQuantifier(.all),
+            Term.Name("first"): handleQuantifier(.first),
+            Term.Name("front"): handleQuantifier(.first),
+            Term.Name("middle"): handleQuantifier(.middle),
+            Term.Name("last"): handleQuantifier(.last),
+            Term.Name("back"): handleQuantifier(.last),
+            Term.Name("some"): handleQuantifier(.random),
+            Term.Name("first position of"): handleInsertionLocation(.beginning),
+            Term.Name("first position"): handleInsertionLocation(.beginning),
+            Term.Name("last position of"): handleInsertionLocation(.end),
+            Term.Name("last position"): handleInsertionLocation(.end),
+            Term.Name("position before"): handleInsertionLocation(.before),
+            Term.Name("position after"): handleInsertionLocation(.after),
+        ],
+        resourceTypes: [
+            Term.Name("system"): (false, [], ResourceTypeHandler(self, EnglishParser.handleImportSystem)),
+            
+            Term.Name("app"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportApplicationName)),
+            Term.Name("app id"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportApplicationID)),
+            
+            Term.Name("library"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportLibrary)),
+            
+            Term.Name("AppleScript"): (true, ["at"], ResourceTypeHandler(self, EnglishParser.handleImportAppleScript)),
+        ],
+        operators: SourceParserConfig.Operators(
+            prefix: [
+                Term.Name("not"): .not,
+                Term.Name("-"): .negate
+            ],
+            postfix: [:],
+            infix: [
+                Term.Name("or"): .or,
+                Term.Name("xor"): .xor,
+                Term.Name("and"): .and,
+                Term.Name("is a"): .isA,
+                Term.Name("is an"): .isA,
+                Term.Name("is not a"): .isNotA,
+                Term.Name("is not an"): .isNotA,
+                Term.Name("isn't a"): .isNotA,
+                Term.Name("isn’t a"): .isNotA,
+                Term.Name("isn't an"): .isNotA,
+                Term.Name("isn’t an"): .isNotA,
+                Term.Name("equals"): .equal,
+                Term.Name("equal to"): .equal,
+                Term.Name("equals to"): .equal,
+                Term.Name("is equal to"): .equal,
+                Term.Name("is"): .equal,
+                Term.Name("="): .equal,
+                Term.Name("=="): .equal,
+                Term.Name("not equal to"): .notEqual,
+                Term.Name("is not equal to"): .notEqual,
+                Term.Name("isn't equal to"): .notEqual,
+                Term.Name("isn’t equal to"): .notEqual,
+                Term.Name("unequal to"): .notEqual,
+                Term.Name("is unequal to"): .notEqual,
+                Term.Name("is not"): .notEqual,
+                Term.Name("isn't"): .notEqual,
+                Term.Name("isn’t"): .notEqual,
+                Term.Name("not ="): .notEqual,
+                Term.Name("!="): .notEqual,
+                Term.Name("≠"): .notEqual,
+                Term.Name("less than"): .less,
+                Term.Name("is less than"): .less,
+                Term.Name("<"): .less,
+                Term.Name("less than equal to"): .lessEqual,
+                Term.Name("less than or equals"): .lessEqual,
+                Term.Name("less than or equal to"): .lessEqual,
+                Term.Name("is less than equal to"): .lessEqual,
+                Term.Name("is less than or equals"): .lessEqual,
+                Term.Name("is less than or equal to"): .lessEqual,
+                Term.Name("<="): .lessEqual,
+                Term.Name("≤"): .lessEqual,
+                Term.Name("greater than"): .greater,
+                Term.Name("is greater than"): .greater,
+                Term.Name(">"): .greater,
+                Term.Name("greater than equal to"): .greaterEqual,
+                Term.Name("greater than or equals"): .greaterEqual,
+                Term.Name("greater than or equal to"): .greaterEqual,
+                Term.Name("is greater than equal to"): .greaterEqual,
+                Term.Name("is greater than or equals"): .greaterEqual,
+                Term.Name("is greater than or equal to"): .greaterEqual,
+                Term.Name(">="): .greaterEqual,
+                Term.Name("≥"): .greaterEqual,
+                Term.Name("starts with"): .startsWith,
+                Term.Name("begins with"): .startsWith,
+                Term.Name("ends with"): .endsWith,
+                Term.Name("contains"): .contains,
+                Term.Name("has"): .contains,
+                Term.Name("does not contain"): .notContains,
+                Term.Name("doesn't contain"): .notContains,
+                Term.Name("doesn’t contain"): .notContains,
+                Term.Name("does not have"): .notContains,
+                Term.Name("doesn't have"): .notContains,
+                Term.Name("doesn’t have"): .notContains,
+                Term.Name("is in"): .containedBy,
+                Term.Name("is contained by"): .containedBy,
+                Term.Name("is not in"): .notContainedBy,
+                Term.Name("isn't in"): .notContainedBy,
+                Term.Name("isn’t in"): .notContainedBy,
+                Term.Name("is not contained by"): .notContainedBy,
+                Term.Name("isn't contained by"): .notContainedBy,
+                Term.Name("isn’t contained by"): .notContainedBy,
+                Term.Name("&"): .concatenate,
+                Term.Name("+"): .add,
+                Term.Name("-"): .subtract,
+                Term.Name("−"): .subtract,
+                Term.Name("*"): .multiply,
+                Term.Name("×"): .multiply,
+                Term.Name("div"): .divide,
+                Term.Name("÷"): .divide,
+                Term.Name("as"): .coerce,
+            ]
+        ),
+        delimiters: SourceParserConfig.Delimiters(
+            suffixSpecifier: [
+                Term.Name("->"),
+                Term.Name("→")
+            ],
+            string: [
+                (begin: Term.Name("\""), end: Term.Name("\"")),
+                (begin: Term.Name("“"), end: Term.Name("”"))
+            ],
+            expressionGrouping: [
+                (begin: Term.Name("("), end: Term.Name(")"))
+            ],
+            list: [],
+            record: [],
+            listAndRecord: [
+                (begin: Term.Name("{"), end: Term.Name("}"), itemSeparators: [Term.Name(",")], keyValueSeparators: [Term.Name(":")])
+            ],
+            lineComment: [
+                Term.Name("--")
+            ],
+            blockComment: [
+                (begin: Term.Name("--("), end: Term.Name(")--"))
+            ]
+        )
+    )
     
     public init() {
     }
     
-    public let prefixOperators: [Term.Name : UnaryOperation] = [
-        Term.Name("not"): .not,
-        Term.Name("-"): .negate
-    ]
-    
-    public let postfixOperators: [Term.Name : UnaryOperation] = [:]
-    
-    public let infixOperators: [Term.Name : BinaryOperation] = [
-        Term.Name("or"): .or,
-        Term.Name("xor"): .xor,
-        Term.Name("and"): .and,
-        Term.Name("is a"): .isA,
-        Term.Name("is an"): .isA,
-        Term.Name("is not a"): .isNotA,
-        Term.Name("is not an"): .isNotA,
-        Term.Name("isn't a"): .isNotA,
-        Term.Name("isn’t a"): .isNotA,
-        Term.Name("isn't an"): .isNotA,
-        Term.Name("isn’t an"): .isNotA,
-        Term.Name("equals"): .equal,
-        Term.Name("equal to"): .equal,
-        Term.Name("equals to"): .equal,
-        Term.Name("is equal to"): .equal,
-        Term.Name("is"): .equal,
-        Term.Name("="): .equal,
-        Term.Name("=="): .equal,
-        Term.Name("not equal to"): .notEqual,
-        Term.Name("is not equal to"): .notEqual,
-        Term.Name("isn't equal to"): .notEqual,
-        Term.Name("isn’t equal to"): .notEqual,
-        Term.Name("unequal to"): .notEqual,
-        Term.Name("is unequal to"): .notEqual,
-        Term.Name("is not"): .notEqual,
-        Term.Name("isn't"): .notEqual,
-        Term.Name("isn’t"): .notEqual,
-        Term.Name("not ="): .notEqual,
-        Term.Name("!="): .notEqual,
-        Term.Name("≠"): .notEqual,
-        Term.Name("less than"): .less,
-        Term.Name("is less than"): .less,
-        Term.Name("<"): .less,
-        Term.Name("less than equal to"): .lessEqual,
-        Term.Name("less than or equals"): .lessEqual,
-        Term.Name("less than or equal to"): .lessEqual,
-        Term.Name("is less than equal to"): .lessEqual,
-        Term.Name("is less than or equals"): .lessEqual,
-        Term.Name("is less than or equal to"): .lessEqual,
-        Term.Name("<="): .lessEqual,
-        Term.Name("≤"): .lessEqual,
-        Term.Name("greater than"): .greater,
-        Term.Name("is greater than"): .greater,
-        Term.Name(">"): .greater,
-        Term.Name("greater than equal to"): .greaterEqual,
-        Term.Name("greater than or equals"): .greaterEqual,
-        Term.Name("greater than or equal to"): .greaterEqual,
-        Term.Name("is greater than equal to"): .greaterEqual,
-        Term.Name("is greater than or equals"): .greaterEqual,
-        Term.Name("is greater than or equal to"): .greaterEqual,
-        Term.Name(">="): .greaterEqual,
-        Term.Name("≥"): .greaterEqual,
-        Term.Name("starts with"): .startsWith,
-        Term.Name("begins with"): .startsWith,
-        Term.Name("ends with"): .endsWith,
-        Term.Name("contains"): .contains,
-        Term.Name("has"): .contains,
-        Term.Name("does not contain"): .notContains,
-        Term.Name("doesn't contain"): .notContains,
-        Term.Name("doesn’t contain"): .notContains,
-        Term.Name("does not have"): .notContains,
-        Term.Name("doesn't have"): .notContains,
-        Term.Name("doesn’t have"): .notContains,
-        Term.Name("is in"): .containedBy,
-        Term.Name("is contained by"): .containedBy,
-        Term.Name("is not in"): .notContainedBy,
-        Term.Name("isn't in"): .notContainedBy,
-        Term.Name("isn’t in"): .notContainedBy,
-        Term.Name("is not contained by"): .notContainedBy,
-        Term.Name("isn't contained by"): .notContainedBy,
-        Term.Name("isn’t contained by"): .notContainedBy,
-        Term.Name("&"): .concatenate,
-        Term.Name("+"): .add,
-        Term.Name("-"): .subtract,
-        Term.Name("−"): .subtract,
-        Term.Name("*"): .multiply,
-        Term.Name("×"): .multiply,
-        Term.Name("div"): .divide,
-        Term.Name("÷"): .divide,
-        Term.Name("as"): .coerce,
-    ]
-    
-    public let suffixSpecifierMarkers: [Term.Name] = [
-        Term.Name("->"),
-        Term.Name("→")
-    ]
-    
-    public let stringMarkers: [(begin: Term.Name, end: Term.Name)] = [
-        (begin: Term.Name("\""), end: Term.Name("\"")),
-        (begin: Term.Name("“"), end: Term.Name("”"))
-    ]
-    
-    public let expressionGroupingMarkers: [(begin: Term.Name, end: Term.Name)] = [
-        (begin: Term.Name("("), end: Term.Name(")"))
-    ]
-    
-    public let listMarkers: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name])] = []
-    
-    public let recordMarkers: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])] = []
-    
-    public let listAndRecordMarkers: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])] = [
-        (begin: Term.Name("{"), end: Term.Name("}"), itemSeparators: [Term.Name(",")], keyValueSeparators: [Term.Name(":")])
-    ]
-    
-    public let lineCommentMarkers: [Term.Name] = [
-        Term.Name("--")
-    ]
-    
-    public let blockCommentMarkers: [(begin: Term.Name, end: Term.Name)] = [
-        (begin: Term.Name("--("), end: Term.Name(")--"))
-    ]
-    
-    public lazy var keywords: [Term.Name : KeywordHandler] = [
-        Term.Name("require"): KeywordHandler(self, SourceParser.handleRequire),
-        Term.Name("use"): KeywordHandler(self, SourceParser.handleUse),
-        Term.Name("return"): KeywordHandler(self, SourceParser.handleReturn),
-        Term.Name("raise"): KeywordHandler(self, SourceParser.handleRaise),
-        Term.Name("that"): KeywordHandler(self, SourceParser.handleThat),
-        Term.Name("it"): KeywordHandler(self, SourceParser.handleIt),
-        Term.Name("missing"): KeywordHandler(self, SourceParser.handleMissing),
-        Term.Name("unspecified"): KeywordHandler(self, SourceParser.handleUnspecified),
-        Term.Name("ref"): KeywordHandler(self, SourceParser.handleRef),
-        Term.Name("get"): KeywordHandler(self, SourceParser.handleGet),
-        Term.Name("debug_inspect_term"): KeywordHandler(self, SourceParser.handleDebugInspectTerm),
-        Term.Name("debug_inspect_lexicon"): KeywordHandler(self, SourceParser.handleDebugInspectLexicon),
-        
-        Term.Name("set"): KeywordHandler(self, EnglishParser.handleSet),
-        Term.Name("on"): KeywordHandler(self, EnglishParser.handleFunctionStart),
-        Term.Name("to"): KeywordHandler(self, EnglishParser.handleFunctionStart),
-        Term.Name("take"): KeywordHandler(self, EnglishParser.handleBlockArgumentNamesStart),
-        Term.Name("do"): KeywordHandler(self, EnglishParser.handleBlockBodyStart),
-        Term.Name("try"): KeywordHandler(self, EnglishParser.handleTry),
-        Term.Name("if"): KeywordHandler(self, EnglishParser.handleIf),
-        Term.Name("repeat"): KeywordHandler(self, EnglishParser.handleRepeat),
-        Term.Name("repeating"): KeywordHandler(self, EnglishParser.handleRepeat),
-        Term.Name("tell"): KeywordHandler(self, EnglishParser.handleTell),
-        Term.Name("let"): KeywordHandler(self, EnglishParser.handleLet),
-        Term.Name("define"): KeywordHandler(self, EnglishParser.handleDefine),
-        Term.Name("defining"): KeywordHandler(self, EnglishParser.handleDefining),
-        Term.Name("subtype"): KeywordHandler(self, EnglishParser.handleSubtype),
-        
-        Term.Name("every"): handleQuantifier(.all),
-        Term.Name("all"): handleQuantifier(.all),
-        Term.Name("first"): handleQuantifier(.first),
-        Term.Name("front"): handleQuantifier(.first),
-        Term.Name("middle"): handleQuantifier(.middle),
-        Term.Name("last"): handleQuantifier(.last),
-        Term.Name("back"): handleQuantifier(.last),
-        Term.Name("some"): handleQuantifier(.random),
-        Term.Name("first position of"): handleInsertionLocation(.beginning),
-        Term.Name("first position"): handleInsertionLocation(.beginning),
-        Term.Name("last position of"): handleInsertionLocation(.end),
-        Term.Name("last position"): handleInsertionLocation(.end),
-        Term.Name("position before"): handleInsertionLocation(.before),
-        Term.Name("position after"): handleInsertionLocation(.after),
-    ]
-    
-    public lazy var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)] = [
-        Term.Name("system"): (false, [], ResourceTypeHandler(self, EnglishParser.handleImportSystem)),
-        
-        Term.Name("app"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportApplicationName)),
-        Term.Name("app id"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportApplicationID)),
-        
-        Term.Name("library"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportLibrary)),
-        
-        Term.Name("AppleScript"): (true, ["at"], ResourceTypeHandler(self, EnglishParser.handleImportAppleScript)),
-    ]
-    
     private func handleFunctionStart() throws -> Expression.Kind? {
         guard let functionName = try parseTermNameEagerly(styling: .command) else {
-            throw ParseError(.missing([.functionName]), at: SourceLocation(source.range, source: entireSource))
+            throw ParseError(.missing([.functionName]), at: SourceLocation(state.source.range, source: state.entireSource))
         }
         
         try eatLineBreakOrThrow()
@@ -236,7 +209,7 @@ public final class EnglishParser: SourceParser {
                         return parameterTermName
                     }
                 }()
-                arguments.append(Term(.variable, lexicon.makeIDURI(forName: argumentName), name: argumentName))
+                arguments.append(Term(.variable, state.lexicon.makeIDURI(forName: argumentName), name: argumentName))
                 
                 if
                     tryEating(prefix: ":", spacing: .right),
@@ -256,13 +229,13 @@ public final class EnglishParser: SourceParser {
             
             // Define command term (and parameter terms) outside
             // the function scope before parsing body:
-            let functionScope = lexicon.top
-            lexicon.pop()
-            commandTerm = lexicon.lookUpOrDefine(.command, name: functionName, dictionary: TermDictionary(contents: parameters))
-            lexicon.push(functionScope)
+            let functionScope = state.lexicon.top
+            state.lexicon.pop()
+            commandTerm = state.lexicon.lookUpOrDefine(.command, name: functionName, dictionary: TermDictionary(contents: parameters))
+            state.lexicon.push(functionScope)
             
             try eatLineBreakOrThrow(.toBeginBlock("function body"))
-            lexicon.add(Set(arguments))
+            state.lexicon.add(Set(arguments))
             return try parseSequence()
         }
         
@@ -273,14 +246,14 @@ public final class EnglishParser: SourceParser {
         var arguments: [Term] = []
         let body = try withScope {
             while let argumentName = try parseTermNameEagerly(stoppingAt: [",", "do"], styling: .variable) {
-                arguments.append(Term(.variable, lexicon.makeIDURI(forName: argumentName), name: argumentName))
+                arguments.append(Term(.variable, state.lexicon.makeIDURI(forName: argumentName), name: argumentName))
                 
                 if !tryEating(prefix: ",", spacing: .right) {
                     break
                 }
             }
             
-            lexicon.add(Set(arguments))
+            state.lexicon.add(Set(arguments))
             
             guard tryEating(prefix: "do") else {
                 throw ParseError(.missing([.blockBody]), at: expressionLocation)
@@ -314,7 +287,7 @@ public final class EnglishParser: SourceParser {
             let foundNewline = tryEatingLineBreak()
             if foundNewline {
                 let body = try parseSequence(stoppingAt: [Term.Name(["handle"])])
-                guard lastEndKeyword == Term.Name(["handle"]) else {
+                guard state.lastEndKeyword == Term.Name(["handle"]) else {
                     throw ParseError(.missing([.keyword(Term.Name(["handle"]))]), at: currentLocation)
                 }
                 return body
@@ -345,9 +318,9 @@ public final class EnglishParser: SourceParser {
         let condition = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["if"])))
         if tryEatingLineBreak() {
             let then = try parseSequence(stoppingAt: [Term.Name(["else"])])
-            let rollbackSource = source
-            let rollbackElements = elements
-            if lastEndKeyword == Term.Name(["else"]) {
+            let rollbackSource = state.source
+            let rollbackElements = state.elements
+            if state.lastEndKeyword == Term.Name(["else"]) {
                 if tryEatingLineBreak() {
                     return .if_(condition: condition, then: then, else: try parseSequence())
                 } else {
@@ -358,8 +331,8 @@ public final class EnglishParser: SourceParser {
                     return .if_(condition: condition, then: then, else: `else`)
                 }
             } else {
-                source = rollbackSource
-                elements = rollbackElements
+                state.source = rollbackSource
+                state.elements = rollbackElements
                 return .if_(condition: condition, then: then, else: nil)
             }
         } else if tryEating(prefix: "then") {
@@ -388,7 +361,7 @@ public final class EnglishParser: SourceParser {
             let variableTerm = try parseVariableTermOrThrow(stoppingAt: ["in"])
             try eatOrThrow(prefix: "in")
             let expression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["in"])))
-            lexicon.add(variableTerm)
+            state.lexicon.add(variableTerm)
             return .repeatFor(variable: variableTerm, container: expression, repeating: try parseRepeatBlock())
         } else {
             let times = try parsePrimaryOrThrow()
@@ -415,7 +388,7 @@ public final class EnglishParser: SourceParser {
     private func handleLet() throws -> Expression.Kind? {
         let term = try parseVariableTermOrThrow(stoppingAt: ["be"], .afterKeyword(Term.Name(["let"])))
         let initialValue: Expression? = tryEating(prefix: "be") ? try parsePrimaryOrThrow(.afterKeyword(Term.Name(["be"]))) : nil
-        lexicon.add(term)
+        state.lexicon.add(term)
         return .let_(term, initialValue: initialValue)
     }
     
@@ -429,10 +402,10 @@ public final class EnglishParser: SourceParser {
                 return nil
             }
             return try eatTermURI(Styling(for: role)) ?? eatTermOrThrow()
-        }() ?? lexicon.makeIDURI(forName: name)
+        }() ?? state.lexicon.makeIDURI(forName: name)
         
         let term = Term(role, uriProvider.uri, name: name)
-        lexicon.add(term)
+        state.lexicon.add(term)
         
         return (term: term, uri: uriProvider)
     }
@@ -482,35 +455,35 @@ public final class EnglishParser: SourceParser {
             system = resolved
         }
         let term = Term(.resource, .res("system"), name: Term.Name(["system"]), resource: system.enumerated())
-        try cache.dictionaryCache.loadResourceDictionary(for: term)
+        try state.cache.dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
     private func handleImportApplicationName(name: Term.Name) throws -> Term {
-        guard let bundle = try cache.resourceCache.app(named: name.normalized) else {
+        guard let bundle = try state.cache.resourceCache.app(named: name.normalized) else {
             throw ParseError(.unmetResourceRequirement(.applicationByName(name: name.normalized)), at: termNameLocation)
         }
         let term = Term(.resource, .res("app:\(name)"), name: name, resource: .applicationByName(bundle: bundle))
-        try cache.dictionaryCache.loadResourceDictionary(for: term)
+        try state.cache.dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
     private func handleImportApplicationID(name: Term.Name) throws -> Term {
-        guard let bundle = try cache.resourceCache.app(id: name.normalized) else {
+        guard let bundle = try state.cache.resourceCache.app(id: name.normalized) else {
             throw ParseError(.unmetResourceRequirement(.applicationByBundleID(bundleID: name.normalized)), at: termNameLocation)
         }
         let term = Term(.resource, .res("appid:\(name)"), name: name, resource: .applicationByID(bundle: bundle))
-        try cache.dictionaryCache.loadResourceDictionary(for: term)
+        try state.cache.dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
     private func handleImportLibrary(name: Term.Name) throws -> Term {
-        guard let (url, library) = try cache.resourceCache.library(named: name.normalized, ignoring: nativeImports) else {
+        guard let (url, library) = try state.cache.resourceCache.library(named: name.normalized, ignoring: state.nativeImports) else {
             throw ParseError(.unmetResourceRequirement(.libraryByName(name: name.normalized)), at: termNameLocation)
         }
-        nativeImports.insert(url)
+        state.nativeImports.insert(url)
         let term = Term(.resource, .res("library:\(name)"), name: name, resource: .libraryByName(name: name.normalized, url: url, library: library))
-        try cache.dictionaryCache.loadResourceDictionary(for: term)
+        try state.cache.dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
@@ -524,11 +497,11 @@ public final class EnglishParser: SourceParser {
         
         path = (path as NSString).expandingTildeInPath
         
-        guard let applescript = try cache.resourceCache.applescript(at: path) else {
-            throw ParseError(.unmetResourceRequirement(.applescriptAtPath(path: path)), at: SourceLocation(pathStartIndex..<currentIndex, source: entireSource))
+        guard let applescript = try state.cache.resourceCache.applescript(at: path) else {
+            throw ParseError(.unmetResourceRequirement(.applescriptAtPath(path: path)), at: SourceLocation(pathStartIndex..<currentIndex, source: state.entireSource))
         }
         let term = Term(.resource, .res("as:\(path)"), name: name, resource: .applescriptAtPath(path: path, script: applescript))
-        try cache.dictionaryCache.loadResourceDictionary(for: term)
+        try state.cache.dictionaryCache.loadResourceDictionary(for: term)
         return term
     }
     
@@ -592,7 +565,7 @@ public final class EnglishParser: SourceParser {
             // a direct parameter (e.g, "open {file1, file2}").
             if !(try parseParameter()) {
                 eatCommentsAndWhitespace()
-                if !(source.first?.isNewline ?? true) {
+                if !(state.source.first?.isNewline ?? true) {
                     // Direct parameter
                     let directParameterValue: Expression
                     do {
@@ -625,54 +598,54 @@ public final class EnglishParser: SourceParser {
     
     public func parseSpecifierAfterTypeName() throws -> Specifier.Kind? {
         eatCommentsAndWhitespace()
-        guard let firstWord = Term.Name.nextWord(in: source) else {
+        guard let firstWord = Term.Name.nextWord(in: state.source) else {
             return nil
         }
         
         switch firstWord {
         case "index":
             addingElement {
-                source.removeFirst(firstWord.count)
+                state.source.removeFirst(firstWord.count)
             }
             return try parsePrimary(allowSuffixSpecifier: false).map { dataExpression in
                 return .index(dataExpression)
             }
         case "named":
             addingElement {
-                source.removeFirst(firstWord.count)
+                state.source.removeFirst(firstWord.count)
             }
             return try parsePrimary(allowSuffixSpecifier: false).map { dataExpression in
                 return .name(dataExpression)
             }
         case "id":
             addingElement {
-                source.removeFirst(firstWord.count)
+                state.source.removeFirst(firstWord.count)
             }
             return try parsePrimary(allowSuffixSpecifier: false).map { dataExpression in
                 return .id(dataExpression)
             }
         case "whose", "where":
             addingElement {
-                source.removeFirst(firstWord.count)
+                state.source.removeFirst(firstWord.count)
             }
             return try parsePrimary(allowSuffixSpecifier: false).map { expression in
                 return .test(expression, expression.asTestPredicate())
             }
         default:
             guard
-                !(source.first?.isNewline ?? false),
+                !(state.source.first?.isNewline ?? false),
                 let firstExpression = try? parsePrimary(allowSuffixSpecifier: false)
             else {
                 return nil
             }
             
             eatCommentsAndWhitespace()
-            let midWord = Term.Name.nextWord(in: source)
+            let midWord = Term.Name.nextWord(in: state.source)
             
             switch midWord {
             case "thru", "through":
                 addingElement {
-                    source.removeFirst(midWord!.count)
+                    state.source.removeFirst(midWord!.count)
                 }
                 return try parsePrimary(allowSuffixSpecifier: false).map { secondExpression in
                     return .range(from: firstExpression, to: secondExpression)
@@ -721,7 +694,7 @@ public final class EnglishParser: SourceParser {
     }
     
     public func tryParseSuffixSpecifier(chainingTo chainTo: Expression) throws -> Expression.Kind? {
-        guard allowSuffixSpecifierStack.last! else {
+        guard state.allowSuffixSpecifierStack.last! else {
             return nil
         }
         guard let keyword = eatSuffixSpecifierMarker() else {
