@@ -120,10 +120,10 @@ class DocumentVC: NSViewController, NSUserInterfaceValidations, SourceEditor.Del
         }
     }
     
-    var highlightStyles: HighlightStyles = defaultSizeHighlightStyles ?? HighlightStyles()
+    var highlightStyles = (try? fetchOrMakeHighlightStyles()) ?? HighlightStyles()
     
     private func updateHighlightStyles() {
-        highlightStyles = (try? makeHighlightStyles(fontSize: customFontSize)) ?? HighlightStyles()
+        highlightStyles = (try? fetchOrMakeHighlightStyles(fontSize: customFontSize)) ?? HighlightStyles()
         DispatchQueue.main.async {
             self.sourceEditor?.reload()
         }

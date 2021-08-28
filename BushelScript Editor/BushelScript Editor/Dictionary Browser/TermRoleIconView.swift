@@ -35,7 +35,7 @@ class TermRoleIconView: NSView {
         }
         
         let fillColor =
-            (defaultSizeHighlightStyles?[Styling(for: role)]?[.foregroundColor] as? NSColor ?? .clear)
+            ((try? fetchOrMakeHighlightStyles()[Styling(for: role)]?[.foregroundColor] as? NSColor) ?? .clear)
             .usingColorSpace(.deviceRGB)!
         let strokeColor = NSColor(
             hue: fillColor.hueComponent,
