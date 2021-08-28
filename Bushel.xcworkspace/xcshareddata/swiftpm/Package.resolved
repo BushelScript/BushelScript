@@ -21,7 +21,7 @@
       },
       {
         "package": "FootlessParser",
-        "repositoryURL": "https://github.com/kareman/FootlessParser",
+        "repositoryURL": "https://github.com/kareman/FootlessParser.git",
         "state": {
           "branch": null,
           "revision": "11c7a366720a2cc62d13ee69c8bdb8372bb3bb2b",
@@ -87,7 +87,7 @@
         "repositoryURL": "https://github.com/ThatsJustCheesy/TooMuchTheme.git",
         "state": {
           "branch": "main",
-          "revision": "24465fd53c93da00c79bc2268cac21fa14e13cf1",
+          "revision": "8acfdf802327ced15b77b5917e66ecd03b7f5038",
           "version": null
         }
       },
