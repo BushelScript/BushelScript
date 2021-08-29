@@ -77,9 +77,11 @@ public class RT_Application: RT_Object, RT_AEQuery, RT_Module {
     }
     
     public override func evaluateSpecifierRootedAtSelf(_ specifier: RT_HierarchicalSpecifier) throws -> RT_Object {
-        do {
+        switch (specifier.topHierarchicalAncestor() as? RT_Specifier)?.kind {
+        case .property(rt.reflection.properties[.id]),
+             .property(rt.reflection.properties[.app_running_Q]):
             return try super.evaluateSpecifierRootedAtSelf(specifier)
-        } catch {
+        default:
             let get = rt.reflection.commands[.get]
             return try specifier.handleByAppleEvent(
                 RT_Arguments(rt, get, [:]),
