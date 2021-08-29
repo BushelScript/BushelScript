@@ -109,6 +109,7 @@
 		3CA2699023F9F09F009E1944 /* RT_System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA2698F23F9F09F009E1944 /* RT_System.swift */; };
 		3CA8EC4C22F3452B0078F7A6 /* TermDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */; };
 		3CA8EC4E22F3469D0078F7A6 /* Lexicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */; };
+		3CB0444226DBF8CA0068BD47 /* OperatingSystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB0444126DBF8CA0068BD47 /* OperatingSystemVersion.swift */; };
 		3CB528EB237FAF8A0051460B /* Type.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C327261232DBAE2001A527C /* Type.swift */; };
 		3CB528ED23809DDD0051460B /* Runtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB528EC23809DDD0051460B /* Runtime.swift */; };
 		3CB7FEC623B7CA22003191AC /* ID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB7FEC523B7CA22003191AC /* ID.swift */; };
@@ -328,6 +329,7 @@
 		3CA8EC4B22F3452B0078F7A6 /* TermDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermDictionary.swift; sourceTree = "<group>"; };
 		3CA8EC4D22F3469D0078F7A6 /* Lexicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lexicon.swift; sourceTree = "<group>"; };
 		3CACF80B24184443002E1A52 /* TermNameSearchingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermNameSearchingTests.swift; sourceTree = "<group>"; };
+		3CB0444126DBF8CA0068BD47 /* OperatingSystemVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatingSystemVersion.swift; sourceTree = "<group>"; };
 		3CB328F623EDB675003BF646 /* BushelRT.CheckboxVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BushelRT.CheckboxVC.xib; sourceTree = "<group>"; };
 		3CB328F823EDB6CF003BF646 /* CheckboxVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckboxVC.swift; sourceTree = "<group>"; };
 		3CB528EC23809DDD0051460B /* Runtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Runtime.swift; sourceTree = "<group>"; };
@@ -641,6 +643,7 @@
 		3C906F21231DD9E30099B139 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				3CB0444126DBF8CA0068BD47 /* OperatingSystemVersion.swift */,
 				3C6B758F2305B17D0006C354 /* Terminology.swift */,
 				3CE88934253363A90036E3F2 /* Located.swift */,
 				3CC774802414270E00EC1E3B /* Formatting.swift */,
@@ -1275,6 +1278,7 @@
 				3C906F00231CD30A0099B139 /* Ordering.swift in Sources */,
 				3CD18EA42620AAD400144A3C /* QuickParse.swift in Sources */,
 				3C043074231857CE00758339 /* Program.swift in Sources */,
+				3CB0444226DBF8CA0068BD47 /* OperatingSystemVersion.swift in Sources */,
 				3CD18E0A2620A2B800144A3C /* SourceFix.swift in Sources */,
 				3C065BB625DB2F7D00C86E5C /* Resource.swift in Sources */,
 				3CC774812414270E00EC1E3B /* Formatting.swift in Sources */,

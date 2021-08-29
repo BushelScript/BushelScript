@@ -53,14 +53,11 @@ public final class EnglishParser: SourceParser {
             Term.Name("position after"): handleInsertionLocation(.after),
         ],
         resourceTypes: [
-            Term.Name("system"): (false, [], ResourceTypeHandler(self, EnglishParser.handleImportSystem)),
-            
-            Term.Name("app"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportApplicationName)),
-            Term.Name("app id"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportApplicationID)),
-            
-            Term.Name("library"): (true, [], ResourceTypeHandler(self, EnglishParser.handleImportLibrary)),
-            
-            Term.Name("AppleScript"): (true, ["at"], ResourceTypeHandler(self, EnglishParser.handleImportAppleScript)),
+            Term.Name("system"): (false, [], .system),
+            Term.Name("app"): (true, [], .applicationByName),
+            Term.Name("app id"): (true, [], .applicationByID),
+            Term.Name("library"): (true, [], .libraryByName),
+            Term.Name("AppleScript"): (true, ["at"], .applescriptAtPath),
         ],
         operators: SourceParserConfig.Operators(
             prefix: [
@@ -432,77 +429,6 @@ public final class EnglishParser: SourceParser {
         try eatOrThrow(prefix: "from")
         let supertype = try eatURIProvider()
         return .subtype(subtype, of: supertype)
-    }
-    
-    private func handleImportSystem(name _: Term.Name) throws -> Term {
-        var system = Resource.System()
-        if tryEating(prefix: "version") {
-            eatCommentsAndWhitespace()
-            guard let match = tryEating(Regex("[vV]?(\\d{1,4})\\.(\\d{1,4})(?:\\.(\\d{1,4}))?")) else {
-                throw AdHocParseError("Expected OS version number", at: currentLocation)
-            }
-            
-            let versionComponents = match.captures.compactMap { $0.map { Int($0)! } }
-            let majorVersion = versionComponents[0]
-            let minorVersion = versionComponents[1]
-            let patchVersion = versionComponents.indices.contains(2) ? versionComponents[2] : 0
-            
-            let version = OperatingSystemVersion(majorVersion: majorVersion, minorVersion: minorVersion, patchVersion: patchVersion)
-            guard let resolved = Resource.System(version: version) else {
-                throw ParseError(.unmetResourceRequirement(.system(version: match.matchedString)), at: termNameLocation)
-            }
-            
-            system = resolved
-        }
-        let term = Term(.resource, .res("system"), name: Term.Name(["system"]), resource: system.enumerated())
-        try state.cache.dictionaryCache.loadResourceDictionary(for: term)
-        return term
-    }
-    
-    private func handleImportApplicationName(name: Term.Name) throws -> Term {
-        guard let bundle = try state.cache.resourceCache.app(named: name.normalized) else {
-            throw ParseError(.unmetResourceRequirement(.applicationByName(name: name.normalized)), at: termNameLocation)
-        }
-        let term = Term(.resource, .res("app:\(name)"), name: name, resource: .applicationByName(bundle: bundle))
-        try state.cache.dictionaryCache.loadResourceDictionary(for: term)
-        return term
-    }
-    
-    private func handleImportApplicationID(name: Term.Name) throws -> Term {
-        guard let bundle = try state.cache.resourceCache.app(id: name.normalized) else {
-            throw ParseError(.unmetResourceRequirement(.applicationByBundleID(bundleID: name.normalized)), at: termNameLocation)
-        }
-        let term = Term(.resource, .res("appid:\(name)"), name: name, resource: .applicationByID(bundle: bundle))
-        try state.cache.dictionaryCache.loadResourceDictionary(for: term)
-        return term
-    }
-    
-    private func handleImportLibrary(name: Term.Name) throws -> Term {
-        guard let (url, library) = try state.cache.resourceCache.library(named: name.normalized, ignoring: state.nativeImports) else {
-            throw ParseError(.unmetResourceRequirement(.libraryByName(name: name.normalized)), at: termNameLocation)
-        }
-        state.nativeImports.insert(url)
-        let term = Term(.resource, .res("library:\(name)"), name: name, resource: .libraryByName(name: name.normalized, url: url, library: library))
-        try state.cache.dictionaryCache.loadResourceDictionary(for: term)
-        return term
-    }
-    
-    private func handleImportAppleScript(name: Term.Name) throws -> Term {
-        try eatOrThrow(prefix: "at")
-        
-        let pathStartIndex = currentIndex
-        guard var (_, path) = try parseString() else {
-            throw AdHocParseError("Expected path string", at: currentLocation)
-        }
-        
-        path = (path as NSString).expandingTildeInPath
-        
-        guard let applescript = try state.cache.resourceCache.applescript(at: path) else {
-            throw ParseError(.unmetResourceRequirement(.applescriptAtPath(path: path)), at: SourceLocation(pathStartIndex..<currentIndex, source: state.entireSource))
-        }
-        let term = Term(.resource, .res("as:\(path)"), name: name, resource: .applescriptAtPath(path: path, script: applescript))
-        try state.cache.dictionaryCache.loadResourceDictionary(for: term)
-        return term
     }
     
     private func handleSet() throws -> Expression.Kind? {

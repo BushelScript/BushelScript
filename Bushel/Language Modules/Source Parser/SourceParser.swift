@@ -13,15 +13,6 @@ public struct KeywordHandler {
         try fn()
     }
 }
-public struct ResourceTypeHandler {
-    public init<Weak: AnyObject>(_ weak: Weak, _ fn: @escaping (Weak) -> (_ name: Term.Name) throws -> Term) {
-        self.fn = { [weak `weak`] name in try fn(weak!)(name) }
-    }
-    public let fn: (_ name: Term.Name) throws -> Term
-    public func callAsFunction(_ name: Term.Name) throws -> Term {
-        try fn(name)
-    }
-}
 
 public struct SourceParserState {
     
@@ -93,12 +84,12 @@ public struct SourceParserConfig {
     public var defaultEndKeyword: Term.Name
     
     public var keywords: [Term.Name : KeywordHandler]
-    public var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)]
+    public var resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], kind: Resource.Kind)]
     
     public var operators: Operators
     public var delimiters: Delimiters
     
-    public init(defaultEndKeyword: Term.Name, keywords: [Term.Name : KeywordHandler], resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], handler: ResourceTypeHandler)], operators: Operators, delimiters: Delimiters) {
+    public init(defaultEndKeyword: Term.Name, keywords: [Term.Name : KeywordHandler], resourceTypes: [Term.Name : (hasName: Bool, stoppingAt: [String], kind: Resource.Kind)], operators: Operators, delimiters: Delimiters) {
         self.defaultEndKeyword = defaultEndKeyword
         self.keywords = keywords
         self.resourceTypes = resourceTypes
@@ -246,7 +237,7 @@ extension SourceParser {
             .reversed()), at: SourceLocation(currentIndex..<state.source.endIndex, source: state.entireSource))
         }
         
-        let (hasName, stoppingAt, handler) = config.resourceTypes[typeName]!
+        let (hasName, stoppingAt, resourceKind) = config.resourceTypes[typeName]!
         
         eatCommentsAndWhitespace()
         
@@ -266,7 +257,66 @@ extension SourceParser {
         
         eatCommentsAndWhitespace()
         
-        let resourceTerm = try handler(name)
+        let resourceTerm: Term = try {
+            switch resourceKind {
+            case .bushelscript:
+                return Term(.resource, .res(""), name: name, resource: .bushelscript)
+            case .system:
+                let term = Term(.resource, .res("system"), name: name, resource: .system(version:
+                    try tryEating(prefix: "version") ? {
+                        eatCommentsAndWhitespace()
+                        guard let match = tryEating(OperatingSystemVersion.dottedDecimalRegex) else {
+                            throw AdHocParseError("Expected OS version number", at: currentLocation)
+                        }
+                        let osVersion = OperatingSystemVersion(dottedDecimalRegexMatch: match)
+                        guard ProcessInfo.processInfo.isOperatingSystemAtLeast(osVersion) else {
+                            throw ParseError(.unmetResourceRequirement(.system(version: match.matchedString)), at: termNameLocation)
+                        }
+                        return osVersion
+                    }() : nil
+                ))
+                try state.cache.dictionaryCache.loadResourceDictionary(for: term)
+                return term
+            case .applicationByName:
+                guard let bundle = try state.cache.resourceCache.app(named: name.normalized) else {
+                    throw ParseError(.unmetResourceRequirement(.applicationByName(name: name.normalized)), at: termNameLocation)
+                }
+                let term = Term(.resource, .res("app:\(name)"), name: name, resource: .applicationByName(bundle: bundle))
+                try state.cache.dictionaryCache.loadResourceDictionary(for: term)
+                return term
+            case .applicationByID:
+                guard let bundle = try state.cache.resourceCache.app(id: name.normalized) else {
+                    throw ParseError(.unmetResourceRequirement(.applicationByBundleID(bundleID: name.normalized)), at: termNameLocation)
+                }
+                let term = Term(.resource, .res("appid:\(name)"), name: name, resource: .applicationByID(bundle: bundle))
+                try state.cache.dictionaryCache.loadResourceDictionary(for: term)
+                return term
+            case .libraryByName:
+                guard let (url, library) = try state.cache.resourceCache.library(named: name.normalized, ignoring: state.nativeImports) else {
+                    throw ParseError(.unmetResourceRequirement(.libraryByName(name: name.normalized)), at: termNameLocation)
+                }
+                state.nativeImports.insert(url)
+                let term = Term(.resource, .res("library:\(name)"), name: name, resource: .libraryByName(name: name.normalized, url: url, library: library))
+                try state.cache.dictionaryCache.loadResourceDictionary(for: term)
+                return term
+            case .applescriptAtPath:
+                try eatOrThrow(prefix: "at")
+                
+                let pathStartIndex = currentIndex
+                guard var (_, path) = try parseString() else {
+                    throw AdHocParseError("Expected path string", at: currentLocation)
+                }
+                
+                path = (path as NSString).expandingTildeInPath
+                
+                guard let applescript = try state.cache.resourceCache.applescript(at: path) else {
+                    throw ParseError(.unmetResourceRequirement(.applescriptAtPath(path: path)), at: SourceLocation(pathStartIndex..<currentIndex, source: state.entireSource))
+                }
+                let term = Term(.resource, .res("as:\(path)"), name: name, resource: .applescriptAtPath(path: path, script: applescript))
+                try state.cache.dictionaryCache.loadResourceDictionary(for: term)
+                return term
+            }
+        }()
         state.lexicon.add(resourceTerm)
         return .require(resource: resourceTerm)
     }

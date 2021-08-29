@@ -4,7 +4,7 @@ import Regex
 public enum Resource {
     
     case bushelscript
-    case system(version: String?)
+    case system(version: OperatingSystemVersion?)
     case applicationByName(bundle: Bundle)
     case applicationByID(bundle: Bundle)
     case libraryByName(name: String, url: URL, library: Library)
@@ -12,64 +12,10 @@ public enum Resource {
     
 }
 
-extension OperatingSystemVersion: CustomStringConvertible {
-    
-    public var description: String {
-        "\(majorVersion).\(minorVersion).\(patchVersion)"
-    }
-    
-}
-
 public enum Library {
     
     case native(Program)
     case applescript(NSAppleScript)
-    
-}
-
-// MARK: Resource resolution
-extension Resource {
-    
-    public struct System {
-        
-        public let version: OperatingSystemVersion?
-        
-        public init?(versionString: String) {
-            guard !versionString.isEmpty else {
-                self.init()
-                return
-            }
-            
-            guard let match = Regex("[vV]?(\\d+)\\.(\\d+)(?:\\.(\\d+))?").firstMatch(in: versionString) else {
-                return nil
-            }
-            
-            let versionComponents = match.captures.compactMap { $0.map { Int($0)! } }
-            let majorVersion = versionComponents[0]
-            let minorVersion = versionComponents[1]
-            let patchVersion = versionComponents.indices.contains(2) ? versionComponents[2] : 0
-            
-            let version = OperatingSystemVersion(majorVersion: majorVersion, minorVersion: minorVersion, patchVersion: patchVersion)
-            self.init(version: version)
-        }
-        public init?(version: OperatingSystemVersion?) {
-            if let version = version {
-                guard ProcessInfo.processInfo.isOperatingSystemAtLeast(version) else {
-                    return nil
-                }
-            }
-            
-            self.version = version
-        }
-        public init() {
-            self.version = nil
-        }
-        
-        public func enumerated() -> Resource {
-            .system(version: version.map { "\($0)" })
-        }
-        
-    }
     
 }
 
@@ -149,7 +95,14 @@ extension Resource {
                 case .bushelscript:
                     return .bushelscript
                 case .system:
-                    return System().enumerated()
+                    if let osVersion = OperatingSystemVersion(data) {
+                        guard ProcessInfo.processInfo.isOperatingSystemAtLeast(osVersion) else {
+                            return nil
+                        }
+                        return .system(version: osVersion)
+                    } else {
+                        return .system(version: nil)
+                    }
                 case .applicationByName:
                     return try cache.app(named: data).map { .applicationByName(bundle: $0) }
                 case .applicationByID:
