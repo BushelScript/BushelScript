@@ -149,6 +149,9 @@ public final class EnglishParser: SourceParser {
             ]
         ),
         delimiters: SourceParserConfig.Delimiters(
+            prefixSpecifier: [
+                Term.Name("of")
+            ],
             suffixSpecifier: [
                 Term.Name("->"),
                 Term.Name("→")
@@ -493,10 +496,6 @@ public final class EnglishParser: SourceParser {
         return .command(commandTerm, parameters: arguments)
     }
     
-    public func postprocess(primary: Expression) throws -> Expression.Kind? {
-        return try tryParseSpecifierPhrase(chainingTo: primary)
-    }
-    
     public func parseSpecifierAfterTypeName() throws -> Specifier.Kind? {
         eatCommentsAndWhitespace()
         guard let firstWord = Term.Name.nextWord(in: state.source) else {
@@ -575,45 +574,6 @@ public final class EnglishParser: SourceParser {
     
     public func parseInsertionSpecifierAfterInsertionLocation(kind: InsertionSpecifier.Kind) throws -> Expression.Kind? {
         .insertionSpecifier(InsertionSpecifier(kind: kind, parent: try parsePrimary(allowSuffixSpecifier: false)))
-    }
-    
-    public func tryParseSpecifierPhrase(chainingTo chainTo: Expression) throws -> Expression.Kind? {
-        guard
-            let childSpecifier = chainTo.asSpecifier(),
-            tryEating(prefix: "of")
-        else {
-            return try tryParseSuffixSpecifier(chainingTo: chainTo)
-        }
-        
-        // Add new parent to top of specifier chain
-        // e.g., character 1 of "hello"
-        // First expression (chainTo) must be a specifier since it is the child
-        
-        let parentExpression = try parsePrimaryOrThrow(.afterKeyword(Term.Name(["of"])), allowSuffixSpecifier: false)
-        childSpecifier.setRootAncestor(parentExpression)
-        return .specifier(childSpecifier)
-    }
-    
-    public func tryParseSuffixSpecifier(chainingTo chainTo: Expression) throws -> Expression.Kind? {
-        guard state.allowSuffixSpecifierStack.last! else {
-            return nil
-        }
-        guard let keyword = eatSuffixSpecifierMarker() else {
-            return nil
-        }
-        
-        // Add new child to bottom of specifier chain
-        // e.g., "hello" -> first character
-        // Second expression (the one about to be parsed) must be a specifier since
-        // it is the child
-         
-        let newChildExpression = try parsePrimaryOrThrow(.adHoc("after possessive"), allowSuffixSpecifier: false)
-        guard let newChildSpecifier = newChildExpression.asSpecifier() else {
-            // e.g., "hello" -> 123
-            throw ParseError(.missing([.specifier], .afterKeyword(keyword)), at: newChildExpression.location)
-        }
-        newChildSpecifier.parent = chainTo
-        return .specifier(newChildSpecifier)
     }
     
 }

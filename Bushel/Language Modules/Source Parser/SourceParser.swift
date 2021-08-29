@@ -45,6 +45,7 @@ public struct SourceParserConfig {
     
     public struct Delimiters {
         
+        public var prefixSpecifier: [Term.Name]
         public var suffixSpecifier: [Term.Name]
         public var string: [(begin: Term.Name, end: Term.Name)]
         public var expressionGrouping: [(begin: Term.Name, end: Term.Name)]
@@ -54,7 +55,8 @@ public struct SourceParserConfig {
         public var lineComment: [Term.Name]
         public var blockComment: [(begin: Term.Name, end: Term.Name)]
         
-        public init(suffixSpecifier: [Term.Name], string: [(begin: Term.Name, end: Term.Name)], expressionGrouping: [(begin: Term.Name, end: Term.Name)], list: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name])], record: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])], listAndRecord: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])], lineComment: [Term.Name], blockComment: [(begin: Term.Name, end: Term.Name)]) {
+        public init(prefixSpecifier: [Term.Name], suffixSpecifier: [Term.Name], string: [(begin: Term.Name, end: Term.Name)], expressionGrouping: [(begin: Term.Name, end: Term.Name)], list: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name])], record: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])], listAndRecord: [(begin: Term.Name, end: Term.Name, itemSeparators: [Term.Name], keyValueSeparators: [Term.Name])], lineComment: [Term.Name], blockComment: [(begin: Term.Name, end: Term.Name)]) {
+            self.prefixSpecifier = prefixSpecifier
             self.suffixSpecifier = suffixSpecifier
             self.string = string
             self.expressionGrouping = expressionGrouping
@@ -111,14 +113,6 @@ public protocol SourceParser: AnyObject {
     
     func handleType(_ typeTerm: Term) throws -> Expression.Kind?
     func handleCommand(_ commandTerm: Term) throws -> Expression.Kind?
-    
-    /// For any required post-processing.
-    /// e.g., possessive specifiers (like "xyz's first widget") modify
-    ///       the preceding primary.
-    /// Return nil to accept `primary` as-is.
-    /// This method is called repeatedly, and its result used as the new primary
-    /// expression, until the result is nil.
-    func postprocess(primary: Expression) throws -> Expression.Kind?
     
 }
 
@@ -481,7 +475,7 @@ extension SourceParser {
         }
         
         while let processedPrimary = try (
-            postprocess(primary: primary).map {
+            parseSpecifierPhrase(chainingTo: primary).map {
                 Expression($0, at: expressionLocation)
             } ?? parsePostfixOperators()
         ) {
@@ -886,6 +880,7 @@ extension SourceParser {
         }
     }
     
+    
 }
 
 private let integerRegex = Regex("^[-+]?\\d++(?!\\.)")
@@ -940,6 +935,45 @@ extension SourceParser {
             
             return Expression(.parentheses(enclosed), at: expressionLocation)
         }
+    }
+    
+    public func parseSpecifierPhrase(chainingTo chainTo: Expression) throws -> Expression.Kind? {
+        guard
+            let childSpecifier = chainTo.asSpecifier(),
+            let delimiter = config.delimiters.prefixSpecifier.first(where: { tryEating($0) })
+        else {
+            return try parseSuffixSpecifier(chainingTo: chainTo)
+        }
+        
+        // Add new parent to top of specifier chain
+        // e.g., character 1 of "hello"
+        // First expression (chainTo) must be a specifier since it is the child
+        
+        let parentExpression = try parsePrimaryOrThrow(.afterKeyword(delimiter), allowSuffixSpecifier: false)
+        childSpecifier.setRootAncestor(parentExpression)
+        return .specifier(childSpecifier)
+    }
+    
+    public func parseSuffixSpecifier(chainingTo chainTo: Expression) throws -> Expression.Kind? {
+        guard
+            state.allowSuffixSpecifierStack.last!,
+            let delimiter = config.delimiters.suffixSpecifier.first(where: { tryEating($0) })
+        else {
+            return nil
+        }
+        
+        // Add new child to bottom of specifier chain
+        // e.g., "hello" -> first character
+        // Second expression (the one about to be parsed) must be a specifier since
+        // it is the child
+        
+        let newChildExpression = try parsePrimaryOrThrow(.adHoc("after possessive"), allowSuffixSpecifier: false)
+        guard let newChildSpecifier = newChildExpression.asSpecifier() else {
+            // e.g., "hello" -> 123
+            throw ParseError(.missing([.specifier], .afterKeyword(delimiter)), at: newChildExpression.location)
+        }
+        newChildSpecifier.parent = chainTo
+        return .specifier(newChildSpecifier)
     }
     
     public func parseVariableTermOrThrow(stoppingAt: [String] = [], _ context: ParseError.Error.Context? = nil) throws -> Term {
@@ -1209,10 +1243,6 @@ extension SourceParser {
     
     private func findSuffixSpecifierMarker() -> Term.Name? {
         config.delimiters.suffixSpecifier.first { isNext($0) }
-    }
-    
-    public func eatSuffixSpecifierMarker() -> Term.Name? {
-        config.delimiters.suffixSpecifier.first { tryEating($0) }
     }
     
     private func eatStringBeginMarker() -> (begin: Term.Name, end: Term.Name)? {
