@@ -63,6 +63,8 @@ public final class EnglishMessageFormatter: MessageFormatter {
                     return " \(context)"
                 case let .afterKeyword(keyword):
                     return " after \(keyword)"
+                case .afterParameterName:
+                    return " after parameter name"
                 case .afterInfixOperator:
                     return " after infix operator"
                 case .afterPrefixOperator:

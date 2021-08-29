@@ -73,6 +73,7 @@ public struct ParseError: ParseErrorProtocol {
             
             case adHoc(String)
             case afterKeyword(Term.Name)
+            case afterParameterName
             case afterInfixOperator
             case afterPrefixOperator
             case afterPostfixOperator

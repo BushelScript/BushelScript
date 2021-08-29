@@ -454,68 +454,43 @@ public final class EnglishParser: SourceParser {
         }
     }
     
-    public func handle(term: Term) throws -> Expression.Kind? {
-        switch term.role {
-        case .constant: // MARK: .constant
-            return .enumerator(term)
-        case .type: // MARK: .type
-            if let specifierKind = try parseSpecifierAfterTypeName() {
-                return .specifier(Specifier(term: term, kind: specifierKind))
-            } else if let specifier = try parseRelativeSpecifierAfterTypeName(term) {
-                return .specifier(specifier)
-            } else {
-                // Just the type name
-                return .type(term)
-            }
-        case .property: // MARK: .property
-            let specifier = Specifier(term: term, kind: .property)
+    public func handleType(_ typeTerm: Term) throws -> Expression.Kind? {
+        if let specifierKind = try parseSpecifierAfterTypeName() {
+            return .specifier(Specifier(term: typeTerm, kind: specifierKind))
+        } else if let specifier = try parseRelativeSpecifierAfterTypeName(typeTerm) {
             return .specifier(specifier)
-        case .command: // MARK: .command
-            var parameters: [(Term, Expression)] = []
-            func parseParameter() throws -> Bool {
-                guard let parameterTerm = try eatTerm(from: term.dictionary, role: .parameter) else {
-                    return false
-                }
-                let parameterValue = try parsePrimaryOrThrow(.adHoc("parameter name"))
-                parameters.append((parameterTerm, parameterValue))
-                return true
-            }
-            func result() -> Expression.Kind {
-                return .command(term, parameters: parameters)
-            }
-            
-            // First, try parsing a named parameter.
-            // If that fails, check if we've reached the end of the line or
-            // the end of the source code.
-            // If neither of those succeed, then what's in front of us must be
-            // a direct parameter (e.g, "open {file1, file2}").
-            if !(try parseParameter()) {
-                eatCommentsAndWhitespace()
-                if !(state.source.first?.isNewline ?? true) {
-                    // Direct parameter
-                    let directParameterValue: Expression
-                    do {
-                        guard let dpValue = try parsePrimary() else {
-                            return result()
-                        }
-                        directParameterValue = dpValue
-                    }
-                    parameters.append((Term(Term.ID(Parameters.direct)), directParameterValue))
-                }
-            }
-            
-            // Parse remaining named parameters
-            while try parseParameter() {
-            }
-            
-            return result()
-        case .parameter: // MARK: .parameter
-            throw ParseError(.wrongTermRoleForContext, at: expressionLocation)
-        case .variable: // MARK: .variable
-            return .variable(term)
-        case .resource: // MARK: .resource
-            return .resource(term)
+        } else {
+            // Just the type name
+            return .type(typeTerm)
         }
+    }
+    
+    public func handleCommand(_ commandTerm: Term) throws -> Expression.Kind? {
+        var arguments: [(Term, Expression)] = []
+        func parseNamedArgument() throws -> Bool {
+            guard let parameterTerm = try eatTerm(from: commandTerm.dictionary, role: .parameter) else {
+                return false
+            }
+            let parameterValue = try parsePrimaryOrThrow(.afterParameterName)
+            arguments.append((parameterTerm, parameterValue))
+            return true
+        }
+        
+        if !(try parseNamedArgument()) {
+            if !eatCommentsAndWhitespaceToEndOfLine() {
+                // Either a direct argument (e.g, "open {file1, file2}"),
+                // or none of our business (e.g., "(open)").
+                guard let directArgument = try parsePrimary() else {
+                    return .command(commandTerm, parameters: [])
+                }
+                arguments.append((Term(Term.ID(Parameters.direct)), directArgument))
+            }
+        }
+        
+        while try parseNamedArgument() {
+        }
+        
+        return .command(commandTerm, parameters: arguments)
     }
     
     public func postprocess(primary: Expression) throws -> Expression.Kind? {
@@ -559,7 +534,7 @@ public final class EnglishParser: SourceParser {
             }
         default:
             guard
-                !(state.source.first?.isNewline ?? false),
+                !eatCommentsAndWhitespaceToEndOfLine(),
                 let firstExpression = try? parsePrimary(allowSuffixSpecifier: false)
             else {
                 return nil

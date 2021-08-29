@@ -109,7 +109,8 @@ public protocol SourceParser: AnyObject {
     
     init()
     
-    func handle(term: Term) throws -> Expression.Kind?
+    func handleType(_ typeTerm: Term) throws -> Expression.Kind?
+    func handleCommand(_ commandTerm: Term) throws -> Expression.Kind?
     
     /// For any required post-processing.
     /// e.g., possessive specifiers (like "xyz's first widget") modify
@@ -847,7 +848,24 @@ extension SourceParser {
                 return nil
             }
         } else if let term = try eatTerm() {
-            if let kind = try handle(term: term) {
+            if let kind: Expression.Kind = try ({
+                switch term.role {
+                case .constant: // MARK: .constant
+                    return .enumerator(term)
+                case .type: // MARK: .type
+                    return try handleType(term)
+                case .property: // MARK: .property
+                    return .specifier(Specifier(term: term, kind: .property))
+                case .command: // MARK: .command
+                    return try handleCommand(term)
+                case .parameter: // MARK: .parameter
+                    throw ParseError(.wrongTermRoleForContext, at: expressionLocation)
+                case .variable: // MARK: .variable
+                    return .variable(term)
+                case .resource: // MARK: .resource
+                    return .resource(term)
+                }
+            }()) {
                 return Expression(kind, at: expressionLocation)
             } else {
                 return nil
@@ -1509,6 +1527,15 @@ extension SourceParser {
         }()
         try eatOrThrow(prefix: stop, spacing: .right)
         return uri
+    }
+    
+    public func eatCommentsAndWhitespaceToEndOfLine() -> Bool {
+        eatCommentsAndWhitespace()
+        return atEndOfLine
+    }
+    
+    public var atEndOfLine: Bool {
+        return state.source.first?.isNewline ?? true
     }
     
     public func eatCommentsAndWhitespace(eatingNewlines: Bool = false, isSignificant: Bool = false) {
