@@ -21,7 +21,7 @@
       },
       {
         "package": "FootlessParser",
-        "repositoryURL": "https://github.com/kareman/FootlessParser.git",
+        "repositoryURL": "https://github.com/kareman/FootlessParser",
         "state": {
           "branch": null,
           "revision": "11c7a366720a2cc62d13ee69c8bdb8372bb3bb2b",
