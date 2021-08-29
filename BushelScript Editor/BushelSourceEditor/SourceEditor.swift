@@ -199,8 +199,6 @@ public class SourceEditor: NSViewController {
         return attributes
     }
     
-    private var displayedSourceCodeChangedDueToHighlight = false
-    
     private func setDisplayedSourceCode(_ newValue: NSAttributedString) {
         let selectedRanges = textView.selectedRanges
         let selectionAffinity = textView.selectionAffinity
@@ -210,23 +208,15 @@ public class SourceEditor: NSViewController {
             textView.selectionGranularity = selectionGranularity
         }
         
-        let textUpdated = (newValue.string != textView.string)
-        
-        if textUpdated {
-            guard textView.shouldChangeText(in: NSRange(location: 0, length: (textView.string as NSString).length), replacementString: newValue.string) else {
-                return
-            }
+        guard textView.shouldChangeText(in: NSRange(location: 0, length: (textView.string as NSString).length), replacementString: newValue.string) else {
+            return
         }
-        
-        displayedSourceCodeChangedDueToHighlight = true
         
         textView.textStorage?.beginEditing()
         textView.textStorage?.setAttributedString(newValue)
         textView.textStorage?.endEditing()
         
-        if textUpdated {
-            textView.didChangeText()
-        }
+        textView.didChangeText()
         resetTypingAttributes()
     }
     
@@ -376,22 +366,22 @@ extension SourceEditor: NSTextViewDelegate {
     }
     
     public func textDidChange(_ notification: Notification) {
-        guard !displayedSourceCodeChangedDueToHighlight else {
-            displayedSourceCodeChangedDueToHighlight = false
-            return
-        }
-        
         let textView = notification.object as! NSText
-        let source = textView.string
-        delegate.sourceCode = source
+        let newSource = textView.string
         
-        removeInlineError()
-        if delegate.useLiveParsing {
-            do {
-                _ = try highlight(source)
-            } catch {
-                if delegate.useLiveErrors {
-                    displayError(error)
+        if newSource != delegate.sourceCode {
+            // This is an actual logical source code change, not merely
+            // a change in formatting attibutes.
+            delegate.sourceCode = newSource
+            
+            removeInlineError()
+            if delegate.useLiveParsing {
+                do {
+                    _ = try highlight(newSource)
+                } catch {
+                    if delegate.useLiveErrors {
+                        displayError(error)
+                    }
                 }
             }
         }
