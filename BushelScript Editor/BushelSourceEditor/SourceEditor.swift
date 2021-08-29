@@ -55,13 +55,13 @@ public class SourceEditor: NSViewController {
         }
         if let sourceCode = delegate.sourceCode {
             do {
-                _ = try self.highlight(sourceCode)
+                _ = try highlight(sourceCode)
             } catch {
                 if let textStorage = self.textView.textStorage {
                     textStorage.addAttributes(self.typingAttributes, range: NSRange(location: 0, length: textStorage.length))
                 }
             }
-            self.resetTypingAttributes()
+            resetTypingAttributes()
         }
     }
     
@@ -143,20 +143,25 @@ public class SourceEditor: NSViewController {
     /// - To propagate the parsed program:
     ///   - setter:program
     public func highlight(_ source: String, registerUndo: Bool = false) throws -> Program {
-        removeInlineError()
-        
-        let program = try parse(source)
-        let highlighted = Bushel.highlight(source: Substring(source), program.elements, with: delegate.highlightStyles.highlighted)
-        
-        if !registerUndo, let undoManager = undoManager {
-            undoManager.withoutRegistration {
-                attributedSourceCode = highlighted
+        func setDisplayedSourceCodeRespectingUndo(_ newValue: NSAttributedString) {
+            if !registerUndo, let undoManager = undoManager {
+                undoManager.withoutRegistration {
+                    self.setDisplayedSourceCode(newValue)
+                }
+            } else {
+                self.setDisplayedSourceCode(newValue)
             }
-        } else {
-            attributedSourceCode = highlighted
         }
         
-        return program
+        removeInlineError()
+        do {
+            let program = try parse(source)
+            setDisplayedSourceCodeRespectingUndo(Bushel.highlight(source: Substring(source), program.elements, with: delegate.highlightStyles.highlighted))
+            return program
+        } catch {
+            setDisplayedSourceCodeRespectingUndo(NSAttributedString(string: source, attributes: delegate.highlightStyles.unhighlighted))
+            throw error
+        }
     }
     
     /// Parses `source` into a Bushel program by asking the delegate
@@ -194,35 +199,35 @@ public class SourceEditor: NSViewController {
         return attributes
     }
     
-    private var attributedSourceCode = NSAttributedString(string: "") {
-        didSet {
-            let selectedRanges = textView.selectedRanges
-            let selectionAffinity = textView.selectionAffinity
-            let selectionGranularity = textView.selectionGranularity
-            defer {
-                textView.setSelectedRanges(selectedRanges, affinity: selectionAffinity, stillSelecting: false)
-                textView.selectionGranularity = selectionGranularity
-            }
-            
-            let textUpdated = (attributedSourceCode.string != textView.string)
-            
-            if textUpdated {
-                guard textView.shouldChangeText(in: NSRange(location: 0, length: (textView.string as NSString).length), replacementString: attributedSourceCode.string) else {
-                    return
-                }
-            }
-            defer {
-                if textUpdated {
-                    textView.didChangeText()
-                }
-                
-                resetTypingAttributes()
-            }
-            
-            textView.textStorage?.beginEditing()
-            textView.textStorage?.setAttributedString(self.attributedSourceCode)
-            textView.textStorage?.endEditing()
+    private var displayedSourceCodeChangedDueToHighlight = false
+    
+    private func setDisplayedSourceCode(_ newValue: NSAttributedString) {
+        let selectedRanges = textView.selectedRanges
+        let selectionAffinity = textView.selectionAffinity
+        let selectionGranularity = textView.selectionGranularity
+        defer {
+            textView.setSelectedRanges(selectedRanges, affinity: selectionAffinity, stillSelecting: false)
+            textView.selectionGranularity = selectionGranularity
         }
+        
+        let textUpdated = (newValue.string != textView.string)
+        
+        if textUpdated {
+            guard textView.shouldChangeText(in: NSRange(location: 0, length: (textView.string as NSString).length), replacementString: newValue.string) else {
+                return
+            }
+        }
+        
+        displayedSourceCodeChangedDueToHighlight = true
+        
+        textView.textStorage?.beginEditing()
+        textView.textStorage?.setAttributedString(newValue)
+        textView.textStorage?.endEditing()
+        
+        if textUpdated {
+            textView.didChangeText()
+        }
+        resetTypingAttributes()
     }
     
     public func displayError(_ error: Error) {
@@ -371,13 +376,12 @@ extension SourceEditor: NSTextViewDelegate {
     }
     
     public func textDidChange(_ notification: Notification) {
-        let textView = notification.object as! NSText
-        guard textView.string != delegate.sourceCode else {
+        guard !displayedSourceCodeChangedDueToHighlight else {
+            displayedSourceCodeChangedDueToHighlight = false
             return
         }
         
-        removeInlineError()
-        
+        let textView = notification.object as! NSText
         let source = textView.string
         delegate.sourceCode = source
         
