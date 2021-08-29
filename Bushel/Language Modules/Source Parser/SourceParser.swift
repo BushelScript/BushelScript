@@ -247,13 +247,14 @@ extension SourceParser {
         
         eatCommentsAndWhitespace()
         
-        var name = Term.Name("")
-        if hasName {
-            guard let name_ = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .resource) else {
-                throw ParseError(.missing([.resourceName]), at: currentLocation)
-            }
-            name = name_
-        }
+        let name = try hasName ?
+            {
+                guard let name = try parseTermNameEagerly(stoppingAt: stoppingAt, styling: .resource) else {
+                    throw ParseError(.missing([.resourceName]), at: currentLocation)
+                }
+                return name
+            }() :
+            typeName
         
         eatCommentsAndWhitespace()
         
