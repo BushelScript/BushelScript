@@ -42,7 +42,7 @@ public struct Reflection {
     
     /// Update supertype info for orphaned types according to the current state
     /// of the TypeTree.
-    private mutating func updateSupertypes() {
+    public mutating func updateSupertypes() {
         guard let typeTree = typeTree else {
             return
         }
