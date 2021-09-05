@@ -3,11 +3,12 @@
 // See file LICENSE.txt for licensing information.
 
 import AppKit
+import BushelSourceEditor
 
 class DictionaryBrowserContentVC: NSViewController {
     
-    var termDoc: DictionaryBrowserTermDoc? {
-        representedObject as? DictionaryBrowserTermDoc
+    var termDoc: TermTableCellValue? {
+        representedObject as? TermTableCellValue
     }
     
 }

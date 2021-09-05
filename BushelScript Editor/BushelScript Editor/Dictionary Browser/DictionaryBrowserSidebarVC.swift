@@ -4,6 +4,7 @@
 
 import AppKit
 import Bushel
+import BushelSourceEditor
 import os.log
 
 private let log = OSLog(subsystem: logSubsystem, category: #fileID)
@@ -95,13 +96,13 @@ class DictionaryBrowserSidebarVC: NSViewController, NSOutlineViewDelegate, NSOut
         //       TermDocs should be created for each available synonym,
         //       or be coalesced in some other way.
         let synonymDoc = TermDoc(term: term, summary: doc.summary, discussion: doc.discussion)
-        return DictionaryBrowserTermDoc(synonymDoc)
+        return TermTableCellValue(synonymDoc)
     }
     
     // MARK: NSOutlineViewDelegate
     
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
-        let cellView = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DataCell"), owner: self) as! DictionaryBrowserSidebarCellView
+        let cellView = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DataCell"), owner: self) as! TermTableCellView
         cellView.highlightStyles = try? fetchOrMakeHighlightStyles()
         return cellView
     }
@@ -111,44 +112,6 @@ class DictionaryBrowserSidebarVC: NSViewController, NSOutlineViewDelegate, NSOut
         if selectedRow != -1 {
             selectionOC?.content = outlineView(outlineView, objectValueFor: nil, byItem: outlineView.item(atRow: selectedRow))
         }
-    }
-    
-}
-
-class DictionaryBrowserTermDoc: NSObject, NSCopying {
-    
-    init(_ termDoc: TermDoc) {
-        self.termDoc = termDoc
-    }
-    
-    var termDoc: TermDoc
-    
-    func copy(with _: NSZone? = nil) -> Any {
-        DictionaryBrowserTermDoc(termDoc)
-    }
-    
-    override var description: String {
-        "\(termDoc.term)"
-    }
-    
-    @objc var id: String {
-        "\(termDoc.term.id)"
-    }
-    
-    @objc var role: String {
-        "\(termDoc.term.role)"
-    }
-    
-    @objc var doc: String {
-        "\(termDoc)"
-    }
-    
-    @objc var summary: String {
-        termDoc.summary
-    }
-    
-    @objc var discussion: String {
-        termDoc.discussion
     }
     
 }

@@ -47,7 +47,6 @@
 		3C76927923E0FC76008FE565 /* EditingPrefsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C76927823E0FC76008FE565 /* EditingPrefsVC.swift */; };
 		3C7A6CBF23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */; };
 		3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */; };
-		3C83CAB826D431EE00C07A56 /* DictionaryBrowserSidebarCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C83CAB726D431EE00C07A56 /* DictionaryBrowserSidebarCellView.swift */; };
 		3C880B1B26C6EB28006839AB /* Themes in Resources */ = {isa = PBXBuildFile; fileRef = 3C880B1526C6EB28006839AB /* Themes */; };
 		3C88833D269E2D6F00803197 /* Bushel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EA23135690004CDB1A /* Bushel.framework */; };
 		3C88833E269E2D6F00803197 /* BushelRT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0566EE23135690004CDB1A /* BushelRT.framework */; };
@@ -61,6 +60,8 @@
 		3CD7690B26E4423F00769999 /* SuggestionsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CD7690326E4423F00769999 /* SuggestionsVC.xib */; };
 		3CD7690C26E4423F00769999 /* SuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD7690426E4423F00769999 /* SuggestionsView.swift */; };
 		3CD7690D26E4499200769999 /* TermRoleIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE531D626AA54C300E7E1B8 /* TermRoleIconView.swift */; };
+		3CD7690E26E450CF00769999 /* TermTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C83CAB726D431EE00C07A56 /* TermTableCellView.swift */; };
+		3CD7691026E4513C00769999 /* TermTableCellValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD7690F26E4513C00769999 /* TermTableCellValue.swift */; };
 		3CE531DE26AA61C400E7E1B8 /* HighlightStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE531DD26AA61C400E7E1B8 /* HighlightStyles.swift */; };
 		3CE8E37926CDF521005C708B /* BushelSourceEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE8E37726CDF521005C708B /* BushelSourceEditor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CE8E37C26CDF521005C708B /* BushelSourceEditor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CE8E37526CDF521005C708B /* BushelSourceEditor.framework */; };
@@ -299,7 +300,7 @@
 		3C7A6CBD23CBCB25007F5D84 /* OSADictionaryWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSADictionaryWindowController.h; sourceTree = "<group>"; };
 		3C7A6CBE23CBCD51007F5D84 /* OSADictionaryWindowCustomization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSADictionaryWindowCustomization.swift; sourceTree = "<group>"; };
 		3C7A6CC023CBD5E5007F5D84 /* DictionaryDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryDocument.swift; sourceTree = "<group>"; };
-		3C83CAB726D431EE00C07A56 /* DictionaryBrowserSidebarCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryBrowserSidebarCellView.swift; sourceTree = "<group>"; };
+		3C83CAB726D431EE00C07A56 /* TermTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermTableCellView.swift; sourceTree = "<group>"; };
 		3C880B1526C6EB28006839AB /* Themes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Themes; sourceTree = "<group>"; };
 		3C9FD7B423E53E5500279945 /* bushelscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = bushelscript.xcodeproj; path = ../bushelscript/bushelscript.xcodeproj; sourceTree = "<group>"; };
 		3CC2A62026A929BD00509362 /* DictionaryBrowser.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DictionaryBrowser.storyboard; sourceTree = "<group>"; };
@@ -311,6 +312,7 @@
 		3CD7690226E4423F00769999 /* SuggestionsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionsVC.swift; sourceTree = "<group>"; };
 		3CD7690326E4423F00769999 /* SuggestionsVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SuggestionsVC.xib; sourceTree = "<group>"; };
 		3CD7690426E4423F00769999 /* SuggestionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionsView.swift; sourceTree = "<group>"; };
+		3CD7690F26E4513C00769999 /* TermTableCellValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermTableCellValue.swift; sourceTree = "<group>"; };
 		3CE531D626AA54C300E7E1B8 /* TermRoleIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermRoleIconView.swift; sourceTree = "<group>"; };
 		3CE531DD26AA61C400E7E1B8 /* HighlightStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HighlightStyles.swift; path = "BushelScript Editor/Preferences/HighlightStyles.swift"; sourceTree = SOURCE_ROOT; };
 		3CE8E37526CDF521005C708B /* BushelSourceEditor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BushelSourceEditor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -626,7 +628,6 @@
 				3CC2A62826A93A6A00509362 /* DictionaryBrowserWC.swift */,
 				3CC2A62226A92C3800509362 /* DictionaryBrowserVC.swift */,
 				3CC2A62426A92C9600509362 /* DictionaryBrowserSidebarVC.swift */,
-				3C83CAB726D431EE00C07A56 /* DictionaryBrowserSidebarCellView.swift */,
 				3CC2A62626A92CA100509362 /* DictionaryBrowserContentVC.swift */,
 			);
 			path = "Dictionary Browser";
@@ -660,6 +661,8 @@
 				3C2A9D1E2679DE3A0084716C /* EditorTextView.swift */,
 				3C2BC9B323E2754600CB8C20 /* Inline Errors */,
 				3CD7690126E4423F00769999 /* Suggestions */,
+				3C83CAB726D431EE00C07A56 /* TermTableCellView.swift */,
+				3CD7690F26E4513C00769999 /* TermTableCellValue.swift */,
 				3CE531D626AA54C300E7E1B8 /* TermRoleIconView.swift */,
 				3CE8E39226CDF67B005C708B /* HighlightStyles.swift */,
 				3C4EC6B726BF25CD00AD5E31 /* IndentMode.swift */,
@@ -1058,7 +1061,6 @@
 				3CE531DE26AA61C400E7E1B8 /* HighlightStyles.swift in Sources */,
 				3C76927923E0FC76008FE565 /* EditingPrefsVC.swift in Sources */,
 				3C76927123E0E635008FE565 /* UnarchiveFontVT.swift in Sources */,
-				3C83CAB826D431EE00C07A56 /* DictionaryBrowserSidebarCellView.swift in Sources */,
 				3C2A9CF02679665E0084716C /* InterpreterPrefsVC.swift in Sources */,
 				3C3C1815231AA70B00553072 /* Logging.swift in Sources */,
 			);
@@ -1099,12 +1101,14 @@
 				3CD7690C26E4423F00769999 /* SuggestionsView.swift in Sources */,
 				3CE8E39326CDF6D6005C708B /* InlineErrorView.swift in Sources */,
 				3CD7690A26E4423F00769999 /* SuggestionsVC.swift in Sources */,
+				3CD7691026E4513C00769999 /* TermTableCellValue.swift in Sources */,
 				3CE8E39A26CDF6E1005C708B /* Logging.swift in Sources */,
 				3CE8E39B26CDF6E1005C708B /* HighlightStyles.swift in Sources */,
 				3CE8E38826CDF581005C708B /* SourceEditor.swift in Sources */,
 				3CE8E39926CDF6E1005C708B /* EditorTextView.swift in Sources */,
 				3CE8E39526CDF6D6005C708B /* InlineErrorVC.swift in Sources */,
 				3CD7690D26E4499200769999 /* TermRoleIconView.swift in Sources */,
+				3CD7690E26E450CF00769999 /* TermTableCellView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
