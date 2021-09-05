@@ -377,6 +377,8 @@ extension SourceEditor: NSTextViewDelegate {
                         displayError(error)
                     }
                 }
+            } else {
+                removeInlineError()
             }
         }
     }
