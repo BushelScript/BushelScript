@@ -101,7 +101,9 @@ class DictionaryBrowserSidebarVC: NSViewController, NSOutlineViewDelegate, NSOut
     // MARK: NSOutlineViewDelegate
     
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
-        outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DataCell"), owner: self) as! DictionaryBrowserSidebarCellView
+        let cellView = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DataCell"), owner: self) as! DictionaryBrowserSidebarCellView
+        cellView.highlightStyles = try? fetchOrMakeHighlightStyles()
+        return cellView
     }
     
     func outlineViewSelectionDidChange(_ notification: Notification) {

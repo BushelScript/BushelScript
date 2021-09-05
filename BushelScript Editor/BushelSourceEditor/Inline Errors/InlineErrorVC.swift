@@ -1,7 +1,7 @@
 import AppKit
 import os
 
-private let log = OSLog(subsystem: logSubsystem, category: "InlineErrorVC")
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
 class InlineErrorVC: NSViewController {
     

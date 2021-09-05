@@ -1,11 +1,11 @@
 import AppKit
 import Bushel
 
-class TermRoleIconView: NSView {
+public class TermRoleIconView: NSView {
     
     @IBOutlet var tableCellView: NSTableCellView!
     
-    var role: Term.SyntacticRole? {
+    public var role: Term.SyntacticRole? {
         didSet {
             needsDisplay = true
         }
@@ -18,7 +18,9 @@ class TermRoleIconView: NSView {
     @IBInspectable var textColor: NSColor = .textBackgroundColor
     @IBInspectable var textStrokeColor: NSColor = .labelColor
     
-    override func draw(_ dirtyRect: NSRect) {
+    public var highlightStyles: HighlightStyles?
+    
+    public override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         drawRoundedRectangle()
         drawText()
@@ -35,7 +37,7 @@ class TermRoleIconView: NSView {
         }
         
         let fillColor =
-            ((try? fetchOrMakeHighlightStyles()[Styling(for: role)]?[.foregroundColor] as? NSColor) ?? .clear)
+            ((highlightStyles?[Styling(for: role)]?[.foregroundColor] as? NSColor) ?? .clear)
             .usingColorSpace(.deviceRGB)!
         let strokeColor = NSColor(
             hue: fillColor.hueComponent,
