@@ -6,39 +6,72 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="InlineErrorVC" customModule="BushelScript_Editor" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="InlineErrorVC" customModule="BushelSourceEditor" customModuleProvider="target">
             <connections>
+                <outlet property="textField" destination="D3a-4S-gUa" id="6st-IO-QRc"/>
+                <outlet property="toggleExpandedButton" destination="yMD-dv-t11" id="IKF-eS-1I6"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView wantsLayer="YES" appearanceType="darkAqua" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Hz6-mo-xeY" customClass="InlineErrorView" customModule="BushelScript_Editor" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="67" height="22"/>
+        <customView wantsLayer="YES" appearanceType="darkAqua" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Hz6-mo-xeY" customClass="InlineErrorView" customModule="BushelSourceEditor" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="85" height="26"/>
             <subviews>
-                <textField horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D3a-4S-gUa">
-                    <rect key="frame" x="2" y="4" width="61" height="16"/>
-                    <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" title="Error text" usesSingleLineMode="YES" id="SSO-nX-lUj">
-                        <font key="font" usesAppearanceFont="YES"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <binding destination="-2" name="value" keyPath="representedObject" id="NZR-V3-Tkr"/>
-                    </connections>
-                </textField>
+                <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="1000" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fAI-Ea-tUl">
+                    <rect key="frame" x="4" y="4" width="71" height="20"/>
+                    <subviews>
+                        <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yMD-dv-t11">
+                            <rect key="frame" x="0.0" y="-1" width="18" height="23"/>
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="yMD-dv-t11" secondAttribute="height" multiplier="1:1" id="9Dk-TZ-Svd"/>
+                                <constraint firstAttribute="height" constant="18" id="rB1-Ai-qLN"/>
+                            </constraints>
+                            <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSLeftFacingTriangleTemplate" imagePosition="only" alignment="center" alternateImage="NSRightFacingTriangleTemplate" state="on" imageScaling="proportionallyDown" inset="2" id="8pj-Ms-sdj">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="smallSystem" size="13"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="takeIsExpandedValueFrom:" target="-2" id="XPd-FV-gsK"/>
+                            </connections>
+                        </button>
+                        <textField horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D3a-4S-gUa">
+                            <rect key="frame" x="20" y="2" width="53" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" title="Error text" usesSingleLineMode="YES" id="SSO-nX-lUj">
+                                <font key="font" usesAppearanceFont="YES"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                            <connections>
+                                <binding destination="-2" name="value" keyPath="representedObject" id="NZR-V3-Tkr"/>
+                            </connections>
+                        </textField>
+                    </subviews>
+                    <visibilityPriorities>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                    </visibilityPriorities>
+                    <customSpacing>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                    </customSpacing>
+                </stackView>
             </subviews>
             <constraints>
-                <constraint firstItem="D3a-4S-gUa" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="2" id="Dgp-OU-WuA"/>
-                <constraint firstItem="D3a-4S-gUa" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="4" id="GDr-vJ-nKx"/>
-                <constraint firstAttribute="trailing" secondItem="D3a-4S-gUa" secondAttribute="trailing" constant="6" id="SZT-zf-YwQ"/>
-                <constraint firstAttribute="bottom" secondItem="D3a-4S-gUa" secondAttribute="bottom" constant="4" id="waU-iZ-QeX"/>
+                <constraint firstItem="fAI-Ea-tUl" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="2" id="Du5-WK-4Cw"/>
+                <constraint firstAttribute="trailing" secondItem="fAI-Ea-tUl" secondAttribute="trailing" constant="10" id="Zrz-jF-a8X"/>
+                <constraint firstItem="fAI-Ea-tUl" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="4" id="dX1-dm-Vc0"/>
+                <constraint firstAttribute="bottom" secondItem="fAI-Ea-tUl" secondAttribute="bottom" constant="4" id="gwe-j2-5uD"/>
             </constraints>
             <shadow key="shadow" blurRadius="6">
                 <size key="offset" width="2" height="-3"/>
                 <color key="color" white="0.0" alpha="0.30073201155462187" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             </shadow>
-            <point key="canvasLocation" x="-30" y="30"/>
+            <point key="canvasLocation" x="-21.5" y="30"/>
         </customView>
     </objects>
+    <resources>
+        <image name="NSLeftFacingTriangleTemplate" width="10" height="14"/>
+        <image name="NSRightFacingTriangleTemplate" width="10" height="14"/>
+    </resources>
 </document>

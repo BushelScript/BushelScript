@@ -1,7 +1,7 @@
 import AppKit
-import os
+import os.log
 
-private let log = OSLog(subsystem: logSubsystem, category: "InlineErrorView")
+private let log = OSLog(subsystem: logSubsystem, category: #fileID)
 
 final class InlineErrorView: NSView {
     

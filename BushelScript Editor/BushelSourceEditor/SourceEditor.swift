@@ -232,7 +232,7 @@ public class SourceEditor: NSViewController {
     }
     
     private var inlineError: (Error & Located)?
-    private var inlineErrorVC: InlineErrorVC?
+    private lazy var inlineErrorVC = InlineErrorVC()
     
     private func displayInlineError() {
         guard let inlineError = inlineError else {
@@ -269,8 +269,6 @@ public class SourceEditor: NSViewController {
                 .scaledBy(x: 1, y: -1)
         )
         
-        let inlineErrorVC = InlineErrorVC()
-        self.inlineErrorVC = inlineErrorVC
         inlineErrorVC.representedObject = inlineError.localizedDescription
         
         let errorView = inlineErrorVC.view
@@ -288,11 +286,7 @@ public class SourceEditor: NSViewController {
     }
     
     private func removeInlineErrorView() {
-        guard let oldInlineErrorVC = self.inlineErrorVC else {
-            return
-        }
-        self.inlineErrorVC = nil
-        oldInlineErrorVC.view.removeFromSuperview()
+        inlineErrorVC.view.removeFromSuperview()
     }
     
     private var previousTabWidth: Int?
