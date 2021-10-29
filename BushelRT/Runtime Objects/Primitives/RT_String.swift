@@ -5,7 +5,7 @@ import AEthereal
 public class RT_String: RT_ValueWrapper<String> {
     
     public override var description: String {
-        "\"\(value)\""
+        "\(value)"
     }
     
     public override class var staticType: Types {
