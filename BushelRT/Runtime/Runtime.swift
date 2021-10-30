@@ -345,8 +345,9 @@ extension Runtime {
                     let value = try runPrimary(parameterValue)
                     return (parameter, value)
                 }
-                let arguments = [Reflection.Parameter : RT_Object](uniqueKeysWithValues:
-                    parameterExprValues
+                let arguments = [Reflection.Parameter : RT_Object](
+                    parameterExprValues,
+                    uniquingKeysWith: { $1 }
                 )
                 let command = reflection.commands[term.uri]
                 return try context.run(command: command, arguments: arguments)
