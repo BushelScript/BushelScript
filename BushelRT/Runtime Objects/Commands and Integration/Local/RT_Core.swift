@@ -80,7 +80,7 @@ public final class RT_Core: RT_Object, RT_LocalModule {
             lhs.compare(with: rhs).map { RT_Boolean.withValue(rt, $0 != .orderedDescending) }
         })
         functions.add(rt, .greater, parameters: [.lhs: .item, .rhs: .item], implementation: binary { lhs, rhs, rt in
-            lhs.compare(with: rhs).map { RT_Boolean.withValue(rt, $0 == .orderedAscending) }
+            lhs.compare(with: rhs).map { RT_Boolean.withValue(rt, $0 == .orderedDescending) }
         })
         functions.add(rt, .greaterEqual, parameters: [.lhs: .item, .rhs: .item], implementation: binary { lhs, rhs, rt in
             lhs.compare(with: rhs).map { RT_Boolean.withValue(rt, $0 != .orderedAscending) }
