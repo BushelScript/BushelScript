@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/BushelScript/AEthereal.git",
         "state": {
           "branch": "main",
-          "revision": "62cad00f24fcbdc1d9ca94cf4265fca0d9e99034",
+          "revision": "730d9d0cb106bb91f5aba20dd4e38ee8427835c1",
           "version": null
         }
       },
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/ThatsJustCheesy/InAnyCase.git",
         "state": {
           "branch": null,
-          "revision": "c9f2151e6cfee4c1487dceb127702a5c83c6217a",
-          "version": "1.0.1"
+          "revision": "ec6911c8c8e5d6a97a27b254445b72590b31908d",
+          "version": "1.0.2"
         }
       },
       {
