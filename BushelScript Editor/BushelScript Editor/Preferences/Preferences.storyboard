@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="tIW-kw-HeA">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="tIW-kw-HeA">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -163,7 +163,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0gx-cp-d1I">
-                                <rect key="frame" x="38" y="244" width="142" height="18"/>
+                                <rect key="frame" x="38" y="244" width="141" height="18"/>
                                 <buttonCell key="cell" type="check" title="Smart Suggestions" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="6h3-Ng-npI">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="smallSystem" size="13"/>
@@ -573,7 +573,7 @@
         <!--Updates-->
         <scene sceneID="qc5-mF-i9R">
             <objects>
-                <viewController title="Updates" id="d7J-M5-OMo" sceneMemberID="viewController">
+                <viewController title="Updates" id="d7J-M5-OMo" customClass="UpdatesPrefsVC" customModule="BushelScript_Editor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="5nN-JT-odI">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="154"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -585,7 +585,7 @@
                                     <font key="font" metaFont="smallSystem" size="13"/>
                                 </buttonCell>
                                 <connections>
-                                    <binding destination="RRE-20-w0l" name="value" keyPath="automaticallyChecksForUpdates" id="o0P-sc-AwW"/>
+                                    <binding destination="d7J-M5-OMo" name="value" keyPath="updater.automaticallyChecksForUpdates" id="SF8-U4-QRH"/>
                                 </connections>
                             </button>
                             <button horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YiU-pv-J9y">
@@ -595,7 +595,7 @@
                                     <font key="font" metaFont="smallSystem" size="13"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="checkForUpdates:" target="RRE-20-w0l" id="I1I-T0-qll"/>
+                                    <action selector="checkForUpdates:" target="d7J-M5-OMo" id="xqd-T5-Of0"/>
                                 </connections>
                             </button>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="NzS-G4-36y">
@@ -625,7 +625,7 @@ The check will only happen when this app is open.</string>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="RRE-20-w0l" name="value" keyPath="lastUpdateCheckDate" id="jI7-tU-540">
+                                    <binding destination="d7J-M5-OMo" name="value" keyPath="updater.lastUpdateCheckDate" id="ft2-Om-Dg2">
                                         <dictionary key="options">
                                             <string key="NSNullPlaceholder">Never</string>
                                         </dictionary>
@@ -653,7 +653,6 @@ The check will only happen when this app is open.</string>
                     </view>
                 </viewController>
                 <customObject id="5pk-9Q-eKQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <customObject id="RRE-20-w0l" customClass="SUUpdater"/>
             </objects>
             <point key="canvasLocation" x="723" y="1624"/>
         </scene>
@@ -781,8 +780,6 @@ The check will only happen when this app is open.</string>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="fontManager" destination="bNU-sQ-sWR" id="eeV-tq-ePl"/>
-                        <outlet property="fontPreviewTF" destination="p0W-xV-W7o" id="8HF-fh-Zr7"/>
                         <outlet property="locationTF" destination="p0W-xV-W7o" id="E5a-Bn-Igr"/>
                     </connections>
                 </viewController>

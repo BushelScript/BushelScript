@@ -21,6 +21,7 @@
 		3C2046F2268EAEC100C52E2B /* StandardLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2046F1268EAEC100C52E2B /* StandardLibraryTests.swift */; };
 		3C204701268EB30F00C52E2B /* Tests in Resources */ = {isa = PBXBuildFile; fileRef = 3C204700268EB30F00C52E2B /* Tests */; };
 		3C204703268EB31E00C52E2B /* Libraries in Resources */ = {isa = PBXBuildFile; fileRef = 3C204702268EB31E00C52E2B /* Libraries */; };
+		3C230E562843DF4600CBFC66 /* UpdatesPrefsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C230E502843DF4600CBFC66 /* UpdatesPrefsVC.swift */; };
 		3C249D482319C1D700F5826E /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C249D472319C1D700F5826E /* PreferencesViewController.swift */; };
 		3C26BA8D268184D800452D9E /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C26BA8C268184D800452D9E /* Menu.swift */; };
 		3C278EBE269D2DAD0003E79A /* main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C278EBC269D2DAD0003E79A /* main.xib */; };
@@ -266,6 +267,7 @@
 		3C2046F3268EAEC100C52E2B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C204700268EB30F00C52E2B /* Tests */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Tests; path = "../Standard Library/Tests"; sourceTree = "<group>"; };
 		3C204702268EB31E00C52E2B /* Libraries */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Libraries; path = "../Standard Library/Libraries"; sourceTree = "<group>"; };
+		3C230E502843DF4600CBFC66 /* UpdatesPrefsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatesPrefsVC.swift; sourceTree = "<group>"; };
 		3C249D472319C1D700F5826E /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 		3C26BA8C268184D800452D9E /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		3C278EB7269D2DAD0003E79A /* Run BushelScript.action */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Run BushelScript.action"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -383,6 +385,7 @@
 				3C249D472319C1D700F5826E /* PreferencesViewController.swift */,
 				3C2A9CEF2679665E0084716C /* InterpreterPrefsVC.swift */,
 				3C76927823E0FC76008FE565 /* EditingPrefsVC.swift */,
+				3C230E502843DF4600CBFC66 /* UpdatesPrefsVC.swift */,
 				3CE531DD26AA61C400E7E1B8 /* HighlightStyles.swift */,
 			);
 			path = Preferences;
@@ -1028,6 +1031,7 @@
 				3C3355F123490F2500AEAAE9 /* NSTabViewController+SelectionConvenience.swift in Sources */,
 				3CC2A62526A92C9600509362 /* DictionaryBrowserSidebarVC.swift in Sources */,
 				3C0566B223135673004CDB1A /* Document.swift in Sources */,
+				3C230E562843DF4600CBFC66 /* UpdatesPrefsVC.swift in Sources */,
 				3C0430022314BECD00758339 /* ModelPropagation.swift in Sources */,
 				3CC2A62326A92C3800509362 /* DictionaryBrowserVC.swift in Sources */,
 				3C7A6CC123CBD5E5007F5D84 /* DictionaryDocument.swift in Sources */,
