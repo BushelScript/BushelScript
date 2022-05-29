@@ -70,7 +70,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-e &apos;require library List&apos; -e &apos;require app id com.apple.safari&apos; -e &apos;let Safari be com.apple.safari&apos; -e &apos;tell Safari&apos; -e &apos;front window&apos; -e &apos;{name of that, id of that, {&quot;app properties&quot;: properties, &quot;window properties&quot;: properties of that}}&apos; -e &apos;item 1 of item 3 of that&apos;"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/ian/Documents/Make\ Keynote\ Slides.bushel"
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>

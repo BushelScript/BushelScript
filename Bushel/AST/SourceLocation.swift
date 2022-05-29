@@ -4,31 +4,20 @@ public struct SourceLocation {
     
     public var range: Range<String.Index>
     
-    #if DEBUG
     public var source: String
-    #else
-    public var source: String {
-        return ""
-    }
-    #endif
     
     public init(_ range: Range<String.Index>, source: String) {
         self.range = range
-        #if DEBUG
         self.source = source
-        #endif
     }
     
     public init(at index: String.Index, source: String) {
         self.range = index..<index
-        #if DEBUG
         self.source = source
-        #endif
     }
     
 }
 
-#if DEBUG
 extension SourceLocation: CustomReflectable {
     
     public var customMirror: Mirror {
@@ -40,7 +29,6 @@ extension SourceLocation: CustomReflectable {
     }
     
 }
-#endif
 
 extension SourceLocation {
     
