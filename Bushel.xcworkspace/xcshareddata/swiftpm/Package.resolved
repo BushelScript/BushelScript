@@ -1,106 +1,104 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "AEthereal",
-        "repositoryURL": "https://github.com/BushelScript/AEthereal.git",
-        "state": {
-          "branch": "main",
-          "revision": "730d9d0cb106bb91f5aba20dd4e38ee8427835c1",
-          "version": null
-        }
-      },
-      {
-        "package": "Defaults",
-        "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
-        "state": {
-          "branch": null,
-          "revision": "55ffea9487fb9b559406d909ee31dcd955fe77aa",
-          "version": "3.1.1"
-        }
-      },
-      {
-        "package": "FootlessParser",
-        "repositoryURL": "https://github.com/kareman/FootlessParser",
-        "state": {
-          "branch": null,
-          "revision": "11c7a366720a2cc62d13ee69c8bdb8372bb3bb2b",
-          "version": "0.5.2"
-        }
-      },
-      {
-        "package": "InAnyCase",
-        "repositoryURL": "https://github.com/ThatsJustCheesy/InAnyCase.git",
-        "state": {
-          "branch": null,
-          "revision": "ec6911c8c8e5d6a97a27b254445b72590b31908d",
-          "version": "1.0.2"
-        }
-      },
-      {
-        "package": "LineNoise",
-        "repositoryURL": "https://github.com/andybest/linenoise-swift",
-        "state": {
-          "branch": null,
-          "revision": "afc897c02b030af7333105c4fedcd843a8339238",
-          "version": "0.0.3"
-        }
-      },
-      {
-        "package": "Nimble",
-        "repositoryURL": "https://github.com/Quick/Nimble.git",
-        "state": {
-          "branch": null,
-          "revision": "e9d769113660769a4d9dd3afb855562c0b7ae7b0",
-          "version": "7.3.4"
-        }
-      },
-      {
-        "package": "Regex",
-        "repositoryURL": "https://github.com/sharplet/Regex.git",
-        "state": {
-          "branch": null,
-          "revision": "76c2b73d4281d77fc3118391877efd1bf972f515",
-          "version": "2.1.1"
-        }
-      },
-      {
-        "package": "SDEFinitely",
-        "repositoryURL": "https://github.com/ThatsJustCheesy/SDEFinitely.git",
-        "state": {
-          "branch": "master",
-          "revision": "1b375a73e6498342a96fc826e0e91f1057b6149f",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-argument-parser",
-        "repositoryURL": "https://github.com/apple/swift-argument-parser",
-        "state": {
-          "branch": null,
-          "revision": "83b23d940471b313427da226196661856f6ba3e0",
-          "version": "0.4.4"
-        }
-      },
-      {
-        "package": "TooMuchTheme",
-        "repositoryURL": "https://github.com/ThatsJustCheesy/TooMuchTheme.git",
-        "state": {
-          "branch": "main",
-          "revision": "8acfdf802327ced15b77b5917e66ecd03b7f5038",
-          "version": null
-        }
-      },
-      {
-        "package": "Yams",
-        "repositoryURL": "https://github.com/jpsim/Yams.git",
-        "state": {
-          "branch": null,
-          "revision": "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
-          "version": "4.0.6"
-        }
+  "pins" : [
+    {
+      "identity" : "aethereal",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BushelScript/AEthereal.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "1d64af49968eece7afdfb4a70222870cdca0a7e4"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "revision" : "55ffea9487fb9b559406d909ee31dcd955fe77aa",
+        "version" : "3.1.1"
+      }
+    },
+    {
+      "identity" : "footlessparser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kareman/FootlessParser",
+      "state" : {
+        "revision" : "11c7a366720a2cc62d13ee69c8bdb8372bb3bb2b",
+        "version" : "0.5.2"
+      }
+    },
+    {
+      "identity" : "inanycase",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ThatsJustCheesy/InAnyCase.git",
+      "state" : {
+        "revision" : "ec6911c8c8e5d6a97a27b254445b72590b31908d",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "linenoise-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/andybest/linenoise-swift",
+      "state" : {
+        "revision" : "afc897c02b030af7333105c4fedcd843a8339238",
+        "version" : "0.0.3"
+      }
+    },
+    {
+      "identity" : "nimble",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Quick/Nimble.git",
+      "state" : {
+        "revision" : "e9d769113660769a4d9dd3afb855562c0b7ae7b0",
+        "version" : "7.3.4"
+      }
+    },
+    {
+      "identity" : "regex",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sharplet/Regex.git",
+      "state" : {
+        "revision" : "76c2b73d4281d77fc3118391877efd1bf972f515",
+        "version" : "2.1.1"
+      }
+    },
+    {
+      "identity" : "sdefinitely",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ThatsJustCheesy/SDEFinitely.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "1b375a73e6498342a96fc826e0e91f1057b6149f"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "83b23d940471b313427da226196661856f6ba3e0",
+        "version" : "0.4.4"
+      }
+    },
+    {
+      "identity" : "toomuchtheme",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ThatsJustCheesy/TooMuchTheme.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "427088605981dbf9b9c4cec50c48055378b2a162"
+      }
+    },
+    {
+      "identity" : "yams",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jpsim/Yams.git",
+      "state" : {
+        "revision" : "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
+        "version" : "4.0.6"
+      }
+    }
+  ],
+  "version" : 2
 }
